@@ -1,0 +1,5 @@
+{
+    "app_name": "Resik",
+    "version_name": "Versi {{.code}}",
+    "home_message": "{{.app_name}} Versi {{.code}}"
+}
