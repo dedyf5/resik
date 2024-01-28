@@ -38,7 +38,7 @@ func ResponseFromStatusHTTP(statusHTTP *statusEntity.HTTP) Response {
 func ResponseSuccessAuto(statusHTTP *statusEntity.HTTP) Response {
 	res := Response{
 		Status: ResponseStatus{
-			Code:    fmt.Sprintf("%d001", statusHTTP.Code),
+			Code:    fmt.Sprintf("%d.1", statusHTTP.Code),
 			Message: statusHTTP.MessageOrDefault(),
 		},
 		Data: statusHTTP.Data,
@@ -50,7 +50,7 @@ func ResponseSuccessAuto(statusHTTP *statusEntity.HTTP) Response {
 func ResponseErrorAuto(statusHTTP *statusEntity.HTTP) Response {
 	return Response{
 		Status: ResponseStatus{
-			Code:    fmt.Sprintf("%d001", statusHTTP.Code),
+			Code:    fmt.Sprintf("%d.1", statusHTTP.Code),
 			Message: statusHTTP.MessageOrDefault(),
 			Detail:  statusHTTP.Detail,
 		},
