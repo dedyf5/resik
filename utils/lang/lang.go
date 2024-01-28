@@ -22,29 +22,30 @@ var LangAvailable []language.Tag = []language.Tag{language.English, language.Ind
 var termDir string = "static/term"
 
 type Lang struct {
-	Bundle     *i18n.Bundle
-	Localizer  *i18n.Localizer
-	LangReq    language.Tag
-	LangAccept string
+	Bundle      *i18n.Bundle
+	Localizer   *i18n.Localizer
+	LangDefault language.Tag
+	LangReq     *language.Tag
+	LangAccept  string
 }
 
-func NewLang(langDefault, langReq language.Tag, langAccept string) *Lang {
+func NewLang(langDefault language.Tag, langReq *language.Tag, langAccept string) *Lang {
 	bundle := i18n.NewBundle(langDefault)
 	return &Lang{
 		Bundle:     bundle,
-		Localizer:  NewLocalizer(bundle, langReq, langAccept),
+		Localizer:  NewLocalizer(bundle, langDefault, langReq, langAccept),
 		LangReq:    langReq,
 		LangAccept: langAccept,
 	}
 }
 
-func NewLocalizer(bundle *i18n.Bundle, langReq language.Tag, langAccept string) *i18n.Localizer {
+func NewLocalizer(bundle *i18n.Bundle, langDefault language.Tag, langReq *language.Tag, langAccept string) *i18n.Localizer {
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
 	for _, v := range LangAvailable {
 		sourcePath := fmt.Sprintf("%s/%s.json", termDir, v.String())
 		bundle.LoadMessageFile(sourcePath)
 	}
-	return i18n.NewLocalizer(bundle, langReq.String(), langAccept)
+	return i18n.NewLocalizer(bundle, GetLanguageReqOrDefault(langDefault, langReq).String(), langAccept)
 }
 
 func (src *Lang) GetByMessageID(id string) string {
@@ -58,6 +59,17 @@ func (src *Lang) GetByTemplateData(id string, templateData commonEntity.Map) str
 		MessageID:    id,
 		TemplateData: templateData,
 	})
+}
+
+func (src *Lang) LangReqOrDefault() language.Tag {
+	return GetLanguageReqOrDefault(src.LangDefault, src.LangReq)
+}
+
+func GetLanguageReqOrDefault(langDefault language.Tag, langReq *language.Tag) language.Tag {
+	if langReq != nil {
+		return *langReq
+	}
+	return langDefault
 }
 
 func GetLanguageOrDefault(lang string) language.Tag {

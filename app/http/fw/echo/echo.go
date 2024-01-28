@@ -1,0 +1,56 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+package echo
+
+import (
+	"net/http"
+
+	statusEntity "github.com/dedyf5/resik/entities/status"
+	httpUtil "github.com/dedyf5/resik/utils/http"
+	validatorUtil "github.com/dedyf5/resik/utils/validator"
+	"github.com/labstack/echo/v4"
+)
+
+type IEcho interface {
+	StructValidator(ctx echo.Context, payload interface{}) error
+}
+
+type Echo struct {
+	validator validatorUtil.IValidate
+}
+
+func New(validator validatorUtil.IValidate) *Echo {
+	return &Echo{
+		validator: validator,
+	}
+}
+
+func (e *Echo) StructValidator(ctx echo.Context, payload interface{}) error {
+	if err := ctx.Bind(payload); err != nil {
+		return err
+	}
+	if err := e.validator.Struct(payload); err != nil {
+		return err
+	}
+	return nil
+}
+
+func HTTPErrorHandler(err error, ctx echo.Context) {
+	if ctx.Response().Committed {
+		return
+	}
+
+	switch status := err.(type) {
+	case *statusEntity.HTTP:
+		if status.Code != http.StatusNoContent {
+			ctx.JSON(status.Code, httpUtil.ResponseFromStatusHTTP(status))
+		}
+		return
+	}
+
+	ctx.JSON(http.StatusNotFound, httpUtil.ResponseErrorAuto(&statusEntity.HTTP{
+		Code: http.StatusNotFound,
+	}))
+}

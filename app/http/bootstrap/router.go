@@ -25,18 +25,15 @@ func newRouter(config config.Config, generalHandler *generalHandler.Handler, trx
 }
 
 func (r *Router) routerSetup(server *ServerHTTP) {
-	r.generalRouterSetup(server)
-	r.trxRouterSetup(server)
-}
-
-func (r *Router) generalRouterSetup(server *ServerHTTP) {
 	e := server.echo
-	handler := r.generalHandler
-	e.GET("/", handler.Home)
-}
 
-func (r *Router) trxRouterSetup(server *ServerHTTP) {
-	e := server.echo
-	handler := r.trxHandler
-	e.GET("/merchants/:ID", handler.GetMerchantOmzet)
+	generalHandler := r.generalHandler
+	e.GET("/", generalHandler.Home)
+
+	trxHandler := r.trxHandler
+	trx := e.Group("/transaction")
+	trxMerchant := trx.Group("/merchant/:id")
+	trxMerchant.GET("/omzet", trxHandler.GetMerchantOmzet)
+	trxOutlet := trx.Group("/outlet/:id")
+	trxOutlet.GET("/omzet", trxHandler.GetOutletOmzet)
 }

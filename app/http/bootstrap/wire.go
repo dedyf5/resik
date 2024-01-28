@@ -8,6 +8,7 @@
 package bootstrap
 
 import (
+	fw "github.com/dedyf5/resik/app/http/fw/echo"
 	generalHandler "github.com/dedyf5/resik/app/http/handler/general"
 	trxHandler "github.com/dedyf5/resik/app/http/handler/transaction"
 	"github.com/dedyf5/resik/config"
@@ -15,6 +16,7 @@ import (
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
+	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
 
@@ -25,6 +27,16 @@ var configGeneralSet = wire.NewSet(
 	wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database"),
 	wire.FieldsOf(new(configEntity.App), "Env", "LangDefault"),
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
+)
+
+var utilSet = wire.NewSet(
+	validatorUtil.New,
+	wire.Bind(new(validatorUtil.IValidate), new(*validatorUtil.Validate)),
+)
+
+var fwSet = wire.NewSet(
+	fw.New,
+	wire.Bind(new(fw.IEcho), new(*fw.Echo)),
 )
 
 var connSet = wire.NewSet(
@@ -50,6 +62,8 @@ var handlerSet = wire.NewSet(
 func InitializeHTTP() (*App, func(), error) {
 	wire.Build(
 		configGeneralSet,
+		utilSet,
+		fwSet,
 		connSet,
 		gormRepoSet,
 		serviceSet,

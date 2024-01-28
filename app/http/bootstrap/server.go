@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/dedyf5/resik/app/http/middleware"
+	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
 	"github.com/dedyf5/resik/cmd"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/utils/color"
@@ -29,8 +29,9 @@ func newServerHTTP(config config.Config, lang language.Tag) *ServerHTTP {
 	echo := echo.New()
 	echo.HideBanner = true
 	echo.HidePort = true
-	echo.HTTPErrorHandler = middleware.StatusEcho
-	echo.Use(middleware.LangEcho(config.App.LangDefault))
+	echo.Binder = echoFW.NewBinder()
+	echo.HTTPErrorHandler = echoFW.HTTPErrorHandler
+	echo.Use(echoFW.LangMiddleware(config.App.LangDefault))
 
 	return &ServerHTTP{
 		echo:   echo,

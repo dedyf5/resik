@@ -7,6 +7,7 @@
 package bootstrap
 
 import (
+	"github.com/dedyf5/resik/app/http/fw/echo"
 	"github.com/dedyf5/resik/app/http/handler/general"
 	handler2 "github.com/dedyf5/resik/app/http/handler/transaction"
 	"github.com/dedyf5/resik/config"
@@ -14,6 +15,7 @@ import (
 	"github.com/dedyf5/resik/drivers"
 	config2 "github.com/dedyf5/resik/entities/config"
 	"github.com/dedyf5/resik/repositories/transaction"
+	"github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
 
@@ -25,6 +27,8 @@ func InitializeHTTP() (*App, func(), error) {
 	tag := app.LangDefault
 	serverHTTP := newServerHTTP(config, tag)
 	handlerHandler := handler.New(config)
+	validate := validator.New(tag)
+	echoEcho := echo.New(validate)
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
 	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig)
@@ -38,7 +42,7 @@ func InitializeHTTP() (*App, func(), error) {
 	}
 	transactionRepo := transaction.New(gormDB)
 	serviceService := service.New(transactionRepo, config)
-	handler3 := handler2.New(serviceService, config)
+	handler3 := handler2.New(echoEcho, serviceService, config)
 	router := newRouter(config, handlerHandler, handler3)
 	bootstrapApp, cleanup3, err := newApp(serverHTTP, router)
 	if err != nil {
@@ -62,6 +66,10 @@ var (
 var configGeneral = config.Load()
 
 var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+
+var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)))
+
+var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 
 var connSet = wire.NewSet(drivers.NewMySQLConnection, drivers.NewGorm)
 
