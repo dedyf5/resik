@@ -12,7 +12,7 @@ import (
 	"strings"
 	"sync"
 
-	statusEntity "github.com/dedyf5/resik/entities/status"
+	httpApp "github.com/dedyf5/resik/ctx/app/http"
 	"github.com/labstack/echo/v4"
 )
 
@@ -139,7 +139,7 @@ func (b *bind) ParamValidator(c echo.Context, i interface{}) error {
 			}
 
 			msg := fmt.Sprintf("%s value must be %s, got string", fn, ft)
-			return &statusEntity.HTTP{
+			return &httpApp.Status{
 				Code:    http.StatusBadRequest,
 				Message: msg,
 				Detail: map[string]string{
@@ -177,7 +177,7 @@ func (b *bind) JSONErrorFormatter(err error) error {
 		errMap := map[string]string{}
 		field := fields[1]
 		errMap[field] = fmt.Sprintf("%s type must be %s, got %s", field, expecteds[1], gots[1])
-		return &statusEntity.HTTP{
+		return &httpApp.Status{
 			Code:    http.StatusBadRequest,
 			Message: errMap[field],
 			Detail:  errMap,

@@ -7,9 +7,9 @@ package config
 import (
 	"log"
 
+	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
-	langUtil "github.com/dedyf5/resik/utils/lang"
 	"github.com/spf13/viper"
 )
 
@@ -51,7 +51,7 @@ func (conf *Config) loadApp() {
 		Name:        viper.GetString("APP_NAME"),
 		Version:     viper.GetString("APP_VERSION"),
 		Env:         env,
-		LangDefault: langUtil.GetLanguageOrDefault(viper.GetString("APP_LANG_DEFAULT")),
+		LangDefault: langCtx.GetLanguageOrDefault(viper.GetString("APP_LANG_DEFAULT")),
 		Host:        viper.GetString("APP_HOST"),
 		Port:        viper.GetUint("APP_PORT"),
 	}

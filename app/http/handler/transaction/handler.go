@@ -12,32 +12,41 @@ import (
 	"github.com/dedyf5/resik/app/http/handler/transaction/request"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/core/transaction/service"
-	statusEntity "github.com/dedyf5/resik/entities/status"
+	httpApp "github.com/dedyf5/resik/ctx/app/http"
+	logUtil "github.com/dedyf5/resik/utils/log"
 	"github.com/labstack/echo/v4"
 )
 
 type Handler struct {
 	fw      echoFW.IEcho
+	log     *logUtil.Log
 	service service.IService
 	config  config.Config
 }
 
-func New(fw echoFW.IEcho, service service.IService, config config.Config) *Handler {
+func New(fw echoFW.IEcho, log *logUtil.Log, service service.IService, config config.Config) *Handler {
 	return &Handler{
 		fw:      fw,
+		log:     log,
 		service: service,
 		config:  config,
 	}
 }
 
-func (h *Handler) GetMerchantOmzet(ctx echo.Context) error {
+func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
+	ctx, err := echoFW.NewCtx(echoCtx, h.log)
+	if err != nil {
+		return err
+	}
+	ctx.App.Logger().Info("GetMerchantOmzet")
+
 	var payload request.GeMerchantOmzet
 
-	if err := h.fw.StructValidator(ctx, &payload); err != nil {
+	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
 	}
 
-	return &statusEntity.HTTP{
+	return &httpApp.Status{
 		Code: http.StatusOK,
 		Data: map[string]interface{}{
 			"page_or_default":  payload.PageOrDefault(),

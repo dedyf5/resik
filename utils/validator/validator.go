@@ -5,13 +5,14 @@
 package validator
 
 import (
+	"errors"
 	"log"
 	"net/http"
 	"reflect"
 	"regexp"
 	"strings"
 
-	statusEntity "github.com/dedyf5/resik/entities/status"
+	httpApp "github.com/dedyf5/resik/ctx/app/http"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -21,8 +22,8 @@ import (
 
 //go:generate mockgen -source validator.go -package mock -destination ./mock/validator.go
 type IValidate interface {
-	Struct(payloadStruct interface{}) error
-	ErrorFormatter(err error) error
+	Struct(payloadStruct interface{}) *httpApp.Status
+	ErrorFormatter(err error) *httpApp.Status
 }
 
 type Validate struct {
@@ -57,18 +58,18 @@ func New(langDefault language.Tag) *Validate {
 	}
 }
 
-func (v *Validate) Struct(payloadStruct interface{}) error {
+func (v *Validate) Struct(payloadStruct interface{}) *httpApp.Status {
 	if payloadStruct == nil {
-		return &statusEntity.HTTP{
+		return &httpApp.Status{
 			Code:       http.StatusInternalServerError,
-			LogMessage: "payloadStruct can't be nil",
+			CauseError: errors.New("payloadStruct can't be nil"),
 		}
 	}
 
 	err := v.instance.Struct(payloadStruct)
 	if err != nil {
 		if _, ok := err.(*validator.InvalidValidationError); ok {
-			return &statusEntity.HTTP{
+			return &httpApp.Status{
 				Code: http.StatusInternalServerError,
 			}
 		}
@@ -78,10 +79,10 @@ func (v *Validate) Struct(payloadStruct interface{}) error {
 	return nil
 }
 
-func (v *Validate) ErrorFormatter(err error) error {
+func (v *Validate) ErrorFormatter(err error) *httpApp.Status {
 	errs, ok := err.(validator.ValidationErrors)
 	if !ok {
-		return &statusEntity.HTTP{
+		return &httpApp.Status{
 			Code: http.StatusBadRequest,
 		}
 	}
@@ -118,7 +119,7 @@ func (v *Validate) ErrorFormatter(err error) error {
 		}
 	}
 
-	return &statusEntity.HTTP{
+	return &httpApp.Status{
 		Code:    http.StatusBadRequest,
 		Message: first,
 		Detail:  errMap,

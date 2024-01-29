@@ -8,9 +8,9 @@ import (
 	"net/http"
 
 	"github.com/dedyf5/resik/config"
+	httpApp "github.com/dedyf5/resik/ctx/app/http"
+	langCtx "github.com/dedyf5/resik/ctx/lang"
 	commonEntity "github.com/dedyf5/resik/entities/common"
-	statusEntity "github.com/dedyf5/resik/entities/status"
-	langUtil "github.com/dedyf5/resik/utils/lang"
 	"github.com/labstack/echo/v4"
 )
 
@@ -25,8 +25,8 @@ func New(config config.Config) *Handler {
 }
 
 func (h *Handler) Home(ctx echo.Context) error {
-	lang := ctx.Get(langUtil.ContextKey.String()).(*langUtil.Lang)
-	return &statusEntity.HTTP{
+	lang := ctx.Get(langCtx.ContextKey.String()).(*langCtx.Lang)
+	return &httpApp.Status{
 		Code:    http.StatusOK,
 		Message: lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
 		Data: commonEntity.Map{

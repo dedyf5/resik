@@ -7,8 +7,8 @@ package echo
 import (
 	"net/http"
 
-	statusEntity "github.com/dedyf5/resik/entities/status"
-	langUtil "github.com/dedyf5/resik/utils/lang"
+	httpApp "github.com/dedyf5/resik/ctx/app/http"
+	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/text/language"
 )
@@ -17,12 +17,12 @@ func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			var langReq *language.Tag = nil
-			langKey := langUtil.ContextKey.String()
+			langKey := langCtx.ContextKey.String()
 			langString := c.Request().URL.Query().Get(langKey)
 			if langString != "" {
-				langRes, err := langUtil.GetLanguageAvailable(langString)
+				langRes, err := langCtx.GetLanguageAvailable(langString)
 				if err != nil {
-					return &statusEntity.HTTP{
+					return &httpApp.Status{
 						Code:    http.StatusBadRequest,
 						Message: err.Error(),
 						Detail: map[string]string{
@@ -33,7 +33,7 @@ func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 				langReq = langRes
 			}
 			langAccept := c.Request().Header.Get("Accept-Language")
-			c.Set(langKey, langUtil.NewLang(langDefault, langReq, langAccept))
+			c.Set(langKey, langCtx.NewLang(langDefault, langReq, langAccept))
 			return next(c)
 		}
 	}

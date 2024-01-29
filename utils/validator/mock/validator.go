@@ -7,6 +7,7 @@ package mock
 import (
 	reflect "reflect"
 
+	http "github.com/dedyf5/resik/ctx/app/http"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -34,10 +35,10 @@ func (m *MockIValidate) EXPECT() *MockIValidateMockRecorder {
 }
 
 // ErrorFormatter mocks base method.
-func (m *MockIValidate) ErrorFormatter(err error) error {
+func (m *MockIValidate) ErrorFormatter(err error) *http.Status {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ErrorFormatter", err)
-	ret0, _ := ret[0].(error)
+	ret0, _ := ret[0].(*http.Status)
 	return ret0
 }
 
@@ -48,10 +49,10 @@ func (mr *MockIValidateMockRecorder) ErrorFormatter(err interface{}) *gomock.Cal
 }
 
 // Struct mocks base method.
-func (m *MockIValidate) Struct(payloadStruct interface{}) error {
+func (m *MockIValidate) Struct(payloadStruct interface{}) *http.Status {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Struct", payloadStruct)
-	ret0, _ := ret[0].(error)
+	ret0, _ := ret[0].(*http.Status)
 	return ret0
 }
 

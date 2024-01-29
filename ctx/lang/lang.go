@@ -6,18 +6,23 @@ package lang
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
-	"net/http"
 	"strings"
 
 	commonEntity "github.com/dedyf5/resik/entities/common"
-	statusEntity "github.com/dedyf5/resik/entities/status"
 	"github.com/dedyf5/resik/utils/array"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )
 
 var LangAvailable []language.Tag = []language.Tag{language.English, language.Indonesian}
+
+type langKey string
+
+const (
+	ContextKey langKey = "lang"
+)
 
 var termDir string = "static/term"
 
@@ -65,6 +70,10 @@ func (src *Lang) LangReqOrDefault() language.Tag {
 	return GetLanguageReqOrDefault(src.LangDefault, src.LangReq)
 }
 
+func (k langKey) String() string {
+	return string(k)
+}
+
 func GetLanguageReqOrDefault(langDefault language.Tag, langReq *language.Tag) language.Tag {
 	if langReq != nil {
 		return *langReq
@@ -90,21 +99,14 @@ func GetLanguageAvailable(lang string) (*language.Tag, error) {
 
 func LanguageIsAvailable(lang string) (bool, error) {
 	if lang == "" {
-		return false, &statusEntity.HTTP{
-			Code:    http.StatusBadRequest,
-			Message: "lang is required",
-		}
+		return false, errors.New("lang is required")
 	}
 	langCodes := make([]string, 0, cap(LangAvailable))
 	for _, v := range LangAvailable {
 		langCodes = append(langCodes, v.String())
 	}
 	if array.InArray(lang, langCodes) < 0 {
-		msg := fmt.Sprintf("lang must be one of [%s]", strings.Join(langCodes, ", "))
-		return false, &statusEntity.HTTP{
-			Code:    http.StatusBadRequest,
-			Message: msg,
-		}
+		return false, errors.New(fmt.Sprintf("lang must be one of [%s]", strings.Join(langCodes, ", ")))
 	}
 	return true, nil
 }

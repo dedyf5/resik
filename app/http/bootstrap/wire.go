@@ -16,6 +16,7 @@ import (
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
+	logUtil "github.com/dedyf5/resik/utils/log"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
@@ -29,9 +30,12 @@ var configGeneralSet = wire.NewSet(
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
 )
 
+var logU = logUtil.New()
+
 var utilSet = wire.NewSet(
 	validatorUtil.New,
 	wire.Bind(new(validatorUtil.IValidate), new(*validatorUtil.Validate)),
+	wire.Value(logU),
 )
 
 var fwSet = wire.NewSet(
