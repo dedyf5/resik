@@ -21,7 +21,7 @@ type Ctx struct {
 
 func NewHTTP(ctx context.Context, log *logUtil.Log, lang *lang.Lang, uri string) *Ctx {
 	return &Ctx{
-		App:     httpApp.NewHTTP(log, uri),
+		App:     httpApp.NewHTTP(log.FromContext(ctx), uri),
 		Context: ctx,
 		Lang:    lang,
 	}

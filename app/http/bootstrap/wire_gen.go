@@ -26,12 +26,12 @@ func InitializeHTTP() (*App, func(), error) {
 	config := _wireConfigValue
 	app := config.App
 	tag := app.LangDefault
-	serverHTTP := newServerHTTP(config, tag)
+	configLog := config.Log
+	logLog := log.Get(configLog)
+	serverHTTP := newServerHTTP(config, tag, logLog)
 	handlerHandler := handler.New(config)
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
-	configLog := config.Log
-	logLog := log.New(configLog)
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
 	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig)
@@ -70,7 +70,7 @@ var configGeneral = config.Load()
 
 var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
-var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)), log.New)
+var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)), log.Get)
 
 var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 

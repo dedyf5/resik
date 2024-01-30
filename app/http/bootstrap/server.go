@@ -16,6 +16,7 @@ import (
 	"github.com/dedyf5/resik/cmd"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/utils/color"
+	logUtil "github.com/dedyf5/resik/utils/log"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/text/language"
 )
@@ -25,12 +26,13 @@ type ServerHTTP struct {
 	echo   *echo.Echo
 }
 
-func newServerHTTP(config config.Config, lang language.Tag) *ServerHTTP {
+func newServerHTTP(config config.Config, lang language.Tag, log *logUtil.Log) *ServerHTTP {
 	echo := echo.New()
 	echo.HideBanner = true
 	echo.HidePort = true
 	echo.Binder = echoFW.NewBinder()
 	echo.HTTPErrorHandler = echoFW.HTTPErrorHandler
+	echo.Use(echoFW.LoggerMiddleware(log))
 	echo.Use(echoFW.LangMiddleware(config.App.LangDefault))
 
 	return &ServerHTTP{

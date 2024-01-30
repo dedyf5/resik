@@ -35,6 +35,6 @@ func (h *HTTP) Status() status.IStatus {
 	return &h.status
 }
 
-func (h *HTTP) Logger() app.ILog {
+func (h *HTTP) Logger() logUtil.ILog {
 	return h.log
 }

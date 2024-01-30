@@ -38,7 +38,7 @@ func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
 	if err != nil {
 		return err
 	}
-	ctx.App.Logger().Info("GetMerchantOmzet")
+	ctx.App.Logger().Debug("GetMerchantOmzet")
 
 	var payload request.GeMerchantOmzet
 

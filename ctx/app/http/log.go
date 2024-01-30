@@ -6,22 +6,15 @@ package http
 
 import (
 	"github.com/dedyf5/resik/ctx/app"
-	"github.com/dedyf5/resik/utils/log"
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
+	logUtil "github.com/dedyf5/resik/utils/log"
 )
 
 type Log struct {
-	log  *log.Log
+	log  *logUtil.Log
 	path string
 }
 
-type Obj struct {
-	AppName string
-	URI     string
-}
-
-func NewLog(log *log.Log, uri string) *Log {
+func NewLog(log *logUtil.Log, uri string) *Log {
 	return &Log{
 		log:  log,
 		path: uri,
@@ -29,39 +22,29 @@ func NewLog(log *log.Log, uri string) *Log {
 }
 
 func (l *Log) Error(msg string) {
-	obj := &Obj{
+	l.log.Error(&logUtil.Service{
 		AppName: app.NameHTTP.String(),
-		URI:     l.path,
-	}
-	l.log.Logger.Error(msg, zap.Inline(obj))
+		Path:    l.path,
+	}, msg)
 }
 
 func (l *Log) Warn(msg string) {
-	obj := &Obj{
+	l.log.Warn(&logUtil.Service{
 		AppName: app.NameHTTP.String(),
-		URI:     l.path,
-	}
-	l.log.Logger.Warn(msg, zap.Inline(obj))
+		Path:    l.path,
+	}, msg)
 }
 
 func (l *Log) Info(msg string) {
-	obj := &Obj{
+	l.log.Info(&logUtil.Service{
 		AppName: app.NameHTTP.String(),
-		URI:     l.path,
-	}
-	l.log.Logger.Info(msg, zap.Inline(obj))
+		Path:    l.path,
+	}, msg)
 }
 
 func (l *Log) Debug(msg string) {
-	obj := &Obj{
+	l.log.Debug(&logUtil.Service{
 		AppName: app.NameHTTP.String(),
-		URI:     l.path,
-	}
-	l.log.Logger.Debug(msg, zap.Inline(obj))
-}
-
-func (o *Obj) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	enc.AddString("app", o.AppName)
-	enc.AddString("uri", o.URI)
-	return nil
+		Path:    l.path,
+	}, msg)
 }

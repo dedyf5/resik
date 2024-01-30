@@ -4,7 +4,10 @@
 
 package app
 
-import "github.com/dedyf5/resik/ctx/status"
+import (
+	"github.com/dedyf5/resik/ctx/status"
+	logUtil "github.com/dedyf5/resik/utils/log"
+)
 
 type Name string
 
@@ -16,14 +19,7 @@ type IApp interface {
 	Name() Name
 	Location() string
 	Status() status.IStatus
-	Logger() ILog
-}
-
-type ILog interface {
-	Error(msg string)
-	Warn(msg string)
-	Info(msg string)
-	Debug(msg string)
+	Logger() logUtil.ILog
 }
 
 func (n Name) String() string {

@@ -5,17 +5,33 @@
 package log
 
 import (
+	"context"
 	"os"
+	"sync"
 	"time"
 
 	configEntity "github.com/dedyf5/resik/entities/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 type Log struct {
-	Logger *zap.Logger
+	Logger        *zap.Logger
+	CorrelationID string
 }
+
+type contextKey struct{}
+
+type CorrelationIDKey string
+
+const (
+	CorrelationIDKeyContext CorrelationIDKey = "correlation_id"
+)
+
+var once sync.Once
+
+var log *Log
 
 var logLevelSeverity = map[zapcore.Level]string{
 	zapcore.DebugLevel:  "debug",
@@ -27,40 +43,97 @@ var logLevelSeverity = map[zapcore.Level]string{
 	zapcore.FatalLevel:  "emergency",
 }
 
-func New(logEntity configEntity.Log) *Log {
-	consoleDebugging := zapcore.Lock(os.Stdout)
-	cfgConsole := zapcore.EncoderConfig{
-		MessageKey:    "message",
-		LevelKey:      "level",
-		EncodeLevel:   CustomEncodeLevel,
-		TimeKey:       "time",
-		EncodeTime:    zapcore.TimeEncoderOfLayout(time.RFC3339),
-		CallerKey:     "line",
-		EncodeCaller:  zapcore.FullCallerEncoder,
-		StacktraceKey: "stack_trace",
-	}
-	coreConfig := []zapcore.Core{}
-	coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), consoleDebugging, zap.DebugLevel))
-	if logEntity.File != "" {
-		logFile, err := os.OpenFile(logEntity.File, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			panic(err.Error())
+type ILog interface {
+	Error(msg string)
+	Warn(msg string)
+	Info(msg string)
+	Debug(msg string)
+}
+
+func Get(logEntity configEntity.Log) *Log {
+	once.Do(func() {
+		stdout := zapcore.AddSync(os.Stdout)
+		cfgConsole := zapcore.EncoderConfig{
+			MessageKey:    "message",
+			LevelKey:      "level",
+			EncodeLevel:   CustomEncodeLevel,
+			TimeKey:       "time",
+			EncodeTime:    zapcore.TimeEncoderOfLayout(time.RFC3339),
+			CallerKey:     "line",
+			EncodeCaller:  zapcore.FullCallerEncoder,
+			StacktraceKey: "stack_trace",
 		}
-		writer := zapcore.AddSync(logFile)
-		coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), writer, zap.DebugLevel))
-	}
-	core := zapcore.NewTee(coreConfig...)
-	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zapcore.ErrorLevel))
-	defer logger.Sync()
-	return &Log{
-		Logger: logger,
-	}
+		coreConfig := []zapcore.Core{}
+		coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), stdout, zap.DebugLevel))
+		if logEntity.File != "" {
+			logFile := zapcore.AddSync(&lumberjack.Logger{
+				Filename:   logEntity.File,
+				MaxSize:    5,
+				MaxBackups: 10,
+				MaxAge:     30,
+				Compress:   true,
+			})
+			writer := zapcore.AddSync(logFile)
+			coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), writer, zap.DebugLevel))
+		}
+		core := zapcore.NewTee(coreConfig...)
+		log = &Log{
+			Logger: zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zapcore.ErrorLevel)),
+		}
+	})
+	return log
 }
 
 func CustomEncodeLevel(level zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(logLevelSeverity[level])
 }
 
-func CustomLevelFileEncoder(level zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
-	enc.AppendString("[" + logLevelSeverity[level] + "]")
+func FromContext(ctx context.Context) *Log {
+	if l, ok := ctx.Value(contextKey{}).(*Log); ok {
+		return l
+	} else if l := log; l != nil {
+		return l
+	}
+
+	return &Log{
+		Logger: zap.NewNop(),
+	}
+}
+
+func WithContext(ctx context.Context, l *Log) context.Context {
+	if lp, ok := ctx.Value(contextKey{}).(*Log); ok {
+		if lp == l {
+			return ctx
+		}
+	}
+
+	return context.WithValue(ctx, contextKey{}, l)
+}
+
+func (l *Log) Error(service *Service, msg string) {
+	l.Logger.Error(msg, zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.Inline(service))
+}
+
+func (l *Log) Warn(service *Service, msg string) {
+	l.Logger.Warn(msg, zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.Inline(service))
+}
+
+func (l *Log) Info(service *Service, msg string) {
+	l.Logger.Info(msg, zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.Inline(service))
+}
+
+func (l *Log) Debug(service *Service, msg string) {
+	l.Logger.Debug(msg, zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.Inline(service))
+}
+
+func (l *Log) FromContext(ctx context.Context) *Log {
+	return FromContext(ctx)
+}
+
+func (l *Log) WithContext(ctx context.Context) context.Context {
+	return WithContext(ctx, l)
+}
+
+func (k CorrelationIDKey) String() string {
+	return string(k)
 }

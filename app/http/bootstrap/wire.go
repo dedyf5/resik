@@ -33,7 +33,7 @@ var configGeneralSet = wire.NewSet(
 var utilSet = wire.NewSet(
 	validatorUtil.New,
 	wire.Bind(new(validatorUtil.IValidate), new(*validatorUtil.Validate)),
-	logUtil.New,
+	logUtil.Get,
 )
 
 var fwSet = wire.NewSet(
