@@ -2,23 +2,30 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package http
+package status
 
 import "net/http"
 
+// use this Status to wrap error across all apps including non http app
 type Status struct {
 	Code       int               `json:"code"`        // HTTP status codes as registered with IANA. See: https://go.dev/src/net/http/status.go
 	Message    string            `json:"message"`     // message for ui/ux
 	CauseError error             `json:"cause_error"` // message for engineer
 	Data       interface{}       `json:"data"`
-	Meta       *StatusMeta       `json:"meta"`
+	Meta       *Meta             `json:"meta"`
 	Detail     map[string]string `json:"detail"`
 }
 
-type StatusMeta struct {
+type Meta struct {
 	Total int64 `json:"total"`
 	Page  int64 `json:"page"`
 	Limit int64 `json:"limit"`
+}
+
+type IStatus interface {
+	IsError() bool
+	Error() string
+	MessageOrDefault() string
 }
 
 func (s *Status) IsError() bool {

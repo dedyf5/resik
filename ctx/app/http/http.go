@@ -6,13 +6,14 @@ package http
 
 import (
 	"github.com/dedyf5/resik/ctx/app"
+	"github.com/dedyf5/resik/ctx/status"
 	logUtil "github.com/dedyf5/resik/utils/log"
 )
 
 type HTTP struct {
 	log    *Log
 	uri    string
-	status Status
+	status status.Status
 }
 
 func NewHTTP(log *logUtil.Log, uri string) *HTTP {
@@ -30,7 +31,7 @@ func (h *HTTP) Location() string {
 	return h.uri
 }
 
-func (h *HTTP) Status() app.IStatus {
+func (h *HTTP) Status() status.IStatus {
 	return &h.status
 }
 

@@ -4,6 +4,8 @@
 
 package app
 
+import "github.com/dedyf5/resik/ctx/status"
+
 type Name string
 
 const (
@@ -13,14 +15,8 @@ const (
 type IApp interface {
 	Name() Name
 	Location() string
-	Status() IStatus
+	Status() status.IStatus
 	Logger() ILog
-}
-
-type IStatus interface {
-	IsError() bool
-	Error() string
-	MessageOrDefault() string
 }
 
 type ILog interface {

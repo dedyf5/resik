@@ -7,7 +7,7 @@ package http
 import (
 	"fmt"
 
-	httpApp "github.com/dedyf5/resik/ctx/app/http"
+	"github.com/dedyf5/resik/ctx/status"
 )
 
 type Response struct {
@@ -28,14 +28,14 @@ type ResponseMeta struct {
 	Limit int64 `json:"limit"`
 }
 
-func ResponseFromStatusHTTP(statusHTTP *httpApp.Status) Response {
+func ResponseFromStatusHTTP(statusHTTP *status.Status) Response {
 	if statusHTTP.IsError() {
 		return ResponseErrorAuto(statusHTTP)
 	}
 	return ResponseSuccessAuto(statusHTTP)
 }
 
-func ResponseSuccessAuto(statusHTTP *httpApp.Status) Response {
+func ResponseSuccessAuto(statusHTTP *status.Status) Response {
 	res := Response{
 		Status: ResponseStatus{
 			Code:    fmt.Sprintf("%d.1", statusHTTP.Code),
@@ -47,7 +47,7 @@ func ResponseSuccessAuto(statusHTTP *httpApp.Status) Response {
 	return res
 }
 
-func ResponseErrorAuto(statusHTTP *httpApp.Status) Response {
+func ResponseErrorAuto(statusHTTP *status.Status) Response {
 	return Response{
 		Status: ResponseStatus{
 			Code:    fmt.Sprintf("%d.1", statusHTTP.Code),
@@ -57,7 +57,7 @@ func ResponseErrorAuto(statusHTTP *httpApp.Status) Response {
 	}
 }
 
-func ResponseMetaFromHTTPMeta(httpMeta *httpApp.StatusMeta) *ResponseMeta {
+func ResponseMetaFromHTTPMeta(httpMeta *status.Meta) *ResponseMeta {
 	if httpMeta == nil {
 		return nil
 	}

@@ -9,8 +9,8 @@ import (
 	"net/http"
 
 	"github.com/dedyf5/resik/ctx"
-	httpApp "github.com/dedyf5/resik/ctx/app/http"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/status"
 	httpUtil "github.com/dedyf5/resik/utils/http"
 	logUtil "github.com/dedyf5/resik/utils/log"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
@@ -41,11 +41,11 @@ func (e *Echo) StructValidator(ctx echo.Context, payload interface{}) error {
 	return nil
 }
 
-func NewCtx(echoCtx echo.Context, log *logUtil.Log) (cxt *ctx.Ctx, err *httpApp.Status) {
+func NewCtx(echoCtx echo.Context, log *logUtil.Log) (cxt *ctx.Ctx, err *status.Status) {
 	val := echoCtx.Get(langCtx.ContextKey.String())
 	langRes, ok := val.(*langCtx.Lang)
 	if !ok {
-		return nil, &httpApp.Status{
+		return nil, &status.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: errors.New("failed to casting lang from context"),
 		}
@@ -59,15 +59,15 @@ func HTTPErrorHandler(err error, ctx echo.Context) {
 		return
 	}
 
-	switch status := err.(type) {
-	case *httpApp.Status:
-		if status.Code != http.StatusNoContent {
-			ctx.JSON(status.Code, httpUtil.ResponseFromStatusHTTP(status))
+	switch res := err.(type) {
+	case *status.Status:
+		if res.Code != http.StatusNoContent {
+			ctx.JSON(res.Code, httpUtil.ResponseFromStatusHTTP(res))
 		}
 		return
 	}
 
-	ctx.JSON(http.StatusInternalServerError, httpUtil.ResponseErrorAuto(&httpApp.Status{
+	ctx.JSON(http.StatusInternalServerError, httpUtil.ResponseErrorAuto(&status.Status{
 		Code: http.StatusInternalServerError,
 	}))
 }

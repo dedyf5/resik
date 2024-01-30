@@ -7,8 +7,8 @@ package echo
 import (
 	"net/http"
 
-	httpApp "github.com/dedyf5/resik/ctx/app/http"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/status"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/text/language"
 )
@@ -22,7 +22,7 @@ func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 			if langString != "" {
 				langRes, err := langCtx.GetLanguageAvailable(langString)
 				if err != nil {
-					return &httpApp.Status{
+					return &status.Status{
 						Code:    http.StatusBadRequest,
 						Message: err.Error(),
 						Detail: map[string]string{

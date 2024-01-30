@@ -12,7 +12,7 @@ import (
 	"github.com/dedyf5/resik/app/http/handler/transaction/request"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/core/transaction/service"
-	httpApp "github.com/dedyf5/resik/ctx/app/http"
+	"github.com/dedyf5/resik/ctx/status"
 	logUtil "github.com/dedyf5/resik/utils/log"
 	"github.com/labstack/echo/v4"
 )
@@ -46,7 +46,7 @@ func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
 		return err
 	}
 
-	return &httpApp.Status{
+	return &status.Status{
 		Code: http.StatusOK,
 		Data: map[string]interface{}{
 			"page_or_default":  payload.PageOrDefault(),
