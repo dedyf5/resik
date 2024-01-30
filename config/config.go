@@ -18,6 +18,7 @@ type (
 		App      configEntity.App
 		HTTP     configEntity.HTTP
 		Database drivers.SQLConfig
+		Log      configEntity.Log
 	}
 )
 
@@ -34,6 +35,7 @@ func Load() *Config {
 	conf.loadApp()
 	conf.loadHTTP()
 	conf.loadDatabase()
+	conf.loadLog()
 
 	return &conf
 }
@@ -83,4 +85,10 @@ func (conf *Config) loadDatabase() {
 	db.ConnMaxIdleTime = viper.GetInt("DATABASE_CONN_MAX_IDLETIME")
 	db.IsDebug = viper.GetBool("DATABASE_IS_DEBUG")
 	conf.Database = db
+}
+
+func (conf *Config) loadLog() {
+	conf.Log = configEntity.Log{
+		File: viper.GetString("LOG_FILE"),
+	}
 }

@@ -25,17 +25,15 @@ var configGeneral = config.Load()
 
 var configGeneralSet = wire.NewSet(
 	wire.Value(*configGeneral),
-	wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database"),
+	wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"),
 	wire.FieldsOf(new(configEntity.App), "Env", "LangDefault"),
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
 )
 
-var logU = logUtil.New()
-
 var utilSet = wire.NewSet(
 	validatorUtil.New,
 	wire.Bind(new(validatorUtil.IValidate), new(*validatorUtil.Validate)),
-	wire.Value(logU),
+	logUtil.New,
 )
 
 var fwSet = wire.NewSet(

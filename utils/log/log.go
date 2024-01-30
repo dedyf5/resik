@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	configEntity "github.com/dedyf5/resik/entities/config"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -26,23 +27,31 @@ var logLevelSeverity = map[zapcore.Level]string{
 	zapcore.FatalLevel:  "emergency",
 }
 
-func New() *Log {
+func New(logEntity configEntity.Log) *Log {
 	consoleDebugging := zapcore.Lock(os.Stdout)
 	cfgConsole := zapcore.EncoderConfig{
-		MessageKey:   "message",
-		LevelKey:     "level",
-		EncodeLevel:  CustomEncodeLevel,
-		TimeKey:      "time",
-		EncodeTime:   zapcore.TimeEncoderOfLayout(time.RFC3339),
-		CallerKey:    "line",
-		EncodeCaller: zapcore.FullCallerEncoder,
+		MessageKey:    "message",
+		LevelKey:      "level",
+		EncodeLevel:   CustomEncodeLevel,
+		TimeKey:       "time",
+		EncodeTime:    zapcore.TimeEncoderOfLayout(time.RFC3339),
+		CallerKey:     "line",
+		EncodeCaller:  zapcore.FullCallerEncoder,
+		StacktraceKey: "stack_trace",
 	}
-	core := zapcore.NewTee(
-		zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), consoleDebugging, zap.DebugLevel),
-	)
-	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+	coreConfig := []zapcore.Core{}
+	coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), consoleDebugging, zap.DebugLevel))
+	if logEntity.File != "" {
+		logFile, err := os.OpenFile(logEntity.File, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			panic(err.Error())
+		}
+		writer := zapcore.AddSync(logFile)
+		coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), writer, zap.DebugLevel))
+	}
+	core := zapcore.NewTee(coreConfig...)
+	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zapcore.ErrorLevel))
 	defer logger.Sync()
-	// sugar := logger.Sugar()
 	return &Log{
 		Logger: logger,
 	}

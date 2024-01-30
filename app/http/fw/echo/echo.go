@@ -67,7 +67,7 @@ func HTTPErrorHandler(err error, ctx echo.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusNotFound, httpUtil.ResponseErrorAuto(&httpApp.Status{
-		Code: http.StatusNotFound,
+	ctx.JSON(http.StatusInternalServerError, httpUtil.ResponseErrorAuto(&httpApp.Status{
+		Code: http.StatusInternalServerError,
 	}))
 }
