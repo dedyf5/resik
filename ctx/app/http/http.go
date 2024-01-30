@@ -27,7 +27,7 @@ func (h *HTTP) Name() app.Name {
 	return app.NameHTTP
 }
 
-func (h *HTTP) Location() string {
+func (h *HTTP) Path() string {
 	return h.uri
 }
 

@@ -17,7 +17,7 @@ const (
 
 type IApp interface {
 	Name() Name
-	Location() string
+	Path() string
 	Status() status.IStatus
 	Logger() logUtil.ILog
 }
