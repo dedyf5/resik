@@ -10,9 +10,9 @@ import (
 
 	"github.com/dedyf5/resik/ctx"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/ctx/status"
 	httpUtil "github.com/dedyf5/resik/utils/http"
-	logUtil "github.com/dedyf5/resik/utils/log"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/labstack/echo/v4"
 )
@@ -41,7 +41,7 @@ func (e *Echo) StructValidator(ctx echo.Context, payload interface{}) error {
 	return nil
 }
 
-func NewCtx(echoCtx echo.Context, log *logUtil.Log) (cxt *ctx.Ctx, err *status.Status) {
+func NewCtx(echoCtx echo.Context, log *logCtx.Log) (cxt *ctx.Ctx, err *status.Status) {
 	val := echoCtx.Get(langCtx.ContextKey.String())
 	langRes, ok := val.(*langCtx.Lang)
 	if !ok {

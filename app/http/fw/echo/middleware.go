@@ -10,8 +10,8 @@ import (
 	"time"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/ctx/status"
-	logUtil "github.com/dedyf5/resik/utils/log"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/xid"
 
@@ -44,14 +44,14 @@ func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 	}
 }
 
-func LoggerMiddleware(log *logUtil.Log) echo.MiddlewareFunc {
+func LoggerMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
 	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 			correlationID := xid.New().String()
 			ctx := context.WithValue(
 				r.Context(),
-				logUtil.CorrelationIDKeyContext,
+				logCtx.CorrelationIDKeyContext,
 				correlationID,
 			)
 
@@ -62,7 +62,7 @@ func LoggerMiddleware(log *logUtil.Log) echo.MiddlewareFunc {
 
 			w.Header().Add("X-Correlation-ID", correlationID)
 
-			lrw := logUtil.NewHTTP(w, log, time.Now(), r.Method, r.RequestURI, r.UserAgent())
+			lrw := logCtx.NewHTTP(w, log, time.Now(), r.Method, r.RequestURI, r.UserAgent())
 
 			r = r.WithContext(log.WithContext(ctx))
 

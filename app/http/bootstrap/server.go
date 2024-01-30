@@ -15,8 +15,8 @@ import (
 	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
 	"github.com/dedyf5/resik/cmd"
 	"github.com/dedyf5/resik/config"
+	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/utils/color"
-	logUtil "github.com/dedyf5/resik/utils/log"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/text/language"
 )
@@ -26,7 +26,7 @@ type ServerHTTP struct {
 	echo   *echo.Echo
 }
 
-func newServerHTTP(config config.Config, lang language.Tag, log *logUtil.Log) *ServerHTTP {
+func newServerHTTP(config config.Config, lang language.Tag, log *logCtx.Log) *ServerHTTP {
 	echo := echo.New()
 	echo.HideBanner = true
 	echo.HidePort = true

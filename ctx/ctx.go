@@ -10,7 +10,7 @@ import (
 	"github.com/dedyf5/resik/ctx/app"
 	httpApp "github.com/dedyf5/resik/ctx/app/http"
 	lang "github.com/dedyf5/resik/ctx/lang"
-	logUtil "github.com/dedyf5/resik/utils/log"
+	logCtx "github.com/dedyf5/resik/ctx/log"
 )
 
 type Ctx struct {
@@ -19,7 +19,7 @@ type Ctx struct {
 	Context context.Context
 }
 
-func NewHTTP(ctx context.Context, log *logUtil.Log, lang *lang.Lang, uri string) *Ctx {
+func NewHTTP(ctx context.Context, log *logCtx.Log, lang *lang.Lang, uri string) *Ctx {
 	return &Ctx{
 		App:     httpApp.NewHTTP(log.FromContext(ctx), uri),
 		Context: ctx,

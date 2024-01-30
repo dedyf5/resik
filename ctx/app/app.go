@@ -5,8 +5,8 @@
 package app
 
 import (
+	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/ctx/status"
-	logUtil "github.com/dedyf5/resik/utils/log"
 )
 
 type Name string
@@ -19,7 +19,7 @@ type IApp interface {
 	Name() Name
 	Path() string
 	Status() status.IStatus
-	Logger() logUtil.ILog
+	Logger() logCtx.ILog
 }
 
 func (n Name) String() string {

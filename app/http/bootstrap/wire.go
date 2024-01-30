@@ -13,10 +13,10 @@ import (
 	trxHandler "github.com/dedyf5/resik/app/http/handler/transaction"
 	"github.com/dedyf5/resik/config"
 	trxService "github.com/dedyf5/resik/core/transaction/service"
+	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
-	logUtil "github.com/dedyf5/resik/utils/log"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
@@ -33,7 +33,7 @@ var configGeneralSet = wire.NewSet(
 var utilSet = wire.NewSet(
 	validatorUtil.New,
 	wire.Bind(new(validatorUtil.IValidate), new(*validatorUtil.Validate)),
-	logUtil.Get,
+	logCtx.Get,
 )
 
 var fwSet = wire.NewSet(

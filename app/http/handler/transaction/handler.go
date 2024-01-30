@@ -12,19 +12,19 @@ import (
 	"github.com/dedyf5/resik/app/http/handler/transaction/request"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/core/transaction/service"
+	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/ctx/status"
-	logUtil "github.com/dedyf5/resik/utils/log"
 	"github.com/labstack/echo/v4"
 )
 
 type Handler struct {
 	fw      echoFW.IEcho
-	log     *logUtil.Log
+	log     *logCtx.Log
 	service service.IService
 	config  config.Config
 }
 
-func New(fw echoFW.IEcho, log *logUtil.Log, service service.IService, config config.Config) *Handler {
+func New(fw echoFW.IEcho, log *logCtx.Log, service service.IService, config config.Config) *Handler {
 	return &Handler{
 		fw:      fw,
 		log:     log,
