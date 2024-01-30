@@ -8,12 +8,18 @@ import "net/http"
 
 // use this Status to wrap error across all apps including non http app
 type Status struct {
-	Code       int               `json:"code"`        // HTTP status codes as registered with IANA. See: https://go.dev/src/net/http/status.go
-	Message    string            `json:"message"`     // message for ui/ux
-	CauseError error             `json:"cause_error"` // message for engineer
-	Data       interface{}       `json:"data"`
-	Meta       *Meta             `json:"meta"`
-	Detail     map[string]string `json:"detail"`
+	// HTTP status codes as registered with IANA. See: https://go.dev/src/net/http/status.go
+	Code int `json:"code"`
+
+	// message for ui/ux
+	Message string `json:"message"`
+
+	// message for engineer
+	CauseError error `json:"cause_error"`
+
+	Data   interface{}       `json:"data"`
+	Meta   *Meta             `json:"meta"`
+	Detail map[string]string `json:"detail"`
 }
 
 type Meta struct {
