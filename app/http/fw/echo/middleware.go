@@ -11,7 +11,6 @@ import (
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
-	"github.com/dedyf5/resik/ctx/status"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/xid"
 
@@ -19,29 +18,29 @@ import (
 )
 
 func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
-	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
+	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			var langReq *language.Tag = nil
 			langKey := langCtx.ContextKey.String()
-			langString := c.Request().URL.Query().Get(langKey)
+			langString := r.URL.Query().Get(langKey)
 			if langString != "" {
 				langRes, err := langCtx.GetLanguageAvailable(langString)
-				if err != nil {
-					return &status.Status{
-						Code:    http.StatusBadRequest,
-						Message: err.Error(),
-						Detail: map[string]string{
-							langKey: err.Error(),
-						},
-					}
+				if err == nil {
+					langReq = langRes
 				}
-				langReq = langRes
 			}
-			langAccept := c.Request().Header.Get("Accept-Language")
-			c.Set(langKey, langCtx.NewLang(langDefault, langReq, langAccept))
-			return next(c)
-		}
-	}
+			ctx := context.WithValue(r.Context(),
+				langCtx.ContextKey,
+				langCtx.NewLang(langDefault,
+					langReq,
+					r.Header.Get("Accept-Language"),
+				),
+			)
+			r = r.WithContext(ctx)
+
+			h.ServeHTTP(w, r)
+		})
+	})
 }
 
 func LoggerMiddleware(log *logCtx.Log) echo.MiddlewareFunc {

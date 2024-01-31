@@ -5,11 +5,14 @@
 package lang
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 
+	"github.com/dedyf5/resik/ctx/status"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	"github.com/dedyf5/resik/pkg/array"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -53,6 +56,19 @@ func NewLocalizer(bundle *i18n.Bundle, langDefault language.Tag, langReq *langua
 	return i18n.NewLocalizer(bundle, GetLanguageReqOrDefault(langDefault, langReq).String(), langAccept)
 }
 
+// return *Lang, if parsing failed return *status.Status error
+//
+// error status code: 500
+func FromContext(ctx context.Context) (*Lang, *status.Status) {
+	if lang, ok := ctx.Value(ContextKey).(*Lang); ok {
+		return lang, nil
+	}
+	return nil, &status.Status{
+		Code:       http.StatusInternalServerError,
+		CauseError: errors.New("failed to casting lang from context"),
+	}
+}
+
 func (src *Lang) GetByMessageID(id string) string {
 	return src.Localizer.MustLocalize(&i18n.LocalizeConfig{
 		MessageID: id,
@@ -89,24 +105,50 @@ func GetLanguageOrDefault(lang string) language.Tag {
 	return *result
 }
 
-func GetLanguageAvailable(lang string) (*language.Tag, error) {
+// return *language.Tag. if parsing failed return *status.Status error
+//
+// error status code: 400, 500
+func GetLanguageAvailable(lang string) (*language.Tag, *status.Status) {
 	if _, err := LanguageIsAvailable(lang); err != nil {
 		return nil, err
 	}
-	res := language.MustParse(lang)
+	res, err := language.Parse(lang)
+	if err != nil {
+		return nil, &status.Status{
+			Code:       http.StatusInternalServerError,
+			CauseError: err,
+		}
+	}
 	return &res, nil
 }
 
-func LanguageIsAvailable(lang string) (bool, error) {
+// return bool. if lang not avaliable return *status.Status error
+//
+// error status code: 400
+func LanguageIsAvailable(lang string) (bool, *status.Status) {
 	if lang == "" {
-		return false, errors.New("lang is required")
+		msg := "lang is required"
+		return false, &status.Status{
+			Code:    http.StatusBadRequest,
+			Message: msg,
+			Detail: map[string]string{
+				ContextKey.String(): msg,
+			},
+		}
 	}
 	langCodes := make([]string, 0, cap(LangAvailable))
 	for _, v := range LangAvailable {
 		langCodes = append(langCodes, v.String())
 	}
 	if array.InArray(lang, langCodes) < 0 {
-		return false, fmt.Errorf("lang must be one of [%s]", strings.Join(langCodes, ", "))
+		msg := fmt.Sprintf("lang must be one of [%s]", strings.Join(langCodes, ", "))
+		return false, &status.Status{
+			Code:    http.StatusBadRequest,
+			Message: msg,
+			Detail: map[string]string{
+				ContextKey.String(): msg,
+			},
+		}
 	}
 	return true, nil
 }

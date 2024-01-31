@@ -5,12 +5,8 @@
 package echo
 
 import (
-	"errors"
 	"net/http"
 
-	"github.com/dedyf5/resik/ctx"
-	langCtx "github.com/dedyf5/resik/ctx/lang"
-	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/ctx/status"
 	httpUtil "github.com/dedyf5/resik/utils/http"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
@@ -39,19 +35,6 @@ func (e *Echo) StructValidator(ctx echo.Context, payload interface{}) error {
 		return err
 	}
 	return nil
-}
-
-func NewCtx(echoCtx echo.Context, log *logCtx.Log) (cxt *ctx.Ctx, err *status.Status) {
-	val := echoCtx.Get(langCtx.ContextKey.String())
-	langRes, ok := val.(*langCtx.Lang)
-	if !ok {
-		return nil, &status.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errors.New("failed to casting lang from context"),
-		}
-	}
-
-	return ctx.NewHTTP(echoCtx.Request().Context(), log, langRes, echoCtx.Request().RequestURI), nil
 }
 
 func HTTPErrorHandler(err error, ctx echo.Context) {

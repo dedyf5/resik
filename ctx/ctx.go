@@ -11,6 +11,7 @@ import (
 	httpApp "github.com/dedyf5/resik/ctx/app/http"
 	lang "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
+	"github.com/dedyf5/resik/ctx/status"
 )
 
 type Ctx struct {
@@ -19,12 +20,19 @@ type Ctx struct {
 	Context context.Context
 }
 
-func NewHTTP(ctx context.Context, log *logCtx.Log, lang *lang.Lang, uri string) *Ctx {
+// return *Ctx HTTP. if create failed return *status.Status error
+//
+// error status code: 500
+func NewHTTP(ctx context.Context, log *logCtx.Log, uri string) (*Ctx, *status.Status) {
+	langRes, err := lang.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
 	return &Ctx{
 		App:     httpApp.NewHTTP(log.FromContext(ctx), uri),
 		Context: ctx,
-		Lang:    lang,
-	}
+		Lang:    langRes,
+	}, nil
 }
 
 func (c *Ctx) IsError() bool {

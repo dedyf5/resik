@@ -12,6 +12,7 @@ import (
 	"strings"
 	"sync"
 
+	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/ctx/status"
 	"github.com/labstack/echo/v4"
 )
@@ -69,6 +70,12 @@ func (b *bind) Bind(i interface{}, c echo.Context) error {
 func (b *bind) ParamValidator(c echo.Context, i interface{}) error {
 	if i == nil {
 		return nil
+	}
+
+	if langString := c.Request().URL.Query().Get(langCtx.ContextKey.String()); langString != "" {
+		if _, err := langCtx.LanguageIsAvailable(langString); err != nil {
+			return err
+		}
 	}
 
 	df := reflect.TypeOf(i)

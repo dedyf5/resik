@@ -12,6 +12,7 @@ import (
 	"github.com/dedyf5/resik/app/http/handler/transaction/request"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/core/transaction/service"
+	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/ctx/status"
 	"github.com/labstack/echo/v4"
@@ -34,7 +35,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, service service.IService, config conf
 }
 
 func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
-	ctx, err := echoFW.NewCtx(echoCtx, h.log)
+	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
 	if err != nil {
 		return err
 	}
@@ -52,6 +53,8 @@ func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
 			"page_or_default":  payload.PageOrDefault(),
 			"limit_or_default": payload.LimitOrDefault(),
 			"req":              payload,
+			"lang_def":         ctx.Lang.LangDefault.String(),
+			"lang_req":         ctx.Lang.LangReq.String(),
 		},
 	}
 }
