@@ -40,10 +40,11 @@ type Lang struct {
 func NewLang(langDefault language.Tag, langReq *language.Tag, langAccept string) *Lang {
 	bundle := i18n.NewBundle(langDefault)
 	return &Lang{
-		Bundle:     bundle,
-		Localizer:  NewLocalizer(bundle, langDefault, langReq, langAccept),
-		LangReq:    langReq,
-		LangAccept: langAccept,
+		Bundle:      bundle,
+		Localizer:   NewLocalizer(bundle, langDefault, langReq, langAccept),
+		LangDefault: langDefault,
+		LangReq:     langReq,
+		LangAccept:  langAccept,
 	}
 }
 
