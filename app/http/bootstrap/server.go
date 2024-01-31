@@ -16,7 +16,7 @@ import (
 	"github.com/dedyf5/resik/cmd"
 	"github.com/dedyf5/resik/config"
 	logCtx "github.com/dedyf5/resik/ctx/log"
-	"github.com/dedyf5/resik/utils/color"
+	"github.com/dedyf5/resik/pkg/color"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/text/language"
 )
