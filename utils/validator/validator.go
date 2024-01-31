@@ -12,11 +12,15 @@ import (
 	"regexp"
 	"strings"
 
+	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/ctx/status"
+	"github.com/go-playground/locales"
 	"github.com/go-playground/locales/en"
+	"github.com/go-playground/locales/id"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	enTranslation "github.com/go-playground/validator/v10/translations/en"
+	idTranslation "github.com/go-playground/validator/v10/translations/id"
 	"golang.org/x/text/language"
 )
 
@@ -34,14 +38,13 @@ type Validate struct {
 
 func New(langDefault language.Tag) *Validate {
 	validate := validator.New()
-	english := en.New()
-	uni := ut.New(english, english)
+	uni := ut.New(LanguageToTranslator(langDefault), Translators()...)
 	trans, found := uni.GetTranslator(langDefault.String())
 	if !found {
 		log.Panic("translator not found")
 	}
 
-	_ = enTranslation.RegisterDefaultTranslations(validate, trans)
+	RegisterCurrentTranslations(langDefault, validate, trans)
 
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
@@ -124,4 +127,28 @@ func (v *Validate) ErrorFormatter(err error) *status.Status {
 		Message: first,
 		Detail:  errMap,
 	}
+}
+
+func RegisterCurrentTranslations(lang language.Tag, validate *validator.Validate, trans ut.Translator) {
+	switch lang.String() {
+	case "id":
+		_ = idTranslation.RegisterDefaultTranslations(validate, trans)
+	default:
+		enTranslation.RegisterDefaultTranslations(validate, trans)
+	}
+}
+
+func Translators() (res []locales.Translator) {
+	for _, v := range langCtx.Available {
+		res = append(res, LanguageToTranslator(v))
+	}
+	return
+}
+
+func LanguageToTranslator(lang language.Tag) locales.Translator {
+	switch lang.String() {
+	case "id":
+		return id.New()
+	}
+	return en.New()
 }
