@@ -19,7 +19,8 @@ import (
 	"golang.org/x/text/language"
 )
 
-var LangAvailable []language.Tag = []language.Tag{language.English, language.Indonesian}
+var Default = language.English
+var Available []language.Tag = []language.Tag{Default, language.Indonesian}
 
 type langKey string
 
@@ -50,7 +51,7 @@ func NewLang(langDefault language.Tag, langReq *language.Tag, langAccept string)
 
 func NewLocalizer(bundle *i18n.Bundle, langDefault language.Tag, langReq *language.Tag, langAccept string) *i18n.Localizer {
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
-	for _, v := range LangAvailable {
+	for _, v := range Available {
 		sourcePath := fmt.Sprintf("%s/%s.json", termDir, v.String())
 		bundle.LoadMessageFile(sourcePath)
 	}
@@ -101,7 +102,7 @@ func GetLanguageReqOrDefault(langDefault language.Tag, langReq *language.Tag) la
 func GetLanguageOrDefault(lang string) language.Tag {
 	result, err := GetLanguageAvailable(lang)
 	if err != nil {
-		return language.English
+		return Default
 	}
 	return *result
 }
@@ -137,8 +138,8 @@ func LanguageIsAvailable(lang string) (bool, *status.Status) {
 			},
 		}
 	}
-	langCodes := make([]string, 0, cap(LangAvailable))
-	for _, v := range LangAvailable {
+	langCodes := make([]string, 0, cap(Available))
+	for _, v := range Available {
 		langCodes = append(langCodes, v.String())
 	}
 	if array.InArray(lang, langCodes) < 0 {
