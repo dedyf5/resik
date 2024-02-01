@@ -53,7 +53,7 @@ type ILog interface {
 func Get(logEntity configEntity.Log) *Log {
 	once.Do(func() {
 		stdout := zapcore.AddSync(os.Stdout)
-		cfgConsole := zapcore.EncoderConfig{
+		encoderConfig := zapcore.EncoderConfig{
 			MessageKey:    "message",
 			LevelKey:      "level",
 			EncodeLevel:   CustomEncodeLevel,
@@ -64,7 +64,7 @@ func Get(logEntity configEntity.Log) *Log {
 			StacktraceKey: "stack_trace",
 		}
 		coreConfig := []zapcore.Core{}
-		coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), stdout, zap.DebugLevel))
+		coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), stdout, zap.DebugLevel))
 		if logEntity.File != "" {
 			logFile := zapcore.AddSync(&lumberjack.Logger{
 				Filename:   logEntity.File,
@@ -74,11 +74,11 @@ func Get(logEntity configEntity.Log) *Log {
 				Compress:   true,
 			})
 			writer := zapcore.AddSync(logFile)
-			coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(cfgConsole), writer, zap.DebugLevel))
+			coreConfig = append(coreConfig, zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), writer, zap.DebugLevel))
 		}
 		core := zapcore.NewTee(coreConfig...)
 		log = &Log{
-			Logger: zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1), zap.AddStacktrace(zapcore.ErrorLevel)),
+			Logger: zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel)),
 		}
 	})
 	return log
