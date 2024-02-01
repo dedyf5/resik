@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	responseEntity "github.com/dedyf5/resik/entities/response"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -68,17 +69,8 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	return nil
 }
 
-type Response struct {
-	Status ResponseStatus `json:"status"`
-}
-
-type ResponseStatus struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
-}
-
-func getResponseBody(buf *bytes.Buffer) *Response {
-	var response Response
+func getResponseBody(buf *bytes.Buffer) *responseEntity.Response {
+	var response responseEntity.Response
 	err := json.Unmarshal(buf.Bytes(), &response)
 	if err != nil {
 		return nil

@@ -8,36 +8,19 @@ import (
 	"fmt"
 
 	"github.com/dedyf5/resik/ctx/status"
+	"github.com/dedyf5/resik/entities/response"
 )
 
-type Response struct {
-	Status ResponseStatus `json:"status"`
-	Data   interface{}    `json:"data,omitempty"`
-	Meta   *ResponseMeta  `json:"meta,omitempty"`
-}
-
-type ResponseStatus struct {
-	Code    string            `json:"code"`
-	Message string            `json:"message"`
-	Detail  map[string]string `json:"detail,omitempty"`
-}
-
-type ResponseMeta struct {
-	Total int64 `json:"total"`
-	Page  int64 `json:"page"`
-	Limit int64 `json:"limit"`
-}
-
-func ResponseFromStatusHTTP(statusHTTP *status.Status) Response {
+func ResponseFromStatusHTTP(statusHTTP *status.Status) response.Response {
 	if statusHTTP.IsError() {
 		return ResponseErrorAuto(statusHTTP)
 	}
 	return ResponseSuccessAuto(statusHTTP)
 }
 
-func ResponseSuccessAuto(statusHTTP *status.Status) Response {
-	res := Response{
-		Status: ResponseStatus{
+func ResponseSuccessAuto(statusHTTP *status.Status) response.Response {
+	res := response.Response{
+		Status: response.Status{
 			Code:    fmt.Sprintf("%d.1", statusHTTP.Code),
 			Message: statusHTTP.MessageOrDefault(),
 		},
@@ -47,9 +30,9 @@ func ResponseSuccessAuto(statusHTTP *status.Status) Response {
 	return res
 }
 
-func ResponseErrorAuto(statusHTTP *status.Status) Response {
-	return Response{
-		Status: ResponseStatus{
+func ResponseErrorAuto(statusHTTP *status.Status) response.Response {
+	return response.Response{
+		Status: response.Status{
 			Code:    fmt.Sprintf("%d.1", statusHTTP.Code),
 			Message: statusHTTP.MessageOrDefault(),
 			Detail:  statusHTTP.Detail,
@@ -57,11 +40,11 @@ func ResponseErrorAuto(statusHTTP *status.Status) Response {
 	}
 }
 
-func ResponseMetaFromHTTPMeta(httpMeta *status.Meta) *ResponseMeta {
+func ResponseMetaFromHTTPMeta(httpMeta *status.Meta) *response.Meta {
 	if httpMeta == nil {
 		return nil
 	}
-	return &ResponseMeta{
+	return &response.Meta{
 		Total: httpMeta.Total,
 		Page:  httpMeta.Page,
 		Limit: httpMeta.Limit,
