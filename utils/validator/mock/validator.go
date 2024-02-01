@@ -7,6 +7,7 @@ package mock
 import (
 	reflect "reflect"
 
+	lang "github.com/dedyf5/resik/ctx/lang"
 	status "github.com/dedyf5/resik/ctx/status"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -35,29 +36,29 @@ func (m *MockIValidate) EXPECT() *MockIValidateMockRecorder {
 }
 
 // ErrorFormatter mocks base method.
-func (m *MockIValidate) ErrorFormatter(err error) *status.Status {
+func (m *MockIValidate) ErrorFormatter(err error, lang *lang.Lang) *status.Status {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ErrorFormatter", err)
+	ret := m.ctrl.Call(m, "ErrorFormatter", err, lang)
 	ret0, _ := ret[0].(*status.Status)
 	return ret0
 }
 
 // ErrorFormatter indicates an expected call of ErrorFormatter.
-func (mr *MockIValidateMockRecorder) ErrorFormatter(err interface{}) *gomock.Call {
+func (mr *MockIValidateMockRecorder) ErrorFormatter(err, lang interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ErrorFormatter", reflect.TypeOf((*MockIValidate)(nil).ErrorFormatter), err)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ErrorFormatter", reflect.TypeOf((*MockIValidate)(nil).ErrorFormatter), err, lang)
 }
 
 // Struct mocks base method.
-func (m *MockIValidate) Struct(payloadStruct interface{}) *status.Status {
+func (m *MockIValidate) Struct(payloadStruct interface{}, lang *lang.Lang) *status.Status {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Struct", payloadStruct)
+	ret := m.ctrl.Call(m, "Struct", payloadStruct, lang)
 	ret0, _ := ret[0].(*status.Status)
 	return ret0
 }
 
 // Struct indicates an expected call of Struct.
-func (mr *MockIValidateMockRecorder) Struct(payloadStruct interface{}) *gomock.Call {
+func (mr *MockIValidateMockRecorder) Struct(payloadStruct, lang interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Struct", reflect.TypeOf((*MockIValidate)(nil).Struct), payloadStruct)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Struct", reflect.TypeOf((*MockIValidate)(nil).Struct), payloadStruct, lang)
 }

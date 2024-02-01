@@ -1,5 +1,6 @@
 {
     "app_name": "Resik",
     "version_name": "Version {{.code}}",
-    "home_message": "{{.app_name}} Version {{.code}}"
+    "home_message": "{{.app_name}} Version {{.code}}",
+    "validation_type_message": "{{.field}} type must be {{.expected}}, got {{.actual}}"
 }

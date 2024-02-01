@@ -7,6 +7,7 @@ package echo
 import (
 	"net/http"
 
+	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/ctx/status"
 	httpUtil "github.com/dedyf5/resik/utils/http"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
@@ -31,7 +32,11 @@ func (e *Echo) StructValidator(ctx echo.Context, payload interface{}) error {
 	if err := ctx.Bind(payload); err != nil {
 		return err
 	}
-	if err := e.validator.Struct(payload); err != nil {
+	lang, err := langCtx.FromContext(ctx.Request().Context())
+	if err != nil {
+		return err
+	}
+	if err := e.validator.Struct(payload, lang); err != nil {
 		return err
 	}
 	return nil

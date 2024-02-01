@@ -32,6 +32,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transaction")
+	trx.POST("", trxHandler.Create)
 	trxMerchant := trx.Group("/merchant/:id")
 	trxMerchant.GET("/omzet", trxHandler.GetMerchantOmzet)
 	trxOutlet := trx.Group("/outlet/:id")

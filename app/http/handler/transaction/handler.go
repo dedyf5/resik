@@ -41,10 +41,15 @@ func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
 	}
 	ctx.App.Logger().Debug("GetMerchantOmzet")
 
-	var payload request.GeMerchantOmzet
+	var payload request.MerchantOmzetGet
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
+	}
+
+	langReq := ""
+	if ctx.Lang.LangReq != nil {
+		langReq = ctx.Lang.LangReq.String()
 	}
 
 	return &status.Status{
@@ -54,7 +59,35 @@ func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
 			"limit_or_default": payload.LimitOrDefault(),
 			"req":              payload,
 			"lang_def":         ctx.Lang.LangDefault.String(),
-			"lang_req":         ctx.Lang.LangReq.String(),
+			"lang_req":         langReq,
+		},
+	}
+}
+
+func (h *Handler) Create(echoCtx echo.Context) error {
+	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	if err != nil {
+		return err
+	}
+	// ctx.App.Logger().Debug("Create")
+
+	var payload request.TransactionUpsert
+
+	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
+		return err
+	}
+
+	langReq := ""
+	if ctx.Lang.LangReq != nil {
+		langReq = ctx.Lang.LangReq.String()
+	}
+
+	return &status.Status{
+		Code: http.StatusOK,
+		Data: map[string]interface{}{
+			"req":      payload,
+			"lang_def": ctx.Lang.LangDefault.String(),
+			"lang_req": langReq,
 		},
 	}
 }

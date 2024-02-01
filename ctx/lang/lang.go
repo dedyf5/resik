@@ -84,7 +84,7 @@ func (src *Lang) GetByTemplateData(id string, templateData commonEntity.Map) str
 	})
 }
 
-func (src *Lang) LangReqOrDefault() language.Tag {
+func (src *Lang) LanguageReqOrDefault() language.Tag {
 	return GetLanguageReqOrDefault(src.LangDefault, src.LangReq)
 }
 

@@ -5,7 +5,6 @@
 package echo
 
 import (
-	"fmt"
 	"net/http"
 	"reflect"
 	"regexp"
@@ -14,6 +13,7 @@ import (
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/ctx/status"
+	"github.com/dedyf5/resik/entities/common"
 	"github.com/labstack/echo/v4"
 )
 
@@ -24,7 +24,7 @@ type Binder interface {
 	BindQueryParams(c echo.Context, i interface{}) error
 	BindPathParams(c echo.Context, i interface{}) error
 	ParamValidator(c echo.Context, i interface{}) error
-	JSONErrorFormatter(err error) error
+	JSONErrorFormatter(c echo.Context, err error) error
 }
 
 var binder *bind
@@ -62,7 +62,7 @@ func (b *bind) Bind(i interface{}, c echo.Context) error {
 		return err
 	}
 	if err := b.def.Bind(i, c); err != nil {
-		return b.JSONErrorFormatter(err)
+		return b.JSONErrorFormatter(c, err)
 	}
 	return nil
 }
@@ -76,6 +76,11 @@ func (b *bind) ParamValidator(c echo.Context, i interface{}) error {
 		if _, err := langCtx.LanguageIsAvailable(langString); err != nil {
 			return err
 		}
+	}
+
+	lang, err := langCtx.FromContext(c.Request().Context())
+	if err != nil {
+		return err
 	}
 
 	df := reflect.TypeOf(i)
@@ -145,7 +150,11 @@ func (b *bind) ParamValidator(c echo.Context, i interface{}) error {
 				continue
 			}
 
-			msg := fmt.Sprintf("%s value must be %s, got string", fn, ft)
+			msg := lang.GetByTemplateData("validation_type_message", common.Map{
+				"field":    fn,
+				"expected": ft,
+				"actual":   "string",
+			})
 			return &status.Status{
 				Code:    http.StatusBadRequest,
 				Message: msg,
@@ -173,7 +182,11 @@ func (b *bind) ParamValidator(c echo.Context, i interface{}) error {
 	return nil
 }
 
-func (b *bind) JSONErrorFormatter(err error) error {
+func (b *bind) JSONErrorFormatter(c echo.Context, err error) error {
+	lang, errLang := langCtx.FromContext(c.Request().Context())
+	if errLang != nil {
+		return errLang
+	}
 	regField := regexp.MustCompile(`field\=(.*?),`)
 	fields := regField.FindStringSubmatch(err.Error())
 	expectedReg := regexp.MustCompile(`expected\=(.*?),`)
@@ -183,7 +196,11 @@ func (b *bind) JSONErrorFormatter(err error) error {
 	if len(fields) > 1 && len(expecteds) > 1 && len(gots) > 1 {
 		errMap := map[string]string{}
 		field := fields[1]
-		errMap[field] = fmt.Sprintf("%s type must be %s, got %s", field, expecteds[1], gots[1])
+		errMap[field] = lang.GetByTemplateData("validation_type_message", common.Map{
+			"field":    field,
+			"expected": expecteds[1],
+			"actual":   gots[1],
+		})
 		return &status.Status{
 			Code:    http.StatusBadRequest,
 			Message: errMap[field],
