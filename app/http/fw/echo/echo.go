@@ -50,12 +50,12 @@ func HTTPErrorHandler(err error, ctx echo.Context) {
 	switch res := err.(type) {
 	case *status.Status:
 		if res.Code != http.StatusNoContent {
-			ctx.JSON(res.Code, httpUtil.ResponseFromStatusHTTP(res))
+			ctx.JSON(res.Code, httpUtil.LoggerFromStatusHTTP(res))
 		}
 		return
 	}
 
-	ctx.JSON(http.StatusInternalServerError, httpUtil.ResponseErrorAuto(&status.Status{
+	ctx.JSON(http.StatusInternalServerError, httpUtil.LoggerErrorAuto(&status.Status{
 		Code: http.StatusInternalServerError,
 	}))
 }

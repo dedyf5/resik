@@ -50,3 +50,25 @@ func ResponseMetaFromHTTPMeta(httpMeta *status.Meta) *response.Meta {
 		Limit: httpMeta.Limit,
 	}
 }
+
+func LoggerFromStatusHTTP(statusHTTP *status.Status) response.Log {
+	msg := statusHTTP.MessageOrDefault()
+	if err := statusHTTP.CauseError; err != nil {
+		msg = err.Error()
+	}
+	return response.Log{
+		Response: ResponseFromStatusHTTP(statusHTTP),
+		Message:  msg,
+	}
+}
+
+func LoggerErrorAuto(statusHTTP *status.Status) response.Log {
+	msg := statusHTTP.MessageOrDefault()
+	if err := statusHTTP.CauseError; err != nil {
+		msg = err.Error()
+	}
+	return response.Log{
+		Response: ResponseErrorAuto(statusHTTP),
+		Message:  msg,
+	}
+}

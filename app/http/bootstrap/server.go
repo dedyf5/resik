@@ -32,7 +32,7 @@ func newServerHTTP(config config.Config, lang language.Tag, log *logCtx.Log) *Se
 	echo.HidePort = true
 	echo.Binder = echoFW.NewBinder()
 	echo.HTTPErrorHandler = echoFW.HTTPErrorHandler
-	echo.Use(echoFW.LoggerMiddleware(log))
+	echo.Use(echoFW.LoggerAndResponseFormatterMiddleware(log))
 	echo.Use(echoFW.LangMiddleware(config.App.LangDefault))
 
 	return &ServerHTTP{

@@ -7,6 +7,7 @@ package log
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -37,16 +38,20 @@ func (h *HTTP) WriteHeader(code int) {
 }
 
 func (h *HTTP) Write(buf []byte) (int, error) {
-	h.body.Write(buf)
-	h.writeLogger()
-	return h.ResponseWriter.Write(buf)
+	loggerRes := getLogResponse(buf)
+	bodyByte, err := json.Marshal(loggerRes.Response)
+	if err != nil {
+		panic(fmt.Sprintf("error encode new body response error: %s", err.Error()))
+	}
+	h.body.Write(bodyByte)
+	h.writeLogger(loggerRes)
+	return h.ResponseWriter.Write(bodyByte)
 }
 
-func (h *HTTP) writeLogger() {
+func (h *HTTP) writeLogger(loggerRes *responseEntity.Log) {
 	msg := ""
-	res := getResponseBody(h.body)
-	if res != nil {
-		msg = res.Status.Message
+	if loggerRes != nil {
+		msg = loggerRes.Message
 	}
 	if h.statusCode >= http.StatusOK && h.statusCode <= http.StatusIMUsed {
 		h.log.Logger.Info(msg, zap.Inline(h))
@@ -69,9 +74,9 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	return nil
 }
 
-func getResponseBody(buf *bytes.Buffer) *responseEntity.Response {
-	var response responseEntity.Response
-	err := json.Unmarshal(buf.Bytes(), &response)
+func getLogResponse(buf []byte) *responseEntity.Log {
+	var response responseEntity.Log
+	err := json.Unmarshal(buf, &response)
 	if err != nil {
 		return nil
 	}

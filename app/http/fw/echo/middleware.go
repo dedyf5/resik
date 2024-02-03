@@ -43,7 +43,7 @@ func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 	})
 }
 
-func LoggerMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
+func LoggerAndResponseFormatterMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
 	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 

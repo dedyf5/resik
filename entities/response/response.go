@@ -17,3 +17,8 @@ type Meta struct {
 	Page  int64 `json:"page"`
 	Limit int64 `json:"limit"`
 }
+
+type Log struct {
+	Response Response `json:"response"`
+	Message  string   `json:"message"`
+}
