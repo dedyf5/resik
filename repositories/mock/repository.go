@@ -8,12 +8,12 @@ import (
 	reflect "reflect"
 	time "time"
 
-	status "github.com/dedyf5/resik/ctx/status"
 	merchant "github.com/dedyf5/resik/entities/merchant"
 	outlet "github.com/dedyf5/resik/entities/outlet"
 	transaction "github.com/dedyf5/resik/entities/transaction"
 	param "github.com/dedyf5/resik/entities/transaction/param"
 	user "github.com/dedyf5/resik/entities/user"
+	status "github.com/dedyf5/resik/pkg/status"
 	gomock "github.com/golang/mock/gomock"
 )
 

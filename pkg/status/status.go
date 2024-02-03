@@ -18,14 +18,7 @@ type Status struct {
 	CauseError error `json:"cause_error"`
 
 	Data   interface{}       `json:"data"`
-	Meta   *Meta             `json:"meta"`
 	Detail map[string]string `json:"detail"`
-}
-
-type Meta struct {
-	Total int64 `json:"total"`
-	Page  int64 `json:"page"`
-	Limit int64 `json:"limit"`
 }
 
 type IStatus interface {

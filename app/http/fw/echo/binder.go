@@ -12,8 +12,8 @@ import (
 	"sync"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
-	"github.com/dedyf5/resik/ctx/status"
 	"github.com/dedyf5/resik/entities/common"
+	"github.com/dedyf5/resik/pkg/status"
 	"github.com/labstack/echo/v4"
 )
 

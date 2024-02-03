@@ -9,8 +9,8 @@ import (
 
 	"github.com/dedyf5/resik/config"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
-	"github.com/dedyf5/resik/ctx/status"
 	commonEntity "github.com/dedyf5/resik/entities/common"
+	"github.com/dedyf5/resik/pkg/status"
 	"github.com/labstack/echo/v4"
 )
 

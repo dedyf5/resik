@@ -8,16 +8,16 @@ import (
 	"net/http"
 	"time"
 
-	statusCtx "github.com/dedyf5/resik/ctx/status"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	"github.com/dedyf5/resik/pkg/goku"
+	statusPkg "github.com/dedyf5/resik/pkg/status"
 )
 
-func (r *TransactionRepo) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *statusCtx.Status) {
+func (r *TransactionRepo) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *statusPkg.Status) {
 	query := r.DB.
 		WithContext(param.Ctx.Context).
 		Select(`
@@ -41,7 +41,7 @@ func (r *TransactionRepo) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (re
 		}
 		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
 		if err != nil {
-			return res, &statusCtx.Status{
+			return res, &statusPkg.Status{
 				Code:       http.StatusInternalServerError,
 				CauseError: err,
 			}
@@ -50,7 +50,7 @@ func (r *TransactionRepo) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (re
 	}
 	err := query.Find(&res).Error
 	if err != nil {
-		return res, &statusCtx.Status{
+		return res, &statusPkg.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: err,
 		}

@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
-	"github.com/dedyf5/resik/ctx/status"
+	"github.com/dedyf5/resik/pkg/status"
 	httpUtil "github.com/dedyf5/resik/utils/http"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/labstack/echo/v4"

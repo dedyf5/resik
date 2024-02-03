@@ -12,9 +12,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/dedyf5/resik/ctx/status"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	"github.com/dedyf5/resik/pkg/array"
+	"github.com/dedyf5/resik/pkg/status"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )

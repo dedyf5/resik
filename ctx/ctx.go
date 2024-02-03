@@ -11,7 +11,7 @@ import (
 	httpApp "github.com/dedyf5/resik/ctx/app/http"
 	lang "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
-	"github.com/dedyf5/resik/ctx/status"
+	"github.com/dedyf5/resik/pkg/status"
 )
 
 type Ctx struct {

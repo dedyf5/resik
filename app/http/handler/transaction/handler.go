@@ -14,7 +14,7 @@ import (
 	trxService "github.com/dedyf5/resik/core/transaction"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
-	"github.com/dedyf5/resik/ctx/status"
+	"github.com/dedyf5/resik/pkg/status"
 	"github.com/labstack/echo/v4"
 )
 

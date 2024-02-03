@@ -6,7 +6,7 @@ package app
 
 import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
-	"github.com/dedyf5/resik/ctx/status"
+	"github.com/dedyf5/resik/pkg/status"
 )
 
 type Name string

@@ -9,19 +9,19 @@ import (
 	"fmt"
 	"time"
 
-	statusCtx "github.com/dedyf5/resik/ctx/status"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
+	statusPkg "github.com/dedyf5/resik/pkg/status"
 )
 
 const (
 	perPage = 10
 )
 
-func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *statusCtx.Status) {
+func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *statusPkg.Status) {
 	return s.transactionRepo.MerchantOmzetGet(param)
 }
 

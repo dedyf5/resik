@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	lang "github.com/dedyf5/resik/ctx/lang"
-	status "github.com/dedyf5/resik/ctx/status"
+	status "github.com/dedyf5/resik/pkg/status"
 	gomock "github.com/golang/mock/gomock"
 )
 
