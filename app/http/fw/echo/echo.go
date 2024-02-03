@@ -50,7 +50,7 @@ func HTTPErrorHandler(err error, ctx echo.Context) {
 	switch res := err.(type) {
 	case *status.Status:
 		if res.Code != http.StatusNoContent {
-			ctx.JSON(res.Code, httpUtil.LoggerFromStatusHTTP(res))
+			ctx.JSON(res.Code, httpUtil.LoggerFromStatus(res))
 		}
 		return
 	}

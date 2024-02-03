@@ -7,68 +7,68 @@ package http
 import (
 	"fmt"
 
-	"github.com/dedyf5/resik/ctx/status"
+	statusCtx "github.com/dedyf5/resik/ctx/status"
 	"github.com/dedyf5/resik/entities/response"
 )
 
-func ResponseFromStatusHTTP(statusHTTP *status.Status) response.Response {
-	if statusHTTP.IsError() {
-		return ResponseErrorAuto(statusHTTP)
+func ResponseFromStatus(status *statusCtx.Status) response.Response {
+	if status.IsError() {
+		return ResponseErrorAuto(status)
 	}
-	return ResponseSuccessAuto(statusHTTP)
+	return ResponseSuccessAuto(status)
 }
 
-func ResponseSuccessAuto(statusHTTP *status.Status) response.Response {
+func ResponseSuccessAuto(status *statusCtx.Status) response.Response {
 	res := response.Response{
 		Status: response.Status{
-			Code:    fmt.Sprintf("%d.1", statusHTTP.Code),
-			Message: statusHTTP.MessageOrDefault(),
+			Code:    fmt.Sprintf("%d.1", status.Code),
+			Message: status.MessageOrDefault(),
 		},
-		Data: statusHTTP.Data,
-		Meta: ResponseMetaFromHTTPMeta(statusHTTP.Meta),
+		Data: status.Data,
+		Meta: ResponseMetaFromStatusMeta(status.Meta),
 	}
 	return res
 }
 
-func ResponseErrorAuto(statusHTTP *status.Status) response.Response {
+func ResponseErrorAuto(status *statusCtx.Status) response.Response {
 	return response.Response{
 		Status: response.Status{
-			Code:    fmt.Sprintf("%d.1", statusHTTP.Code),
-			Message: statusHTTP.MessageOrDefault(),
-			Detail:  statusHTTP.Detail,
+			Code:    fmt.Sprintf("%d.1", status.Code),
+			Message: status.MessageOrDefault(),
+			Detail:  status.Detail,
 		},
 	}
 }
 
-func ResponseMetaFromHTTPMeta(httpMeta *status.Meta) *response.Meta {
-	if httpMeta == nil {
+func ResponseMetaFromStatusMeta(statusMeta *statusCtx.Meta) *response.Meta {
+	if statusMeta == nil {
 		return nil
 	}
 	return &response.Meta{
-		Total: httpMeta.Total,
-		Page:  httpMeta.Page,
-		Limit: httpMeta.Limit,
+		Total: statusMeta.Total,
+		Page:  statusMeta.Page,
+		Limit: statusMeta.Limit,
 	}
 }
 
-func LoggerFromStatusHTTP(statusHTTP *status.Status) response.Log {
-	msg := statusHTTP.MessageOrDefault()
-	if err := statusHTTP.CauseError; err != nil {
+func LoggerFromStatus(status *statusCtx.Status) response.Log {
+	msg := status.MessageOrDefault()
+	if err := status.CauseError; err != nil {
 		msg = err.Error()
 	}
 	return response.Log{
-		Response: ResponseFromStatusHTTP(statusHTTP),
+		Response: ResponseFromStatus(status),
 		Message:  msg,
 	}
 }
 
-func LoggerErrorAuto(statusHTTP *status.Status) response.Log {
-	msg := statusHTTP.MessageOrDefault()
-	if err := statusHTTP.CauseError; err != nil {
+func LoggerErrorAuto(status *statusCtx.Status) response.Log {
+	msg := status.MessageOrDefault()
+	if err := status.CauseError; err != nil {
 		msg = err.Error()
 	}
 	return response.Log{
-		Response: ResponseErrorAuto(statusHTTP),
+		Response: ResponseErrorAuto(status),
 		Message:  msg,
 	}
 }
