@@ -34,13 +34,13 @@ func (m *MerchantOmzetGet) ToParam(c *ctx.Ctx) *trxParam.MerchantOmzetGet {
 	if m.Order != nil {
 		orderStr = *m.Order
 	}
-	var page uint = 1
+	var page int = 1
 	if m.Page != nil {
-		page = *m.Page
+		page = int(*m.Page)
 	}
-	var limit uint = 10
+	var limit int = 10
 	if m.Limit != nil {
-		limit = *m.Limit
+		limit = int(*m.Limit)
 	}
 	return &trxParam.MerchantOmzetGet{
 		Ctx:        c,

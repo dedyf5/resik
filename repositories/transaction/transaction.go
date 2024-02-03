@@ -30,7 +30,9 @@ func (r *TransactionRepo) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (re
 		Joins("INNER JOIN merchant AS m1 ON m1.id = t1.merchant_id").
 		Where("t1.merchant_id = ?", param.MerchantID).
 		Where("t1.created_at >= ? AND t1.created_at <= ?", param.GroupPeriod.DatetimeStart, param.GroupPeriod.DatetimeEnd).
-		Group("t1.merchant_id, period")
+		Group("t1.merchant_id, period").
+		Limit(param.Filter.LimitOrDefault()).
+		Offset(param.Filter.Offset())
 	if len(param.Orders) > 0 {
 		orderMap := map[string]string{
 			"period":        "period",

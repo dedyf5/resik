@@ -4,30 +4,30 @@
 
 package goku
 
-var LimitDefault uint = 10
-var PageDefault uint = 1
+var LimitDefault int = 10
+var PageDefault int = 1
 
 type Filter struct {
 	Search string
-	Page   uint
-	Limit  uint
+	Page   int
+	Limit  int
 }
 
-func (f *Filter) PageOrDefault() uint {
+func (f *Filter) PageOrDefault() int {
 	if f.Page > 0 {
 		return f.Page
 	}
 	return PageDefault
 }
 
-func (f *Filter) LimitOrDefault() uint {
+func (f *Filter) LimitOrDefault() int {
 	if f.Limit > 0 {
 		return f.Limit
 	}
 	return LimitDefault
 }
 
-func (f *Filter) Offset() uint {
+func (f *Filter) Offset() int {
 	page := f.PageOrDefault()
 	if page == 1 {
 		return 0
