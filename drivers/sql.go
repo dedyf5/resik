@@ -16,6 +16,7 @@ import (
 	"github.com/pkg/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 type SQLEngine string
@@ -118,9 +119,20 @@ func NewMySQLConnection(config SQLConfig) (*sql.DB, func(), error) {
 func NewGorm(
 	dialect SQLEngine,
 	conn *sql.DB,
+	config SQLConfig,
 ) (*gorm.DB, func(), error) {
 	var gormConfig = &gorm.Config{
 		SkipDefaultTransaction: true,
+	}
+	if config.IsDebug {
+		gormConfig.Logger = logger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags),
+			logger.Config{
+				SlowThreshold: time.Second,
+				LogLevel:      logger.Silent,
+				Colorful:      true,
+			},
+		)
 	}
 	var gormDialect gorm.Dialector
 	if dialect.String() == "mysql" {
@@ -138,6 +150,10 @@ func NewGorm(
 		if err := conn.Close(); err != nil {
 			log.Printf("failed to close mysql connection %e", err)
 		}
+	}
+
+	if config.IsDebug {
+		return gormDB.Debug(), cleanup, nil
 	}
 
 	return gormDB, cleanup, nil
