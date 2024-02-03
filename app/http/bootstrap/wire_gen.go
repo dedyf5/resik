@@ -38,7 +38,7 @@ func InitializeHTTP() (*App, func(), error) {
 	if err != nil {
 		return nil, nil, err
 	}
-	gormDB, cleanup2, err := drivers.NewGorm(sqlEngine, db)
+	gormDB, cleanup2, err := drivers.NewGorm(sqlEngine, db, sqlConfig)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
