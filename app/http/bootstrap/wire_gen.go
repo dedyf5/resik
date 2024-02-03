@@ -11,10 +11,12 @@ import (
 	"github.com/dedyf5/resik/app/http/handler/general"
 	handler2 "github.com/dedyf5/resik/app/http/handler/transaction"
 	"github.com/dedyf5/resik/config"
+	transaction2 "github.com/dedyf5/resik/core/transaction"
 	"github.com/dedyf5/resik/core/transaction/service"
 	"github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	config2 "github.com/dedyf5/resik/entities/config"
+	"github.com/dedyf5/resik/repositories"
 	"github.com/dedyf5/resik/repositories/transaction"
 	"github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
@@ -76,8 +78,8 @@ var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 
 var connSet = wire.NewSet(drivers.NewMySQLConnection, drivers.NewGorm)
 
-var gormRepoSet = wire.NewSet(transaction.New, wire.Bind(new(transaction.ITransaction), new(*transaction.TransactionRepo)))
+var gormRepoSet = wire.NewSet(transaction.New, wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
 
-var serviceSet = wire.NewSet(service.New, wire.Bind(new(service.IService), new(*service.Service)))
+var serviceSet = wire.NewSet(service.New, wire.Bind(new(transaction2.IService), new(*service.Service)))
 
 var handlerSet = wire.NewSet(handler.New, handler2.New)

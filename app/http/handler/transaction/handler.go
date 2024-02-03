@@ -11,7 +11,7 @@ import (
 	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
 	"github.com/dedyf5/resik/app/http/handler/transaction/request"
 	"github.com/dedyf5/resik/config"
-	"github.com/dedyf5/resik/core/transaction/service"
+	trxService "github.com/dedyf5/resik/core/transaction"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/ctx/status"
@@ -21,11 +21,11 @@ import (
 type Handler struct {
 	fw      echoFW.IEcho
 	log     *logCtx.Log
-	service service.IService
+	service trxService.IService
 	config  config.Config
 }
 
-func New(fw echoFW.IEcho, log *logCtx.Log, service service.IService, config config.Config) *Handler {
+func New(fw echoFW.IEcho, log *logCtx.Log, service trxService.IService, config config.Config) *Handler {
 	return &Handler{
 		fw:      fw,
 		log:     log,

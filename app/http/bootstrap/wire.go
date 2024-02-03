@@ -12,10 +12,12 @@ import (
 	generalHandler "github.com/dedyf5/resik/app/http/handler/general"
 	trxHandler "github.com/dedyf5/resik/app/http/handler/transaction"
 	"github.com/dedyf5/resik/config"
+	trx "github.com/dedyf5/resik/core/transaction"
 	trxService "github.com/dedyf5/resik/core/transaction/service"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
+	repo "github.com/dedyf5/resik/repositories"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
@@ -48,12 +50,12 @@ var connSet = wire.NewSet(
 
 var gormRepoSet = wire.NewSet(
 	trxRepo.New,
-	wire.Bind(new(trxRepo.ITransaction), new(*trxRepo.TransactionRepo)),
+	wire.Bind(new(repo.ITransaction), new(*trxRepo.TransactionRepo)),
 )
 
 var serviceSet = wire.NewSet(
 	trxService.New,
-	wire.Bind(new(trxService.IService), new(*trxService.Service)),
+	wire.Bind(new(trx.IService), new(*trxService.Service)),
 )
 
 var handlerSet = wire.NewSet(

@@ -21,7 +21,7 @@ const (
 	perPage = 10
 )
 
-func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) ([]trxEntity.MerchantOmzet, *statusCtx.Status) {
+func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *statusCtx.Status) {
 	return s.transactionRepo.MerchantOmzetGet(param)
 }
 
