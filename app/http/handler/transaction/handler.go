@@ -47,20 +47,16 @@ func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
 		return err
 	}
 
-	langReq := ""
-	if ctx.Lang.LangReq != nil {
-		langReq = ctx.Lang.LangReq.String()
+	param := payload.ToParam(ctx)
+
+	res, err := h.service.MerchantOmzetGet(param)
+	if err != nil {
+		return err
 	}
 
 	return &status.Status{
 		Code: http.StatusOK,
-		Data: map[string]interface{}{
-			"page_or_default":  payload.PageOrDefault(),
-			"limit_or_default": payload.LimitOrDefault(),
-			"req":              payload,
-			"lang_def":         ctx.Lang.LangDefault.String(),
-			"lang_req":         langReq,
-		},
+		Data: res,
 	}
 }
 

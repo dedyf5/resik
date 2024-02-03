@@ -8,9 +8,11 @@ import (
 	reflect "reflect"
 	time "time"
 
+	status "github.com/dedyf5/resik/ctx/status"
 	merchant "github.com/dedyf5/resik/entities/merchant"
 	outlet "github.com/dedyf5/resik/entities/outlet"
 	transaction "github.com/dedyf5/resik/entities/transaction"
+	param "github.com/dedyf5/resik/entities/transaction/param"
 	user "github.com/dedyf5/resik/entities/user"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -113,19 +115,19 @@ func (mr *MockITransactionMockRecorder) GetUserByUserNameAndPassword(userName, p
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUserNameAndPassword", reflect.TypeOf((*MockITransaction)(nil).GetUserByUserNameAndPassword), userName, password)
 }
 
-// MerchantOmzet mocks base method.
-func (m *MockITransaction) MerchantOmzet(merchantID int64, date time.Time) (*transaction.MerchantOmzet, error) {
+// MerchantOmzetGet mocks base method.
+func (m *MockITransaction) MerchantOmzetGet(param *param.MerchantOmzetGet) ([]transaction.MerchantOmzet, *status.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MerchantOmzet", merchantID, date)
-	ret0, _ := ret[0].(*transaction.MerchantOmzet)
-	ret1, _ := ret[1].(error)
+	ret := m.ctrl.Call(m, "MerchantOmzetGet", param)
+	ret0, _ := ret[0].([]transaction.MerchantOmzet)
+	ret1, _ := ret[1].(*status.Status)
 	return ret0, ret1
 }
 
-// MerchantOmzet indicates an expected call of MerchantOmzet.
-func (mr *MockITransactionMockRecorder) MerchantOmzet(merchantID, date interface{}) *gomock.Call {
+// MerchantOmzetGet indicates an expected call of MerchantOmzetGet.
+func (mr *MockITransactionMockRecorder) MerchantOmzetGet(param interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantOmzet", reflect.TypeOf((*MockITransaction)(nil).MerchantOmzet), merchantID, date)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantOmzetGet", reflect.TypeOf((*MockITransaction)(nil).MerchantOmzetGet), param)
 }
 
 // OutletOmzet mocks base method.

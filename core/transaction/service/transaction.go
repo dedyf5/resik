@@ -9,9 +9,11 @@ import (
 	"fmt"
 	"time"
 
+	statusCtx "github.com/dedyf5/resik/ctx/status"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
+	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
 )
 
@@ -19,26 +21,8 @@ const (
 	perPage = 10
 )
 
-func (s *Service) MerchantOmzet(merchantID int64, dates []time.Time) ([]trxEntity.MerchantOmzet, error) {
-	var merchats []trxEntity.MerchantOmzet
-	base, err1 := s.transactionRepo.GetMerchantByID(merchantID)
-	if err1 != nil {
-		return merchats, err1
-	}
-	for _, v := range dates {
-		result, err2 := s.transactionRepo.MerchantOmzet(merchantID, v)
-		if err2 == nil {
-			merchats = append(merchats, *result)
-		} else {
-			merchant := trxEntity.MerchantOmzet{
-				MerchantName: base.MerchantName,
-				Omzet:        0,
-				Date:         v,
-			}
-			merchats = append(merchats, merchant)
-		}
-	}
-	return merchats, nil
+func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) ([]trxEntity.MerchantOmzet, *statusCtx.Status) {
+	return s.transactionRepo.MerchantOmzetGet(param)
 }
 
 func (s *Service) OutletOmzet(outletID int64, dates []time.Time) ([]trxEntity.OutletOmzet, error) {
