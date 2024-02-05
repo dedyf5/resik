@@ -8,6 +8,7 @@ import (
 	reflect "reflect"
 	time "time"
 
+	dto "github.com/dedyf5/resik/core/transaction/dto"
 	merchant "github.com/dedyf5/resik/entities/merchant"
 	outlet "github.com/dedyf5/resik/entities/outlet"
 	transaction "github.com/dedyf5/resik/entities/transaction"
@@ -70,10 +71,10 @@ func (mr *MockIServiceMockRecorder) GetUserByUserNameAndPassword(userName, passw
 }
 
 // MerchantOmzetGet mocks base method.
-func (m *MockIService) MerchantOmzetGet(param *param.MerchantOmzetGet) ([]transaction.MerchantOmzet, *status.Status) {
+func (m *MockIService) MerchantOmzetGet(param *param.MerchantOmzetGet) (*dto.MerchantOmzet, *status.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MerchantOmzetGet", param)
-	ret0, _ := ret[0].([]transaction.MerchantOmzet)
+	ret0, _ := ret[0].(*dto.MerchantOmzet)
 	ret1, _ := ret[1].(*status.Status)
 	return ret0, ret1
 }

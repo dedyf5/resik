@@ -115,19 +115,34 @@ func (mr *MockITransactionMockRecorder) GetUserByUserNameAndPassword(userName, p
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUserNameAndPassword", reflect.TypeOf((*MockITransaction)(nil).GetUserByUserNameAndPassword), userName, password)
 }
 
-// MerchantOmzetGet mocks base method.
-func (m *MockITransaction) MerchantOmzetGet(param *param.MerchantOmzetGet) ([]transaction.MerchantOmzet, *status.Status) {
+// MerchantOmzetGetData mocks base method.
+func (m *MockITransaction) MerchantOmzetGetData(param *param.MerchantOmzetGet) ([]transaction.MerchantOmzet, *status.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MerchantOmzetGet", param)
+	ret := m.ctrl.Call(m, "MerchantOmzetGetData", param)
 	ret0, _ := ret[0].([]transaction.MerchantOmzet)
 	ret1, _ := ret[1].(*status.Status)
 	return ret0, ret1
 }
 
-// MerchantOmzetGet indicates an expected call of MerchantOmzetGet.
-func (mr *MockITransactionMockRecorder) MerchantOmzetGet(param interface{}) *gomock.Call {
+// MerchantOmzetGetData indicates an expected call of MerchantOmzetGetData.
+func (mr *MockITransactionMockRecorder) MerchantOmzetGetData(param interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantOmzetGet", reflect.TypeOf((*MockITransaction)(nil).MerchantOmzetGet), param)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantOmzetGetData", reflect.TypeOf((*MockITransaction)(nil).MerchantOmzetGetData), param)
+}
+
+// MerchantOmzetGetTotal mocks base method.
+func (m *MockITransaction) MerchantOmzetGetTotal(param *param.MerchantOmzetGet) (uint64, *status.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MerchantOmzetGetTotal", param)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(*status.Status)
+	return ret0, ret1
+}
+
+// MerchantOmzetGetTotal indicates an expected call of MerchantOmzetGetTotal.
+func (mr *MockITransactionMockRecorder) MerchantOmzetGetTotal(param interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantOmzetGetTotal", reflect.TypeOf((*MockITransaction)(nil).MerchantOmzetGetTotal), param)
 }
 
 // OutletOmzet mocks base method.

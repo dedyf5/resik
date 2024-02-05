@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"time"
 
+	trxDTO "github.com/dedyf5/resik/core/transaction/dto"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
@@ -21,8 +22,19 @@ const (
 	perPage = 10
 )
 
-func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *statusPkg.Status) {
-	return s.transactionRepo.MerchantOmzetGet(param)
+func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res *trxDTO.MerchantOmzet, status *statusPkg.Status) {
+	total, status := s.transactionRepo.MerchantOmzetGetTotal(param)
+	if status != nil {
+		return nil, status
+	}
+	data, status := s.transactionRepo.MerchantOmzetGetData(param)
+	if status != nil {
+		return nil, status
+	}
+	return &trxDTO.MerchantOmzet{
+		Data:  data,
+		Total: total,
+	}, nil
 }
 
 func (s *Service) OutletOmzet(outletID int64, dates []time.Time) ([]trxEntity.OutletOmzet, error) {

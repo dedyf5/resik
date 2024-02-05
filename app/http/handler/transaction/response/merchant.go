@@ -4,7 +4,7 @@
 
 package response
 
-import "github.com/dedyf5/resik/entities/transaction"
+import trxEntity "github.com/dedyf5/resik/entities/transaction"
 
 type MerchantOmzet struct {
 	MerchantName string  `json:"merchant_name"`
@@ -12,7 +12,7 @@ type MerchantOmzet struct {
 	Period       string  `json:"period"`
 }
 
-func MerchantOmzetFromEntity(src []transaction.MerchantOmzet) []MerchantOmzet {
+func MerchantOmzetFromEntity(src []trxEntity.MerchantOmzet) []MerchantOmzet {
 	res := make([]MerchantOmzet, 0, cap(src))
 	for _, v := range src {
 		res = append(res, MerchantOmzet{

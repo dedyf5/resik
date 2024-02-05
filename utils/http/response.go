@@ -25,7 +25,7 @@ func ResponseSuccessAuto(status *statusPkg.Status) response.Response {
 			Message: status.MessageOrDefault(),
 		},
 		Data: status.Data,
-		// Meta: ResponseMetaFromStatusMeta(status.Meta),
+		Meta: ResponseMetaFromStatusMeta(status.Meta),
 	}
 	return res
 }
@@ -40,16 +40,16 @@ func ResponseErrorAuto(status *statusPkg.Status) response.Response {
 	}
 }
 
-// func ResponseMetaFromStatusMeta(statusMeta *statusPkg.Meta) *response.Meta {
-// 	if statusMeta == nil {
-// 		return nil
-// 	}
-// 	return &response.Meta{
-// 		Total: statusMeta.Total,
-// 		Page:  statusMeta.Page,
-// 		Limit: statusMeta.Limit,
-// 	}
-// }
+func ResponseMetaFromStatusMeta(statusMeta *statusPkg.Meta) *response.Meta {
+	if statusMeta == nil {
+		return nil
+	}
+	return &response.Meta{
+		Total: statusMeta.Total,
+		Page:  statusMeta.Page,
+		Limit: statusMeta.Limit,
+	}
+}
 
 func LoggerFromStatus(status *statusPkg.Status) response.Log {
 	msg := status.MessageOrDefault()

@@ -13,9 +13,9 @@ type Status struct {
 }
 
 type Meta struct {
-	Total int64 `json:"total"`
-	Page  int64 `json:"page"`
-	Limit int64 `json:"limit"`
+	Total uint64 `json:"total"`
+	Page  int    `json:"page"`
+	Limit int    `json:"limit"`
 }
 
 type Log struct {

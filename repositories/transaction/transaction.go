@@ -15,10 +15,66 @@ import (
 	userEntity "github.com/dedyf5/resik/entities/user"
 	"github.com/dedyf5/resik/pkg/goku"
 	statusPkg "github.com/dedyf5/resik/pkg/status"
+	"gorm.io/gorm"
 )
 
-func (r *TransactionRepo) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *statusPkg.Status) {
-	query := r.DB.
+func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *statusPkg.Status) {
+	query, status := r.MerchantOmzetGetQuery(param)
+	if status != nil {
+		return res, status
+	}
+
+	query = query.
+		Limit(param.Filter.LimitOrDefault()).
+		Offset(param.Filter.Offset())
+
+	if len(param.Orders) > 0 {
+		orderMap := map[string]string{
+			"period":        "period",
+			"omzet":         "omzet",
+			"merchant_name": "m1.merchant_name",
+		}
+		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
+		if err != nil {
+			return nil, &statusPkg.Status{
+				Code:       http.StatusInternalServerError,
+				CauseError: err,
+			}
+		}
+		query = query.Order(order)
+	}
+
+	err := query.Find(&res).Error
+	if err != nil {
+		return res, &statusPkg.Status{
+			Code:       http.StatusInternalServerError,
+			CauseError: err,
+		}
+	}
+	return
+}
+
+func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total uint64, status *statusPkg.Status) {
+	query, status := r.MerchantOmzetGetQuery(param)
+	if status != nil {
+		return 0, status
+	}
+	query = r.DB.
+		WithContext(param.Ctx.Context).
+		Select("COUNT(x.merchant_id)").
+		Table("(?) AS x", query)
+	err := query.Take(&total).Error
+	if err != nil {
+		return 0, &statusPkg.Status{
+			Code:       http.StatusInternalServerError,
+			CauseError: err,
+		}
+	}
+	return
+}
+
+func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet) (query *gorm.DB, status *statusPkg.Status) {
+	query = r.DB.
 		WithContext(param.Ctx.Context).
 		Select(`
 		t1.merchant_id,
@@ -30,33 +86,9 @@ func (r *TransactionRepo) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (re
 		Joins("INNER JOIN merchant AS m1 ON m1.id = t1.merchant_id").
 		Where("t1.merchant_id = ?", param.MerchantID).
 		Where("t1.created_at >= ? AND t1.created_at <= ?", param.GroupPeriod.DatetimeStart, param.GroupPeriod.DatetimeEnd).
-		Group("t1.merchant_id, period").
-		Limit(param.Filter.LimitOrDefault()).
-		Offset(param.Filter.Offset())
+		Group("t1.merchant_id, period")
 	if search := param.Filter.Search; search != "" {
 		query = query.Where("m1.merchant_name LIKE ?", "%"+search+"%")
-	}
-	if len(param.Orders) > 0 {
-		orderMap := map[string]string{
-			"period":        "period",
-			"omzet":         "omzet",
-			"merchant_name": "m1.merchant_name",
-		}
-		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
-		if err != nil {
-			return res, &statusPkg.Status{
-				Code:       http.StatusInternalServerError,
-				CauseError: err,
-			}
-		}
-		query = query.Order(order)
-	}
-	err := query.Find(&res).Error
-	if err != nil {
-		return res, &statusPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: err,
-		}
 	}
 	return
 }
