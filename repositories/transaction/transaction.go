@@ -33,6 +33,9 @@ func (r *TransactionRepo) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (re
 		Group("t1.merchant_id, period").
 		Limit(param.Filter.LimitOrDefault()).
 		Offset(param.Filter.Offset())
+	if search := param.Filter.Search; search != "" {
+		query = query.Where("m1.merchant_name LIKE ?", "%"+search+"%")
+	}
 	if len(param.Orders) > 0 {
 		orderMap := map[string]string{
 			"period":        "period",
