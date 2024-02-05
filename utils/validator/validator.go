@@ -6,10 +6,12 @@ package validator
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
@@ -35,6 +37,11 @@ type Validate struct {
 
 func New(langDefault language.Tag) *Validate {
 	validate := validator.New()
+
+	if err := validate.RegisterValidation("oneof_order", isOneOfOrder); err != nil {
+		log.Panic("error register validation tag oneof_order")
+	}
+
 	uni := ut.New(transLang.LanguageToTranslator(langDefault), transLang.Translators()...)
 	trans, found := uni.GetTranslator(langDefault.String())
 	if !found {
@@ -146,6 +153,37 @@ func (v *Validate) Translator(lang language.Tag) ut.Translator {
 		t = v.translatorDefault
 	}
 	return t
+}
+
+func isOneOfOrder(fl validator.FieldLevel) bool {
+	s := strings.ReplaceAll(fl.Param(), "'", "")
+	s = strings.ReplaceAll(s, `"`, ``)
+	base := strings.Split(s, " ")
+	vals := make([]string, 0, cap(base)*2)
+	for _, v := range base {
+		vals = append(vals, v)
+		vals = append(vals, fmt.Sprintf("-%s", v))
+	}
+
+	field := fl.Field()
+
+	var v string
+	switch field.Kind() {
+	case reflect.String:
+		v = field.String()
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v = strconv.FormatInt(field.Int(), 10)
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		v = strconv.FormatUint(field.Uint(), 10)
+	default:
+		panic(fmt.Sprintf("Bad field type %T", field.Interface()))
+	}
+	for i := 0; i < len(vals); i++ {
+		if vals[i] == v {
+			return true
+		}
+	}
+	return false
 }
 
 func getLanguage(langDef language.Tag, lang *langCtx.Lang) language.Tag {

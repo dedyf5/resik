@@ -17,7 +17,7 @@ type MerchantOmzetGet struct {
 	DateTimeStart string  `json:"datetime_start" query:"datetime_start" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-02-01 13:45:00"`
 	DateTimeEnd   string  `json:"datetime_end" query:"datetime_end" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-02-01 13:45:00"`
 	Search        string  `json:"search" query:"search" validate:"" example:"keyword"`
-	Order         *string `json:"order" query:"order" validate:"omitempty" example:"period"`
+	Order         *string `json:"order" query:"order" validate:"omitempty,oneof_order=period omzet merchant_name" example:"period"`
 	Page          *uint   `json:"page" query:"page" validate:"omitempty,min=1" example:"1"`
 	Limit         *uint   `json:"limit" query:"limit" validate:"omitempty,min=1,max=100" example:"10"`
 }

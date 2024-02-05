@@ -1317,6 +1317,29 @@ var Indonesian []translation = []translation{
 		},
 	},
 	{
+		Tag:         "oneof_order",
+		Translation: "{0} harus berupa salah satu dari [{1}]",
+		Override:    false,
+		CustomTransFunc: func(ut ut.Translator, fe validator.FieldError) string {
+			s := strings.ReplaceAll(fe.Param(), "'", "")
+			s = strings.ReplaceAll(s, `"`, ``)
+			base := strings.Split(s, " ")
+			vals := make([]string, 0, cap(base)*2)
+			for _, v := range base {
+				vals = append(vals, v)
+				vals = append(vals, fmt.Sprintf("-%s", v))
+			}
+			param := strings.Join(vals, " ")
+
+			s, err := ut.T(fe.Tag(), fe.Field(), param)
+			if err != nil {
+				log.Printf("warning: error translating FieldError: %#v", fe)
+				return fe.(error).Error()
+			}
+			return s
+		},
+	},
+	{
 		Tag:         "datetime",
 		Translation: "{0} tidak sesuai format {1}",
 		Override:    false,
