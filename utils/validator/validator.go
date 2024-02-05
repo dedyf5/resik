@@ -17,8 +17,6 @@ import (
 	"github.com/dedyf5/resik/pkg/status"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	enTranslation "github.com/go-playground/validator/v10/translations/en"
-	idTranslation "github.com/go-playground/validator/v10/translations/id"
 	"golang.org/x/text/language"
 )
 
@@ -43,8 +41,6 @@ func New(langDefault language.Tag) *Validate {
 		log.Panic("translator not found")
 	}
 
-	registerDefaultTranslations(langDefault, validate, trans)
-
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
 		if name == "-" {
@@ -54,9 +50,6 @@ func New(langDefault language.Tag) *Validate {
 	})
 
 	for lang, translations := range transLang.Map {
-		if lang == langDefault {
-			continue
-		}
 		engine, _ := uni.FindTranslator(lang.String())
 		for _, translation := range translations {
 			var err error = nil
@@ -160,15 +153,6 @@ func getLanguage(langDef language.Tag, lang *langCtx.Lang) language.Tag {
 		return langDef
 	}
 	return lang.LanguageReqOrDefault()
-}
-
-func registerDefaultTranslations(lang language.Tag, validate *validator.Validate, trans ut.Translator) {
-	switch lang.String() {
-	case "id":
-		_ = idTranslation.RegisterDefaultTranslations(validate, trans)
-	default:
-		enTranslation.RegisterDefaultTranslations(validate, trans)
-	}
 }
 
 func registrationFunc(tag string, translation string, override bool) validator.RegisterTranslationsFunc {
