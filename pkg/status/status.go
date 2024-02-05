@@ -23,9 +23,9 @@ type Status struct {
 }
 
 type Meta struct {
-	Total uint64 `json:"total"`
-	Page  int    `json:"page"`
-	Limit int    `json:"limit"`
+	Total       uint64 `json:"total"`
+	PageCurrent int    `json:"page"`
+	Limit       int    `json:"limit"`
 }
 
 type IStatus interface {

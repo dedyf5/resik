@@ -59,9 +59,9 @@ func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
 		Code: http.StatusOK,
 		Data: response.MerchantOmzetFromEntity(res.Data),
 		Meta: &status.Meta{
-			Page:  param.Filter.Page,
-			Limit: param.Filter.Limit,
-			Total: res.Total,
+			PageCurrent: param.Filter.Page,
+			Limit:       param.Filter.Limit,
+			Total:       res.Total,
 		},
 	}
 }

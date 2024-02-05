@@ -46,8 +46,58 @@ func ResponseMetaFromStatusMeta(statusMeta *statusPkg.Meta) *response.Meta {
 	}
 	return &response.Meta{
 		Total: statusMeta.Total,
-		Page:  statusMeta.Page,
+		Page:  Page(statusMeta.Total, statusMeta.Limit, statusMeta.PageCurrent),
 		Limit: statusMeta.Limit,
+	}
+}
+
+func Page(total uint64, limit, pageCurrent int) *response.Page {
+	current := pageCurrent
+	if pageCurrent == 0 {
+		current = 1
+	}
+	res := response.Page{
+		First:    1,
+		Previous: nil,
+		Current:  current,
+		Next:     nil,
+		Last:     1,
+	}
+	if total == 0 {
+		return &res
+	}
+
+	var previous *int = nil
+	if current > 1 {
+		tmp := current - 1
+		previous = &tmp
+	}
+
+	last := int(int(total) / limit)
+	var next *int = nil
+	if current != last {
+		tmp := current + 1
+		next = &tmp
+	}
+	if current > last {
+		previous = &last
+		next = nil
+	}
+	if last == 0 {
+		last = 1
+	}
+	if previous != nil {
+		if *previous == current {
+			previous = nil
+		}
+	}
+
+	return &response.Page{
+		First:    1,
+		Previous: previous,
+		Current:  current,
+		Next:     next,
+		Last:     last,
 	}
 }
 
