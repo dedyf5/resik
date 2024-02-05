@@ -10,6 +10,7 @@ import (
 
 	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
 	"github.com/dedyf5/resik/app/http/handler/transaction/request"
+	"github.com/dedyf5/resik/app/http/handler/transaction/response"
 	"github.com/dedyf5/resik/config"
 	trxService "github.com/dedyf5/resik/core/transaction"
 	"github.com/dedyf5/resik/ctx"
@@ -56,7 +57,7 @@ func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
 
 	return &status.Status{
 		Code: http.StatusOK,
-		Data: res,
+		Data: response.MerchantOmzetFromEntity(res),
 	}
 }
 
