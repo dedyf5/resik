@@ -11,11 +11,11 @@ import (
 	"net/http"
 	"reflect"
 	"regexp"
-	"strconv"
 	"strings"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	transLang "github.com/dedyf5/resik/ctx/lang/translations"
+	"github.com/dedyf5/resik/pkg/array"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -165,25 +165,14 @@ func isOneOfOrder(fl validator.FieldLevel) bool {
 		vals = append(vals, fmt.Sprintf("-%s", v))
 	}
 
-	field := fl.Field()
-
-	var v string
-	switch field.Kind() {
-	case reflect.String:
-		v = field.String()
-	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-		v = strconv.FormatInt(field.Int(), 10)
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-		v = strconv.FormatUint(field.Uint(), 10)
-	default:
-		panic(fmt.Sprintf("Bad field type %T", field.Interface()))
-	}
-	for i := 0; i < len(vals); i++ {
-		if vals[i] == v {
-			return true
+	fields := strings.Split(fl.Field().String(), ",")
+	for _, field := range fields {
+		if array.InArray(field, vals) < 0 {
+			return false
 		}
 	}
-	return false
+
+	return true
 }
 
 func getLanguage(langDef language.Tag, lang *langCtx.Lang) language.Tag {
