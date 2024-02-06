@@ -14,6 +14,8 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+const DocPrefix string = "/docs/swagger"
+
 type IEcho interface {
 	StructValidator(ctx echo.Context, payload interface{}) error
 }

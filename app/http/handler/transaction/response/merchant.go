@@ -7,9 +7,9 @@ package response
 import trxEntity "github.com/dedyf5/resik/entities/transaction"
 
 type MerchantOmzet struct {
-	MerchantName string  `json:"merchant_name"`
-	Omzet        float64 `json:"omzet"`
-	Period       string  `json:"period"`
+	MerchantName string  `json:"merchant_name" example:"Resik Merchant"`
+	Omzet        float64 `json:"omzet" example:"1000000.5"`
+	Period       string  `json:"period" example:"2024-02-06"`
 }
 
 func MerchantOmzetFromEntity(src []trxEntity.MerchantOmzet) []MerchantOmzet {

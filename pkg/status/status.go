@@ -20,6 +20,7 @@ type Status struct {
 	Data   interface{}       `json:"data"`
 	Meta   *Meta             `json:"meta"`
 	Detail map[string]string `json:"detail"`
+	Format interface{}       `json:"-"`
 }
 
 type Meta struct {

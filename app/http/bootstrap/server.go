@@ -18,6 +18,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/pkg/color"
 	"github.com/labstack/echo/v4"
+	echoMiddle "github.com/labstack/echo/v4/middleware"
 	"golang.org/x/text/language"
 )
 
@@ -27,16 +28,22 @@ type ServerHTTP struct {
 }
 
 func newServerHTTP(config config.Config, lang language.Tag, log *logCtx.Log) *ServerHTTP {
-	echo := echo.New()
-	echo.HideBanner = true
-	echo.HidePort = true
-	echo.Binder = echoFW.NewBinder()
-	echo.HTTPErrorHandler = echoFW.HTTPErrorHandler
-	echo.Use(echoFW.LoggerAndResponseFormatterMiddleware(log))
-	echo.Use(echoFW.LangMiddleware(config.App.LangDefault))
+	e := echo.New()
+	e.HideBanner = true
+	e.HidePort = true
+	e.Binder = echoFW.NewBinder()
+	e.HTTPErrorHandler = echoFW.HTTPErrorHandler
+	e.Use(echoFW.LoggerAndResponseFormatterMiddleware(log))
+	e.Use(echoFW.LangMiddleware(config.App.LangDefault))
+	e.Use(echoMiddle.CORSWithConfig(
+		echoMiddle.CORSConfig{
+			AllowOrigins: []string{"*"},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		},
+	))
 
 	return &ServerHTTP{
-		echo:   echo,
+		echo:   e,
 		config: config,
 	}
 }

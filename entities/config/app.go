@@ -30,3 +30,7 @@ type App struct {
 func (a *App) HostPort() string {
 	return fmt.Sprintf("%v:%v", a.Host, a.Port)
 }
+
+func (a *App) APIDocDescription() string {
+	return fmt.Sprintf("%v API Documentation", a.Name)
+}

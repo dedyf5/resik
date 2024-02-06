@@ -7,6 +7,7 @@ package echo
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
@@ -46,6 +47,11 @@ func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 func LoggerAndResponseFormatterMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
 	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+			if strings.Contains(r.RequestURI, DocPrefix) {
+				h.ServeHTTP(w, r)
+				return
+			}
 
 			correlationID := xid.New().String()
 			ctx := context.WithValue(

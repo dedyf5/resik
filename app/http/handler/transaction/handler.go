@@ -15,6 +15,7 @@ import (
 	trxService "github.com/dedyf5/resik/core/transaction"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
+	resEntity "github.com/dedyf5/resik/entities/response"
 	"github.com/dedyf5/resik/pkg/status"
 	"github.com/labstack/echo/v4"
 )
@@ -35,6 +36,17 @@ func New(fw echoFW.IEcho, log *logCtx.Log, service trxService.IService, config c
 	}
 }
 
+// @Summary Get Merchant Omzet
+// @Description Get merchant omzet by merchant id
+// @Tags transaction
+// @Accept json
+// @Produce json
+// @Param       id path int true "Merchant ID"
+// @Param       parameter query request.MerchantOmzetGet true "Query Param"
+// @Success		200	{object}	resEntity.Response{data=[]response.MerchantOmzet}
+// @Failure     400 {object}	resEntity.Response{}
+// @Failure     500 {object}	resEntity.Response{}
+// @Router		/transaction/merchant/{id}/omzet [get]
 func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
 	if err != nil {
@@ -63,6 +75,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 			Limit:       param.Filter.Limit,
 			Total:       res.Total,
 		},
+		Format: resEntity.Response{},
 	}
 }
 
