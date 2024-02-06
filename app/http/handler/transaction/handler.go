@@ -35,7 +35,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, service trxService.IService, config c
 	}
 }
 
-func (h *Handler) GetMerchantOmzet(echoCtx echo.Context) error {
+func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
 	if err != nil {
 		return err
@@ -94,7 +94,7 @@ func (h *Handler) Create(echoCtx echo.Context) error {
 	}
 }
 
-func (h *Handler) GetOutletOmzet(ctx echo.Context) error {
+func (h *Handler) OutletOmzetGet(ctx echo.Context) error {
 	return errors.New("MASUK GetOutletOmzet")
 }
 

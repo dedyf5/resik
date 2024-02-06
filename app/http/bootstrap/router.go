@@ -34,7 +34,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	trx := e.Group("/transaction")
 	trx.POST("", trxHandler.Create)
 	trxMerchant := trx.Group("/merchant/:id")
-	trxMerchant.GET("/omzet", trxHandler.GetMerchantOmzet)
+	trxMerchant.GET("/omzet", trxHandler.MerchantOmzetGet)
 	trxOutlet := trx.Group("/outlet/:id")
-	trxOutlet.GET("/omzet", trxHandler.GetOutletOmzet)
+	trxOutlet.GET("/omzet", trxHandler.OutletOmzetGet)
 }
