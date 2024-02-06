@@ -6,12 +6,14 @@ package request
 
 import (
 	ctx "github.com/dedyf5/resik/ctx"
+	commonEntity "github.com/dedyf5/resik/entities/common"
 	"github.com/dedyf5/resik/entities/groupperiod"
 	trxParam "github.com/dedyf5/resik/entities/transaction/param"
 	"github.com/dedyf5/resik/pkg/goku"
 )
 
 type MerchantOmzetGet struct {
+	commonEntity.Request
 	ID            uint64  `json:"-" param:"id" query:"-" validate:"required,min=1" example:"1"`
 	Mode          string  `json:"mode" query:"mode" validate:"required,oneof=day month year" example:"day"`
 	DateTimeStart string  `json:"datetime_start" query:"datetime_start" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-02-01 13:45:00"`

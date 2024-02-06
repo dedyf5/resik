@@ -85,6 +85,12 @@ paths:
         name: datetime_start
         required: true
         type: string
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
       - example: 10
         in: query
         maximum: 100
