@@ -2,7 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package status
+package response
 
 import "net/http"
 
@@ -20,7 +20,6 @@ type Status struct {
 	Data   interface{}       `json:"data"`
 	Meta   *Meta             `json:"meta"`
 	Detail map[string]string `json:"detail"`
-	Format interface{}       `json:"-"`
 }
 
 type Meta struct {

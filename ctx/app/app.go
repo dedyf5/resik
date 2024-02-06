@@ -6,7 +6,7 @@ package app
 
 import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
-	"github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
 type Name string
@@ -18,7 +18,7 @@ const (
 type IApp interface {
 	Name() Name
 	Path() string
-	Status() status.IStatus
+	Status() resPkg.IStatus
 	Logger() logCtx.ILog
 }
 

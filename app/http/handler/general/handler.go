@@ -10,7 +10,7 @@ import (
 	"github.com/dedyf5/resik/config"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	commonEntity "github.com/dedyf5/resik/entities/common"
-	"github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v4"
 )
 
@@ -26,7 +26,7 @@ func New(config config.Config) *Handler {
 
 func (h *Handler) Home(ctx echo.Context) error {
 	lang := ctx.Get(langCtx.ContextKey.String()).(*langCtx.Lang)
-	return &status.Status{
+	return &resPkg.Status{
 		Code:    http.StatusOK,
 		Message: lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
 		Data: commonEntity.Map{

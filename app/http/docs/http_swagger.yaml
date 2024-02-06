@@ -11,18 +11,26 @@ definitions:
         example: "2024-02-06"
         type: string
     type: object
-  response.Meta:
+  response.Response:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/response.ResponseMeta'
+      status:
+        $ref: '#/definitions/response.ResponseStatus'
+    type: object
+  response.ResponseMeta:
     properties:
       limit:
         example: 10
         type: integer
       page:
-        $ref: '#/definitions/response.Page'
+        $ref: '#/definitions/response.ResponsePage'
       total:
         example: 100
         type: integer
     type: object
-  response.Page:
+  response.ResponsePage:
     properties:
       current:
         example: 3
@@ -40,15 +48,7 @@ definitions:
         example: 2
         type: integer
     type: object
-  response.Response:
-    properties:
-      data: {}
-      meta:
-        $ref: '#/definitions/response.Meta'
-      status:
-        $ref: '#/definitions/response.Status'
-    type: object
-  response.Status:
+  response.ResponseStatus:
     properties:
       code:
         example: "200.1"

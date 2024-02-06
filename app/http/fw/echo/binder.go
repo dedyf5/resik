@@ -13,7 +13,7 @@ import (
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/entities/common"
-	"github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v4"
 )
 
@@ -155,7 +155,7 @@ func (b *bind) ParamValidator(c echo.Context, i interface{}) error {
 				"expected": ft,
 				"actual":   "string",
 			})
-			return &status.Status{
+			return &resPkg.Status{
 				Code:    http.StatusBadRequest,
 				Message: msg,
 				Detail: map[string]string{
@@ -201,7 +201,7 @@ func (b *bind) JSONErrorFormatter(c echo.Context, err error) error {
 			"expected": expecteds[1],
 			"actual":   gots[1],
 		})
-		return &status.Status{
+		return &resPkg.Status{
 			Code:    http.StatusBadRequest,
 			Message: errMap[field],
 			Detail:  errMap,

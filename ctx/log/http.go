@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"time"
 
-	responseEntity "github.com/dedyf5/resik/entities/response"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -48,7 +48,7 @@ func (h *HTTP) Write(buf []byte) (int, error) {
 	return h.ResponseWriter.Write(bodyByte)
 }
 
-func (h *HTTP) writeLogger(loggerRes *responseEntity.Log) {
+func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 	msg := ""
 	if loggerRes != nil {
 		msg = loggerRes.Message
@@ -74,8 +74,8 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	return nil
 }
 
-func getLogResponse(buf []byte) *responseEntity.Log {
-	var response responseEntity.Log
+func getLogResponse(buf []byte) *resPkg.Log {
+	var response resPkg.Log
 	err := json.Unmarshal(buf, &response)
 	if err != nil {
 		return nil

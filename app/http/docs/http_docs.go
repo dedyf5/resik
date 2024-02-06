@@ -146,7 +146,19 @@ const docTemplatehttp = `{
                 }
             }
         },
-        "response.Meta": {
+        "response.Response": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "meta": {
+                    "$ref": "#/definitions/response.ResponseMeta"
+                },
+                "status": {
+                    "$ref": "#/definitions/response.ResponseStatus"
+                }
+            }
+        },
+        "response.ResponseMeta": {
             "type": "object",
             "properties": {
                 "limit": {
@@ -154,7 +166,7 @@ const docTemplatehttp = `{
                     "example": 10
                 },
                 "page": {
-                    "$ref": "#/definitions/response.Page"
+                    "$ref": "#/definitions/response.ResponsePage"
                 },
                 "total": {
                     "type": "integer",
@@ -162,7 +174,7 @@ const docTemplatehttp = `{
                 }
             }
         },
-        "response.Page": {
+        "response.ResponsePage": {
             "type": "object",
             "properties": {
                 "current": {
@@ -187,19 +199,7 @@ const docTemplatehttp = `{
                 }
             }
         },
-        "response.Response": {
-            "type": "object",
-            "properties": {
-                "data": {},
-                "meta": {
-                    "$ref": "#/definitions/response.Meta"
-                },
-                "status": {
-                    "$ref": "#/definitions/response.Status"
-                }
-            }
-        },
-        "response.Status": {
+        "response.ResponseStatus": {
             "type": "object",
             "properties": {
                 "code": {

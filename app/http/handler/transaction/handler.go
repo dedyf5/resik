@@ -9,14 +9,13 @@ import (
 	"net/http"
 
 	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
-	"github.com/dedyf5/resik/app/http/handler/transaction/request"
-	"github.com/dedyf5/resik/app/http/handler/transaction/response"
+	trxReq "github.com/dedyf5/resik/app/http/handler/transaction/request"
+	trxRes "github.com/dedyf5/resik/app/http/handler/transaction/response"
 	"github.com/dedyf5/resik/config"
 	trxService "github.com/dedyf5/resik/core/transaction"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
-	resEntity "github.com/dedyf5/resik/entities/response"
-	"github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v4"
 )
 
@@ -43,9 +42,9 @@ func New(fw echoFW.IEcho, log *logCtx.Log, service trxService.IService, config c
 // @Produce json
 // @Param       id path int true "Merchant ID"
 // @Param       parameter query request.MerchantOmzetGet true "Query Param"
-// @Success		200	{object}	resEntity.Response{data=[]response.MerchantOmzet}
-// @Failure     400 {object}	resEntity.Response{}
-// @Failure     500 {object}	resEntity.Response{}
+// @Success		200	{object}	resPkg.Response{data=[]trxRes.MerchantOmzet}
+// @Failure     400 {object}	resPkg.Response{}
+// @Failure     500 {object}	resPkg.Response{}
 // @Router		/transaction/merchant/{id}/omzet [get]
 func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
@@ -54,7 +53,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 	}
 	ctx.App.Logger().Debug("GetMerchantOmzet")
 
-	var payload request.MerchantOmzetGet
+	var payload trxReq.MerchantOmzetGet
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
@@ -67,15 +66,14 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	return &status.Status{
+	return &resPkg.Status{
 		Code: http.StatusOK,
-		Data: response.MerchantOmzetFromEntity(res.Data),
-		Meta: &status.Meta{
+		Data: trxRes.MerchantOmzetFromEntity(res.Data),
+		Meta: &resPkg.Meta{
 			PageCurrent: param.Filter.Page,
 			Limit:       param.Filter.Limit,
 			Total:       res.Total,
 		},
-		Format: resEntity.Response{},
 	}
 }
 
@@ -86,7 +84,7 @@ func (h *Handler) Create(echoCtx echo.Context) error {
 	}
 	// ctx.App.Logger().Debug("Create")
 
-	var payload request.TransactionUpsert
+	var payload trxReq.TransactionUpsert
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
@@ -97,7 +95,7 @@ func (h *Handler) Create(echoCtx echo.Context) error {
 		langReq = ctx.Lang.LangReq.String()
 	}
 
-	return &status.Status{
+	return &resPkg.Status{
 		Code: http.StatusOK,
 		Data: map[string]interface{}{
 			"req":      payload,

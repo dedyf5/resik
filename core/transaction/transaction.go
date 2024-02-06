@@ -9,12 +9,12 @@ import (
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
-	statusPkg "github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
 //go:generate mockgen -source transaction.go -package mock -destination ./mock/transaction.go
 type IService interface {
-	MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res *trxDTO.MerchantOmzet, status *statusPkg.Status)
+	MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res *trxDTO.MerchantOmzet, status *resPkg.Status)
 	OutletOmzet(outletID int64, date []time.Time) ([]trxEntity.OutletOmzet, error)
 	GetUserByUserNameAndPassword(userName, password string) (*userEntity.User, error)
 	ValidateAuthRequest(username, password string) error

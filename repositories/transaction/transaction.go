@@ -14,11 +14,11 @@ import (
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	"github.com/dedyf5/resik/pkg/goku"
-	statusPkg "github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"gorm.io/gorm"
 )
 
-func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *statusPkg.Status) {
+func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *resPkg.Status) {
 	query, status := r.MerchantOmzetGetQuery(param)
 	if status != nil {
 		return res, status
@@ -36,7 +36,7 @@ func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet)
 		}
 		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
 		if err != nil {
-			return nil, &statusPkg.Status{
+			return nil, &resPkg.Status{
 				Code:       http.StatusInternalServerError,
 				CauseError: err,
 			}
@@ -46,7 +46,7 @@ func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet)
 
 	err := query.Find(&res).Error
 	if err != nil {
-		return res, &statusPkg.Status{
+		return res, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: err,
 		}
@@ -54,7 +54,7 @@ func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet)
 	return
 }
 
-func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total uint64, status *statusPkg.Status) {
+func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total uint64, status *resPkg.Status) {
 	query, status := r.MerchantOmzetGetQuery(param)
 	if status != nil {
 		return 0, status
@@ -65,7 +65,7 @@ func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet
 		Table("(?) AS x", query)
 	err := query.Take(&total).Error
 	if err != nil {
-		return 0, &statusPkg.Status{
+		return 0, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: err,
 		}
@@ -73,7 +73,7 @@ func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet
 	return
 }
 
-func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet) (query *gorm.DB, status *statusPkg.Status) {
+func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet) (query *gorm.DB, status *resPkg.Status) {
 	query = r.DB.
 		WithContext(param.Ctx.Context).
 		Select(`

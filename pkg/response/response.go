@@ -1,24 +1,24 @@
 package response
 
 type Response struct {
-	Status Status      `json:"status"`
-	Data   interface{} `json:"data,omitempty"`
-	Meta   *Meta       `json:"meta,omitempty"`
+	Status ResponseStatus `json:"status"`
+	Data   interface{}    `json:"data,omitempty"`
+	Meta   *ResponseMeta  `json:"meta,omitempty"`
 }
 
-type Status struct {
+type ResponseStatus struct {
 	Code    string            `json:"code" example:"200.1"`
 	Message string            `json:"message" example:"OK"`
 	Detail  map[string]string `json:"detail,omitempty"`
 }
 
-type Meta struct {
-	Total uint64 `json:"total" example:"100"`
-	Limit int    `json:"limit" example:"10"`
-	Page  *Page  `json:"page"`
+type ResponseMeta struct {
+	Total uint64        `json:"total" example:"100"`
+	Limit int           `json:"limit" example:"10"`
+	Page  *ResponsePage `json:"page"`
 }
 
-type Page struct {
+type ResponsePage struct {
 	First    int  `json:"first" example:"1"`
 	Previous *int `json:"previous" example:"2"`
 	Current  int  `json:"current" example:"3"`

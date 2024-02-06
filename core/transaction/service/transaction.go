@@ -15,14 +15,14 @@ import (
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
-	statusPkg "github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
 const (
 	perPage = 10
 )
 
-func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res *trxDTO.MerchantOmzet, status *statusPkg.Status) {
+func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res *trxDTO.MerchantOmzet, status *resPkg.Status) {
 	total, status := s.transactionRepo.MerchantOmzetGetTotal(param)
 	if status != nil {
 		return nil, status

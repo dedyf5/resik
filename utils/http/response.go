@@ -7,20 +7,19 @@ package http
 import (
 	"fmt"
 
-	"github.com/dedyf5/resik/entities/response"
-	statusPkg "github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
-func ResponseFromStatus(status *statusPkg.Status) response.Response {
+func ResponseFromStatus(status *resPkg.Status) resPkg.Response {
 	if status.IsError() {
 		return ResponseErrorAuto(status)
 	}
 	return ResponseSuccessAuto(status)
 }
 
-func ResponseSuccessAuto(status *statusPkg.Status) response.Response {
-	res := response.Response{
-		Status: response.Status{
+func ResponseSuccessAuto(status *resPkg.Status) resPkg.Response {
+	res := resPkg.Response{
+		Status: resPkg.ResponseStatus{
 			Code:    fmt.Sprintf("%d.1", status.Code),
 			Message: status.MessageOrDefault(),
 		},
@@ -30,9 +29,9 @@ func ResponseSuccessAuto(status *statusPkg.Status) response.Response {
 	return res
 }
 
-func ResponseErrorAuto(status *statusPkg.Status) response.Response {
-	return response.Response{
-		Status: response.Status{
+func ResponseErrorAuto(status *resPkg.Status) resPkg.Response {
+	return resPkg.Response{
+		Status: resPkg.ResponseStatus{
 			Code:    fmt.Sprintf("%d.1", status.Code),
 			Message: status.MessageOrDefault(),
 			Detail:  status.Detail,
@@ -40,23 +39,23 @@ func ResponseErrorAuto(status *statusPkg.Status) response.Response {
 	}
 }
 
-func ResponseMetaFromStatusMeta(statusMeta *statusPkg.Meta) *response.Meta {
+func ResponseMetaFromStatusMeta(statusMeta *resPkg.Meta) *resPkg.ResponseMeta {
 	if statusMeta == nil {
 		return nil
 	}
-	return &response.Meta{
+	return &resPkg.ResponseMeta{
 		Total: statusMeta.Total,
 		Page:  Page(statusMeta.Total, statusMeta.Limit, statusMeta.PageCurrent),
 		Limit: statusMeta.Limit,
 	}
 }
 
-func Page(total uint64, limit, pageCurrent int) *response.Page {
+func Page(total uint64, limit, pageCurrent int) *resPkg.ResponsePage {
 	current := pageCurrent
 	if pageCurrent == 0 {
 		current = 1
 	}
-	res := response.Page{
+	res := resPkg.ResponsePage{
 		First:    1,
 		Previous: nil,
 		Current:  current,
@@ -92,7 +91,7 @@ func Page(total uint64, limit, pageCurrent int) *response.Page {
 		}
 	}
 
-	return &response.Page{
+	return &resPkg.ResponsePage{
 		First:    1,
 		Previous: previous,
 		Current:  current,
@@ -101,23 +100,23 @@ func Page(total uint64, limit, pageCurrent int) *response.Page {
 	}
 }
 
-func LoggerFromStatus(status *statusPkg.Status) response.Log {
+func LoggerFromStatus(status *resPkg.Status) resPkg.Log {
 	msg := status.MessageOrDefault()
 	if err := status.CauseError; err != nil {
 		msg = err.Error()
 	}
-	return response.Log{
+	return resPkg.Log{
 		Response: ResponseFromStatus(status),
 		Message:  msg,
 	}
 }
 
-func LoggerErrorAuto(status *statusPkg.Status) response.Log {
+func LoggerErrorAuto(status *resPkg.Status) resPkg.Log {
 	msg := status.MessageOrDefault()
 	if err := status.CauseError; err != nil {
 		msg = err.Error()
 	}
-	return response.Log{
+	return resPkg.Log{
 		Response: ResponseErrorAuto(status),
 		Message:  msg,
 	}

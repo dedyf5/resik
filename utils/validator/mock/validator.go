@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	lang "github.com/dedyf5/resik/ctx/lang"
-	status "github.com/dedyf5/resik/pkg/status"
+	response "github.com/dedyf5/resik/pkg/response"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -36,10 +36,10 @@ func (m *MockIValidate) EXPECT() *MockIValidateMockRecorder {
 }
 
 // ErrorFormatter mocks base method.
-func (m *MockIValidate) ErrorFormatter(err error, lang *lang.Lang) *status.Status {
+func (m *MockIValidate) ErrorFormatter(err error, lang *lang.Lang) *response.Status {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ErrorFormatter", err, lang)
-	ret0, _ := ret[0].(*status.Status)
+	ret0, _ := ret[0].(*response.Status)
 	return ret0
 }
 
@@ -50,10 +50,10 @@ func (mr *MockIValidateMockRecorder) ErrorFormatter(err, lang interface{}) *gomo
 }
 
 // Struct mocks base method.
-func (m *MockIValidate) Struct(payloadStruct interface{}, lang *lang.Lang) *status.Status {
+func (m *MockIValidate) Struct(payloadStruct interface{}, lang *lang.Lang) *response.Status {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Struct", payloadStruct, lang)
-	ret0, _ := ret[0].(*status.Status)
+	ret0, _ := ret[0].(*response.Status)
 	return ret0
 }
 

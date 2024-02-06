@@ -16,7 +16,7 @@ import (
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	transLang "github.com/dedyf5/resik/ctx/lang/translations"
-	"github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/text/language"
@@ -24,8 +24,8 @@ import (
 
 //go:generate mockgen -source validator.go -package mock -destination ./mock/validator.go
 type IValidate interface {
-	Struct(payloadStruct interface{}, lang *langCtx.Lang) *status.Status
-	ErrorFormatter(err error, lang *langCtx.Lang) *status.Status
+	Struct(payloadStruct interface{}, lang *langCtx.Lang) *resPkg.Status
+	ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status
 }
 
 type Validate struct {
@@ -83,9 +83,9 @@ func New(langDefault language.Tag) *Validate {
 	}
 }
 
-func (v *Validate) Struct(payloadStruct interface{}, lang *langCtx.Lang) *status.Status {
+func (v *Validate) Struct(payloadStruct interface{}, lang *langCtx.Lang) *resPkg.Status {
 	if payloadStruct == nil {
-		return &status.Status{
+		return &resPkg.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: errors.New("payloadStruct can't be nil"),
 		}
@@ -94,7 +94,7 @@ func (v *Validate) Struct(payloadStruct interface{}, lang *langCtx.Lang) *status
 	err := v.instance.Struct(payloadStruct)
 	if err != nil {
 		if _, ok := err.(*validator.InvalidValidationError); ok {
-			return &status.Status{
+			return &resPkg.Status{
 				Code: http.StatusInternalServerError,
 			}
 		}
@@ -104,10 +104,10 @@ func (v *Validate) Struct(payloadStruct interface{}, lang *langCtx.Lang) *status
 	return nil
 }
 
-func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *status.Status {
+func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status {
 	errs, ok := err.(validator.ValidationErrors)
 	if !ok {
-		return &status.Status{
+		return &resPkg.Status{
 			Code: http.StatusBadRequest,
 		}
 	}
@@ -140,7 +140,7 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *status.Status 
 		}
 	}
 
-	return &status.Status{
+	return &resPkg.Status{
 		Code:    http.StatusBadRequest,
 		Message: first,
 		Detail:  errMap,

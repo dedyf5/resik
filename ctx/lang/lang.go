@@ -14,7 +14,7 @@ import (
 
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	"github.com/dedyf5/resik/pkg/array"
-	"github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
 )
@@ -58,14 +58,14 @@ func NewLocalizer(bundle *i18n.Bundle, langDefault language.Tag, langReq *langua
 	return i18n.NewLocalizer(bundle, GetLanguageReqOrDefault(langDefault, langReq).String(), langAccept)
 }
 
-// return *Lang, if parsing failed return *status.Status error
+// return *Lang, if parsing failed return *response.Status error
 //
 // error status code: 500
-func FromContext(ctx context.Context) (*Lang, *status.Status) {
+func FromContext(ctx context.Context) (*Lang, *resPkg.Status) {
 	if lang, ok := ctx.Value(ContextKey).(*Lang); ok {
 		return lang, nil
 	}
-	return nil, &status.Status{
+	return nil, &resPkg.Status{
 		Code:       http.StatusInternalServerError,
 		CauseError: errors.New("failed to casting lang from context"),
 	}
@@ -107,16 +107,16 @@ func GetLanguageOrDefault(lang string) language.Tag {
 	return *result
 }
 
-// return *language.Tag. if parsing failed return *status.Status error
+// return *language.Tag. if parsing failed return *response.Status error
 //
 // error status code: 400, 500
-func GetLanguageAvailable(lang string) (*language.Tag, *status.Status) {
+func GetLanguageAvailable(lang string) (*language.Tag, *resPkg.Status) {
 	if _, err := LanguageIsAvailable(lang); err != nil {
 		return nil, err
 	}
 	res, err := language.Parse(lang)
 	if err != nil {
-		return nil, &status.Status{
+		return nil, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: err,
 		}
@@ -124,13 +124,13 @@ func GetLanguageAvailable(lang string) (*language.Tag, *status.Status) {
 	return &res, nil
 }
 
-// return bool. if lang not avaliable return *status.Status error
+// return bool. if lang not avaliable return *response.Status error
 //
 // error status code: 400
-func LanguageIsAvailable(lang string) (bool, *status.Status) {
+func LanguageIsAvailable(lang string) (bool, *resPkg.Status) {
 	if lang == "" {
 		msg := "lang is required"
-		return false, &status.Status{
+		return false, &resPkg.Status{
 			Code:    http.StatusBadRequest,
 			Message: msg,
 			Detail: map[string]string{
@@ -144,7 +144,7 @@ func LanguageIsAvailable(lang string) (bool, *status.Status) {
 	}
 	if array.InArray(lang, langCodes) < 0 {
 		msg := fmt.Sprintf("lang must be one of [%s]", strings.Join(langCodes, ", "))
-		return false, &status.Status{
+		return false, &resPkg.Status{
 			Code:    http.StatusBadRequest,
 			Message: msg,
 			Detail: map[string]string{

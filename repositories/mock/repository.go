@@ -13,7 +13,7 @@ import (
 	transaction "github.com/dedyf5/resik/entities/transaction"
 	param "github.com/dedyf5/resik/entities/transaction/param"
 	user "github.com/dedyf5/resik/entities/user"
-	status "github.com/dedyf5/resik/pkg/status"
+	response "github.com/dedyf5/resik/pkg/response"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -116,11 +116,11 @@ func (mr *MockITransactionMockRecorder) GetUserByUserNameAndPassword(userName, p
 }
 
 // MerchantOmzetGetData mocks base method.
-func (m *MockITransaction) MerchantOmzetGetData(param *param.MerchantOmzetGet) ([]transaction.MerchantOmzet, *status.Status) {
+func (m *MockITransaction) MerchantOmzetGetData(param *param.MerchantOmzetGet) ([]transaction.MerchantOmzet, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MerchantOmzetGetData", param)
 	ret0, _ := ret[0].([]transaction.MerchantOmzet)
-	ret1, _ := ret[1].(*status.Status)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
@@ -131,11 +131,11 @@ func (mr *MockITransactionMockRecorder) MerchantOmzetGetData(param interface{}) 
 }
 
 // MerchantOmzetGetTotal mocks base method.
-func (m *MockITransaction) MerchantOmzetGetTotal(param *param.MerchantOmzetGet) (uint64, *status.Status) {
+func (m *MockITransaction) MerchantOmzetGetTotal(param *param.MerchantOmzetGet) (uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MerchantOmzetGetTotal", param)
 	ret0, _ := ret[0].(uint64)
-	ret1, _ := ret[1].(*status.Status)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 

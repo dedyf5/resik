@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
-	"github.com/dedyf5/resik/pkg/status"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	httpUtil "github.com/dedyf5/resik/utils/http"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/labstack/echo/v4"
@@ -50,14 +50,14 @@ func HTTPErrorHandler(err error, ctx echo.Context) {
 	}
 
 	switch res := err.(type) {
-	case *status.Status:
+	case *resPkg.Status:
 		if res.Code != http.StatusNoContent {
 			ctx.JSON(res.Code, httpUtil.LoggerFromStatus(res))
 		}
 		return
 	}
 
-	ctx.JSON(http.StatusInternalServerError, httpUtil.LoggerErrorAuto(&status.Status{
+	ctx.JSON(http.StatusInternalServerError, httpUtil.LoggerErrorAuto(&resPkg.Status{
 		Code: http.StatusInternalServerError,
 	}))
 }
