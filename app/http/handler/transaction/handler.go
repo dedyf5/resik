@@ -43,8 +43,8 @@ func New(fw echoFW.IEcho, log *logCtx.Log, service trxService.IService, config c
 // @Param       id path int true "Merchant ID"
 // @Param       parameter query request.MerchantOmzetGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=[]trxRes.MerchantOmzet}
-// @Failure     400 {object}	resPkg.Response{}
-// @Failure     500 {object}	resPkg.Response{}
+// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/transaction/merchant/{id}/omzet [get]
 func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
