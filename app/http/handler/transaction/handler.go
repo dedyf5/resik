@@ -77,38 +77,6 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 	}
 }
 
-func (h *Handler) Create(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
-	if err != nil {
-		return err
-	}
-	// ctx.App.Logger().Debug("Create")
-
-	var payload trxReq.TransactionUpsert
-
-	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
-		return err
-	}
-
-	langReq := ""
-	if ctx.Lang.LangReq != nil {
-		langReq = ctx.Lang.LangReq.String()
-	}
-
-	return &resPkg.Status{
-		Code: http.StatusOK,
-		Data: map[string]interface{}{
-			"req":      payload,
-			"lang_def": ctx.Lang.LangDefault.String(),
-			"lang_req": langReq,
-		},
-	}
-}
-
 func (h *Handler) OutletOmzetGet(ctx echo.Context) error {
 	return errors.New("MASUK GetOutletOmzet")
-}
-
-func (h *Handler) Login(ctx echo.Context) error {
-	return errors.New("MASUK Login")
 }
