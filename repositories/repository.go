@@ -1,8 +1,10 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
 package repositories
 
 import (
-	"time"
-
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
@@ -15,7 +17,8 @@ import (
 type ITransaction interface {
 	MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *resPkg.Status)
 	MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total uint64, status *resPkg.Status)
-	OutletOmzet(outletID int64, date time.Time) (*trxEntity.OutletOmzet, error)
+	OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (res []trxEntity.OutletOmzet, status *resPkg.Status)
+	OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (total uint64, status *resPkg.Status)
 	GetMerchantByID(merchantID int64) (*merchantEntity.Merchant, error)
 	GetMerchantByIDAndUserID(merchantID int64, userID int64) (*merchantEntity.Merchant, error)
 	GetOutletByID(outletID int64) (*outletEntity.Outlet, error)

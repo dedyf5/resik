@@ -11,7 +11,6 @@ import (
 	dto "github.com/dedyf5/resik/core/transaction/dto"
 	merchant "github.com/dedyf5/resik/entities/merchant"
 	outlet "github.com/dedyf5/resik/entities/outlet"
-	transaction "github.com/dedyf5/resik/entities/transaction"
 	param "github.com/dedyf5/resik/entities/transaction/param"
 	user "github.com/dedyf5/resik/entities/user"
 	response "github.com/dedyf5/resik/pkg/response"
@@ -85,19 +84,19 @@ func (mr *MockIServiceMockRecorder) MerchantOmzetGet(param interface{}) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantOmzetGet", reflect.TypeOf((*MockIService)(nil).MerchantOmzetGet), param)
 }
 
-// OutletOmzet mocks base method.
-func (m *MockIService) OutletOmzet(outletID int64, date []time.Time) ([]transaction.OutletOmzet, error) {
+// OutletOmzetGet mocks base method.
+func (m *MockIService) OutletOmzetGet(param *param.OutletOmzetGet) (*dto.OutletOmzet, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OutletOmzet", outletID, date)
-	ret0, _ := ret[0].([]transaction.OutletOmzet)
-	ret1, _ := ret[1].(error)
+	ret := m.ctrl.Call(m, "OutletOmzetGet", param)
+	ret0, _ := ret[0].(*dto.OutletOmzet)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
-// OutletOmzet indicates an expected call of OutletOmzet.
-func (mr *MockIServiceMockRecorder) OutletOmzet(outletID, date interface{}) *gomock.Call {
+// OutletOmzetGet indicates an expected call of OutletOmzetGet.
+func (mr *MockIServiceMockRecorder) OutletOmzetGet(param interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletOmzet", reflect.TypeOf((*MockIService)(nil).OutletOmzet), outletID, date)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletOmzetGet", reflect.TypeOf((*MockIService)(nil).OutletOmzetGet), param)
 }
 
 // ValidateAuthRequest mocks base method.

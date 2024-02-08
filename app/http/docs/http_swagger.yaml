@@ -11,6 +11,21 @@ definitions:
         example: "2024-02-06"
         type: string
     type: object
+  response.OutletOmzet:
+    properties:
+      merchant_name:
+        example: Resik Merchant
+        type: string
+      omzet:
+        example: 50000.5
+        type: number
+      outlet_name:
+        example: Resik Outlet
+        type: string
+      period:
+        example: "2024-02-06"
+        type: string
+    type: object
   response.Response:
     properties:
       data: {}
@@ -152,6 +167,96 @@ paths:
                   type: object
               type: object
       summary: Get Merchant Omzet
+      tags:
+      - transaction
+  /transaction/outlet/{id}/omzet:
+    get:
+      consumes:
+      - application/json
+      description: Get outlet omzet by outlet id
+      parameters:
+      - description: Outlet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - example: "2024-02-01 13:45:00"
+        in: query
+        name: datetime_end
+        required: true
+        type: string
+      - example: "2024-02-01 13:45:00"
+        in: query
+        name: datetime_start
+        required: true
+        type: string
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      - example: 10
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - enum:
+        - day
+        - month
+        - year
+        example: day
+        in: query
+        name: mode
+        required: true
+        type: string
+      - example: period
+        in: query
+        name: order
+        type: string
+      - example: 1
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - example: keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.OutletOmzet'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Get Outlet Omzet
       tags:
       - transaction
 swagger: "2.0"

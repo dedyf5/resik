@@ -6,7 +6,6 @@ package mock
 
 import (
 	reflect "reflect"
-	time "time"
 
 	merchant "github.com/dedyf5/resik/entities/merchant"
 	outlet "github.com/dedyf5/resik/entities/outlet"
@@ -145,17 +144,32 @@ func (mr *MockITransactionMockRecorder) MerchantOmzetGetTotal(param interface{})
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantOmzetGetTotal", reflect.TypeOf((*MockITransaction)(nil).MerchantOmzetGetTotal), param)
 }
 
-// OutletOmzet mocks base method.
-func (m *MockITransaction) OutletOmzet(outletID int64, date time.Time) (*transaction.OutletOmzet, error) {
+// OutletOmzetGetData mocks base method.
+func (m *MockITransaction) OutletOmzetGetData(param *param.OutletOmzetGet) ([]transaction.OutletOmzet, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OutletOmzet", outletID, date)
-	ret0, _ := ret[0].(*transaction.OutletOmzet)
-	ret1, _ := ret[1].(error)
+	ret := m.ctrl.Call(m, "OutletOmzetGetData", param)
+	ret0, _ := ret[0].([]transaction.OutletOmzet)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
-// OutletOmzet indicates an expected call of OutletOmzet.
-func (mr *MockITransactionMockRecorder) OutletOmzet(outletID, date interface{}) *gomock.Call {
+// OutletOmzetGetData indicates an expected call of OutletOmzetGetData.
+func (mr *MockITransactionMockRecorder) OutletOmzetGetData(param interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletOmzet", reflect.TypeOf((*MockITransaction)(nil).OutletOmzet), outletID, date)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletOmzetGetData", reflect.TypeOf((*MockITransaction)(nil).OutletOmzetGetData), param)
+}
+
+// OutletOmzetGetTotal mocks base method.
+func (m *MockITransaction) OutletOmzetGetTotal(param *param.OutletOmzetGet) (uint64, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OutletOmzetGetTotal", param)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// OutletOmzetGetTotal indicates an expected call of OutletOmzetGetTotal.
+func (mr *MockITransactionMockRecorder) OutletOmzetGetTotal(param interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletOmzetGetTotal", reflect.TypeOf((*MockITransaction)(nil).OutletOmzetGetTotal), param)
 }

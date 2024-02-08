@@ -5,7 +5,6 @@
 package handler
 
 import (
-	"errors"
 	"net/http"
 
 	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
@@ -77,6 +76,43 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 	}
 }
 
-func (h *Handler) OutletOmzetGet(ctx echo.Context) error {
-	return errors.New("MASUK GetOutletOmzet")
+// @Summary Get Outlet Omzet
+// @Description Get outlet omzet by outlet id
+// @Tags transaction
+// @Accept json
+// @Produce json
+// @Param       id path int true "Outlet ID"
+// @Param       parameter query request.OutletOmzetGet true "Query Param"
+// @Success		200	{object}	resPkg.Response{data=[]trxRes.OutletOmzet}
+// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Router		/transaction/outlet/{id}/omzet [get]
+func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
+	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	if err != nil {
+		return err
+	}
+
+	var payload trxReq.OutletOmzetGet
+
+	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
+		return err
+	}
+
+	param := payload.ToParam(ctx)
+
+	res, err := h.service.OutletOmzetGet(param)
+	if err != nil {
+		return err
+	}
+
+	return &resPkg.Status{
+		Code: http.StatusOK,
+		Data: trxRes.OutletOmzetFromEntity(res.Data),
+		Meta: &resPkg.Meta{
+			PageCurrent: param.Filter.Page,
+			Limit:       param.Filter.Limit,
+			Total:       res.Total,
+		},
+	}
 }

@@ -4,11 +4,11 @@
 
 package transaction
 
-import "time"
-
 type OutletOmzet struct {
-	MerchantName string    `gorm:"column:merchant_name"`
-	OutletName   string    `gorm:"column:outlet_name"`
-	Omzet        float64   `gorm:"column:omzet"`
-	Date         time.Time `gorm:"column:date"`
+	MerchantID   int64   `gorm:"column:merchant_id"`
+	MerchantName string  `gorm:"column:merchant_name"`
+	OutletID     int64   `gorm:"column:outlet_id"`
+	OutletName   string  `gorm:"column:outlet_name"`
+	Omzet        float64 `gorm:"column:omzet"`
+	Period       string  `gorm:"column:period"`
 }

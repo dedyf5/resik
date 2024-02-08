@@ -159,6 +159,151 @@ const docTemplatehttp = `{
                     }
                 }
             }
+        },
+        "/transaction/outlet/{id}/omzet": {
+            "get": {
+                "description": "Get outlet omzet by outlet id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transaction"
+                ],
+                "summary": "Get Outlet Omzet",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Outlet ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "2024-02-01 13:45:00",
+                        "name": "datetime_end",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "2024-02-01 13:45:00",
+                        "name": "datetime_start",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "en",
+                            "id"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 100,
+                        "minimum": 1,
+                        "type": "integer",
+                        "example": 10,
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "enum": [
+                            "day",
+                            "month",
+                            "year"
+                        ],
+                        "type": "string",
+                        "example": "day",
+                        "name": "mode",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "example": "period",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "example": 1,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "keyword",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.OutletOmzet"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -172,6 +317,27 @@ const docTemplatehttp = `{
                 "omzet": {
                     "type": "number",
                     "example": 1000000.5
+                },
+                "period": {
+                    "type": "string",
+                    "example": "2024-02-06"
+                }
+            }
+        },
+        "response.OutletOmzet": {
+            "type": "object",
+            "properties": {
+                "merchant_name": {
+                    "type": "string",
+                    "example": "Resik Merchant"
+                },
+                "omzet": {
+                    "type": "number",
+                    "example": 50000.5
+                },
+                "outlet_name": {
+                    "type": "string",
+                    "example": "Resik Outlet"
                 },
                 "period": {
                     "type": "string",

@@ -12,7 +12,6 @@ import (
 	trxDTO "github.com/dedyf5/resik/core/transaction/dto"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
-	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -37,27 +36,19 @@ func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res *trxDT
 	}, nil
 }
 
-func (s *Service) OutletOmzet(outletID int64, dates []time.Time) ([]trxEntity.OutletOmzet, error) {
-	var outlets []trxEntity.OutletOmzet
-	base, err1 := s.transactionRepo.GetOutletByID(outletID)
-	if err1 != nil {
-		return outlets, err1
+func (s *Service) OutletOmzetGet(param *paramTrx.OutletOmzetGet) (res *trxDTO.OutletOmzet, status *resPkg.Status) {
+	total, status := s.transactionRepo.OutletOmzetGetTotal(param)
+	if status != nil {
+		return nil, status
 	}
-	for _, v := range dates {
-		result, err2 := s.transactionRepo.OutletOmzet(outletID, v)
-		if err2 == nil {
-			outlets = append(outlets, *result)
-		} else {
-			outlet := trxEntity.OutletOmzet{
-				MerchantName: base.Merchant.MerchantName,
-				OutletName:   base.OutletName,
-				Omzet:        0,
-				Date:         v,
-			}
-			outlets = append(outlets, outlet)
-		}
+	data, status := s.transactionRepo.OutletOmzetGetData(param)
+	if status != nil {
+		return nil, status
 	}
-	return outlets, nil
+	return &trxDTO.OutletOmzet{
+		Data:  data,
+		Total: total,
+	}, nil
 }
 
 func (s *Service) GetUserByUserNameAndPassword(userName string, password string) (*userEntity.User, error) {
