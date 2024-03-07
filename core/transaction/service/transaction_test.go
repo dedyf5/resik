@@ -31,11 +31,12 @@ func TestMerchantOmzetGet(t *testing.T) {
 	config, ctx := env()
 	trx := New(trxRepo, config)
 
+	p := trxParam.MerchantOmzetGet{
+		Ctx:        ctx,
+		MerchantID: 1,
+	}
+
 	t.Run("MerchantOmzetGetTotal-ERROR", func(t *testing.T) {
-		p := trxParam.MerchantOmzetGet{
-			Ctx:        ctx,
-			MerchantID: 1,
-		}
 		errNative := errors.New("failed to get total")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
@@ -53,10 +54,6 @@ func TestMerchantOmzetGet(t *testing.T) {
 	})
 
 	t.Run("MerchantOmzetGetData-ERROR", func(t *testing.T) {
-		p := trxParam.MerchantOmzetGet{
-			Ctx:        ctx,
-			MerchantID: 1,
-		}
 		errNative := errors.New("failed to get data")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
@@ -75,10 +72,6 @@ func TestMerchantOmzetGet(t *testing.T) {
 	})
 
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
-		p := trxParam.MerchantOmzetGet{
-			Ctx:        ctx,
-			MerchantID: 1,
-		}
 		expRes := []trxEntity.MerchantOmzet{}
 		expRes = append(expRes, trxEntity.MerchantOmzet{
 			MerchantID:   1,
