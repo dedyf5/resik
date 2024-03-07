@@ -31,7 +31,7 @@ func InitializeHTTP() (*App, func(), error) {
 	configLog := config.Log
 	logLog := log.Get(configLog)
 	serverHTTP := newServerHTTP(config, tag, logLog)
-	handlerHandler := handler.New(config)
+	handlerHandler := handler.New(logLog, config)
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
 	sqlConfig := config.Database
