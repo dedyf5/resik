@@ -42,9 +42,8 @@ func TestMerchantOmzetGet(t *testing.T) {
 			Code:       http.StatusInternalServerError,
 			CauseError: errNative,
 		}
-		var resUint64 uint64 = 0
 		gomock.InOrder(
-			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(resUint64, statusErr),
+			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(uint64(0), statusErr),
 		)
 		res, err := trx.MerchantOmzetGet(&p)
 		assert.Nil(t, res)
@@ -59,9 +58,8 @@ func TestMerchantOmzetGet(t *testing.T) {
 			Code:       http.StatusInternalServerError,
 			CauseError: errNative,
 		}
-		var resUint64 uint64 = 1
 		gomock.InOrder(
-			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(resUint64, nil),
+			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(uint64(1), nil),
 			trxRepo.EXPECT().MerchantOmzetGetData(&p).Return(nil, statusErr),
 		)
 		res, err := trx.MerchantOmzetGet(&p)
@@ -72,14 +70,14 @@ func TestMerchantOmzetGet(t *testing.T) {
 	})
 
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
-		expRes := []trxEntity.MerchantOmzet{}
+		expRes := make([]trxEntity.MerchantOmzet, 0, 1)
 		expRes = append(expRes, trxEntity.MerchantOmzet{
 			MerchantID:   1,
 			MerchantName: "Merchant Name",
 			Omzet:        500.75,
 			Period:       "2024-03-07",
 		})
-		var resUint64 uint64 = 1
+		resUint64 := uint64(len(expRes))
 		gomock.InOrder(
 			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(resUint64, nil),
 			trxRepo.EXPECT().MerchantOmzetGetData(&p).Return(expRes, nil),
@@ -112,9 +110,8 @@ func TestOutletOmzetGet(t *testing.T) {
 			Code:       http.StatusInternalServerError,
 			CauseError: errNative,
 		}
-		var resUint64 uint64 = 0
 		gomock.InOrder(
-			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resUint64, statusErr),
+			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(uint64(0), statusErr),
 		)
 		res, err := trx.OutletOmzetGet(&p)
 		assert.Nil(t, res)
@@ -129,9 +126,8 @@ func TestOutletOmzetGet(t *testing.T) {
 			Code:       http.StatusInternalServerError,
 			CauseError: errNative,
 		}
-		var resUint64 uint64 = 1
 		gomock.InOrder(
-			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resUint64, nil),
+			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(uint64(1), nil),
 			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(nil, statusErr),
 		)
 		res, err := trx.OutletOmzetGet(&p)
@@ -142,7 +138,7 @@ func TestOutletOmzetGet(t *testing.T) {
 	})
 
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
-		expRes := []trxEntity.OutletOmzet{}
+		expRes := make([]trxEntity.OutletOmzet, 0, 1)
 		expRes = append(expRes, trxEntity.OutletOmzet{
 			MerchantID:   1,
 			MerchantName: "Merchant Name",
@@ -151,7 +147,7 @@ func TestOutletOmzetGet(t *testing.T) {
 			Omzet:        500.75,
 			Period:       "2024-03-07",
 		})
-		var resUint64 uint64 = 1
+		resUint64 := uint64(len(expRes))
 		gomock.InOrder(
 			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resUint64, nil),
 			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(expRes, nil),
