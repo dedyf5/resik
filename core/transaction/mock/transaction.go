@@ -6,13 +6,9 @@ package mock
 
 import (
 	reflect "reflect"
-	time "time"
 
 	dto "github.com/dedyf5/resik/core/transaction/dto"
-	merchant "github.com/dedyf5/resik/entities/merchant"
-	outlet "github.com/dedyf5/resik/entities/outlet"
 	param "github.com/dedyf5/resik/entities/transaction/param"
-	user "github.com/dedyf5/resik/entities/user"
 	response "github.com/dedyf5/resik/pkg/response"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -38,35 +34,6 @@ func NewMockIService(ctrl *gomock.Controller) *MockIService {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockIService) EXPECT() *MockIServiceMockRecorder {
 	return m.recorder
-}
-
-// Dates mocks base method.
-func (m *MockIService) Dates(date *time.Time, page int) []time.Time {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Dates", date, page)
-	ret0, _ := ret[0].([]time.Time)
-	return ret0
-}
-
-// Dates indicates an expected call of Dates.
-func (mr *MockIServiceMockRecorder) Dates(date, page interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Dates", reflect.TypeOf((*MockIService)(nil).Dates), date, page)
-}
-
-// GetUserByUserNameAndPassword mocks base method.
-func (m *MockIService) GetUserByUserNameAndPassword(userName, password string) (*user.User, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserByUserNameAndPassword", userName, password)
-	ret0, _ := ret[0].(*user.User)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetUserByUserNameAndPassword indicates an expected call of GetUserByUserNameAndPassword.
-func (mr *MockIServiceMockRecorder) GetUserByUserNameAndPassword(userName, password interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUserNameAndPassword", reflect.TypeOf((*MockIService)(nil).GetUserByUserNameAndPassword), userName, password)
 }
 
 // MerchantOmzetGet mocks base method.
@@ -97,48 +64,4 @@ func (m *MockIService) OutletOmzetGet(param *param.OutletOmzetGet) (*dto.OutletO
 func (mr *MockIServiceMockRecorder) OutletOmzetGet(param interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletOmzetGet", reflect.TypeOf((*MockIService)(nil).OutletOmzetGet), param)
-}
-
-// ValidateAuthRequest mocks base method.
-func (m *MockIService) ValidateAuthRequest(username, password string) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ValidateAuthRequest", username, password)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ValidateAuthRequest indicates an expected call of ValidateAuthRequest.
-func (mr *MockIServiceMockRecorder) ValidateAuthRequest(username, password interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateAuthRequest", reflect.TypeOf((*MockIService)(nil).ValidateAuthRequest), username, password)
-}
-
-// ValidateMerchantUser mocks base method.
-func (m *MockIService) ValidateMerchantUser(merchantID, userID int64) (*merchant.Merchant, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ValidateMerchantUser", merchantID, userID)
-	ret0, _ := ret[0].(*merchant.Merchant)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ValidateMerchantUser indicates an expected call of ValidateMerchantUser.
-func (mr *MockIServiceMockRecorder) ValidateMerchantUser(merchantID, userID interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateMerchantUser", reflect.TypeOf((*MockIService)(nil).ValidateMerchantUser), merchantID, userID)
-}
-
-// ValidateOutletUser mocks base method.
-func (m *MockIService) ValidateOutletUser(outletID, createdBy int64) (*outlet.Outlet, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ValidateOutletUser", outletID, createdBy)
-	ret0, _ := ret[0].(*outlet.Outlet)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ValidateOutletUser indicates an expected call of ValidateOutletUser.
-func (mr *MockIServiceMockRecorder) ValidateOutletUser(outletID, createdBy interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateOutletUser", reflect.TypeOf((*MockIService)(nil).ValidateOutletUser), outletID, createdBy)
 }
