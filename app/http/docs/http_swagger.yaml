@@ -1,4 +1,27 @@
 definitions:
+  response.Home:
+    properties:
+      app:
+        example: Resik
+        type: string
+      lang:
+        $ref: '#/definitions/response.Lang'
+      version:
+        example: "0.1"
+        type: string
+    type: object
+  response.Lang:
+    properties:
+      current:
+        example: id
+        type: string
+      default:
+        example: en
+        type: string
+      request:
+        example: id
+        type: string
+    type: object
   response.MerchantOmzet:
     properties:
       merchant_name:
@@ -79,6 +102,51 @@ definitions:
 info:
   contact: {}
 paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: App info
+      parameters:
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Home'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Get Home
+      tags:
+      - home
   /transaction/merchant/{id}/omzet:
     get:
       consumes:

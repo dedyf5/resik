@@ -15,6 +15,88 @@ const docTemplatehttp = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/": {
+            "get": {
+                "description": "App info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "home"
+                ],
+                "summary": "Get Home",
+                "parameters": [
+                    {
+                        "enum": [
+                            "en",
+                            "id"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.Home"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/transaction/merchant/{id}/omzet": {
             "get": {
                 "description": "Get merchant omzet by merchant id",
@@ -307,6 +389,39 @@ const docTemplatehttp = `{
         }
     },
     "definitions": {
+        "response.Home": {
+            "type": "object",
+            "properties": {
+                "app": {
+                    "type": "string",
+                    "example": "Resik"
+                },
+                "lang": {
+                    "$ref": "#/definitions/response.Lang"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "0.1"
+                }
+            }
+        },
+        "response.Lang": {
+            "type": "object",
+            "properties": {
+                "current": {
+                    "type": "string",
+                    "example": "id"
+                },
+                "default": {
+                    "type": "string",
+                    "example": "en"
+                },
+                "request": {
+                    "type": "string",
+                    "example": "id"
+                }
+            }
+        },
         "response.MerchantOmzet": {
             "type": "object",
             "properties": {

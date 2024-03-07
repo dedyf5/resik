@@ -31,9 +31,9 @@ func InitializeHTTP() (*App, func(), error) {
 	configLog := config.Log
 	logLog := log.Get(configLog)
 	serverHTTP := newServerHTTP(config, tag, logLog)
-	handlerHandler := handler.New(logLog, config)
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
+	handlerHandler := handler.New(echoEcho, logLog, config)
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
 	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig)
