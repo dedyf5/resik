@@ -93,6 +93,78 @@ func TestMerchantOmzetGet(t *testing.T) {
 	})
 }
 
+func TestOutletOmzetGet(t *testing.T) {
+	ctl := gomock.NewController(t)
+	defer ctl.Finish()
+
+	trxRepo := trxRepoMock.NewMockITransaction(ctl)
+	config, ctx := env()
+	trx := New(trxRepo, config)
+
+	p := trxParam.OutletOmzetGet{
+		Ctx:      ctx,
+		OutletID: 1,
+	}
+
+	t.Run("OutletOmzetGetTotal-ERROR", func(t *testing.T) {
+		errNative := errors.New("failed to get total")
+		statusErr := &resPkg.Status{
+			Code:       http.StatusInternalServerError,
+			CauseError: errNative,
+		}
+		var resUint64 uint64 = 0
+		gomock.InOrder(
+			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resUint64, statusErr),
+		)
+		res, err := trx.OutletOmzetGet(&p)
+		assert.Nil(t, res)
+		assert.NotNil(t, err)
+		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
+		assert.Equal(t, statusErr.CauseError.Error(), err.CauseError.Error())
+	})
+
+	t.Run("OutletOmzetGetData-ERROR", func(t *testing.T) {
+		errNative := errors.New("failed to get data")
+		statusErr := &resPkg.Status{
+			Code:       http.StatusInternalServerError,
+			CauseError: errNative,
+		}
+		var resUint64 uint64 = 1
+		gomock.InOrder(
+			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resUint64, nil),
+			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(nil, statusErr),
+		)
+		res, err := trx.OutletOmzetGet(&p)
+		assert.Nil(t, res)
+		assert.NotNil(t, err)
+		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
+		assert.Equal(t, statusErr.CauseError.Error(), err.CauseError.Error())
+	})
+
+	t.Run("ALL-SUCCESS", func(t *testing.T) {
+		expRes := []trxEntity.OutletOmzet{}
+		expRes = append(expRes, trxEntity.OutletOmzet{
+			MerchantID:   1,
+			MerchantName: "Merchant Name",
+			OutletID:     1,
+			OutletName:   "Outlet Name",
+			Omzet:        500.75,
+			Period:       "2024-03-07",
+		})
+		var resUint64 uint64 = 1
+		gomock.InOrder(
+			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resUint64, nil),
+			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(expRes, nil),
+		)
+		res, err := trx.OutletOmzetGet(&p)
+		assert.Nil(t, err)
+		assert.NotNil(t, res)
+		assert.Equal(t, resUint64, res.Total)
+		assert.Equal(t, int(resUint64), len(res.Data))
+		assert.Equal(t, expRes, res.Data)
+	})
+}
+
 func env() (conf config.Config, c *ctx.Ctx) {
 	conf = config.Config{
 		App: configEntity.App{
