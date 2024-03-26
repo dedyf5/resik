@@ -12,7 +12,7 @@ import (
 type User struct {
 	ID        int64          `json:"id"`
 	Name      sql.NullString `json:"name" gorm:"type:varchar(45);default:null"`
-	UserName  sql.NullString `json:"user_name" gorm:"column:user_name;type:varchar(45);default:null"`
+	Username  sql.NullString `json:"username" gorm:"column:username;type:varchar(45);default:null"`
 	Password  sql.NullString `json:"password" gorm:"type:varchar(225);default:null"`
 	CreatedAt time.Time      `json:"created_at" gorm:"type:timestamp;default:current_timestamp();not null;"`
 	CreatedBy int64          `json:"created_by" gorm:"not null"`
