@@ -9,12 +9,12 @@ package bootstrap
 import (
 	"github.com/dedyf5/resik/app/http/fw/echo"
 	"github.com/dedyf5/resik/app/http/handler/general"
-	handler3 "github.com/dedyf5/resik/app/http/handler/transaction"
-	handler2 "github.com/dedyf5/resik/app/http/handler/user"
+	transaction2 "github.com/dedyf5/resik/app/http/handler/transaction"
+	user2 "github.com/dedyf5/resik/app/http/handler/user"
 	"github.com/dedyf5/resik/config"
-	transaction2 "github.com/dedyf5/resik/core/transaction"
+	transaction3 "github.com/dedyf5/resik/core/transaction"
 	service2 "github.com/dedyf5/resik/core/transaction/service"
-	user2 "github.com/dedyf5/resik/core/user"
+	user3 "github.com/dedyf5/resik/core/user"
 	"github.com/dedyf5/resik/core/user/service"
 	"github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
@@ -37,7 +37,7 @@ func InitializeHTTP() (*App, func(), error) {
 	serverHTTP := newServerHTTP(config, tag, logLog)
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
-	handlerHandler := handler.New(echoEcho, logLog, config)
+	handler := general.New(echoEcho, logLog, config)
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
 	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig)
@@ -51,11 +51,11 @@ func InitializeHTTP() (*App, func(), error) {
 	}
 	userRepo := user.New(gormDB)
 	serviceService := service.New(userRepo, config)
-	handler4 := handler2.New(echoEcho, logLog, serviceService, config)
+	userHandler := user2.New(echoEcho, logLog, serviceService, config)
 	transactionRepo := transaction.New(gormDB)
 	service3 := service2.New(transactionRepo, config)
-	handler5 := handler3.New(echoEcho, logLog, service3, config)
-	router := newRouter(config, handlerHandler, handler4, handler5)
+	transactionHandler := transaction2.New(echoEcho, logLog, service3, config)
+	router := newRouter(config, handler, userHandler, transactionHandler)
 	bootstrapApp, cleanup3, err := newApp(serverHTTP, router)
 	if err != nil {
 		cleanup2()
@@ -87,6 +87,6 @@ var connSet = wire.NewSet(drivers.NewMySQLConnection, drivers.NewGorm)
 
 var gormRepoSet = wire.NewSet(user.New, transaction.New, wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
 
-var serviceSet = wire.NewSet(service.New, service2.New, wire.Bind(new(user2.IService), new(*service.Service)), wire.Bind(new(transaction2.IService), new(*service2.Service)))
+var serviceSet = wire.NewSet(service.New, service2.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(transaction3.IService), new(*service2.Service)))
 
-var handlerSet = wire.NewSet(handler.New, handler2.New, handler3.New)
+var handlerSet = wire.NewSet(general.New, user2.New, transaction2.New)
