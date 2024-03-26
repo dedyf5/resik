@@ -11,14 +11,18 @@ import (
 	fw "github.com/dedyf5/resik/app/http/fw/echo"
 	generalHandler "github.com/dedyf5/resik/app/http/handler/general"
 	trxHandler "github.com/dedyf5/resik/app/http/handler/transaction"
+	userHandler "github.com/dedyf5/resik/app/http/handler/user"
 	"github.com/dedyf5/resik/config"
 	trx "github.com/dedyf5/resik/core/transaction"
 	trxService "github.com/dedyf5/resik/core/transaction/service"
+	user "github.com/dedyf5/resik/core/user"
+	userService "github.com/dedyf5/resik/core/user/service"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	repo "github.com/dedyf5/resik/repositories"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
+	userRepo "github.com/dedyf5/resik/repositories/user"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
@@ -49,17 +53,22 @@ var connSet = wire.NewSet(
 )
 
 var gormRepoSet = wire.NewSet(
+	userRepo.New,
 	trxRepo.New,
+	wire.Bind(new(repo.IUser), new(*userRepo.UserRepo)),
 	wire.Bind(new(repo.ITransaction), new(*trxRepo.TransactionRepo)),
 )
 
 var serviceSet = wire.NewSet(
+	userService.New,
 	trxService.New,
+	wire.Bind(new(user.IService), new(*userService.Service)),
 	wire.Bind(new(trx.IService), new(*trxService.Service)),
 )
 
 var handlerSet = wire.NewSet(
 	generalHandler.New,
+	userHandler.New,
 	trxHandler.New,
 )
 

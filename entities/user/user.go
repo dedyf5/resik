@@ -19,3 +19,11 @@ type User struct {
 	UpdatedAt time.Time      `json:"updated_at" gorm:"type:timestamp;default:current_timestamp();not null;"`
 	UpdatedBy int64          `json:"updated_by" gorm:"not null"`
 }
+
+type Tabler interface {
+	TableName() string
+}
+
+func (User) TableName() string {
+	return "user"
+}

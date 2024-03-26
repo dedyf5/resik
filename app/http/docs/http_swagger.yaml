@@ -1,4 +1,16 @@
 definitions:
+  request.LoginPost:
+    properties:
+      password:
+        example: secret
+        type: string
+      username:
+        example: sakisaki
+        type: string
+    required:
+    - password
+    - username
+    type: object
   response.Home:
     properties:
       app:
@@ -99,6 +111,13 @@ definitions:
         example: OK
         type: string
     type: object
+  response.UserCredential:
+    properties:
+      token:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -147,6 +166,57 @@ paths:
       summary: Get Home
       tags:
       - home
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login by user_name and password
+      parameters:
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      - description: Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginPost'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserCredential'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Login
+      tags:
+      - user
   /transaction/merchant/{id}/omzet:
     get:
       consumes:

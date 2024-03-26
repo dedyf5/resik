@@ -99,21 +99,6 @@ func (mr *MockITransactionMockRecorder) GetOutletByIDAndCreatedBy(outletID, crea
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOutletByIDAndCreatedBy", reflect.TypeOf((*MockITransaction)(nil).GetOutletByIDAndCreatedBy), outletID, createdBy)
 }
 
-// GetUserByUserNameAndPassword mocks base method.
-func (m *MockITransaction) GetUserByUserNameAndPassword(userName, password string) (*user.User, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserByUserNameAndPassword", userName, password)
-	ret0, _ := ret[0].(*user.User)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetUserByUserNameAndPassword indicates an expected call of GetUserByUserNameAndPassword.
-func (mr *MockITransactionMockRecorder) GetUserByUserNameAndPassword(userName, password interface{}) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUserNameAndPassword", reflect.TypeOf((*MockITransaction)(nil).GetUserByUserNameAndPassword), userName, password)
-}
-
 // MerchantOmzetGetData mocks base method.
 func (m *MockITransaction) MerchantOmzetGetData(param *param.MerchantOmzetGet) ([]transaction.MerchantOmzet, *response.Status) {
 	m.ctrl.T.Helper()
@@ -172,4 +157,42 @@ func (m *MockITransaction) OutletOmzetGetTotal(param *param.OutletOmzetGet) (uin
 func (mr *MockITransactionMockRecorder) OutletOmzetGetTotal(param interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletOmzetGetTotal", reflect.TypeOf((*MockITransaction)(nil).OutletOmzetGetTotal), param)
+}
+
+// MockIUser is a mock of IUser interface.
+type MockIUser struct {
+	ctrl     *gomock.Controller
+	recorder *MockIUserMockRecorder
+}
+
+// MockIUserMockRecorder is the mock recorder for MockIUser.
+type MockIUserMockRecorder struct {
+	mock *MockIUser
+}
+
+// NewMockIUser creates a new mock instance.
+func NewMockIUser(ctrl *gomock.Controller) *MockIUser {
+	mock := &MockIUser{ctrl: ctrl}
+	mock.recorder = &MockIUserMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIUser) EXPECT() *MockIUserMockRecorder {
+	return m.recorder
+}
+
+// GetUserByUsernameAndPassword mocks base method.
+func (m *MockIUser) GetUserByUsernameAndPassword(userName, password string) (*user.User, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetUserByUsernameAndPassword", userName, password)
+	ret0, _ := ret[0].(*user.User)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// GetUserByUsernameAndPassword indicates an expected call of GetUserByUsernameAndPassword.
+func (mr *MockIUserMockRecorder) GetUserByUsernameAndPassword(userName, password interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsernameAndPassword", reflect.TypeOf((*MockIUser)(nil).GetUserByUsernameAndPassword), userName, password)
 }

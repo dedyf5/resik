@@ -2,5 +2,6 @@
     "app_name": "Resik",
     "version_name": "Versi {{.code}}",
     "home_message": "{{.app_name}} Versi {{.code}}",
-    "validation_type_message": "tipe {{.field}} harus {{.expected}}, bukan {{.actual}}"
+    "validation_type_message": "tipe {{.field}} harus {{.expected}}, bukan {{.actual}}",
+    "incorrect_username_or_password": "Username atau Password salah"
 }

@@ -9,15 +9,19 @@ package bootstrap
 import (
 	"github.com/dedyf5/resik/app/http/fw/echo"
 	"github.com/dedyf5/resik/app/http/handler/general"
-	handler2 "github.com/dedyf5/resik/app/http/handler/transaction"
+	handler3 "github.com/dedyf5/resik/app/http/handler/transaction"
+	handler2 "github.com/dedyf5/resik/app/http/handler/user"
 	"github.com/dedyf5/resik/config"
 	transaction2 "github.com/dedyf5/resik/core/transaction"
-	"github.com/dedyf5/resik/core/transaction/service"
+	service2 "github.com/dedyf5/resik/core/transaction/service"
+	user2 "github.com/dedyf5/resik/core/user"
+	"github.com/dedyf5/resik/core/user/service"
 	"github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	config2 "github.com/dedyf5/resik/entities/config"
 	"github.com/dedyf5/resik/repositories"
 	"github.com/dedyf5/resik/repositories/transaction"
+	"github.com/dedyf5/resik/repositories/user"
 	"github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
@@ -45,10 +49,13 @@ func InitializeHTTP() (*App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
+	userRepo := user.New(gormDB)
+	serviceService := service.New(userRepo, config)
+	handler4 := handler2.New(echoEcho, logLog, serviceService, config)
 	transactionRepo := transaction.New(gormDB)
-	serviceService := service.New(transactionRepo, config)
-	handler3 := handler2.New(echoEcho, logLog, serviceService, config)
-	router := newRouter(config, handlerHandler, handler3)
+	service3 := service2.New(transactionRepo, config)
+	handler5 := handler3.New(echoEcho, logLog, service3, config)
+	router := newRouter(config, handlerHandler, handler4, handler5)
 	bootstrapApp, cleanup3, err := newApp(serverHTTP, router)
 	if err != nil {
 		cleanup2()
@@ -78,8 +85,8 @@ var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 
 var connSet = wire.NewSet(drivers.NewMySQLConnection, drivers.NewGorm)
 
-var gormRepoSet = wire.NewSet(transaction.New, wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
+var gormRepoSet = wire.NewSet(user.New, transaction.New, wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
 
-var serviceSet = wire.NewSet(service.New, wire.Bind(new(transaction2.IService), new(*service.Service)))
+var serviceSet = wire.NewSet(service.New, service2.New, wire.Bind(new(user2.IService), new(*service.Service)), wire.Bind(new(transaction2.IService), new(*service2.Service)))
 
-var handlerSet = wire.NewSet(handler.New, handler2.New)
+var handlerSet = wire.NewSet(handler.New, handler2.New, handler3.New)

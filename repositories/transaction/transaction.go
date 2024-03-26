@@ -11,7 +11,6 @@ import (
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
-	userEntity "github.com/dedyf5/resik/entities/user"
 	"github.com/dedyf5/resik/pkg/goku"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"gorm.io/gorm"
@@ -184,9 +183,5 @@ func (r *TransactionRepo) GetOutletByID(outletID int64) (*outletEntity.Outlet, e
 }
 
 func (r *TransactionRepo) GetOutletByIDAndCreatedBy(outletID int64, createdBy int64) (*outletEntity.Outlet, error) {
-	return nil, nil
-}
-
-func (r *TransactionRepo) GetUserByUserNameAndPassword(userName string, password string) (*userEntity.User, error) {
 	return nil, nil
 }

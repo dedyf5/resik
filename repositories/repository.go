@@ -23,5 +23,8 @@ type ITransaction interface {
 	GetMerchantByIDAndUserID(merchantID int64, userID int64) (*merchantEntity.Merchant, error)
 	GetOutletByID(outletID int64) (*outletEntity.Outlet, error)
 	GetOutletByIDAndCreatedBy(outletID int64, createdBy int64) (*outletEntity.Outlet, error)
-	GetUserByUserNameAndPassword(userName string, password string) (*userEntity.User, error)
+}
+
+type IUser interface {
+	GetUserByUsernameAndPassword(userName string, password string) (user *userEntity.User, status *resPkg.Status)
 }
