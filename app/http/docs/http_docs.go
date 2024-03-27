@@ -99,7 +99,7 @@ const docTemplatehttp = `{
         },
         "/login": {
             "post": {
-                "description": "Login by user_name and password",
+                "description": "Login by username and password",
                 "consumes": [
                     "application/json"
                 ],

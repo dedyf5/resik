@@ -36,7 +36,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, service userService.IService, config 
 }
 
 // @Summary Login
-// @Description Login by user_name and password
+// @Description Login by username and password
 // @Tags user
 // @Accept json
 // @Produce json
@@ -64,7 +64,7 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 		return err
 	}
 
-	res, err := h.service.GetUserByUsernameAndPassword(payload.Username, payload.Password)
+	res, err := h.service.UserByUsernameAndPasswordGet(payload.Username, payload.Password)
 	if err != nil {
 		return err
 	}

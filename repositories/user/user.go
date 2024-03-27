@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *UserRepo) GetUserByUsernameAndPassword(userName string, password string) (user *userEntity.User, status *resPkg.Status) {
+func (r *UserRepo) UserByUsernameAndPasswordGetData(userName string, password string) (user *userEntity.User, status *resPkg.Status) {
 	var res userEntity.User
 	err := r.DB.First(&res, "username = ? AND password = ?", userName, password).Error
 	if err != nil {

@@ -10,5 +10,5 @@ import (
 )
 
 type IService interface {
-	GetUserByUsernameAndPassword(userName string, password string) (user *userEntity.User, status *resPkg.Status)
+	UserByUsernameAndPasswordGet(userName string, password string) (user *userEntity.User, status *resPkg.Status)
 }

@@ -9,6 +9,6 @@ import (
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
-func (s *Service) GetUserByUsernameAndPassword(userName string, password string) (user *userEntity.User, status *resPkg.Status) {
-	return s.userRepo.GetUserByUsernameAndPassword(userName, password)
+func (s *Service) UserByUsernameAndPasswordGet(userName string, password string) (user *userEntity.User, status *resPkg.Status) {
+	return s.userRepo.UserByUsernameAndPasswordGetData(userName, password)
 }

@@ -170,7 +170,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Login by user_name and password
+      description: Login by username and password
       parameters:
       - enum:
         - en

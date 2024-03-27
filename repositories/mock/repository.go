@@ -182,17 +182,17 @@ func (m *MockIUser) EXPECT() *MockIUserMockRecorder {
 	return m.recorder
 }
 
-// GetUserByUsernameAndPassword mocks base method.
-func (m *MockIUser) GetUserByUsernameAndPassword(userName, password string) (*user.User, *response.Status) {
+// UserByUsernameAndPasswordGetData mocks base method.
+func (m *MockIUser) UserByUsernameAndPasswordGetData(userName, password string) (*user.User, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserByUsernameAndPassword", userName, password)
+	ret := m.ctrl.Call(m, "UserByUsernameAndPasswordGetData", userName, password)
 	ret0, _ := ret[0].(*user.User)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
-// GetUserByUsernameAndPassword indicates an expected call of GetUserByUsernameAndPassword.
-func (mr *MockIUserMockRecorder) GetUserByUsernameAndPassword(userName, password interface{}) *gomock.Call {
+// UserByUsernameAndPasswordGetData indicates an expected call of UserByUsernameAndPasswordGetData.
+func (mr *MockIUserMockRecorder) UserByUsernameAndPasswordGetData(userName, password interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserByUsernameAndPassword", reflect.TypeOf((*MockIUser)(nil).GetUserByUsernameAndPassword), userName, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserByUsernameAndPasswordGetData", reflect.TypeOf((*MockIUser)(nil).UserByUsernameAndPasswordGetData), userName, password)
 }

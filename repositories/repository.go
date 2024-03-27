@@ -26,5 +26,5 @@ type ITransaction interface {
 }
 
 type IUser interface {
-	GetUserByUsernameAndPassword(userName string, password string) (user *userEntity.User, status *resPkg.Status)
+	UserByUsernameAndPasswordGetData(userName string, password string) (user *userEntity.User, status *resPkg.Status)
 }
