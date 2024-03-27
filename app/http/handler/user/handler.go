@@ -15,6 +15,7 @@ import (
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
+	"github.com/dedyf5/resik/entities/user/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v4"
 )
@@ -64,25 +65,16 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 		return err
 	}
 
-	res, err := h.service.UserByUsernameAndPasswordGet(payload.Username, payload.Password)
+	token, err := h.service.Auth(param.Auth{Ctx: ctx, Username: payload.Username, Password: payload.Password})
 	if err != nil {
 		return err
 	}
 
-	if res == nil && err == nil {
-		return &resPkg.Status{
-			Code:    http.StatusBadRequest,
-			Message: ctx.Lang.GetByMessageID("incorrect_username_or_password"),
-		}
-	}
-
-	data := userRes.UserCredential{
-		Username: res.Name.String,
-		Token:    "asal",
-	}
-
 	return &resPkg.Status{
 		Code: http.StatusOK,
-		Data: data,
+		Data: userRes.UserCredential{
+			Username: payload.Username,
+			Token:    token,
+		},
 	}
 }

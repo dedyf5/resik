@@ -5,10 +5,10 @@
 package user
 
 import (
-	userEntity "github.com/dedyf5/resik/entities/user"
+	paramUser "github.com/dedyf5/resik/entities/user/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
 type IService interface {
-	UserByUsernameAndPasswordGet(userName string, password string) (user *userEntity.User, status *resPkg.Status)
+	Auth(param paramUser.Auth) (token string, status *resPkg.Status)
 }

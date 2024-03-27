@@ -12,6 +12,7 @@ import (
 	transaction "github.com/dedyf5/resik/entities/transaction"
 	param "github.com/dedyf5/resik/entities/transaction/param"
 	user "github.com/dedyf5/resik/entities/user"
+	param0 "github.com/dedyf5/resik/entities/user/param"
 	response "github.com/dedyf5/resik/pkg/response"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -182,17 +183,32 @@ func (m *MockIUser) EXPECT() *MockIUserMockRecorder {
 	return m.recorder
 }
 
-// UserByUsernameAndPasswordGetData mocks base method.
-func (m *MockIUser) UserByUsernameAndPasswordGetData(userName, password string) (*user.User, *response.Status) {
+// MerchantIDsByUserIDGetData mocks base method.
+func (m *MockIUser) MerchantIDsByUserIDGetData(userID int64) ([]int64, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UserByUsernameAndPasswordGetData", userName, password)
+	ret := m.ctrl.Call(m, "MerchantIDsByUserIDGetData", userID)
+	ret0, _ := ret[0].([]int64)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// MerchantIDsByUserIDGetData indicates an expected call of MerchantIDsByUserIDGetData.
+func (mr *MockIUserMockRecorder) MerchantIDsByUserIDGetData(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantIDsByUserIDGetData", reflect.TypeOf((*MockIUser)(nil).MerchantIDsByUserIDGetData), userID)
+}
+
+// UserByUsernameAndPasswordGetData mocks base method.
+func (m *MockIUser) UserByUsernameAndPasswordGetData(param param0.Auth) (*user.User, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UserByUsernameAndPasswordGetData", param)
 	ret0, _ := ret[0].(*user.User)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
 // UserByUsernameAndPasswordGetData indicates an expected call of UserByUsernameAndPasswordGetData.
-func (mr *MockIUserMockRecorder) UserByUsernameAndPasswordGetData(userName, password interface{}) *gomock.Call {
+func (mr *MockIUserMockRecorder) UserByUsernameAndPasswordGetData(param interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserByUsernameAndPasswordGetData", reflect.TypeOf((*MockIUser)(nil).UserByUsernameAndPasswordGetData), userName, password)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserByUsernameAndPasswordGetData", reflect.TypeOf((*MockIUser)(nil).UserByUsernameAndPasswordGetData), param)
 }

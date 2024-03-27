@@ -114,8 +114,10 @@ definitions:
   response.UserCredential:
     properties:
       token:
+        example: xxx.xxx.xxx
         type: string
       username:
+        example: sakisaki
         type: string
     type: object
 info:

@@ -5,6 +5,6 @@
 package response
 
 type UserCredential struct {
-	Username string `json:"username"`
-	Token    string `json:"token"`
+	Username string `json:"username" example:"sakisaki"`
+	Token    string `json:"token" example:"xxx.xxx.xxx"`
 }

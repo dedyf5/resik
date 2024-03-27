@@ -644,10 +644,12 @@ const docTemplatehttp = `{
             "type": "object",
             "properties": {
                 "token": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "xxx.xxx.xxx"
                 },
                 "username": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "sakisaki"
                 }
             }
         }
