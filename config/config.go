@@ -18,6 +18,7 @@ type (
 		App      configEntity.App
 		HTTP     configEntity.HTTP
 		Database drivers.SQLConfig
+		Auth     configEntity.Auth
 		Log      configEntity.Log
 	}
 )
@@ -35,6 +36,7 @@ func Load() *Config {
 	conf.loadApp()
 	conf.loadHTTP()
 	conf.loadDatabase()
+	conf.loadAuth()
 	conf.loadLog()
 
 	return &conf
@@ -85,6 +87,13 @@ func (conf *Config) loadDatabase() {
 	db.ConnMaxIdleTime = viper.GetInt("DATABASE_CONN_MAX_IDLETIME")
 	db.IsDebug = viper.GetBool("DATABASE_IS_DEBUG")
 	conf.Database = db
+}
+
+func (conf *Config) loadAuth() {
+	conf.Auth = configEntity.Auth{
+		Expires:      viper.GetUint64("AUTH_EXPIRES"),
+		SignatureKey: viper.GetString("AUTH_SIGNATURE_KEY"),
+	}
 }
 
 func (conf *Config) loadLog() {
