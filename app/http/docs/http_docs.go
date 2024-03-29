@@ -203,6 +203,13 @@ const docTemplatehttp = `{
                 "summary": "Get Merchant Omzet",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "type": "integer",
                         "description": "Merchant ID",
                         "name": "id",
@@ -347,6 +354,13 @@ const docTemplatehttp = `{
                 ],
                 "summary": "Get Outlet Omzet",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "bearer token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "integer",
                         "description": "Outlet ID",

@@ -225,6 +225,11 @@ paths:
       - application/json
       description: Get merchant omzet by merchant id
       parameters:
+      - description: bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Merchant ID
         in: path
         name: id
@@ -315,6 +320,11 @@ paths:
       - application/json
       description: Get outlet omzet by outlet id
       parameters:
+      - description: bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: Outlet ID
         in: path
         name: id
