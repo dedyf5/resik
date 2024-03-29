@@ -30,11 +30,11 @@ import (
 
 func InitializeHTTP() (*App, func(), error) {
 	config := _wireConfigValue
-	app := config.App
-	tag := app.LangDefault
 	configLog := config.Log
 	logLog := log.Get(configLog)
-	serverHTTP := newServerHTTP(config, tag, logLog)
+	serverHTTP := newServerHTTP(config, logLog)
+	app := config.App
+	tag := app.LangDefault
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
 	handler := general.New(echoEcho, logLog, config)

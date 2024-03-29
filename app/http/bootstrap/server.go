@@ -19,7 +19,6 @@ import (
 	"github.com/dedyf5/resik/pkg/color"
 	"github.com/labstack/echo/v4"
 	echoMiddle "github.com/labstack/echo/v4/middleware"
-	"golang.org/x/text/language"
 )
 
 type ServerHTTP struct {
@@ -27,7 +26,7 @@ type ServerHTTP struct {
 	echo   *echo.Echo
 }
 
-func newServerHTTP(config config.Config, lang language.Tag, log *logCtx.Log) *ServerHTTP {
+func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
