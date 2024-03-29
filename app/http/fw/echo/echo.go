@@ -5,6 +5,7 @@
 package echo
 
 import (
+	"fmt"
 	"net/http"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
@@ -55,9 +56,16 @@ func HTTPErrorHandler(err error, ctx echo.Context) {
 			ctx.JSON(res.Code, httpUtil.LoggerFromStatus(res))
 		}
 		return
+	case *echo.HTTPError:
+		ctx.JSON(res.Code, httpUtil.LoggerFromStatus(&resPkg.Status{
+			Code:    res.Code,
+			Message: fmt.Sprintf("%s", res.Message),
+		}))
+		return
 	}
 
 	ctx.JSON(http.StatusInternalServerError, httpUtil.LoggerErrorAuto(&resPkg.Status{
-		Code: http.StatusInternalServerError,
+		Code:       http.StatusInternalServerError,
+		CauseError: err,
 	}))
 }
