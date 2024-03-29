@@ -24,7 +24,7 @@ type AuthClaims struct {
 	MerchantIDs []int64 `json:"merchant_ids"`
 }
 
-func AuthToken(appConfig config.App, authConfig config.Auth, userID int64, username string, merchantIDs []int64) (token string, status *resPkg.Status) {
+func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID int64, username string, merchantIDs []int64) (token string, status *resPkg.Status) {
 	duration := time.Duration(authConfig.Expires) * time.Second
 	claims := AuthClaims{
 		RegisteredClaims: jwt.RegisteredClaims{

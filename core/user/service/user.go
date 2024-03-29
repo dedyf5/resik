@@ -32,6 +32,6 @@ func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Statu
 		}
 	}
 
-	token, status = jwtUtil.AuthToken(s.config.App, s.config.Auth, user.ID, user.Username.String, merchantIDs)
+	token, status = jwtUtil.AuthTokenGenerate(s.config.App, s.config.Auth, user.ID, user.Username.String, merchantIDs)
 	return
 }
