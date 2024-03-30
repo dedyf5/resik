@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/dedyf5/resik/entities/config"
+	"github.com/dedyf5/resik/pkg/array"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -33,6 +34,15 @@ type AuthClaims struct {
 
 func (a AuthClaims) Valid() error {
 	return nil
+}
+
+func (a AuthClaims) MerchantIDIsAccessible(merchantID int64) (ok bool, status *resPkg.Status) {
+	if array.InArray(merchantID, a.MerchantIDs) < 0 {
+		return false, &resPkg.Status{
+			Code: http.StatusUnauthorized,
+		}
+	}
+	return true, nil
 }
 
 func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID int64, username string, merchantIDs []int64) (token string, status *resPkg.Status) {
