@@ -61,6 +61,10 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 
 	param := payload.ToParam(ctx)
 
+	if _, err := ctx.UserClaims.MerchantIDIsAccessible(int64(param.MerchantID)); err != nil {
+		return err
+	}
+
 	res, err := h.service.MerchantOmzetGet(param)
 	if err != nil {
 		return err
