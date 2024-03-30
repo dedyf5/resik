@@ -10,8 +10,11 @@ import (
 	"strings"
 	"time"
 
+	jwtCxt "github.com/dedyf5/resik/ctx/jwt"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
+	"github.com/golang-jwt/jwt/v5"
+	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/rs/xid"
 
@@ -72,6 +75,33 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
 			r = r.WithContext(log.WithContext(ctx))
 
 			h.ServeHTTP(lrw, r)
+		})
+	})
+}
+
+func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
+	jwtConfig := echojwt.Config{
+		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+			return new(jwtCxt.AuthClaims)
+		},
+		SigningKey: []byte(signatureKey),
+	}
+	return echojwt.WithConfig(jwtConfig)
+}
+
+func JWTMiddleware(signatureKey string) echo.MiddlewareFunc {
+	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			token := strings.ReplaceAll(r.Header.Get("Authorization"), "Bearer ", "")
+			if token != "" {
+				ctx := context.WithValue(r.Context(),
+					jwtCxt.AuthClaimsKey,
+					jwtCxt.AuthClaimsFromString(token, signatureKey),
+				)
+				r = r.WithContext(ctx)
+			}
+
+			h.ServeHTTP(w, r)
 		})
 	})
 }

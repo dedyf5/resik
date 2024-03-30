@@ -13,7 +13,6 @@ import (
 	trxHandler "github.com/dedyf5/resik/app/http/handler/transaction"
 	userHandler "github.com/dedyf5/resik/app/http/handler/user"
 	"github.com/dedyf5/resik/config"
-	echojwt "github.com/labstack/echo-jwt/v4"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
@@ -35,7 +34,9 @@ func newRouter(config config.Config, generalHandler *generalHandler.Handler, use
 
 func (r *Router) routerSetup(server *ServerHTTP) {
 	e := server.echo
-	validateToken := echojwt.JWT([]byte(r.config.Auth.SignatureKey))
+
+	validateToken := echoFW.ValidateTokenMiddleware(r.config.Auth.SignatureKey)
+	jwtMiddleware := echoFW.JWTMiddleware(r.config.Auth.SignatureKey)
 
 	generalHandler := r.generalHandler
 	e.GET("/", generalHandler.Home)
@@ -45,9 +46,9 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transaction")
-	trxMerchant := trx.Group("/merchant/:id", validateToken)
+	trxMerchant := trx.Group("/merchant/:id", validateToken, jwtMiddleware)
 	trxMerchant.GET("/omzet", trxHandler.MerchantOmzetGet)
-	trxOutlet := trx.Group("/outlet/:id", validateToken)
+	trxOutlet := trx.Group("/outlet/:id", validateToken, jwtMiddleware)
 	trxOutlet.GET("/omzet", trxHandler.OutletOmzetGet)
 
 	docs.SwaggerInfohttp.Title = r.config.App.Name

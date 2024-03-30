@@ -5,6 +5,7 @@
 package jwt
 
 import (
+	"context"
 	"net/http"
 	"time"
 
@@ -17,11 +18,21 @@ var (
 	AUTH_SIGNING_METHOD = jwt.SigningMethodHS256
 )
 
+type authClaimsKey string
+
+const (
+	AuthClaimsKey authClaimsKey = "auth_claims"
+)
+
 type AuthClaims struct {
 	jwt.RegisteredClaims
 	UserID      int64   `json:"user_id"`
 	Username    string  `json:"username"`
 	MerchantIDs []int64 `json:"merchant_ids"`
+}
+
+func (a AuthClaims) Valid() error {
+	return nil
 }
 
 func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID int64, username string, merchantIDs []int64) (token string, status *resPkg.Status) {
@@ -44,4 +55,28 @@ func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID int6
 		}
 	}
 	return
+}
+
+func AuthClaimsFromString(tokenString string, signatureKey string) *AuthClaims {
+	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
+		return []byte(signatureKey), nil
+	})
+	if err != nil {
+		return nil
+	}
+	if claims, ok := token.Claims.(*AuthClaims); ok {
+		return claims
+	}
+	return nil
+}
+
+func AuthClaimsFromContext(ctx context.Context) *AuthClaims {
+	value := ctx.Value(AuthClaimsKey)
+	if value == nil {
+		return nil
+	}
+	if claims, ok := value.(*AuthClaims); ok {
+		return claims
+	}
+	return nil
 }

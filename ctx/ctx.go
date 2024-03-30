@@ -9,15 +9,17 @@ import (
 
 	"github.com/dedyf5/resik/ctx/app"
 	httpApp "github.com/dedyf5/resik/ctx/app/http"
+	jwt "github.com/dedyf5/resik/ctx/jwt"
 	lang "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
 type Ctx struct {
-	App     app.IApp
-	Lang    *lang.Lang
-	Context context.Context
+	App        app.IApp
+	Lang       *lang.Lang
+	Context    context.Context
+	UserClaims *jwt.AuthClaims
 }
 
 // return *Ctx HTTP. if create failed return *status.Status error
@@ -29,9 +31,10 @@ func NewHTTP(ctx context.Context, log *logCtx.Log, uri string) (*Ctx, *resPkg.St
 		return nil, err
 	}
 	return &Ctx{
-		App:     httpApp.NewHTTP(log.FromContext(ctx), uri),
-		Context: ctx,
-		Lang:    langRes,
+		App:        httpApp.NewHTTP(log.FromContext(ctx), uri),
+		Context:    ctx,
+		Lang:       langRes,
+		UserClaims: jwt.AuthClaimsFromContext(ctx),
 	}, nil
 }
 
