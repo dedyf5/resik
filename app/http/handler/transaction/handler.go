@@ -107,6 +107,10 @@ func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
 
 	param := payload.ToParam(ctx)
 
+	if _, err := ctx.UserClaims.OutletIDIsAccessible(param.OutletID); err != nil {
+		return err
+	}
+
 	res, err := h.service.OutletOmzetGet(param)
 	if err != nil {
 		return err
