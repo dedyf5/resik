@@ -46,6 +46,15 @@ func (a AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, status *
 	return true, nil
 }
 
+func (a AuthClaims) OutletIDIsAccessible(outletID uint64) (ok bool, status *resPkg.Status) {
+	if array.InArray(outletID, a.OutletIDs) < 0 {
+		return false, &resPkg.Status{
+			Code: http.StatusUnauthorized,
+		}
+	}
+	return true, nil
+}
+
 func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64, outletIDs []uint64) (token string, status *resPkg.Status) {
 	duration := time.Duration(authConfig.Expires) * time.Second
 	claims := AuthClaims{
