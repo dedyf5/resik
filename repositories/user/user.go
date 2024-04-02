@@ -29,7 +29,7 @@ func (r *UserRepo) UserByUsernameAndPasswordGetData(param paramUser.Auth) (user 
 	return &res, nil
 }
 
-func (r *UserRepo) MerchantIDsByUserIDGetData(userID int64) (merchantIDs []int64, status *resPkg.Status) {
+func (r *UserRepo) MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, status *resPkg.Status) {
 	query := r.DB.Select("id").Table("merchant").Where("user_id = ?", userID)
 	err := query.Find(&merchantIDs).Error
 	if err != nil {

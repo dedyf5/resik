@@ -27,16 +27,16 @@ const (
 
 type AuthClaims struct {
 	jwt.RegisteredClaims
-	UserID      int64   `json:"user_id"`
-	Username    string  `json:"username"`
-	MerchantIDs []int64 `json:"merchant_ids"`
+	UserID      uint64   `json:"user_id"`
+	Username    string   `json:"username"`
+	MerchantIDs []uint64 `json:"merchant_ids"`
 }
 
 func (a AuthClaims) Valid() error {
 	return nil
 }
 
-func (a AuthClaims) MerchantIDIsAccessible(merchantID int64) (ok bool, status *resPkg.Status) {
+func (a AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, status *resPkg.Status) {
 	if array.InArray(merchantID, a.MerchantIDs) < 0 {
 		return false, &resPkg.Status{
 			Code: http.StatusUnauthorized,
@@ -45,7 +45,7 @@ func (a AuthClaims) MerchantIDIsAccessible(merchantID int64) (ok bool, status *r
 	return true, nil
 }
 
-func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID int64, username string, merchantIDs []int64) (token string, status *resPkg.Status) {
+func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64) (token string, status *resPkg.Status) {
 	duration := time.Duration(authConfig.Expires) * time.Second
 	claims := AuthClaims{
 		RegisteredClaims: jwt.RegisteredClaims{

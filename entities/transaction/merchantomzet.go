@@ -5,7 +5,7 @@
 package transaction
 
 type MerchantOmzet struct {
-	MerchantID   int64   `gorm:"column:merchant_id"`
+	MerchantID   uint64  `gorm:"column:merchant_id"`
 	MerchantName string  `gorm:"column:merchant_name"`
 	Omzet        float64 `gorm:"column:omzet"`
 	Period       string  `gorm:"column:period"`

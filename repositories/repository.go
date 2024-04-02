@@ -20,13 +20,13 @@ type ITransaction interface {
 	MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total uint64, status *resPkg.Status)
 	OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (res []trxEntity.OutletOmzet, status *resPkg.Status)
 	OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (total uint64, status *resPkg.Status)
-	GetMerchantByID(merchantID int64) (*merchantEntity.Merchant, error)
-	GetMerchantByIDAndUserID(merchantID int64, userID int64) (*merchantEntity.Merchant, error)
-	GetOutletByID(outletID int64) (*outletEntity.Outlet, error)
-	GetOutletByIDAndCreatedBy(outletID int64, createdBy int64) (*outletEntity.Outlet, error)
+	GetMerchantByID(merchantID uint64) (*merchantEntity.Merchant, error)
+	GetMerchantByIDAndUserID(merchantID uint64, userID uint64) (*merchantEntity.Merchant, error)
+	GetOutletByID(outletID uint64) (*outletEntity.Outlet, error)
+	GetOutletByIDAndCreatedBy(outletID uint64, createdBy uint64) (*outletEntity.Outlet, error)
 }
 
 type IUser interface {
 	UserByUsernameAndPasswordGetData(param paramUser.Auth) (user *userEntity.User, status *resPkg.Status)
-	MerchantIDsByUserIDGetData(userID int64) (merchantIDs []int64, status *resPkg.Status)
+	MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, status *resPkg.Status)
 }

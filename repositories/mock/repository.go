@@ -41,7 +41,7 @@ func (m *MockITransaction) EXPECT() *MockITransactionMockRecorder {
 }
 
 // GetMerchantByID mocks base method.
-func (m *MockITransaction) GetMerchantByID(merchantID int64) (*merchant.Merchant, error) {
+func (m *MockITransaction) GetMerchantByID(merchantID uint64) (*merchant.Merchant, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMerchantByID", merchantID)
 	ret0, _ := ret[0].(*merchant.Merchant)
@@ -56,7 +56,7 @@ func (mr *MockITransactionMockRecorder) GetMerchantByID(merchantID interface{}) 
 }
 
 // GetMerchantByIDAndUserID mocks base method.
-func (m *MockITransaction) GetMerchantByIDAndUserID(merchantID, userID int64) (*merchant.Merchant, error) {
+func (m *MockITransaction) GetMerchantByIDAndUserID(merchantID, userID uint64) (*merchant.Merchant, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetMerchantByIDAndUserID", merchantID, userID)
 	ret0, _ := ret[0].(*merchant.Merchant)
@@ -71,7 +71,7 @@ func (mr *MockITransactionMockRecorder) GetMerchantByIDAndUserID(merchantID, use
 }
 
 // GetOutletByID mocks base method.
-func (m *MockITransaction) GetOutletByID(outletID int64) (*outlet.Outlet, error) {
+func (m *MockITransaction) GetOutletByID(outletID uint64) (*outlet.Outlet, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOutletByID", outletID)
 	ret0, _ := ret[0].(*outlet.Outlet)
@@ -86,7 +86,7 @@ func (mr *MockITransactionMockRecorder) GetOutletByID(outletID interface{}) *gom
 }
 
 // GetOutletByIDAndCreatedBy mocks base method.
-func (m *MockITransaction) GetOutletByIDAndCreatedBy(outletID, createdBy int64) (*outlet.Outlet, error) {
+func (m *MockITransaction) GetOutletByIDAndCreatedBy(outletID, createdBy uint64) (*outlet.Outlet, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOutletByIDAndCreatedBy", outletID, createdBy)
 	ret0, _ := ret[0].(*outlet.Outlet)
@@ -184,10 +184,10 @@ func (m *MockIUser) EXPECT() *MockIUserMockRecorder {
 }
 
 // MerchantIDsByUserIDGetData mocks base method.
-func (m *MockIUser) MerchantIDsByUserIDGetData(userID int64) ([]int64, *response.Status) {
+func (m *MockIUser) MerchantIDsByUserIDGetData(userID uint64) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MerchantIDsByUserIDGetData", userID)
-	ret0, _ := ret[0].([]int64)
+	ret0, _ := ret[0].([]uint64)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }

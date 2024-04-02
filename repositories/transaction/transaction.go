@@ -170,18 +170,18 @@ func (r *TransactionRepo) OutletOmzetGetQuery(param *paramTrx.OutletOmzetGet) (q
 	return
 }
 
-func (r *TransactionRepo) GetMerchantByID(merchantID int64) (*merchantEntity.Merchant, error) {
+func (r *TransactionRepo) GetMerchantByID(merchantID uint64) (*merchantEntity.Merchant, error) {
 	return nil, nil
 }
 
-func (r *TransactionRepo) GetMerchantByIDAndUserID(merchantID int64, userID int64) (*merchantEntity.Merchant, error) {
+func (r *TransactionRepo) GetMerchantByIDAndUserID(merchantID uint64, userID uint64) (*merchantEntity.Merchant, error) {
 	return nil, nil
 }
 
-func (r *TransactionRepo) GetOutletByID(outletID int64) (*outletEntity.Outlet, error) {
+func (r *TransactionRepo) GetOutletByID(outletID uint64) (*outletEntity.Outlet, error) {
 	return nil, nil
 }
 
-func (r *TransactionRepo) GetOutletByIDAndCreatedBy(outletID int64, createdBy int64) (*outletEntity.Outlet, error) {
+func (r *TransactionRepo) GetOutletByIDAndCreatedBy(outletID uint64, createdBy uint64) (*outletEntity.Outlet, error) {
 	return nil, nil
 }
