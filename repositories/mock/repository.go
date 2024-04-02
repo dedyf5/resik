@@ -198,6 +198,21 @@ func (mr *MockIUserMockRecorder) MerchantIDsByUserIDGetData(userID interface{}) 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantIDsByUserIDGetData", reflect.TypeOf((*MockIUser)(nil).MerchantIDsByUserIDGetData), userID)
 }
 
+// OutletByUserIDGetData mocks base method.
+func (m *MockIUser) OutletByUserIDGetData(userID uint64) ([]outlet.Outlet, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OutletByUserIDGetData", userID)
+	ret0, _ := ret[0].([]outlet.Outlet)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// OutletByUserIDGetData indicates an expected call of OutletByUserIDGetData.
+func (mr *MockIUserMockRecorder) OutletByUserIDGetData(userID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletByUserIDGetData", reflect.TypeOf((*MockIUser)(nil).OutletByUserIDGetData), userID)
+}
+
 // UserByUsernameAndPasswordGetData mocks base method.
 func (m *MockIUser) UserByUsernameAndPasswordGetData(param param0.Auth) (*user.User, *response.Status) {
 	m.ctrl.T.Helper()

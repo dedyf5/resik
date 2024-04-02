@@ -9,6 +9,7 @@ import (
 
 	jwtCtx "github.com/dedyf5/resik/ctx/jwt"
 	paramUser "github.com/dedyf5/resik/entities/user/param"
+	"github.com/dedyf5/resik/pkg/array"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
@@ -24,14 +25,21 @@ func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Statu
 		}
 	}
 
-	merchantIDs, err := s.userRepo.MerchantIDsByUserIDGetData(user.ID)
+	outlets, err := s.userRepo.OutletByUserIDGetData(user.ID)
 	if err != nil {
-		return "", &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: err,
+		return "", err
+	}
+
+	length := len(outlets)
+	merchantIDs := make([]uint64, 0, length)
+	outletIDs := make([]uint64, 0, length)
+	for _, v := range outlets {
+		outletIDs = append(outletIDs, v.ID)
+		if array.InArray(v.MerchantID, merchantIDs) < 0 {
+			merchantIDs = append(merchantIDs, v.MerchantID)
 		}
 	}
 
-	token, status = jwtCtx.AuthTokenGenerate(s.config.App, s.config.Auth, user.ID, user.Username, merchantIDs)
+	token, status = jwtCtx.AuthTokenGenerate(s.config.App, s.config.Auth, user.ID, user.Username, merchantIDs, outletIDs)
 	return
 }

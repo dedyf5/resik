@@ -30,6 +30,7 @@ type AuthClaims struct {
 	UserID      uint64   `json:"user_id"`
 	Username    string   `json:"username"`
 	MerchantIDs []uint64 `json:"merchant_ids"`
+	OutletIDs   []uint64 `json:"outlet_ids"`
 }
 
 func (a AuthClaims) Valid() error {
@@ -45,7 +46,7 @@ func (a AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, status *
 	return true, nil
 }
 
-func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64) (token string, status *resPkg.Status) {
+func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64, outletIDs []uint64) (token string, status *resPkg.Status) {
 	duration := time.Duration(authConfig.Expires) * time.Second
 	claims := AuthClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -55,6 +56,7 @@ func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint
 		UserID:      userID,
 		Username:    username,
 		MerchantIDs: merchantIDs,
+		OutletIDs:   outletIDs,
 	}
 	tokenGen := jwt.NewWithClaims(AUTH_SIGNING_METHOD, claims)
 	token, err := tokenGen.SignedString([]byte(authConfig.SignatureKey))
