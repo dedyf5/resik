@@ -80,8 +80,8 @@ func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet
 		SUM(t1.bill_total) AS omzet,
 		m1.merchant_name
 		`).
-		Table("transaction AS t1").
-		Joins("INNER JOIN merchant AS m1 ON m1.id = t1.merchant_id").
+		Table(trxEntity.TABLE_NAME+" AS t1").
+		Joins("INNER JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = t1.merchant_id").
 		Where("t1.merchant_id = ?", param.MerchantID).
 		Where("t1.created_at >= ? AND t1.created_at <= ?", param.GroupPeriod.DatetimeStart, param.GroupPeriod.DatetimeEnd).
 		Group("t1.merchant_id, period")
@@ -158,9 +158,9 @@ func (r *TransactionRepo) OutletOmzetGetQuery(param *paramTrx.OutletOmzetGet) (q
 		t1.outlet_id,
 		o1.outlet_name
 		`).
-		Table("transaction AS t1").
-		Joins("INNER JOIN merchant AS m1 ON m1.id = t1.merchant_id").
-		Joins("INNER JOIN outlet AS o1 ON o1.id = t1.outlet_id").
+		Table(trxEntity.TABLE_NAME+" AS t1").
+		Joins("INNER JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = t1.merchant_id").
+		Joins("INNER JOIN "+outletEntity.TABLE_NAME+" AS o1 ON o1.id = t1.outlet_id").
 		Where("t1.outlet_id = ?", param.OutletID).
 		Where("t1.created_at >= ? AND t1.created_at <= ?", param.GroupPeriod.DatetimeStart, param.GroupPeriod.DatetimeEnd).
 		Group("t1.outlet_id, period")

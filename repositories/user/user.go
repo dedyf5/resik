@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net/http"
 
+	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	paramUser "github.com/dedyf5/resik/entities/user/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -30,7 +31,7 @@ func (r *UserRepo) UserByUsernameAndPasswordGetData(param paramUser.Auth) (user 
 }
 
 func (r *UserRepo) MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, status *resPkg.Status) {
-	query := r.DB.Select("id").Table("merchant").Where("user_id = ?", userID)
+	query := r.DB.Select("id").Table(merchantEntity.TABLE_NAME).Where("user_id = ?", userID)
 	err := query.Find(&merchantIDs).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+const TABLE_NAME = "user"
+
 type User struct {
 	ID        uint64    `json:"id"`
 	Name      string    `json:"name" gorm:"type:varchar(45)"`
@@ -24,5 +26,5 @@ type Tabler interface {
 }
 
 func (User) TableName() string {
-	return "user"
+	return TABLE_NAME
 }
