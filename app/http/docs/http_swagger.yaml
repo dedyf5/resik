@@ -225,11 +225,6 @@ paths:
       - application/json
       description: Request new token by existing token
       parameters:
-      - description: bearer token
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - enum:
         - en
         - id
@@ -266,6 +261,8 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - BearerAuth: []
       summary: Token Refresh
       tags:
       - user
@@ -275,11 +272,6 @@ paths:
       - application/json
       description: Get merchant omzet by merchant id
       parameters:
-      - description: bearer token
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: Merchant ID
         in: path
         name: id
@@ -361,6 +353,8 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - BearerAuth: []
       summary: Get Merchant Omzet
       tags:
       - transaction
@@ -370,11 +364,6 @@ paths:
       - application/json
       description: Get outlet omzet by outlet id
       parameters:
-      - description: bearer token
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: Outlet ID
         in: path
         name: id
@@ -456,7 +445,14 @@ paths:
                 data:
                   type: object
               type: object
+      security:
+      - BearerAuth: []
       summary: Get Outlet Omzet
       tags:
       - transaction
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

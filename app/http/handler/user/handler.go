@@ -84,7 +84,7 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 // @Tags user
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "bearer token"
+// @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=userRes.UserCredential}
 // @Failure     400 {object}	resPkg.Response{data=nil}

@@ -10,6 +10,9 @@ var app *bootstrap.App
 var cleanup func()
 var err error
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func Init() {
 	app, cleanup, err = bootstrap.InitializeHTTP()
 

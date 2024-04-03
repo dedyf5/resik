@@ -179,6 +179,11 @@
         },
         "/token-refresh": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Request new token by existing token",
                 "consumes": [
                     "application/json"
@@ -191,13 +196,6 @@
                 ],
                 "summary": "Token Refresh",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "enum": [
                             "en",
@@ -268,6 +266,11 @@
         },
         "/transaction/merchant/{id}/omzet": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get merchant omzet by merchant id",
                 "consumes": [
                     "application/json"
@@ -280,13 +283,6 @@
                 ],
                 "summary": "Get Merchant Omzet",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "Merchant ID",
@@ -420,6 +416,11 @@
         },
         "/transaction/outlet/{id}/omzet": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get outlet omzet by outlet id",
                 "consumes": [
                     "application/json"
@@ -432,13 +433,6 @@
                 ],
                 "summary": "Get Outlet Omzet",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "Outlet ID",
@@ -744,6 +738,13 @@
                     "example": "sakisaki"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

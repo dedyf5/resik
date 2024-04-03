@@ -37,7 +37,7 @@ func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 	e.Use(echoMiddle.CORSWithConfig(
 		echoMiddle.CORSConfig{
 			AllowOrigins: []string{"*"},
-			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+			AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept, echo.HeaderAuthorization},
 		},
 	))
 

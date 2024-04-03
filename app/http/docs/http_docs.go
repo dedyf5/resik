@@ -190,6 +190,11 @@ const docTemplatehttp = `{
         },
         "/token-refresh": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Request new token by existing token",
                 "consumes": [
                     "application/json"
@@ -202,13 +207,6 @@ const docTemplatehttp = `{
                 ],
                 "summary": "Token Refresh",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "enum": [
                             "en",
@@ -279,6 +277,11 @@ const docTemplatehttp = `{
         },
         "/transaction/merchant/{id}/omzet": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get merchant omzet by merchant id",
                 "consumes": [
                     "application/json"
@@ -291,13 +294,6 @@ const docTemplatehttp = `{
                 ],
                 "summary": "Get Merchant Omzet",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "Merchant ID",
@@ -431,6 +427,11 @@ const docTemplatehttp = `{
         },
         "/transaction/outlet/{id}/omzet": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Get outlet omzet by outlet id",
                 "consumes": [
                     "application/json"
@@ -443,13 +444,6 @@ const docTemplatehttp = `{
                 ],
                 "summary": "Get Outlet Omzet",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "bearer token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "Outlet ID",
@@ -755,6 +749,13 @@ const docTemplatehttp = `{
                     "example": "sakisaki"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

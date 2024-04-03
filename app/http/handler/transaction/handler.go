@@ -39,7 +39,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, service trxService.IService, config c
 // @Tags transaction
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "bearer token"
+// @Security BearerAuth
 // @Param       id path int true "Merchant ID"
 // @Param       parameter query request.MerchantOmzetGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=[]trxRes.MerchantOmzet}
@@ -86,7 +86,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 // @Tags transaction
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "bearer token"
+// @Security BearerAuth
 // @Param       id path int true "Outlet ID"
 // @Param       parameter query request.OutletOmzetGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=[]trxRes.OutletOmzet}
