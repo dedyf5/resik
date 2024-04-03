@@ -1,6 +1,14 @@
 ## Resik
 
-Golang Clean Architecture
+Golang Clean Architecture.
+
+### Features
+- [x] Multi-language
+- [x] Form Validation
+- [x] Authentication and Authorization (JWT)
+- [x] API Documentation
+- [x] Dependency Injection
+- [x] Logger
 
 ## Credits
 
