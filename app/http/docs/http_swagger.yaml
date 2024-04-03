@@ -219,6 +219,56 @@ paths:
       summary: Login
       tags:
       - user
+  /token-refresh:
+    post:
+      consumes:
+      - application/json
+      description: Request new token by existing token
+      parameters:
+      - description: bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserCredential'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Token Refresh
+      tags:
+      - user
   /transaction/merchant/{id}/omzet:
     get:
       consumes:

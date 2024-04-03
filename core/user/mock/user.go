@@ -49,3 +49,18 @@ func (mr *MockIServiceMockRecorder) Auth(param interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Auth", reflect.TypeOf((*MockIService)(nil).Auth), param)
 }
+
+// AuthTokenGenerate mocks base method.
+func (m *MockIService) AuthTokenGenerate(userID uint64, username string) (string, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AuthTokenGenerate", userID, username)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// AuthTokenGenerate indicates an expected call of AuthTokenGenerate.
+func (mr *MockIServiceMockRecorder) AuthTokenGenerate(userID, username interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthTokenGenerate", reflect.TypeOf((*MockIService)(nil).AuthTokenGenerate), userID, username)
+}

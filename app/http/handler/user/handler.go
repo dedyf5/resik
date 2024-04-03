@@ -78,3 +78,46 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 		},
 	}
 }
+
+// @Summary Token Refresh
+// @Description Request new token by existing token
+// @Tags user
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "bearer token"
+// @Param       parameter query commonEntity.Request true "Query Param"
+// @Success		200	{object}	resPkg.Response{data=userRes.UserCredential}
+// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Router		/token-refresh [post]
+func (h *Handler) TokenRefresh(echoCtx echo.Context) error {
+	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	if err != nil {
+		return err
+	}
+	ctx.App.Logger().Debug("TokenRefresh")
+
+	var query commonEntity.Request
+	if err := h.fw.StructValidator(echoCtx, &query); err != nil {
+		return err
+	}
+
+	if ctx.UserClaims == nil {
+		return &resPkg.Status{
+			Code: http.StatusBadRequest,
+		}
+	}
+
+	token, err := h.service.AuthTokenGenerate(ctx.UserClaims.UserID, ctx.UserClaims.Username)
+	if err != nil {
+		return err
+	}
+
+	return &resPkg.Status{
+		Code: http.StatusOK,
+		Data: userRes.UserCredential{
+			Username: ctx.UserClaims.Username,
+			Token:    token,
+		},
+	}
+}

@@ -25,7 +25,11 @@ func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Statu
 		}
 	}
 
-	outlets, err := s.userRepo.OutletByUserIDGetData(user.ID)
+	return s.AuthTokenGenerate(user.ID, user.Username)
+}
+
+func (s *Service) AuthTokenGenerate(userID uint64, username string) (token string, status *resPkg.Status) {
+	outlets, err := s.userRepo.OutletByUserIDGetData(userID)
 	if err != nil {
 		return "", err
 	}
@@ -40,6 +44,6 @@ func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Statu
 		}
 	}
 
-	token, status = jwtCtx.AuthTokenGenerate(s.config.App, s.config.Auth, user.ID, user.Username, merchantIDs, outletIDs)
+	token, status = jwtCtx.AuthTokenGenerate(s.config.App, s.config.Auth, userID, username, merchantIDs, outletIDs)
 	return
 }

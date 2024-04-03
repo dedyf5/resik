@@ -43,6 +43,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 
 	userHandler := r.userHandler
 	e.POST("/login", userHandler.LoginPost)
+	e.POST("/token-refresh", userHandler.TokenRefresh, validateToken, jwtMiddleware)
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transaction")
