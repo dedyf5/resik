@@ -9,17 +9,21 @@ package bootstrap
 import (
 	"github.com/dedyf5/resik/app/http/fw/echo"
 	"github.com/dedyf5/resik/app/http/handler/general"
+	merchant2 "github.com/dedyf5/resik/app/http/handler/merchant"
 	transaction2 "github.com/dedyf5/resik/app/http/handler/transaction"
 	user2 "github.com/dedyf5/resik/app/http/handler/user"
 	"github.com/dedyf5/resik/config"
+	merchant3 "github.com/dedyf5/resik/core/merchant"
+	service2 "github.com/dedyf5/resik/core/merchant/service"
 	transaction3 "github.com/dedyf5/resik/core/transaction"
-	service2 "github.com/dedyf5/resik/core/transaction/service"
+	service3 "github.com/dedyf5/resik/core/transaction/service"
 	user3 "github.com/dedyf5/resik/core/user"
 	"github.com/dedyf5/resik/core/user/service"
 	"github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	config2 "github.com/dedyf5/resik/entities/config"
 	"github.com/dedyf5/resik/repositories"
+	"github.com/dedyf5/resik/repositories/merchant"
 	"github.com/dedyf5/resik/repositories/transaction"
 	"github.com/dedyf5/resik/repositories/user"
 	"github.com/dedyf5/resik/utils/validator"
@@ -52,10 +56,13 @@ func InitializeHTTP() (*App, func(), error) {
 	userRepo := user.New(gormDB)
 	serviceService := service.New(userRepo, config)
 	userHandler := user2.New(echoEcho, logLog, serviceService, config)
+	merchantRepo := merchant.New(gormDB)
+	service4 := service2.New(merchantRepo, config)
+	merchantHandler := merchant2.New(echoEcho, logLog, service4, config)
 	transactionRepo := transaction.New(gormDB)
-	service3 := service2.New(transactionRepo, config)
-	transactionHandler := transaction2.New(echoEcho, logLog, service3, config)
-	router := newRouter(config, handler, userHandler, transactionHandler)
+	service5 := service3.New(transactionRepo, config)
+	transactionHandler := transaction2.New(echoEcho, logLog, service5, config)
+	router := newRouter(config, handler, userHandler, merchantHandler, transactionHandler)
 	bootstrapApp, cleanup3, err := newApp(serverHTTP, router)
 	if err != nil {
 		cleanup2()
@@ -85,8 +92,8 @@ var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 
 var connSet = wire.NewSet(drivers.NewMySQLConnection, drivers.NewGorm)
 
-var gormRepoSet = wire.NewSet(user.New, transaction.New, wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
+var gormRepoSet = wire.NewSet(user.New, merchant.New, transaction.New, wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
 
-var serviceSet = wire.NewSet(service.New, service2.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(transaction3.IService), new(*service2.Service)))
+var serviceSet = wire.NewSet(service.New, service2.New, service3.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)))
 
-var handlerSet = wire.NewSet(general.New, user2.New, transaction2.New)
+var handlerSet = wire.NewSet(general.New, user2.New, merchant2.New, transaction2.New)

@@ -10,6 +10,7 @@ import (
 	"github.com/dedyf5/resik/app/http/docs"
 	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
 	generalHandler "github.com/dedyf5/resik/app/http/handler/general"
+	merchantHandler "github.com/dedyf5/resik/app/http/handler/merchant"
 	trxHandler "github.com/dedyf5/resik/app/http/handler/transaction"
 	userHandler "github.com/dedyf5/resik/app/http/handler/user"
 	"github.com/dedyf5/resik/config"
@@ -17,18 +18,20 @@ import (
 )
 
 type Router struct {
-	config         config.Config
-	generalHandler *generalHandler.Handler
-	userHandler    *userHandler.Handler
-	trxHandler     *trxHandler.Handler
+	config          config.Config
+	generalHandler  *generalHandler.Handler
+	merchantHandler *merchantHandler.Handler
+	userHandler     *userHandler.Handler
+	trxHandler      *trxHandler.Handler
 }
 
-func newRouter(config config.Config, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, trxHandler *trxHandler.Handler) *Router {
+func newRouter(config config.Config, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, merchantHandler *merchantHandler.Handler, trxHandler *trxHandler.Handler) *Router {
 	return &Router{
-		config:         config,
-		generalHandler: generalHandler,
-		userHandler:    userHandler,
-		trxHandler:     trxHandler,
+		config:          config,
+		generalHandler:  generalHandler,
+		userHandler:     userHandler,
+		merchantHandler: merchantHandler,
+		trxHandler:      trxHandler,
 	}
 }
 
@@ -44,6 +47,9 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	userHandler := r.userHandler
 	e.POST("/login", userHandler.LoginPost)
 	e.POST("/token-refresh", userHandler.TokenRefresh, validateToken, jwtMiddleware)
+
+	merchantHandler := r.merchantHandler
+	e.POST("/merchant", merchantHandler.MerchantPost, validateToken, jwtMiddleware)
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transaction")

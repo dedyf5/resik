@@ -5,6 +5,7 @@
 package repositories
 
 import (
+	"github.com/dedyf5/resik/ctx"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
@@ -30,4 +31,8 @@ type IUser interface {
 	UserByUsernameAndPasswordGetData(param paramUser.Auth) (user *userEntity.User, status *resPkg.Status)
 	MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, status *resPkg.Status)
 	OutletByUserIDGetData(userID uint64) (outlets []outletEntity.Outlet, status *resPkg.Status)
+}
+
+type IMerchant interface {
+	MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status)
 }

@@ -7,6 +7,7 @@ package mock
 import (
 	reflect "reflect"
 
+	ctx "github.com/dedyf5/resik/ctx"
 	merchant "github.com/dedyf5/resik/entities/merchant"
 	outlet "github.com/dedyf5/resik/entities/outlet"
 	transaction "github.com/dedyf5/resik/entities/transaction"
@@ -226,4 +227,42 @@ func (m *MockIUser) UserByUsernameAndPasswordGetData(param param0.Auth) (*user.U
 func (mr *MockIUserMockRecorder) UserByUsernameAndPasswordGetData(param interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserByUsernameAndPasswordGetData", reflect.TypeOf((*MockIUser)(nil).UserByUsernameAndPasswordGetData), param)
+}
+
+// MockIMerchant is a mock of IMerchant interface.
+type MockIMerchant struct {
+	ctrl     *gomock.Controller
+	recorder *MockIMerchantMockRecorder
+}
+
+// MockIMerchantMockRecorder is the mock recorder for MockIMerchant.
+type MockIMerchantMockRecorder struct {
+	mock *MockIMerchant
+}
+
+// NewMockIMerchant creates a new mock instance.
+func NewMockIMerchant(ctrl *gomock.Controller) *MockIMerchant {
+	mock := &MockIMerchant{ctrl: ctrl}
+	mock.recorder = &MockIMerchantMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockIMerchant) EXPECT() *MockIMerchantMockRecorder {
+	return m.recorder
+}
+
+// MerchantInsert mocks base method.
+func (m *MockIMerchant) MerchantInsert(ctx *ctx.Ctx, merchant *merchant.Merchant) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MerchantInsert", ctx, merchant)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// MerchantInsert indicates an expected call of MerchantInsert.
+func (mr *MockIMerchantMockRecorder) MerchantInsert(ctx, merchant interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantInsert", reflect.TypeOf((*MockIMerchant)(nil).MerchantInsert), ctx, merchant)
 }
