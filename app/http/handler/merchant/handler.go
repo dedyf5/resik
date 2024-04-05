@@ -85,3 +85,60 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 		},
 	}
 }
+
+// @Summary Update Merchant
+// @Description Update merchant
+// @Tags merchant
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param       id path int true "Merchant ID"
+// @Param       parameter query commonEntity.Request true "Query Param"
+// @Param       payload body request.MerchantPut true "Payload"
+// @Success		200	{object}	resPkg.Response{data=response.MerchantUpsert}
+// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     401 {object}	resPkg.Response{data=nil}
+// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Router		/merchant/{id} [put]
+func (h *Handler) MerchantPut(echoCtx echo.Context) error {
+	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	if err != nil {
+		return err
+	}
+	ctx.App.Logger().Debug("MerchantPut")
+
+	var body request.MerchantPut
+
+	if err := h.fw.StructValidator(echoCtx, &body); err != nil {
+		return err
+	}
+
+	var param commonEntity.Request
+	if err := h.fw.StructValidator(echoCtx, &param); err != nil {
+		return err
+	}
+
+	entity, err := request.MerchantPutToEntity(ctx, &body)
+	if err != nil {
+		return err
+	}
+
+	if _, err = ctx.UserClaims.MerchantIDIsAccessible(entity.ID); err != nil {
+		return err
+	}
+
+	_, err = h.merchantService.MerchantUpdate(ctx, entity)
+	if err != nil {
+		return err
+	}
+
+	return &resPkg.Status{
+		Code: http.StatusOK,
+		Message: ctx.Lang.GetByTemplateData("successfully_updated_val", commonEntity.Map{
+			"val": "merchant",
+		}),
+		Data: &response.MerchantUpsert{
+			ID: entity.ID,
+		},
+	}
+}

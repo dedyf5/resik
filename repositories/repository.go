@@ -35,4 +35,5 @@ type IUser interface {
 
 type IMerchant interface {
 	MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status)
+	MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status)
 }

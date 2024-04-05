@@ -4,5 +4,6 @@
     "home_message": "{{.app_name}} Versi {{.code}}",
     "validation_type_message": "tipe {{.field}} harus {{.expected}}, bukan {{.actual}}",
     "incorrect_username_or_password": "Username atau Password salah",
-    "successfully_created_val": "Berhasil membuat {{.val}}"
+    "successfully_created_val": "Berhasil membuat {{.val}}",
+    "successfully_updated_val": "Berhasil memperbarui {{.val}}"
 }

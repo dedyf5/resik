@@ -4,5 +4,6 @@
     "home_message": "{{.app_name}} Version {{.code}}",
     "validation_type_message": "{{.field}} type must be {{.expected}}, got {{.actual}}",
     "incorrect_username_or_password": "Incorrect username or password",
-    "successfully_created_val": "Successfully created a {{.val}}"
+    "successfully_created_val": "Successfully created {{.val}}",
+    "successfully_updated_val": "Successfully updated {{.val}}"
 }

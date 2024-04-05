@@ -50,3 +50,18 @@ func (mr *MockIServiceMockRecorder) MerchantInsert(ctx, merchant interface{}) *g
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantInsert", reflect.TypeOf((*MockIService)(nil).MerchantInsert), ctx, merchant)
 }
+
+// MerchantUpdate mocks base method.
+func (m *MockIService) MerchantUpdate(ctx *ctx.Ctx, merchant *merchant.Merchant) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MerchantUpdate", ctx, merchant)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// MerchantUpdate indicates an expected call of MerchantUpdate.
+func (mr *MockIServiceMockRecorder) MerchantUpdate(ctx, merchant interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantUpdate", reflect.TypeOf((*MockIService)(nil).MerchantUpdate), ctx, merchant)
+}

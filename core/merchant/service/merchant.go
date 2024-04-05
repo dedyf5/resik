@@ -13,3 +13,7 @@ import (
 func (s *Service) MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status) {
 	return s.merchantRepo.MerchantInsert(ctx, merchant)
 }
+
+func (s *Service) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status) {
+	return s.merchantRepo.MerchantUpdate(ctx, merchant)
+}

@@ -50,6 +50,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 
 	merchantHandler := r.merchantHandler
 	e.POST("/merchant", merchantHandler.MerchantPost, validateToken, jwtMiddleware)
+	e.PUT("/merchant/:id", merchantHandler.MerchantPut, validateToken, jwtMiddleware)
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transaction")
