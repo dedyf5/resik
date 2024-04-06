@@ -15,7 +15,7 @@ const TABLE_NAME = "outlet"
 type Outlet struct {
 	ID         uint64            `json:"id"`
 	MerchantID uint64            `json:"merchant_id" gorm:"not null"`
-	OutletName string            `json:"outlet_name" gorm:"type:varchar(40);not null"`
+	Name       string            `json:"name" gorm:"type:varchar(40);not null"`
 	CreatedAt  time.Time         `json:"created_at" gorm:"type:timestamp;default:current_timestamp();not null;"`
 	CreatedBy  uint64            `json:"created_by" gorm:"not null"`
 	UpdatedAt  time.Time         `json:"updated_at" gorm:"type:timestamp;default:current_timestamp();not null;"`
