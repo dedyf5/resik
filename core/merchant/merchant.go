@@ -5,8 +5,10 @@
 package merchant
 
 import (
+	"github.com/dedyf5/resik/core/merchant/dto"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/entities/merchant"
+	"github.com/dedyf5/resik/entities/merchant/param"
 	"github.com/dedyf5/resik/pkg/response"
 )
 
@@ -14,4 +16,5 @@ import (
 type IService interface {
 	MerchantInsert(ctx *ctx.Ctx, merchant *merchant.Merchant) (ok bool, status *response.Status)
 	MerchantUpdate(ctx *ctx.Ctx, merchant *merchant.Merchant) (ok bool, status *response.Status)
+	MerchantListGet(param *param.MerchantListGet) (res *dto.MerchantList, status *response.Status)
 }

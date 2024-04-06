@@ -7,8 +7,10 @@ package mock
 import (
 	reflect "reflect"
 
+	dto "github.com/dedyf5/resik/core/merchant/dto"
 	ctx "github.com/dedyf5/resik/ctx"
 	merchant "github.com/dedyf5/resik/entities/merchant"
+	param "github.com/dedyf5/resik/entities/merchant/param"
 	response "github.com/dedyf5/resik/pkg/response"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -49,6 +51,21 @@ func (m *MockIService) MerchantInsert(ctx *ctx.Ctx, merchant *merchant.Merchant)
 func (mr *MockIServiceMockRecorder) MerchantInsert(ctx, merchant interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantInsert", reflect.TypeOf((*MockIService)(nil).MerchantInsert), ctx, merchant)
+}
+
+// MerchantListGet mocks base method.
+func (m *MockIService) MerchantListGet(param *param.MerchantListGet) (*dto.MerchantList, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MerchantListGet", param)
+	ret0, _ := ret[0].(*dto.MerchantList)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// MerchantListGet indicates an expected call of MerchantListGet.
+func (mr *MockIServiceMockRecorder) MerchantListGet(param interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantListGet", reflect.TypeOf((*MockIService)(nil).MerchantListGet), param)
 }
 
 // MerchantUpdate mocks base method.

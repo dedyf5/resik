@@ -250,6 +250,80 @@ paths:
       tags:
       - user
   /merchant:
+    get:
+      consumes:
+      - application/json
+      description: Merchant list
+      parameters:
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      - example: 10
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - example: name
+        in: query
+        name: order
+        type: string
+      - example: 1
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - example: keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.MerchantUpsert'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Merchant List
+      tags:
+      - merchant
     post:
       consumes:
       - application/json

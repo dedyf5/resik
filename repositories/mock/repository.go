@@ -9,11 +9,12 @@ import (
 
 	ctx "github.com/dedyf5/resik/ctx"
 	merchant "github.com/dedyf5/resik/entities/merchant"
+	param "github.com/dedyf5/resik/entities/merchant/param"
 	outlet "github.com/dedyf5/resik/entities/outlet"
 	transaction "github.com/dedyf5/resik/entities/transaction"
-	param "github.com/dedyf5/resik/entities/transaction/param"
+	param0 "github.com/dedyf5/resik/entities/transaction/param"
 	user "github.com/dedyf5/resik/entities/user"
-	param0 "github.com/dedyf5/resik/entities/user/param"
+	param1 "github.com/dedyf5/resik/entities/user/param"
 	response "github.com/dedyf5/resik/pkg/response"
 	gomock "github.com/golang/mock/gomock"
 )
@@ -102,7 +103,7 @@ func (mr *MockITransactionMockRecorder) GetOutletByIDAndCreatedBy(outletID, crea
 }
 
 // MerchantOmzetGetData mocks base method.
-func (m *MockITransaction) MerchantOmzetGetData(param *param.MerchantOmzetGet) ([]transaction.MerchantOmzet, *response.Status) {
+func (m *MockITransaction) MerchantOmzetGetData(param *param0.MerchantOmzetGet) ([]transaction.MerchantOmzet, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MerchantOmzetGetData", param)
 	ret0, _ := ret[0].([]transaction.MerchantOmzet)
@@ -117,7 +118,7 @@ func (mr *MockITransactionMockRecorder) MerchantOmzetGetData(param interface{}) 
 }
 
 // MerchantOmzetGetTotal mocks base method.
-func (m *MockITransaction) MerchantOmzetGetTotal(param *param.MerchantOmzetGet) (uint64, *response.Status) {
+func (m *MockITransaction) MerchantOmzetGetTotal(param *param0.MerchantOmzetGet) (uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MerchantOmzetGetTotal", param)
 	ret0, _ := ret[0].(uint64)
@@ -132,7 +133,7 @@ func (mr *MockITransactionMockRecorder) MerchantOmzetGetTotal(param interface{})
 }
 
 // OutletOmzetGetData mocks base method.
-func (m *MockITransaction) OutletOmzetGetData(param *param.OutletOmzetGet) ([]transaction.OutletOmzet, *response.Status) {
+func (m *MockITransaction) OutletOmzetGetData(param *param0.OutletOmzetGet) ([]transaction.OutletOmzet, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OutletOmzetGetData", param)
 	ret0, _ := ret[0].([]transaction.OutletOmzet)
@@ -147,7 +148,7 @@ func (mr *MockITransactionMockRecorder) OutletOmzetGetData(param interface{}) *g
 }
 
 // OutletOmzetGetTotal mocks base method.
-func (m *MockITransaction) OutletOmzetGetTotal(param *param.OutletOmzetGet) (uint64, *response.Status) {
+func (m *MockITransaction) OutletOmzetGetTotal(param *param0.OutletOmzetGet) (uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OutletOmzetGetTotal", param)
 	ret0, _ := ret[0].(uint64)
@@ -215,7 +216,7 @@ func (mr *MockIUserMockRecorder) OutletMerchantByUserIDGetData(userID interface{
 }
 
 // UserByUsernameAndPasswordGetData mocks base method.
-func (m *MockIUser) UserByUsernameAndPasswordGetData(param param0.Auth) (*user.User, *response.Status) {
+func (m *MockIUser) UserByUsernameAndPasswordGetData(param param1.Auth) (*user.User, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UserByUsernameAndPasswordGetData", param)
 	ret0, _ := ret[0].(*user.User)
@@ -265,6 +266,36 @@ func (m *MockIMerchant) MerchantInsert(ctx *ctx.Ctx, merchant *merchant.Merchant
 func (mr *MockIMerchantMockRecorder) MerchantInsert(ctx, merchant interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantInsert", reflect.TypeOf((*MockIMerchant)(nil).MerchantInsert), ctx, merchant)
+}
+
+// MerchantListGetData mocks base method.
+func (m *MockIMerchant) MerchantListGetData(param *param.MerchantListGet) ([]merchant.Merchant, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MerchantListGetData", param)
+	ret0, _ := ret[0].([]merchant.Merchant)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// MerchantListGetData indicates an expected call of MerchantListGetData.
+func (mr *MockIMerchantMockRecorder) MerchantListGetData(param interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantListGetData", reflect.TypeOf((*MockIMerchant)(nil).MerchantListGetData), param)
+}
+
+// MerchantListGetTotal mocks base method.
+func (m *MockIMerchant) MerchantListGetTotal(param *param.MerchantListGet) (uint64, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MerchantListGetTotal", param)
+	ret0, _ := ret[0].(uint64)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// MerchantListGetTotal indicates an expected call of MerchantListGetTotal.
+func (mr *MockIMerchantMockRecorder) MerchantListGetTotal(param interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantListGetTotal", reflect.TypeOf((*MockIMerchant)(nil).MerchantListGetTotal), param)
 }
 
 // MerchantUpdate mocks base method.

@@ -7,6 +7,7 @@ package repositories
 import (
 	"github.com/dedyf5/resik/ctx"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
+	paramMerchant "github.com/dedyf5/resik/entities/merchant/param"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
@@ -36,4 +37,6 @@ type IUser interface {
 type IMerchant interface {
 	MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status)
 	MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status)
+	MerchantListGetData(param *paramMerchant.MerchantListGet) (merchant []merchantEntity.Merchant, status *resPkg.Status)
+	MerchantListGetTotal(param *paramMerchant.MerchantListGet) (total uint64, status *resPkg.Status)
 }

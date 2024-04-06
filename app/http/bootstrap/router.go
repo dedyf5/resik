@@ -49,6 +49,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	e.POST("/token-refresh", userHandler.TokenRefresh, validateToken, jwtMiddleware)
 
 	merchantHandler := r.merchantHandler
+	e.GET("/merchant", merchantHandler.MerchantListGet, validateToken, jwtMiddleware)
 	e.POST("/merchant", merchantHandler.MerchantPost, validateToken, jwtMiddleware)
 	e.PUT("/merchant/:id", merchantHandler.MerchantPut, validateToken, jwtMiddleware)
 

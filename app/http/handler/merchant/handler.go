@@ -142,3 +142,51 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 		},
 	}
 }
+
+// @Summary Merchant List
+// @Description Merchant list
+// @Tags merchant
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param       parameter query request.MerchantListGet true "Query Param"
+// @Success		200	{object}	resPkg.Response{data=response.MerchantUpsert}
+// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     404 {object}	resPkg.Response{data=nil}
+// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Router		/merchant [get]
+func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
+	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	if err != nil {
+		return err
+	}
+	ctx.App.Logger().Debug("MerchantListGet")
+
+	var payload request.MerchantListGet
+
+	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
+		return err
+	}
+
+	param := payload.ToParam(ctx)
+
+	res, err := h.merchantService.MerchantListGet(param)
+	if err != nil {
+		return err
+	}
+
+	code := http.StatusOK
+	if len(res.Data) == 0 {
+		code = http.StatusNotFound
+	}
+
+	return &resPkg.Status{
+		Code: code,
+		Data: response.MerchantListFromEntity(res.Data),
+		Meta: &resPkg.Meta{
+			PageCurrent: param.Filter.Page,
+			Limit:       param.Filter.Limit,
+			Total:       res.Total,
+		},
+	}
+}
