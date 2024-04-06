@@ -28,12 +28,12 @@ func MerchantPostToEntity(ctx *ctx.Ctx, src *MerchantPost) (res *merchantEntity.
 		return nil, err
 	}
 	return &merchantEntity.Merchant{
-		UserID:       ctx.UserClaims.UserID,
-		MerchantName: src.Name,
-		CreatedBy:    ctx.UserClaims.UserID,
-		CreatedAt:    *datetime,
-		UpdatedBy:    ctx.UserClaims.UserID,
-		UpdatedAt:    *datetime,
+		UserID:    ctx.UserClaims.UserID,
+		Name:      src.Name,
+		CreatedBy: ctx.UserClaims.UserID,
+		CreatedAt: *datetime,
+		UpdatedBy: ctx.UserClaims.UserID,
+		UpdatedAt: *datetime,
 	}, nil
 }
 
@@ -43,9 +43,9 @@ func MerchantPutToEntity(ctx *ctx.Ctx, src *MerchantPut) (res *merchantEntity.Me
 		return nil, err
 	}
 	return &merchantEntity.Merchant{
-		ID:           src.ID,
-		MerchantName: src.Name,
-		UpdatedBy:    ctx.UserClaims.UserID,
-		UpdatedAt:    *datetime,
+		ID:        src.ID,
+		Name:      src.Name,
+		UpdatedBy: ctx.UserClaims.UserID,
+		UpdatedAt: *datetime,
 	}, nil
 }

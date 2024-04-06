@@ -30,7 +30,7 @@ func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet)
 		orderMap := map[string]string{
 			"period":        "period",
 			"omzet":         "omzet",
-			"merchant_name": "m1.merchant_name",
+			"merchant_name": "m1.name",
 		}
 		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
 		if err != nil {
@@ -78,7 +78,7 @@ func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet
 		t1.merchant_id,
 		DATE_FORMAT(t1.created_at, '`+param.GroupPeriod.Mode.DateFormatMySQL()+`') period,
 		SUM(t1.bill_total) AS omzet,
-		m1.merchant_name
+		m1.name AS merchant_name
 		`).
 		Table(trxEntity.TABLE_NAME+" AS t1").
 		Joins("INNER JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = t1.merchant_id").
@@ -86,7 +86,7 @@ func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet
 		Where("t1.created_at >= ? AND t1.created_at <= ?", param.GroupPeriod.DatetimeStart, param.GroupPeriod.DatetimeEnd).
 		Group("t1.merchant_id, period")
 	if search := param.Filter.Search; search != "" {
-		query = query.Where("m1.merchant_name LIKE ?", "%"+search+"%")
+		query = query.Where("m1.name LIKE ?", "%"+search+"%")
 	}
 	return
 }
@@ -105,7 +105,7 @@ func (r *TransactionRepo) OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (re
 		orderMap := map[string]string{
 			"period":        "period",
 			"omzet":         "omzet",
-			"merchant_name": "m1.merchant_name",
+			"merchant_name": "m1.name",
 			"outlet_name":   "o1.outlet_name",
 		}
 		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
@@ -154,7 +154,7 @@ func (r *TransactionRepo) OutletOmzetGetQuery(param *paramTrx.OutletOmzetGet) (q
 		t1.merchant_id,
 		DATE_FORMAT(t1.created_at, '`+param.GroupPeriod.Mode.DateFormatMySQL()+`') period,
 		SUM(t1.bill_total) AS omzet,
-		m1.merchant_name,
+		m1.name AS merchant_name,
 		t1.outlet_id,
 		o1.outlet_name
 		`).
@@ -165,7 +165,7 @@ func (r *TransactionRepo) OutletOmzetGetQuery(param *paramTrx.OutletOmzetGet) (q
 		Where("t1.created_at >= ? AND t1.created_at <= ?", param.GroupPeriod.DatetimeStart, param.GroupPeriod.DatetimeEnd).
 		Group("t1.outlet_id, period")
 	if search := param.Filter.Search; search != "" {
-		query = query.Where("m1.merchant_name LIKE ? OR o1.outlet_name LIKE ?", "%"+search+"%", "%"+search+"%")
+		query = query.Where("m1.name LIKE ? OR o1.outlet_name LIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 	return
 }

@@ -28,7 +28,7 @@ func (r *MerchantRepo) MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Mer
 
 func (r *MerchantRepo) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status) {
 	result := r.DB.WithContext(ctx.Context).
-		Exec("UPDATE "+merchantEntity.TABLE_NAME+" SET merchant_name = ?, updated_at = ?, updated_by = ? WHERE id = ?", merchant.MerchantName, merchant.UpdatedAt, merchant.UpdatedBy, merchant.ID)
+		Exec("UPDATE "+merchantEntity.TABLE_NAME+" SET name = ?, updated_at = ?, updated_by = ? WHERE id = ?", merchant.Name, merchant.UpdatedAt, merchant.UpdatedBy, merchant.ID)
 	if result.Error != nil {
 		return false, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
@@ -47,7 +47,7 @@ func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet)
 
 	if len(param.Orders) > 0 {
 		orderMap := map[string]string{
-			"name":       "merchant_name",
+			"name":       "name",
 			"created_at": "created_at",
 			"updated_at": "updated_at",
 		}
@@ -88,7 +88,7 @@ func (r *MerchantRepo) MerchantListBaseQuery(param *paramMerchant.MerchantListGe
 		Table(merchantEntity.TABLE_NAME).
 		Where("id IN ?", param.MerchantIDs)
 	if param.Filter.Search != "" {
-		query = query.Where("merchant_name LIKE ?", "%"+param.Filter.Search+"%")
+		query = query.Where("name LIKE ?", "%"+param.Filter.Search+"%")
 	}
 	return
 }
