@@ -13,8 +13,8 @@ const (
 	FormatyyyyMMddHHmmss Format = "2006-01-02 15:04:05"
 )
 
-func (f *Format) ToString() string {
-	return string(*f)
+func (f Format) ToString() string {
+	return string(f)
 }
 
 func FromString(val string, format Format) (res *time.Time, status *resPkg.Status) {
