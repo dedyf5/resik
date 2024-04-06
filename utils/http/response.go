@@ -6,6 +6,7 @@ package http
 
 import (
 	"fmt"
+	"math"
 
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
@@ -72,7 +73,7 @@ func Page(total uint64, limit, pageCurrent int) *resPkg.ResponsePage {
 		previous = &tmp
 	}
 
-	last := int(int(total) / limit)
+	last := int(math.Ceil(float64(total) / float64(limit)))
 	var next *int = nil
 	if current != last {
 		tmp := current + 1
