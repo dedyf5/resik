@@ -30,7 +30,7 @@ type ITransaction interface {
 type IUser interface {
 	UserByUsernameAndPasswordGetData(param paramUser.Auth) (user *userEntity.User, status *resPkg.Status)
 	MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, status *resPkg.Status)
-	OutletByUserIDGetData(userID uint64) (outlets []outletEntity.Outlet, status *resPkg.Status)
+	OutletMerchantByUserIDGetData(userID uint64) (outlets []outletEntity.Outlet, status *resPkg.Status)
 }
 
 type IMerchant interface {

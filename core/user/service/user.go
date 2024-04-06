@@ -29,7 +29,7 @@ func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Statu
 }
 
 func (s *Service) AuthTokenGenerate(userID uint64, username string) (token string, status *resPkg.Status) {
-	outlets, err := s.userRepo.OutletByUserIDGetData(userID)
+	outlets, err := s.userRepo.OutletMerchantByUserIDGetData(userID)
 	if err != nil {
 		return "", err
 	}
@@ -38,7 +38,9 @@ func (s *Service) AuthTokenGenerate(userID uint64, username string) (token strin
 	merchantIDs := make([]uint64, 0, length)
 	outletIDs := make([]uint64, 0, length)
 	for _, v := range outlets {
-		outletIDs = append(outletIDs, v.ID)
+		if v.ID > 0 {
+			outletIDs = append(outletIDs, v.ID)
+		}
 		if array.InArray(v.MerchantID, merchantIDs) < 0 {
 			merchantIDs = append(merchantIDs, v.MerchantID)
 		}

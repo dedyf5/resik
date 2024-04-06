@@ -46,10 +46,10 @@ func (r *UserRepo) MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint
 	return
 }
 
-func (r *UserRepo) OutletByUserIDGetData(userID uint64) (outlets []outletEntity.Outlet, status *resPkg.Status) {
-	query := r.DB.Select("o1.*").
+func (r *UserRepo) OutletMerchantByUserIDGetData(userID uint64) (outlets []outletEntity.Outlet, status *resPkg.Status) {
+	query := r.DB.Select("o1.id, m1.id AS merchant_id").
 		Table(outletEntity.TABLE_NAME+" AS o1").
-		Joins("INNER JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = o1.merchant_id").
+		Joins("RIGHT JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = o1.merchant_id").
 		Where("m1.user_id = ?", userID)
 	err := query.Find(&outlets).Error
 	if err != nil {
