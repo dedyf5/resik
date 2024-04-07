@@ -43,7 +43,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, merchantService merchantCore.IService
 // @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       payload body request.MerchantPost true "Payload"
-// @Success		200	{object}	resPkg.Response{data=response.MerchantUpsert}
+// @Success		201	{object}	resPkg.Response{data=response.MerchantUpsert}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant [post]
@@ -76,7 +76,7 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 	}
 
 	return &resPkg.Status{
-		Code: http.StatusOK,
+		Code: http.StatusCreated,
 		Message: ctx.Lang.GetByTemplateData("successfully_created_val", commonEntity.Map{
 			"val": "merchant",
 		}),
@@ -175,7 +175,7 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	code := http.StatusOK
+	code := http.StatusCreated
 	if len(res.Data) == 0 {
 		code = http.StatusNotFound
 	}
