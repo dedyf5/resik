@@ -92,3 +92,13 @@ func (r *MerchantRepo) MerchantListBaseQuery(param *paramMerchant.MerchantListGe
 	}
 	return
 }
+
+func (r *MerchantRepo) MerchantDelete(c *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status) {
+	if err := r.DB.WithContext(c.Context).Delete(merchant).Error; err != nil {
+		return false, &resPkg.Status{
+			Code:       http.StatusInternalServerError,
+			CauseError: err,
+		}
+	}
+	return true, nil
+}

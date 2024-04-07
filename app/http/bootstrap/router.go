@@ -52,6 +52,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	e.GET("/merchant", merchantHandler.MerchantListGet, validateToken, jwtMiddleware)
 	e.POST("/merchant", merchantHandler.MerchantPost, validateToken, jwtMiddleware)
 	e.PUT("/merchant/:id", merchantHandler.MerchantPut, validateToken, jwtMiddleware)
+	e.DELETE("/merchant/:id", merchantHandler.MerchantDelete, validateToken, jwtMiddleware)
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transaction")

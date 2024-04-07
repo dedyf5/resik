@@ -34,3 +34,7 @@ func (s *Service) MerchantListGet(param *paramMerchant.MerchantListGet) (res *dt
 		Total: total,
 	}, nil
 }
+
+func (s *Service) MerchantDelete(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status) {
+	return s.merchantRepo.MerchantDelete(ctx, merchant)
+}

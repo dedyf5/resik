@@ -38,6 +38,21 @@ func (m *MockIService) EXPECT() *MockIServiceMockRecorder {
 	return m.recorder
 }
 
+// MerchantDelete mocks base method.
+func (m *MockIService) MerchantDelete(ctx *ctx.Ctx, param *merchant.Merchant) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MerchantDelete", ctx, param)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// MerchantDelete indicates an expected call of MerchantDelete.
+func (mr *MockIServiceMockRecorder) MerchantDelete(ctx, param interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantDelete", reflect.TypeOf((*MockIService)(nil).MerchantDelete), ctx, param)
+}
+
 // MerchantInsert mocks base method.
 func (m *MockIService) MerchantInsert(ctx *ctx.Ctx, merchant *merchant.Merchant) (bool, *response.Status) {
 	m.ctrl.T.Helper()

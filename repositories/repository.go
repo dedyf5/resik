@@ -39,4 +39,5 @@ type IMerchant interface {
 	MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status)
 	MerchantListGetData(param *paramMerchant.MerchantListGet) (merchant []merchantEntity.Merchant, status *resPkg.Status)
 	MerchantListGetTotal(param *paramMerchant.MerchantListGet) (total uint64, status *resPkg.Status)
+	MerchantDelete(c *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status)
 }

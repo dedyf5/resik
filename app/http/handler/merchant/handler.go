@@ -190,3 +190,42 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 		},
 	}
 }
+
+// @Summary Update Merchant
+// @Description Update merchant
+// @Tags merchant
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param       id path int true "Merchant ID"
+// @Param       parameter query request.MerchantDelete true "Query Param"
+// @Success		204	{object}	nil
+// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     401 {object}	resPkg.Response{data=nil}
+// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Router		/merchant/{id} [delete]
+func (h *Handler) MerchantDelete(echoCtx echo.Context) error {
+	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	if err != nil {
+		return err
+	}
+	ctx.App.Logger().Debug("MerchantDelete")
+
+	var param request.MerchantDelete
+	if err := h.fw.StructValidator(echoCtx, &param); err != nil {
+		return err
+	}
+
+	if _, err = ctx.UserClaims.MerchantIDIsAccessible(param.ID); err != nil {
+		return err
+	}
+
+	_, err = h.merchantService.MerchantDelete(ctx, param.ToMerchant())
+	if err != nil {
+		return err
+	}
+
+	return &resPkg.Status{
+		Code: http.StatusNoContent,
+	}
+}
