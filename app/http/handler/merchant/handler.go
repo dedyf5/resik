@@ -175,7 +175,7 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	code := http.StatusCreated
+	code := http.StatusOK
 	if len(res.Data) == 0 {
 		code = http.StatusNotFound
 	}
