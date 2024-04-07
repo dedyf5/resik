@@ -65,7 +65,7 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 		return err
 	}
 
-	entity, err := request.MerchantPostToEntity(ctx, &payload)
+	entity, err := payload.ToEntity(ctx)
 	if err != nil {
 		return err
 	}
@@ -118,7 +118,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 		return err
 	}
 
-	entity, err := request.MerchantPutToEntity(ctx, &body)
+	entity, err := body.ToEntity(ctx)
 	if err != nil {
 		return err
 	}

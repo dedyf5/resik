@@ -16,20 +16,14 @@ type MerchantPost struct {
 	CreatedAt string `json:"created_at" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-04-14 14:18:00"`
 }
 
-type MerchantPut struct {
-	ID        uint64 `json:"-" param:"id" query:"-" validate:"required" example:"123"`
-	Name      string `json:"name" validate:"required,max=40"`
-	UpdatedAt string `json:"updated_at" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-04-14 14:18:00"`
-}
-
-func MerchantPostToEntity(ctx *ctx.Ctx, src *MerchantPost) (res *merchantEntity.Merchant, status *resPkg.Status) {
-	datetime, err := datetime.FromString(src.CreatedAt, datetime.FormatyyyyMMddHHmmss)
+func (m *MerchantPost) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, status *resPkg.Status) {
+	datetime, err := datetime.FromString(m.CreatedAt, datetime.FormatyyyyMMddHHmmss)
 	if err != nil {
 		return nil, err
 	}
 	return &merchantEntity.Merchant{
 		UserID:    ctx.UserClaims.UserID,
-		Name:      src.Name,
+		Name:      m.Name,
 		CreatedBy: ctx.UserClaims.UserID,
 		CreatedAt: *datetime,
 		UpdatedBy: ctx.UserClaims.UserID,
@@ -37,14 +31,20 @@ func MerchantPostToEntity(ctx *ctx.Ctx, src *MerchantPost) (res *merchantEntity.
 	}, nil
 }
 
-func MerchantPutToEntity(ctx *ctx.Ctx, src *MerchantPut) (res *merchantEntity.Merchant, status *resPkg.Status) {
-	datetime, err := datetime.FromString(src.UpdatedAt, datetime.FormatyyyyMMddHHmmss)
+type MerchantPut struct {
+	ID        uint64 `json:"-" param:"id" query:"-" validate:"required" example:"123"`
+	Name      string `json:"name" validate:"required,max=40"`
+	UpdatedAt string `json:"updated_at" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-04-14 14:18:00"`
+}
+
+func (m *MerchantPut) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, status *resPkg.Status) {
+	datetime, err := datetime.FromString(m.UpdatedAt, datetime.FormatyyyyMMddHHmmss)
 	if err != nil {
 		return nil, err
 	}
 	return &merchantEntity.Merchant{
-		ID:        src.ID,
-		Name:      src.Name,
+		ID:        m.ID,
+		Name:      m.Name,
 		UpdatedBy: ctx.UserClaims.UserID,
 		UpdatedAt: *datetime,
 	}, nil
