@@ -45,6 +45,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, service userService.IService, config 
 // @Param       payload body userReq.LoginPost true "Payload"
 // @Success		200	{object}	resPkg.Response{data=userRes.UserCredential}
 // @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/login [post]
 func (h *Handler) LoginPost(echoCtx echo.Context) error {

@@ -20,7 +20,7 @@ func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Statu
 	}
 	if user == nil {
 		return "", &resPkg.Status{
-			Code:    http.StatusBadRequest,
+			Code:    http.StatusUnauthorized,
 			Message: param.Ctx.Lang.GetByMessageID("incorrect_username_or_password"),
 		}
 	}

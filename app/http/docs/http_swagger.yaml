@@ -237,6 +237,15 @@ paths:
                 data:
                   type: object
               type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
         "500":
           description: Internal Server Error
           schema:
