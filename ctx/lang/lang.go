@@ -26,9 +26,8 @@ type langKey string
 
 const (
 	ContextKey langKey = "lang"
+	TermDir    string  = "static/term"
 )
-
-var termDir string = "static/term"
 
 type Lang struct {
 	Bundle      *i18n.Bundle
@@ -39,17 +38,21 @@ type Lang struct {
 }
 
 func NewLang(langDefault language.Tag, langReq *language.Tag, langAccept string) *Lang {
+	return NewLangTermDir(langDefault, langReq, langAccept, TermDir)
+}
+
+func NewLangTermDir(langDefault language.Tag, langReq *language.Tag, langAccept string, termDir string) *Lang {
 	bundle := i18n.NewBundle(langDefault)
 	return &Lang{
 		Bundle:      bundle,
-		Localizer:   NewLocalizer(bundle, langDefault, langReq, langAccept),
+		Localizer:   NewLocalizer(bundle, langDefault, langReq, langAccept, termDir),
 		LangDefault: langDefault,
 		LangReq:     langReq,
 		LangAccept:  langAccept,
 	}
 }
 
-func NewLocalizer(bundle *i18n.Bundle, langDefault language.Tag, langReq *language.Tag, langAccept string) *i18n.Localizer {
+func NewLocalizer(bundle *i18n.Bundle, langDefault language.Tag, langReq *language.Tag, langAccept string, termDir string) *i18n.Localizer {
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
 	for _, v := range Available {
 		sourcePath := fmt.Sprintf("%s/%s.json", termDir, v.String())
