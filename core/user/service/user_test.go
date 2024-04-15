@@ -111,13 +111,6 @@ func TestAuthTokenGenerate(t *testing.T) {
 	})
 }
 
-func setup(ctrl *gomock.Controller) (userRepo *userMock.MockIUser, ctx *ctx.Ctx, userService *Service) {
-	userRepo = userMock.NewMockIUser(ctrl)
-	config, ctx := env()
-	userService = New(userRepo, config)
-	return
-}
-
 func outletsExpected() []outletEntity.Outlet {
 	return []outletEntity.Outlet{
 		{
@@ -132,6 +125,13 @@ func outletsExpected() []outletEntity.Outlet {
 			MerchantID: 3,
 		},
 	}
+}
+
+func setup(ctrl *gomock.Controller) (userRepo *userMock.MockIUser, ctx *ctx.Ctx, userService *Service) {
+	userRepo = userMock.NewMockIUser(ctrl)
+	config, ctx := env()
+	userService = New(userRepo, config)
+	return
 }
 
 func env() (conf config.Config, c *ctx.Ctx) {
