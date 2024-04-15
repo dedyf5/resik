@@ -24,12 +24,10 @@ import (
 )
 
 func TestMerchantOmzetGet(t *testing.T) {
-	ctl := gomock.NewController(t)
-	defer ctl.Finish()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-	trxRepo := trxRepoMock.NewMockITransaction(ctl)
-	config, ctx := env()
-	trx := New(trxRepo, config)
+	trxRepo, ctx, trxService := setup(ctrl)
 
 	p := trxParam.MerchantOmzetGet{
 		Ctx:        ctx,
@@ -45,7 +43,7 @@ func TestMerchantOmzetGet(t *testing.T) {
 		gomock.InOrder(
 			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(uint64(0), statusErr),
 		)
-		res, err := trx.MerchantOmzetGet(&p)
+		res, err := trxService.MerchantOmzetGet(&p)
 		assert.Nil(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
@@ -62,7 +60,7 @@ func TestMerchantOmzetGet(t *testing.T) {
 			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(uint64(1), nil),
 			trxRepo.EXPECT().MerchantOmzetGetData(&p).Return(nil, statusErr),
 		)
-		res, err := trx.MerchantOmzetGet(&p)
+		res, err := trxService.MerchantOmzetGet(&p)
 		assert.Nil(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
@@ -82,7 +80,7 @@ func TestMerchantOmzetGet(t *testing.T) {
 			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(resUint64, nil),
 			trxRepo.EXPECT().MerchantOmzetGetData(&p).Return(expRes, nil),
 		)
-		res, err := trx.MerchantOmzetGet(&p)
+		res, err := trxService.MerchantOmzetGet(&p)
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, resUint64, res.Total)
@@ -92,12 +90,10 @@ func TestMerchantOmzetGet(t *testing.T) {
 }
 
 func TestOutletOmzetGet(t *testing.T) {
-	ctl := gomock.NewController(t)
-	defer ctl.Finish()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
 
-	trxRepo := trxRepoMock.NewMockITransaction(ctl)
-	config, ctx := env()
-	trx := New(trxRepo, config)
+	trxRepo, ctx, trxService := setup(ctrl)
 
 	p := trxParam.OutletOmzetGet{
 		Ctx:      ctx,
@@ -113,7 +109,7 @@ func TestOutletOmzetGet(t *testing.T) {
 		gomock.InOrder(
 			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(uint64(0), statusErr),
 		)
-		res, err := trx.OutletOmzetGet(&p)
+		res, err := trxService.OutletOmzetGet(&p)
 		assert.Nil(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
@@ -130,7 +126,7 @@ func TestOutletOmzetGet(t *testing.T) {
 			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(uint64(1), nil),
 			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(nil, statusErr),
 		)
-		res, err := trx.OutletOmzetGet(&p)
+		res, err := trxService.OutletOmzetGet(&p)
 		assert.Nil(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
@@ -152,13 +148,20 @@ func TestOutletOmzetGet(t *testing.T) {
 			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resUint64, nil),
 			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(expRes, nil),
 		)
-		res, err := trx.OutletOmzetGet(&p)
+		res, err := trxService.OutletOmzetGet(&p)
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, resUint64, res.Total)
 		assert.Equal(t, int(resUint64), len(res.Data))
 		assert.Equal(t, expRes, res.Data)
 	})
+}
+
+func setup(ctrl *gomock.Controller) (trxRepo *trxRepoMock.MockITransaction, ctx *ctx.Ctx, trxService *Service) {
+	trxRepo = trxRepoMock.NewMockITransaction(ctrl)
+	config, ctx := env()
+	trxService = New(trxRepo, config)
+	return
 }
 
 func env() (conf config.Config, c *ctx.Ctx) {
