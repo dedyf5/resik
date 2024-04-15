@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/dedyf5/resik/entities/merchant"
+	"github.com/dedyf5/resik/pkg/array"
 )
 
 const TABLE_NAME = "outlet"
@@ -29,4 +30,19 @@ type Tabler interface {
 
 func (Outlet) TableName() string {
 	return TABLE_NAME
+}
+
+func GetUniqueMerchantIDsAndOutletIDs(outlets []Outlet) (merchantIDs, OutletIDs []uint64) {
+	length := len(outlets)
+	MIDs := make([]uint64, 0, length)
+	OIDs := make([]uint64, 0, length)
+	for _, v := range outlets {
+		if v.ID > 0 {
+			OIDs = append(OIDs, v.ID)
+		}
+		if array.InArray(v.MerchantID, MIDs) < 0 {
+			MIDs = append(MIDs, v.MerchantID)
+		}
+	}
+	return MIDs, OIDs
 }

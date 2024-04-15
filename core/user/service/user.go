@@ -8,8 +8,8 @@ import (
 	"net/http"
 
 	jwtCtx "github.com/dedyf5/resik/ctx/jwt"
+	"github.com/dedyf5/resik/entities/outlet"
 	paramUser "github.com/dedyf5/resik/entities/user/param"
-	"github.com/dedyf5/resik/pkg/array"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
@@ -34,17 +34,7 @@ func (s *Service) AuthTokenGenerate(userID uint64, username string) (token strin
 		return "", err
 	}
 
-	length := len(outlets)
-	merchantIDs := make([]uint64, 0, length)
-	outletIDs := make([]uint64, 0, length)
-	for _, v := range outlets {
-		if v.ID > 0 {
-			outletIDs = append(outletIDs, v.ID)
-		}
-		if array.InArray(v.MerchantID, merchantIDs) < 0 {
-			merchantIDs = append(merchantIDs, v.MerchantID)
-		}
-	}
+	merchantIDs, outletIDs := outlet.GetUniqueMerchantIDsAndOutletIDs(outlets)
 
 	token, status = jwtCtx.AuthTokenGenerate(s.config.App, s.config.Auth, userID, username, merchantIDs, outletIDs)
 	return
