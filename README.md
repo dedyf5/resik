@@ -2,6 +2,20 @@
 
 Golang Clean Architecture.
 
+### How to run Resik?
+#### Run REST app
+```
+go run main.go rest
+```
+#### Run gRPC app
+```
+go run main.go grpc
+```
+#### Help
+```
+go run main.go help
+```
+
 ### Features
 - [x] Multi-language
 - [x] Form Validation

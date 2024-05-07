@@ -4,11 +4,8 @@
 
 package main
 
-import (
-	"github.com/dedyf5/resik/app/grpc"
-)
+import "github.com/dedyf5/resik/cmd"
 
 func main() {
-	// rest.Init()
-	grpc.Init()
+	cmd.Execute()
 }

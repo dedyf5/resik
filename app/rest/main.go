@@ -2,7 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package rest
+package main
 
 import "github.com/dedyf5/resik/app/rest/bootstrap"
 
@@ -13,7 +13,7 @@ var err error
 // @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
-func Init() {
+func main() {
 	app, cleanup, err = bootstrap.InitializeHTTP()
 
 	if err != nil {
