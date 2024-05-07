@@ -17,6 +17,8 @@ go run main.go help
 ```
 
 ### Features
+- [x] REST App
+- [x] gRPC App
 - [x] Multi-language
 - [x] Form Validation
 - [x] Authentication and Authorization (JWT)
