@@ -1,0 +1,28 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+package general;
+
+option go_package = "./app/grpc/handler/general";
+
+message App {
+    string App = 1;
+    string Version = 2;
+    Lang Lang = 3;
+
+}
+
+message Lang {
+	string Current = 1;
+	string Request = 2;
+	string Default = 3;
+}
+
+service GeneralService {
+    rpc Home(google.protobuf.Empty) returns (App) {}
+}

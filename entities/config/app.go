@@ -6,6 +6,7 @@ package config
 
 import (
 	"fmt"
+	"strings"
 
 	"golang.org/x/text/language"
 )
@@ -18,9 +19,17 @@ const (
 	EnvProduction  Env = "production"
 )
 
+type Module string
+
+const (
+	ModuleREST Module = "REST"
+	ModuleGRPC Module = "GRPC"
+)
+
 type App struct {
 	Name        string
 	Version     string
+	Module      Module
 	Env         Env
 	LangDefault language.Tag
 	Host        string
@@ -33,4 +42,11 @@ func (a *App) HostPort() string {
 
 func (a *App) APIDocDescription() string {
 	return fmt.Sprintf("%v API Documentation", a.Name)
+}
+
+func (t Module) DirectoryName() string {
+	if t == ModuleREST {
+		return "http"
+	}
+	return strings.ToLower(string(t))
 }

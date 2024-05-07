@@ -4,10 +4,9 @@
 
 package main
 
-import (
-	"github.com/dedyf5/resik/app/http"
-)
+import "github.com/dedyf5/resik/app/grpc"
 
 func main() {
-	http.Init()
+	// http.Init()
+	grpc.Init()
 }

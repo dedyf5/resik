@@ -1,3 +1,5 @@
+app/grpc/config/.env
+app/http/config/.env
 config/.env
 logs/
 .vscode/

@@ -5,6 +5,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
@@ -23,9 +24,9 @@ type (
 	}
 )
 
-func Load() *Config {
+func Load(module configEntity.Module) *Config {
 	viper.SetConfigType("env")
-	viper.SetConfigFile("./config/.env")
+	viper.SetConfigFile(fmt.Sprintf("./app/%s/config/.env", module.DirectoryName()))
 	if err := viper.ReadInConfig(); err != nil {
 		log.Print("ERROR read env", err.Error())
 	}
@@ -33,7 +34,7 @@ func Load() *Config {
 	viper.AutomaticEnv()
 
 	conf := Config{}
-	conf.loadApp()
+	conf.loadApp(module)
 	conf.loadHTTP()
 	conf.loadDatabase()
 	conf.loadAuth()
@@ -42,7 +43,7 @@ func Load() *Config {
 	return &conf
 }
 
-func (conf *Config) loadApp() {
+func (conf *Config) loadApp(module configEntity.Module) {
 	envStr := viper.GetString("ENV")
 	env := configEntity.EnvDevelopment
 	switch envStr {
@@ -54,6 +55,7 @@ func (conf *Config) loadApp() {
 	conf.App = configEntity.App{
 		Name:        viper.GetString("APP_NAME"),
 		Version:     viper.GetString("APP_VERSION"),
+		Module:      module,
 		Env:         env,
 		LangDefault: langCtx.GetLanguageOrDefault(viper.GetString("APP_LANG_DEFAULT")),
 		Host:        viper.GetString("APP_HOST"),

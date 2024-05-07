@@ -31,7 +31,7 @@ import (
 	"github.com/google/wire"
 )
 
-var configGeneral = config.Load()
+var configGeneral = config.Load(configEntity.ModuleREST)
 
 var configGeneralSet = wire.NewSet(
 	wire.Value(*configGeneral),

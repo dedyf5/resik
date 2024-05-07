@@ -82,7 +82,7 @@ var (
 
 // wire.go:
 
-var configGeneral = config.Load()
+var configGeneral = config.Load(config2.ModuleREST)
 
 var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
