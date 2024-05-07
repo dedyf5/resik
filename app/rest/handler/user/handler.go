@@ -7,9 +7,9 @@ package user
 import (
 	"net/http"
 
-	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
-	userReq "github.com/dedyf5/resik/app/http/handler/user/request"
-	userRes "github.com/dedyf5/resik/app/http/handler/user/response"
+	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
+	userReq "github.com/dedyf5/resik/app/rest/handler/user/request"
+	userRes "github.com/dedyf5/resik/app/rest/handler/user/response"
 	"github.com/dedyf5/resik/config"
 	userService "github.com/dedyf5/resik/core/user"
 	"github.com/dedyf5/resik/ctx"

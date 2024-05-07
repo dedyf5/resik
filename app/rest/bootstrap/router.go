@@ -7,12 +7,12 @@ package bootstrap
 import (
 	"fmt"
 
-	"github.com/dedyf5/resik/app/http/docs"
-	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
-	generalHandler "github.com/dedyf5/resik/app/http/handler/general"
-	merchantHandler "github.com/dedyf5/resik/app/http/handler/merchant"
-	trxHandler "github.com/dedyf5/resik/app/http/handler/transaction"
-	userHandler "github.com/dedyf5/resik/app/http/handler/user"
+	"github.com/dedyf5/resik/app/rest/docs"
+	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
+	generalHandler "github.com/dedyf5/resik/app/rest/handler/general"
+	merchantHandler "github.com/dedyf5/resik/app/rest/handler/merchant"
+	trxHandler "github.com/dedyf5/resik/app/rest/handler/transaction"
+	userHandler "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )

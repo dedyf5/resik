@@ -5,8 +5,8 @@ GOGENERATE=$(GOCMD) generate
 generate:
 	protoc --go_out=. --go-grpc_out=. app/grpc/handler/*/*.proto
 	wire gen ./app/grpc/bootstrap
-	wire gen ./app/http/bootstrap
-	swag init -g ../../app/http/main.go -d ./pkg/response,./app/http -o ./app/http/docs --instanceName http --parseDependency true
+	wire gen ./app/rest/bootstrap
+	swag init -g ../../app/rest/main.go -d ./pkg/response,./app/rest -o ./app/rest/docs --instanceName rest --parseDependency true
 	$(GOGENERATE) ./...
 
 ## generate-proto: Generate GRPC files
@@ -14,10 +14,10 @@ generate-grpc:
 	protoc --go_out=. --go-grpc_out=. app/grpc/handler/*/*.proto
 	wire gen ./app/grpc/bootstrap
 
-## generate-proto: Generate HTTP files
-generate-http:
-	wire gen ./app/http/bootstrap
-	swag init -g ../../app/http/main.go -d ./pkg/response,./app/http -o ./app/http/docs --instanceName http --parseDependency true
+## generate-proto: Generate REST files
+generate-rest:
+	wire gen ./app/rest/bootstrap
+	swag init -g ../../app/rest/main.go -d ./pkg/response,./app/rest -o ./app/rest/docs --instanceName rest --parseDependency true
 	$(GOGENERATE) ./...
 
 ## generate-proto: Generate proto files

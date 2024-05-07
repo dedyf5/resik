@@ -7,11 +7,11 @@
 package bootstrap
 
 import (
-	"github.com/dedyf5/resik/app/http/fw/echo"
-	"github.com/dedyf5/resik/app/http/handler/general"
-	merchant2 "github.com/dedyf5/resik/app/http/handler/merchant"
-	transaction2 "github.com/dedyf5/resik/app/http/handler/transaction"
-	user2 "github.com/dedyf5/resik/app/http/handler/user"
+	"github.com/dedyf5/resik/app/rest/fw/echo"
+	"github.com/dedyf5/resik/app/rest/handler/general"
+	merchant2 "github.com/dedyf5/resik/app/rest/handler/merchant"
+	transaction2 "github.com/dedyf5/resik/app/rest/handler/transaction"
+	user2 "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
 	merchant3 "github.com/dedyf5/resik/core/merchant"
 	service2 "github.com/dedyf5/resik/core/merchant/service"

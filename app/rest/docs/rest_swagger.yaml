@@ -1,0 +1,744 @@
+definitions:
+  request.LoginPost:
+    properties:
+      password:
+        example: secret
+        type: string
+      username:
+        example: sakisaki
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  request.MerchantPost:
+    properties:
+      created_at:
+        example: "2024-04-14 14:18:00"
+        type: string
+      name:
+        maxLength: 40
+        type: string
+    required:
+    - created_at
+    - name
+    type: object
+  request.MerchantPut:
+    properties:
+      name:
+        maxLength: 40
+        type: string
+      updated_at:
+        example: "2024-04-14 14:18:00"
+        type: string
+    required:
+    - name
+    - updated_at
+    type: object
+  response.Home:
+    properties:
+      app:
+        example: Resik
+        type: string
+      lang:
+        $ref: '#/definitions/response.Lang'
+      version:
+        example: "0.1"
+        type: string
+    type: object
+  response.Lang:
+    properties:
+      current:
+        example: id
+        type: string
+      default:
+        example: en
+        type: string
+      request:
+        example: id
+        type: string
+    type: object
+  response.MerchantOmzet:
+    properties:
+      merchant_name:
+        example: Resik Merchant
+        type: string
+      omzet:
+        example: 1.0000005e+06
+        type: number
+      period:
+        example: "2024-02-06"
+        type: string
+    type: object
+  response.MerchantUpsert:
+    properties:
+      id:
+        example: 123
+        type: integer
+    type: object
+  response.OutletOmzet:
+    properties:
+      merchant_name:
+        example: Resik Merchant
+        type: string
+      omzet:
+        example: 50000.5
+        type: number
+      outlet_name:
+        example: Resik Outlet
+        type: string
+      period:
+        example: "2024-02-06"
+        type: string
+    type: object
+  response.Response:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/response.ResponseMeta'
+      status:
+        $ref: '#/definitions/response.ResponseStatus'
+    type: object
+  response.ResponseMeta:
+    properties:
+      limit:
+        example: 10
+        type: integer
+      page:
+        $ref: '#/definitions/response.ResponsePage'
+      total:
+        example: 100
+        type: integer
+    type: object
+  response.ResponsePage:
+    properties:
+      current:
+        example: 3
+        type: integer
+      first:
+        example: 1
+        type: integer
+      last:
+        example: 9
+        type: integer
+      next:
+        example: 4
+        type: integer
+      previous:
+        example: 2
+        type: integer
+    type: object
+  response.ResponseStatus:
+    properties:
+      code:
+        example: "200.1"
+        type: string
+      detail:
+        additionalProperties:
+          type: string
+        type: object
+      message:
+        example: OK
+        type: string
+    type: object
+  response.UserCredential:
+    properties:
+      token:
+        example: xxx.xxx.xxx
+        type: string
+      username:
+        example: sakisaki
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /:
+    get:
+      consumes:
+      - application/json
+      description: App info
+      parameters:
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.Home'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Get Home
+      tags:
+      - home
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login by username and password
+      parameters:
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      - description: Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/request.LoginPost'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserCredential'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Login
+      tags:
+      - user
+  /merchant:
+    get:
+      consumes:
+      - application/json
+      description: Merchant list
+      parameters:
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      - example: 10
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - example: name
+        in: query
+        name: order
+        type: string
+      - example: 1
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - example: keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.MerchantUpsert'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Merchant List
+      tags:
+      - merchant
+    post:
+      consumes:
+      - application/json
+      description: Create new merchant
+      parameters:
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      - description: Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/request.MerchantPost'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.MerchantUpsert'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Create Merchant
+      tags:
+      - merchant
+  /merchant/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Update merchant
+      parameters:
+      - description: Merchant ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Update Merchant
+      tags:
+      - merchant
+    put:
+      consumes:
+      - application/json
+      description: Update merchant
+      parameters:
+      - description: Merchant ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      - description: Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/request.MerchantPut'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.MerchantUpsert'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Update Merchant
+      tags:
+      - merchant
+  /token-refresh:
+    post:
+      consumes:
+      - application/json
+      description: Request new token by existing token
+      parameters:
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.UserCredential'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Token Refresh
+      tags:
+      - user
+  /transaction/merchant/{id}/omzet:
+    get:
+      consumes:
+      - application/json
+      description: Get merchant omzet by merchant id
+      parameters:
+      - description: Merchant ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - example: "2024-02-01 13:45:00"
+        in: query
+        name: datetime_end
+        required: true
+        type: string
+      - example: "2024-02-01 13:45:00"
+        in: query
+        name: datetime_start
+        required: true
+        type: string
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      - example: 10
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - enum:
+        - day
+        - month
+        - year
+        example: day
+        in: query
+        name: mode
+        required: true
+        type: string
+      - example: period
+        in: query
+        name: order
+        type: string
+      - example: 1
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - example: keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.MerchantOmzet'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get Merchant Omzet
+      tags:
+      - transaction
+  /transaction/outlet/{id}/omzet:
+    get:
+      consumes:
+      - application/json
+      description: Get outlet omzet by outlet id
+      parameters:
+      - description: Outlet ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - example: "2024-02-01 13:45:00"
+        in: query
+        name: datetime_end
+        required: true
+        type: string
+      - example: "2024-02-01 13:45:00"
+        in: query
+        name: datetime_start
+        required: true
+        type: string
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
+      - example: 10
+        in: query
+        maximum: 100
+        minimum: 1
+        name: limit
+        type: integer
+      - enum:
+        - day
+        - month
+        - year
+        example: day
+        in: query
+        name: mode
+        required: true
+        type: string
+      - example: period
+        in: query
+        name: order
+        type: string
+      - example: 1
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - example: keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.OutletOmzet'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get Outlet Omzet
+      tags:
+      - transaction
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

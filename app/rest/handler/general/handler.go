@@ -7,8 +7,8 @@ package general
 import (
 	"net/http"
 
-	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
-	"github.com/dedyf5/resik/app/http/handler/general/response"
+	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
+	"github.com/dedyf5/resik/app/rest/handler/general/response"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"

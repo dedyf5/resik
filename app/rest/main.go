@@ -2,9 +2,9 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package http
+package rest
 
-import "github.com/dedyf5/resik/app/http/bootstrap"
+import "github.com/dedyf5/resik/app/rest/bootstrap"
 
 var app *bootstrap.App
 var cleanup func()

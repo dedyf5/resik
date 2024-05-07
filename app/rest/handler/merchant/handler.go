@@ -7,9 +7,9 @@ package merchant
 import (
 	"net/http"
 
-	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
-	"github.com/dedyf5/resik/app/http/handler/merchant/request"
-	"github.com/dedyf5/resik/app/http/handler/merchant/response"
+	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
+	"github.com/dedyf5/resik/app/rest/handler/merchant/request"
+	"github.com/dedyf5/resik/app/rest/handler/merchant/response"
 	"github.com/dedyf5/resik/config"
 	merchantCore "github.com/dedyf5/resik/core/merchant"
 	"github.com/dedyf5/resik/ctx"

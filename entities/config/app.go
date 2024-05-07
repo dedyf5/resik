@@ -45,8 +45,5 @@ func (a *App) APIDocDescription() string {
 }
 
 func (t Module) DirectoryName() string {
-	if t == ModuleREST {
-		return "http"
-	}
 	return strings.ToLower(string(t))
 }

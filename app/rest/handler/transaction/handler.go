@@ -7,9 +7,9 @@ package transaction
 import (
 	"net/http"
 
-	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
-	trxReq "github.com/dedyf5/resik/app/http/handler/transaction/request"
-	trxRes "github.com/dedyf5/resik/app/http/handler/transaction/response"
+	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
+	trxReq "github.com/dedyf5/resik/app/rest/handler/transaction/request"
+	trxRes "github.com/dedyf5/resik/app/rest/handler/transaction/response"
 	"github.com/dedyf5/resik/config"
 	trxService "github.com/dedyf5/resik/core/transaction"
 	"github.com/dedyf5/resik/ctx"

@@ -12,7 +12,7 @@ import (
 	"net/http"
 	"time"
 
-	echoFW "github.com/dedyf5/resik/app/http/fw/echo"
+	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
 	"github.com/dedyf5/resik/cmd"
 	"github.com/dedyf5/resik/config"
 	logCtx "github.com/dedyf5/resik/ctx/log"

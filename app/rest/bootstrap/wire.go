@@ -8,11 +8,11 @@
 package bootstrap
 
 import (
-	fw "github.com/dedyf5/resik/app/http/fw/echo"
-	generalHandler "github.com/dedyf5/resik/app/http/handler/general"
-	merchantHandler "github.com/dedyf5/resik/app/http/handler/merchant"
-	trxHandler "github.com/dedyf5/resik/app/http/handler/transaction"
-	userHandler "github.com/dedyf5/resik/app/http/handler/user"
+	fw "github.com/dedyf5/resik/app/rest/fw/echo"
+	generalHandler "github.com/dedyf5/resik/app/rest/handler/general"
+	merchantHandler "github.com/dedyf5/resik/app/rest/handler/merchant"
+	trxHandler "github.com/dedyf5/resik/app/rest/handler/transaction"
+	userHandler "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
 	merchant "github.com/dedyf5/resik/core/merchant"
 	merchantService "github.com/dedyf5/resik/core/merchant/service"
