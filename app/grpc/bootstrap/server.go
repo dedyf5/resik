@@ -42,7 +42,7 @@ func (s *ServerHTTP) Start() {
 	addr := s.config.App.HostPort()
 	appName := color.Format(color.GREEN, s.config.App.Name)
 	version := color.Format(color.YELLOW, s.config.App.Version)
-	log.Printf("%s%s version %s\n\n", cmd.AppLogoASCII, appName, version)
+	fmt.Printf("%s%s version %s\n\n", cmd.AppLogoASCII, appName, version)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
 	s.router.routerSetup(s.grpcServer)
 	go func() {
