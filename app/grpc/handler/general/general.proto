@@ -4,25 +4,29 @@
 
 syntax = "proto3";
 
-import "google/protobuf/empty.proto";
+import "app/grpc/proto/request/common.proto";
 
 package general;
 
-option go_package = "./app/grpc/handler/general";
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
+
+message Req {
+    request.Common request = 1;
+}
 
 message App {
-    string App = 1;
-    string Version = 2;
-    Lang Lang = 3;
-
+    string app = 1;
+    string version = 2;
+    Lang lang = 3;
+    string message = 4;
 }
 
 message Lang {
-	string Current = 1;
-	string Request = 2;
-	string Default = 3;
+	string current = 1;
+	string request = 2;
+	string default = 3;
 }
 
 service GeneralService {
-    rpc Home(google.protobuf.Empty) returns (App) {}
+    rpc Home(request.Common) returns (App) {}
 }

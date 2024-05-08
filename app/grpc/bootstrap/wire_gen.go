@@ -20,13 +20,12 @@ import (
 
 func InitializeHTTP() (*App, func(), error) {
 	config := _wireConfigValue
-	generalHandler := general.New(config)
-	router := newRouter(config, generalHandler)
-	app := config.App
-	module := app.Module
 	configLog := config.Log
 	logLog := log.Get(configLog)
-	interceptor := middleware.NewInterceptor(module, logLog)
+	generalHandler := general.New(logLog, config)
+	router := newRouter(config, generalHandler)
+	app := config.App
+	interceptor := middleware.NewInterceptor(app, logLog)
 	serverHTTP := newServerHTTP(config, router, interceptor)
 	bootstrapApp, cleanup, err := newApp(serverHTTP)
 	if err != nil {
@@ -45,7 +44,7 @@ var (
 
 var configGeneral = config.Load(config2.ModuleGRPC)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"), wire.FieldsOf(new(config2.App), "Module", "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
 var utilSet = wire.NewSet(log.Get)
 

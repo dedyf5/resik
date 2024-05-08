@@ -6,6 +6,8 @@ package ctx
 
 import (
 	"context"
+	"errors"
+	"net/http"
 
 	"github.com/dedyf5/resik/ctx/app"
 	httpApp "github.com/dedyf5/resik/ctx/app/http"
@@ -13,6 +15,12 @@ import (
 	lang "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+)
+
+type Key string
+
+const (
+	KeyFullMethod Key = "FullMethod"
 )
 
 type Ctx struct {
@@ -36,6 +44,19 @@ func NewHTTP(ctx context.Context, log *logCtx.Log, uri string) (*Ctx, *resPkg.St
 		Lang:       langRes,
 		UserClaims: jwt.AuthClaimsFromContext(ctx),
 	}, nil
+}
+
+// return *Ctx HTTP. if create failed return *status.Status error
+//
+// error status code: 500
+func NewHTTPFromGRPC(c context.Context, log *logCtx.Log) (*Ctx, *resPkg.Status) {
+	if fullMethod, ok := c.Value(KeyFullMethod).(string); ok {
+		return NewHTTP(c, log, fullMethod)
+	}
+	return nil, &resPkg.Status{
+		Code:       http.StatusInternalServerError,
+		CauseError: errors.New("failed to casting " + string(KeyFullMethod) + " from context"),
+	}
 }
 
 func (c *Ctx) IsError() bool {

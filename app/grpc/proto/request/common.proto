@@ -1,0 +1,13 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package request;
+
+option go_package = "github.com/dedyf5/resik/app/grpc/proto/request";
+
+message Common {
+    string lang = 1;
+}
