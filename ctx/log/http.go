@@ -71,7 +71,7 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString("path", h.uri)
 	enc.AddString("user_agent", h.userAgent)
 	enc.AddInt("status_code", h.statusCode)
-	enc.AddDuration("elapsed_micro", time.Since(h.start))
+	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())
 	enc.AddString("response", h.body.String())
 	return nil
 }

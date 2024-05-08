@@ -65,7 +65,7 @@ func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
 	enc.AddString("path", h.uri)
 	enc.AddUint32("status_code", uint32(h.statusCode))
-	enc.AddDuration("elapsed_micro", time.Since(h.start))
+	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())
 	enc.AddString("req", string(reqByte))
 	enc.AddString("res", string(resByte))
 	return nil
