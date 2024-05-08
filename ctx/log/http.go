@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"time"
 
+	configEntity "github.com/dedyf5/resik/entities/config"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -18,6 +19,7 @@ import (
 
 type HTTP struct {
 	http.ResponseWriter
+	appModule  configEntity.Module
 	log        *Log
 	start      time.Time
 	statusCode int
@@ -27,9 +29,9 @@ type HTTP struct {
 	body       *bytes.Buffer
 }
 
-func NewHTTP(w http.ResponseWriter, log *Log, start time.Time, method, uri, userAgent string) *HTTP {
+func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, log *Log, start time.Time, method, uri, userAgent string) *HTTP {
 	var buf bytes.Buffer
-	return &HTTP{w, log, start, http.StatusOK, method, uri, userAgent, &buf}
+	return &HTTP{w, appModule, log, start, http.StatusOK, method, uri, userAgent, &buf}
 }
 
 func (h *HTTP) WriteHeader(code int) {
@@ -63,7 +65,7 @@ func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 }
 
 func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	enc.AddString("app", "http")
+	enc.AddString("app", h.appModule.DirectoryName())
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
 	enc.AddString("method", h.method)
 	enc.AddString("path", h.uri)

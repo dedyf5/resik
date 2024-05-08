@@ -10,6 +10,7 @@ import (
 	"log"
 	"net"
 
+	"github.com/dedyf5/resik/app/grpc/middleware"
 	"github.com/dedyf5/resik/cmd"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/pkg/color"
@@ -17,24 +18,28 @@ import (
 )
 
 type ServerHTTP struct {
-	config     config.Config
-	listener   net.Listener
-	grpcServer *grpc.Server
-	router     *Router
+	config      config.Config
+	listener    net.Listener
+	grpcServer  *grpc.Server
+	router      *Router
+	interceptor *middleware.Interceptor
 }
 
-func newServerHTTP(config config.Config, router *Router) *ServerHTTP {
+func newServerHTTP(config config.Config, router *Router, interceptor *middleware.Interceptor) *ServerHTTP {
 	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", config.App.Port))
 	if err != nil {
 		log.Fatalf("HTTP SERVER LISTEN ERROR: %s", err.Error())
 		return nil
 	}
-	server := grpc.NewServer()
+	server := grpc.NewServer(
+		grpc.UnaryInterceptor(interceptor.Unary),
+	)
 	return &ServerHTTP{
-		config:     config,
-		listener:   listener,
-		grpcServer: server,
-		router:     router,
+		config:      config,
+		listener:    listener,
+		grpcServer:  server,
+		router:      router,
+		interceptor: interceptor,
 	}
 }
 

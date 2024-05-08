@@ -27,6 +27,7 @@ type CorrelationIDKey string
 
 const (
 	CorrelationIDKeyContext CorrelationIDKey = "correlation_id"
+	CorrelationIDKeyXHeader CorrelationIDKey = "X-Correlation-ID"
 )
 
 var once sync.Once

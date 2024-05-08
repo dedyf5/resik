@@ -13,6 +13,7 @@ import (
 	jwtCxt "github.com/dedyf5/resik/ctx/jwt"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
+	"github.com/dedyf5/resik/entities/config"
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -47,7 +48,7 @@ func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 	})
 }
 
-func LoggerAndResponseFormatterMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
+func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Module) echo.MiddlewareFunc {
 	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -68,9 +69,9 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
 			// log.Logger = log.Logger.With(zap.String(string(correlationIDCtxKey), correlationID))
 			log.CorrelationID = correlationID
 
-			w.Header().Add("X-Correlation-ID", correlationID)
+			w.Header().Add(logCtx.CorrelationIDKeyXHeader.String(), correlationID)
 
-			lrw := logCtx.NewHTTP(w, log, time.Now(), r.Method, r.RequestURI, r.UserAgent())
+			lrw := logCtx.NewHTTP(w, appModule, log, time.Now(), r.Method, r.RequestURI, r.UserAgent())
 
 			r = r.WithContext(log.WithContext(ctx))
 

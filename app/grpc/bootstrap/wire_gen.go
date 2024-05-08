@@ -8,7 +8,9 @@ package bootstrap
 
 import (
 	"github.com/dedyf5/resik/app/grpc/handler/general"
+	"github.com/dedyf5/resik/app/grpc/middleware"
 	"github.com/dedyf5/resik/config"
+	"github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	config2 "github.com/dedyf5/resik/entities/config"
 	"github.com/google/wire"
@@ -20,12 +22,17 @@ func InitializeHTTP() (*App, func(), error) {
 	config := _wireConfigValue
 	generalHandler := general.New(config)
 	router := newRouter(config, generalHandler)
-	serverHTTP := newServerHTTP(config, router)
-	app, cleanup, err := newApp(serverHTTP)
+	app := config.App
+	module := app.Module
+	configLog := config.Log
+	logLog := log.Get(configLog)
+	interceptor := middleware.NewInterceptor(module, logLog)
+	serverHTTP := newServerHTTP(config, router, interceptor)
+	bootstrapApp, cleanup, err := newApp(serverHTTP)
 	if err != nil {
 		return nil, nil, err
 	}
-	return app, func() {
+	return bootstrapApp, func() {
 		cleanup()
 	}, nil
 }
@@ -38,6 +45,10 @@ var (
 
 var configGeneral = config.Load(config2.ModuleGRPC)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"), wire.FieldsOf(new(config2.App), "Module", "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+
+var utilSet = wire.NewSet(log.Get)
+
+var interceptorSet = wire.NewSet(middleware.NewInterceptor)
 
 var handlerSet = wire.NewSet(general.New)

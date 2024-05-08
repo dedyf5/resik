@@ -9,7 +9,9 @@ package bootstrap
 
 import (
 	generalHandler "github.com/dedyf5/resik/app/grpc/handler/general"
+	"github.com/dedyf5/resik/app/grpc/middleware"
 	"github.com/dedyf5/resik/config"
+	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	"github.com/google/wire"
@@ -20,8 +22,16 @@ var configGeneral = config.Load(configEntity.ModuleGRPC)
 var configGeneralSet = wire.NewSet(
 	wire.Value(*configGeneral),
 	wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"),
-	wire.FieldsOf(new(configEntity.App), "Env", "LangDefault"),
+	wire.FieldsOf(new(configEntity.App), "Module", "Env", "LangDefault"),
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
+)
+
+var utilSet = wire.NewSet(
+	logCtx.Get,
+)
+
+var interceptorSet = wire.NewSet(
+	middleware.NewInterceptor,
 )
 
 var handlerSet = wire.NewSet(
@@ -31,6 +41,8 @@ var handlerSet = wire.NewSet(
 func InitializeHTTP() (*App, func(), error) {
 	wire.Build(
 		configGeneralSet,
+		utilSet,
+		interceptorSet,
 		handlerSet,
 		newServerHTTP,
 		newRouter,
