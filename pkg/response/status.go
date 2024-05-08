@@ -4,7 +4,12 @@
 
 package response
 
-import "net/http"
+import (
+	"net/http"
+
+	"google.golang.org/grpc/codes"
+	statusGRPC "google.golang.org/grpc/status"
+)
 
 // use this Status to wrap error across all apps including non http app
 type Status struct {
@@ -53,4 +58,21 @@ func (s *Status) MessageOrDefault() string {
 		return s.Message
 	}
 	return http.StatusText(s.Code)
+}
+
+func (s *Status) GRPC() *statusGRPC.Status {
+	switch s.Code {
+	case http.StatusOK, http.StatusCreated:
+		return statusGRPC.New(codes.OK, s.MessageOrDefault())
+	case http.StatusBadRequest:
+		return statusGRPC.New(codes.InvalidArgument, s.MessageOrDefault())
+	case http.StatusUnauthorized:
+		return statusGRPC.New(codes.InvalidArgument, s.MessageOrDefault())
+	case http.StatusNotFound:
+		return statusGRPC.New(codes.InvalidArgument, s.MessageOrDefault())
+	case http.StatusInternalServerError:
+		return statusGRPC.New(codes.InvalidArgument, s.MessageOrDefault())
+	default:
+		return statusGRPC.New(codes.Unknown, s.MessageOrDefault())
+	}
 }
