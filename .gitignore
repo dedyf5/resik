@@ -1,6 +1,5 @@
 app/grpc/config/.env
 app/rest/config/.env
-config/.env
 logs/
 .vscode/
 .DS_Store
