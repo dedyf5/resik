@@ -1,0 +1,33 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+import "app/grpc/proto/common/request.proto";
+import "app/grpc/proto/status/status.proto";
+
+package general;
+
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
+
+message HomeRequest {
+    common.Request common = 1;
+}
+
+message HomeResponse {
+    status.Status status = 1;
+    App data = 2;
+}
+
+message App {
+    string app = 1;
+    string version = 2;
+    Lang lang = 3;
+}
+
+message Lang {
+	string current = 1;
+	string request = 2;
+	string default = 3;
+}

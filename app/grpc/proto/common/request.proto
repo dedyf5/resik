@@ -4,10 +4,10 @@
 
 syntax = "proto3";
 
-package request;
+package common;
 
-option go_package = "github.com/dedyf5/resik/app/grpc/proto/request";
+option go_package = "github.com/dedyf5/resik/app/grpc/proto/common";
 
-message Common {
+message Request {
     string lang = 1;
 }
