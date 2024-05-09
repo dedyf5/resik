@@ -52,6 +52,6 @@ Usage:
 
 Available Commands:
   grpc 		To run gRPC app
-  http 		To run HTTP app
+  rest 		To run REST app
 
 `
