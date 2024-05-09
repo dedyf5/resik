@@ -1,0 +1,14 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package status;
+
+option go_package = "github.com/dedyf5/resik/app/grpc/proto/status";
+
+message Status {
+    string code = 1;
+    string message = 2;
+}

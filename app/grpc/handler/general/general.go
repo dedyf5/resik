@@ -7,11 +7,13 @@ package general
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/request"
+	"github.com/dedyf5/resik/app/grpc/proto/status"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
-	commonEntity "github.com/dedyf5/resik/entities/common"
+	"github.com/dedyf5/resik/entities/common"
+	"google.golang.org/grpc/codes"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 type GeneralHandler struct {
@@ -26,7 +28,7 @@ func New(log *logCtx.Log, config config.Config) *GeneralHandler {
 	}
 }
 
-func (h *GeneralHandler) Home(c context.Context, common *request.Common) (*App, error) {
+func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeResponse, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
 		return nil, err.GRPC().Err()
@@ -39,15 +41,20 @@ func (h *GeneralHandler) Home(c context.Context, common *request.Common) (*App, 
 
 	lang := ctx.Lang
 
-	return &App{
-		App:     h.config.App.Name,
-		Version: h.config.App.Version,
-		Lang: &Lang{
-			Current: lang.LanguageReqOrDefault().String(),
-			Request: langReqCode,
-			Default: h.config.App.LangDefault.String(),
+	return &HomeResponse{
+		Status: &status.Status{
+			Code:    status.CodePlus(codes.OK),
+			Message: lang.GetByTemplateData("home_message", common.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
 		},
-		Message: lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
+		Data: &App{
+			App:     h.config.App.Name,
+			Version: h.config.App.Version,
+			Lang: &Lang{
+				Current: lang.LanguageReqOrDefault().String(),
+				Request: langReqCode,
+				Default: h.config.App.LangDefault.String(),
+			},
+		},
 	}, nil
 }
 
