@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/dedyf5/resik/app/grpc/proto/status"
+	appRes "github.com/dedyf5/resik/core/app/res"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/entities/common"
 	"google.golang.org/grpc/codes"
@@ -20,26 +21,11 @@ func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRespons
 		return nil, err.GRPC().Err()
 	}
 
-	langReqCode := ""
-	if ctx.Lang.LangReq != nil {
-		langReqCode = ctx.Lang.LangReq.String()
-	}
-
-	lang := ctx.Lang
-
 	return &HomeResponse{
 		Status: &status.Status{
 			Code:    status.CodePlus(codes.OK),
-			Message: lang.GetByTemplateData("home_message", common.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
+			Message: ctx.Lang.GetByTemplateData("home_message", common.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
 		},
-		Data: &App{
-			App:     h.config.App.Name,
-			Version: h.config.App.Version,
-			Lang: &Lang{
-				Current: lang.LanguageReqOrDefault().String(),
-				Request: langReqCode,
-				Default: h.config.App.LangDefault.String(),
-			},
-		},
+		Data: appRes.AppMap(ctx, h.config),
 	}, nil
 }

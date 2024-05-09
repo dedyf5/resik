@@ -2,35 +2,23 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package response
+package res
 
 import (
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/ctx"
 )
 
-type Home struct {
-	App     string `json:"app" example:"Resik"`
-	Version string `json:"version" example:"0.1"`
-	Lang    *Lang  `json:"lang"`
-}
-
-type Lang struct {
-	Current string `json:"current" example:"id"`
-	Request string `json:"request" example:"id"`
-	Default string `json:"default" example:"en"`
-}
-
-func HomeMap(ctx *ctx.Ctx, config config.Config) Home {
+func AppMap(ctx *ctx.Ctx, config config.Config) *App {
 	lang := ctx.Lang
 	langReqCode := ""
 	if lang.LangReq != nil {
 		langReqCode = lang.LangReq.String()
 	}
-	return Home{
+	return &App{
 		App:     config.App.Name,
 		Version: config.App.Version,
-		Lang: &Lang{
+		Lang: &AppLang{
 			Current: lang.LanguageReqOrDefault().String(),
 			Request: langReqCode,
 			Default: config.App.LangDefault.String(),

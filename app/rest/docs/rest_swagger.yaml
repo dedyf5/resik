@@ -35,27 +35,22 @@ definitions:
     - name
     - updated_at
     type: object
-  response.Home:
+  res.App:
     properties:
       app:
-        example: Resik
         type: string
       lang:
-        $ref: '#/definitions/response.Lang'
+        $ref: '#/definitions/res.AppLang'
       version:
-        example: "0.1"
         type: string
     type: object
-  response.Lang:
+  res.AppLang:
     properties:
       current:
-        example: id
         type: string
       default:
-        example: en
         type: string
       request:
-        example: id
         type: string
     type: object
   response.MerchantOmzet:
@@ -175,7 +170,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.Home'
+                  $ref: '#/definitions/res.App'
               type: object
         "400":
           description: Bad Request

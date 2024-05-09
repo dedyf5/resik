@@ -51,7 +51,7 @@ const docTemplaterest = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.Home"
+                                            "$ref": "#/definitions/res.App"
                                         }
                                     }
                                 }
@@ -1088,36 +1088,31 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.Home": {
+        "res.App": {
             "type": "object",
             "properties": {
                 "app": {
-                    "type": "string",
-                    "example": "Resik"
+                    "type": "string"
                 },
                 "lang": {
-                    "$ref": "#/definitions/response.Lang"
+                    "$ref": "#/definitions/res.AppLang"
                 },
                 "version": {
-                    "type": "string",
-                    "example": "0.1"
+                    "type": "string"
                 }
             }
         },
-        "response.Lang": {
+        "res.AppLang": {
             "type": "object",
             "properties": {
                 "current": {
-                    "type": "string",
-                    "example": "id"
+                    "type": "string"
                 },
                 "default": {
-                    "type": "string",
-                    "example": "en"
+                    "type": "string"
                 },
                 "request": {
-                    "type": "string",
-                    "example": "id"
+                    "type": "string"
                 }
             }
         },

@@ -1,0 +1,21 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package res;
+
+option go_package = "github.com/dedyf5/resik/core/app/res";
+
+message App {
+    string app = 1;
+    string version = 2;
+    AppLang lang = 3;
+}
+
+message AppLang {
+	string current = 1;
+	string request = 2;
+	string default = 3;
+}

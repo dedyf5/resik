@@ -8,8 +8,8 @@ import (
 	"net/http"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
-	"github.com/dedyf5/resik/app/rest/handler/general/response"
 	"github.com/dedyf5/resik/config"
+	appRes "github.com/dedyf5/resik/core/app/res"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
@@ -37,7 +37,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, config config.Config) *Handler {
 // @Accept json
 // @Produce json
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=response.Home}
+// @Success		200	{object}	resPkg.Response{data=appRes.App}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/ [get]
@@ -57,6 +57,6 @@ func (h *Handler) Home(echoCtx echo.Context) error {
 	return &resPkg.Status{
 		Code:    http.StatusOK,
 		Message: lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
-		Data:    response.HomeMap(ctx, h.config),
+		Data:    appRes.AppMap(ctx, h.config),
 	}
 }
