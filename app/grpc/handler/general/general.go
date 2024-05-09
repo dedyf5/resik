@@ -39,9 +39,6 @@ func (h *GeneralHandler) Home(c context.Context, common *request.Common) (*App, 
 
 	lang := ctx.Lang
 
-	// msg := lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version})
-	// msg = "asal"
-
 	return &App{
 		App:     h.config.App.Name,
 		Version: h.config.App.Version,
