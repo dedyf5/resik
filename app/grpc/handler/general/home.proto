@@ -12,11 +12,11 @@ package general;
 
 option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
 
-message HomeRequest {
+message HomeReq {
     common.Request common = 1;
 }
 
-message HomeResponse {
+message HomeRes {
     status.Status status = 1;
     res.App data = 2;
 }

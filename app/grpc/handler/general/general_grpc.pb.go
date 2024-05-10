@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GeneralServiceClient interface {
-	Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HomeResponse, error)
+	Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HomeRes, error)
 }
 
 type generalServiceClient struct {
@@ -34,8 +34,8 @@ func NewGeneralServiceClient(cc grpc.ClientConnInterface) GeneralServiceClient {
 	return &generalServiceClient{cc}
 }
 
-func (c *generalServiceClient) Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HomeResponse, error) {
-	out := new(HomeResponse)
+func (c *generalServiceClient) Home(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*HomeRes, error) {
+	out := new(HomeRes)
 	err := c.cc.Invoke(ctx, "/general.GeneralService/Home", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (c *generalServiceClient) Home(ctx context.Context, in *emptypb.Empty, opts
 // All implementations must embed UnimplementedGeneralServiceServer
 // for forward compatibility
 type GeneralServiceServer interface {
-	Home(context.Context, *emptypb.Empty) (*HomeResponse, error)
+	Home(context.Context, *emptypb.Empty) (*HomeRes, error)
 	mustEmbedUnimplementedGeneralServiceServer()
 }
 
@@ -55,7 +55,7 @@ type GeneralServiceServer interface {
 type UnimplementedGeneralServiceServer struct {
 }
 
-func (UnimplementedGeneralServiceServer) Home(context.Context, *emptypb.Empty) (*HomeResponse, error) {
+func (UnimplementedGeneralServiceServer) Home(context.Context, *emptypb.Empty) (*HomeRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Home not implemented")
 }
 func (UnimplementedGeneralServiceServer) mustEmbedUnimplementedGeneralServiceServer() {}

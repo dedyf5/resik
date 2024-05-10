@@ -15,13 +15,13 @@ import (
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
-func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeResponse, error) {
+func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
 		return nil, err.GRPC().Err()
 	}
 
-	return &HomeResponse{
+	return &HomeRes{
 		Status: &status.Status{
 			Code:    status.CodePlus(codes.OK),
 			Message: ctx.Lang.GetByTemplateData("home_message", common.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),

@@ -12,5 +12,5 @@ package general;
 option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
 
 service GeneralService {
-    rpc Home(google.protobuf.Empty) returns (general.HomeResponse) {}
+    rpc Home(google.protobuf.Empty) returns (general.HomeRes) {}
 }
