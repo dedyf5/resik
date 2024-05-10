@@ -51,7 +51,7 @@ func (h *GRPC) Write() {
 	if h.statusCode == codes.OK {
 		h.log.Logger.Info(h.statusMessage, zap.Inline(h))
 		return
-	} else if h.statusCode == codes.PermissionDenied || h.statusCode == codes.Unauthenticated {
+	} else if h.statusCode == codes.InvalidArgument || h.statusCode == codes.PermissionDenied || h.statusCode == codes.Unauthenticated {
 		h.log.Logger.Warn(h.statusMessage, zap.Inline(h))
 		return
 	}
