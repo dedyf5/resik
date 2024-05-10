@@ -14,7 +14,7 @@ import (
 
 type OutletOmzetGet struct {
 	commonEntity.Request
-	ID            uint64  `json:"-" param:"id" query:"-" validate:"required,min=1" example:"1"`
+	OutletID      uint64  `json:"-" param:"id" query:"-" validate:"required,min=1" example:"1"`
 	Mode          string  `json:"mode" query:"mode" validate:"required,oneof=day month year" example:"day"`
 	DateTimeStart string  `json:"datetime_start" query:"datetime_start" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-02-01 13:45:00"`
 	DateTimeEnd   string  `json:"datetime_end" query:"datetime_end" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-02-01 13:45:00"`
@@ -39,7 +39,7 @@ func (o *OutletOmzetGet) ToParam(c *ctx.Ctx) *trxParam.OutletOmzetGet {
 	}
 	return &trxParam.OutletOmzetGet{
 		Ctx:      c,
-		OutletID: o.ID,
+		OutletID: o.OutletID,
 		GroupPeriod: groupperiod.GroupPeriod{
 			Mode:          groupperiod.Mode(o.Mode),
 			DatetimeStart: o.DateTimeStart,
