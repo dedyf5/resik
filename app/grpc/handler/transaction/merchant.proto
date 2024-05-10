@@ -1,0 +1,29 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package transaction;
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/transaction";
+
+import "app/grpc/proto/meta/meta.proto";
+import "app/grpc/proto/status/status.proto";
+import "core/transaction/res/merchant.proto";
+
+message MerchantOmzetGetReq {
+    uint64 ID = 1; // @gotags: json:"id"
+    string Mode = 2; // @gotags: json:"mode"
+    string DateTimeStart = 3; // @gotags: json:"datetime_start"
+    string DateTimeEnd = 4; // @gotags: json:"datetime_end"
+    string Search = 5; // @gotags: json:"search"
+    optional string Order = 6; // @gotags: json:"order"
+    optional uint32 Page = 7; // @gotags: json:"page"
+    optional uint32 Limit = 8; // @gotags: json:"limit"
+}
+
+message MerchantOmzetGetRes {
+    status.Status Status = 1; // @gotags: json:"status"
+    repeated res.MerchantOmzet Data = 2; // @gotags: json:"data"
+    meta.Meta Meta = 3; // @gotags: json:"meta"
+}

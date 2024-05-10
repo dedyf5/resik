@@ -8,11 +8,17 @@ package bootstrap
 
 import (
 	"github.com/dedyf5/resik/app/grpc/handler/general"
+	transaction2 "github.com/dedyf5/resik/app/grpc/handler/transaction"
 	"github.com/dedyf5/resik/app/grpc/middleware"
 	"github.com/dedyf5/resik/config"
+	transaction3 "github.com/dedyf5/resik/core/transaction"
+	"github.com/dedyf5/resik/core/transaction/service"
 	"github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	config2 "github.com/dedyf5/resik/entities/config"
+	"github.com/dedyf5/resik/repositories"
+	"github.com/dedyf5/resik/repositories/transaction"
+	"github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
 
@@ -23,15 +29,35 @@ func InitializeHTTP() (*App, func(), error) {
 	configLog := config.Log
 	logLog := log.Get(configLog)
 	generalHandler := general.New(config, logLog)
-	router := newRouter(config, generalHandler)
 	app := config.App
-	interceptor := middleware.NewInterceptor(app, logLog)
-	serverHTTP := newServerHTTP(config, router, interceptor)
-	bootstrapApp, cleanup, err := newApp(serverHTTP)
+	tag := app.LangDefault
+	validate := validator.New(tag)
+	sqlConfig := config.Database
+	sqlEngine := sqlConfig.Engine
+	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig)
 	if err != nil {
 		return nil, nil, err
 	}
+	gormDB, cleanup2, err := drivers.NewGorm(sqlEngine, db, sqlConfig)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	transactionRepo := transaction.New(gormDB)
+	serviceService := service.New(transactionRepo, config)
+	transactionHandler := transaction2.New(config, logLog, validate, serviceService)
+	router := newRouter(config, generalHandler, transactionHandler)
+	interceptor := middleware.NewInterceptor(app, logLog)
+	serverHTTP := newServerHTTP(config, router, interceptor)
+	bootstrapApp, cleanup3, err := newApp(serverHTTP)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	return bootstrapApp, func() {
+		cleanup3()
+		cleanup2()
 		cleanup()
 	}, nil
 }
@@ -46,8 +72,14 @@ var configGeneral = config.Load(config2.ModuleGRPC)
 
 var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
-var utilSet = wire.NewSet(log.Get)
+var utilSet = wire.NewSet(validator.New, log.Get)
 
 var interceptorSet = wire.NewSet(middleware.NewInterceptor)
 
-var handlerSet = wire.NewSet(general.New)
+var connSet = wire.NewSet(drivers.NewMySQLConnection, drivers.NewGorm)
+
+var gormRepoSet = wire.NewSet(transaction.New, wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
+
+var serviceSet = wire.NewSet(service.New, wire.Bind(new(transaction3.IService), new(*service.Service)))
+
+var handlerSet = wire.NewSet(general.New, transaction2.New)

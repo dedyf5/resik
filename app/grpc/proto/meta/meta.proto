@@ -1,0 +1,22 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package meta;
+option go_package = "github.com/dedyf5/resik/app/grpc/proto/meta";
+
+message Meta {
+    uint64 Total = 1; // @gotags: json:"total"
+    int32 Limit = 2; // @gotags: json:"limit"
+    MetaPage Page = 3; // @gotags: json:"page"
+}
+
+message MetaPage {
+    int32 First = 1; // @gotags: json:"first"
+    optional int32 Previous = 2; // @gotags: json:"previous"
+    int32 Current = 3; // @gotags: json:"current"
+    optional int32 Next = 4; // @gotags: json:"next"
+    int32 Last = 5; // @gotags: json:"last"
+}
