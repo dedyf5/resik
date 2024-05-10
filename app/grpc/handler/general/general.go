@@ -10,11 +10,11 @@ import (
 )
 
 type GeneralHandler struct {
-	log    *logCtx.Log
 	config config.Config
+	log    *logCtx.Log
 }
 
-func New(log *logCtx.Log, config config.Config) *GeneralHandler {
+func New(config config.Config, log *logCtx.Log) *GeneralHandler {
 	return &GeneralHandler{
 		log:    log,
 		config: config,

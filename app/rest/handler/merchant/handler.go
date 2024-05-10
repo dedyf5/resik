@@ -20,18 +20,18 @@ import (
 )
 
 type Handler struct {
-	fw              echoFW.IEcho
-	log             *logCtx.Log
-	merchantService merchantCore.IService
 	config          config.Config
+	log             *logCtx.Log
+	fw              echoFW.IEcho
+	merchantService merchantCore.IService
 }
 
-func New(fw echoFW.IEcho, log *logCtx.Log, merchantService merchantCore.IService, config config.Config) *Handler {
+func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService) *Handler {
 	return &Handler{
-		fw:              fw,
-		log:             log,
-		merchantService: merchantService,
 		config:          config,
+		log:             log,
+		fw:              fw,
+		merchantService: merchantService,
 	}
 }
 

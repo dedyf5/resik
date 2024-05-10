@@ -21,18 +21,18 @@ import (
 )
 
 type Handler struct {
-	fw      echoFW.IEcho
-	log     *logCtx.Log
-	service userService.IService
-	config  config.Config
+	config      config.Config
+	fw          echoFW.IEcho
+	log         *logCtx.Log
+	userService userService.IService
 }
 
-func New(fw echoFW.IEcho, log *logCtx.Log, service userService.IService, config config.Config) *Handler {
+func New(fw echoFW.IEcho, log *logCtx.Log, userService userService.IService, config config.Config) *Handler {
 	return &Handler{
-		fw:      fw,
-		log:     log,
-		service: service,
-		config:  config,
+		config:      config,
+		log:         log,
+		fw:          fw,
+		userService: userService,
 	}
 }
 
@@ -66,7 +66,7 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 		return err
 	}
 
-	token, err := h.service.Auth(param.Auth{Ctx: ctx, Username: payload.Username, Password: payload.Password})
+	token, err := h.userService.Auth(param.Auth{Ctx: ctx, Username: payload.Username, Password: payload.Password})
 	if err != nil {
 		return err
 	}
@@ -109,7 +109,7 @@ func (h *Handler) TokenRefresh(echoCtx echo.Context) error {
 		}
 	}
 
-	token, err := h.service.AuthTokenGenerate(ctx.UserClaims.UserID, ctx.UserClaims.Username)
+	token, err := h.userService.AuthTokenGenerate(ctx.UserClaims.UserID, ctx.UserClaims.Username)
 	if err != nil {
 		return err
 	}

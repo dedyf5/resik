@@ -18,16 +18,16 @@ import (
 )
 
 type Handler struct {
-	fw     echoFW.IEcho
-	log    *logCtx.Log
 	config config.Config
+	log    *logCtx.Log
+	fw     echoFW.IEcho
 }
 
-func New(fw echoFW.IEcho, log *logCtx.Log, config config.Config) *Handler {
+func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho) *Handler {
 	return &Handler{
-		fw:     fw,
-		log:    log,
 		config: config,
+		log:    log,
+		fw:     fw,
 	}
 }
 

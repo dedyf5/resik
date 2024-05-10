@@ -19,18 +19,18 @@ import (
 )
 
 type Handler struct {
-	fw      echoFW.IEcho
-	log     *logCtx.Log
-	service trxService.IService
-	config  config.Config
+	config     config.Config
+	log        *logCtx.Log
+	fw         echoFW.IEcho
+	trxService trxService.IService
 }
 
-func New(fw echoFW.IEcho, log *logCtx.Log, service trxService.IService, config config.Config) *Handler {
+func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, config config.Config) *Handler {
 	return &Handler{
-		fw:      fw,
-		log:     log,
-		service: service,
-		config:  config,
+		config:     config,
+		log:        log,
+		fw:         fw,
+		trxService: trxService,
 	}
 }
 
@@ -65,7 +65,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	res, err := h.service.MerchantOmzetGet(param)
+	res, err := h.trxService.MerchantOmzetGet(param)
 	if err != nil {
 		return err
 	}
@@ -111,7 +111,7 @@ func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	res, err := h.service.OutletOmzetGet(param)
+	res, err := h.trxService.OutletOmzetGet(param)
 	if err != nil {
 		return err
 	}

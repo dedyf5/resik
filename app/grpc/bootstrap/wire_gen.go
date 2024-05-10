@@ -22,7 +22,7 @@ func InitializeHTTP() (*App, func(), error) {
 	config := _wireConfigValue
 	configLog := config.Log
 	logLog := log.Get(configLog)
-	generalHandler := general.New(logLog, config)
+	generalHandler := general.New(config, logLog)
 	router := newRouter(config, generalHandler)
 	app := config.App
 	interceptor := middleware.NewInterceptor(app, logLog)

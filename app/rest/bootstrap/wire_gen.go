@@ -41,7 +41,7 @@ func InitializeHTTP() (*App, func(), error) {
 	tag := app.LangDefault
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
-	handler := general.New(echoEcho, logLog, config)
+	handler := general.New(config, logLog, echoEcho)
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
 	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig)
@@ -58,7 +58,7 @@ func InitializeHTTP() (*App, func(), error) {
 	userHandler := user2.New(echoEcho, logLog, serviceService, config)
 	merchantRepo := merchant.New(gormDB)
 	service4 := service2.New(merchantRepo, config)
-	merchantHandler := merchant2.New(echoEcho, logLog, service4, config)
+	merchantHandler := merchant2.New(config, logLog, echoEcho, service4)
 	transactionRepo := transaction.New(gormDB)
 	service5 := service3.New(transactionRepo, config)
 	transactionHandler := transaction2.New(echoEcho, logLog, service5, config)
