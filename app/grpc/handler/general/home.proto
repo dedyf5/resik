@@ -13,10 +13,10 @@ package general;
 option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
 
 message HomeReq {
-    common.Request common = 1;
+    common.Request Common = 1; // @gotags: json:"common"
 }
 
 message HomeRes {
-    status.Status status = 1;
-    res.App data = 2;
+    status.Status Status = 1; // @gotags: json:"status"
+    res.App Data = 2; // @gotags: json:"data"
 }

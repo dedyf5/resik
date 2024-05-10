@@ -4,8 +4,11 @@ GOGENERATE=$(GOCMD) generate
 ## generate: Generate files
 generate:
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/res/*.proto
+	protoc-go-inject-tag -input="core/*/res/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto
+	protoc-go-inject-tag -input="app/grpc/proto/*/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/handler/*/*.proto
+	protoc-go-inject-tag -input="app/grpc/handler/*/*.pb.go" -remove_tag_comment
 	wire gen ./app/grpc/bootstrap
 	wire gen ./app/rest/bootstrap
 	swag init -g ../../app/rest/main.go -d ./pkg/response,./app/rest -o ./app/rest/docs --instanceName rest --parseDependency true
@@ -13,8 +16,11 @@ generate:
 ## generate-proto: Generate GRPC files
 generate-grpc:
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/res/*.proto
+	protoc-go-inject-tag -input="core/*/res/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto
+	protoc-go-inject-tag -input="app/grpc/proto/*/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/handler/*/*.proto
+	protoc-go-inject-tag -input="app/grpc/handler/*/*.pb.go" -remove_tag_comment
 	wire gen ./app/grpc/bootstrap
 
 ## generate-proto: Generate REST files
@@ -25,8 +31,11 @@ generate-rest:
 ## generate-proto: Generate proto files
 generate-proto:
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/res/*.proto
+	protoc-go-inject-tag -input="core/*/res/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto
+	protoc-go-inject-tag -input="app/grpc/proto/*/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/handler/*/*.proto
+	protoc-go-inject-tag -input="app/grpc/handler/*/*.pb.go" -remove_tag_comment
 
 ## test: Test all files
 test:

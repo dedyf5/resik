@@ -9,6 +9,6 @@ package status;
 option go_package = "github.com/dedyf5/resik/app/grpc/proto/status";
 
 message Status {
-    string code = 1;
-    string message = 2;
+    string Code = 1; // @gotags: json:"code"
+    string Message = 2; // @gotags: json:"message"
 }
