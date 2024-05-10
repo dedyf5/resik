@@ -68,6 +68,12 @@ func (i *Interceptor) logCtx(c context.Context) (*context.Context, error) {
 	return &newCtx, nil
 }
 
+func (i *Interceptor) writeLogger(start time.Time, fullMethod string, req any, res any, err error) (any, error) {
+	logger := logCtx.NewGRPC(i.app.Module, i.log, start, fullMethod, req, res, err)
+	logger.Write()
+	return res, err
+}
+
 func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*context.Context, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
@@ -115,22 +121,25 @@ func (i *Interceptor) validateJWT(c context.Context, signatureKey, fullMethod st
 }
 
 func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-	langC, err := i.langCtx(c, i.app.LangDefault)
-	if err != nil {
-		return nil, err
-	}
-	logC, err := i.logCtx(*langC)
-	if err != nil {
-		return nil, err
-	}
-	tokenC, err := i.validateJWT(*logC, i.auth.SignatureKey, info.FullMethod)
-	if err != nil {
-		return nil, err
-	}
-	newCtx := context.WithValue(*tokenC, ctx.KeyFullMethod, info.FullMethod)
 	start := time.Now()
-	resHandler, err := handler(newCtx, req)
-	logger := logCtx.NewGRPC(i.app.Module, i.log, start, info.FullMethod, req, resHandler, err)
-	logger.Write()
-	return resHandler, err
+	methodCtx := context.WithValue(c, ctx.KeyFullMethod, info.FullMethod)
+
+	logC, err := i.logCtx(methodCtx)
+	if err != nil {
+		return handler, err
+	}
+
+	langC, err := i.langCtx(*logC, i.app.LangDefault)
+	if err != nil {
+		return i.writeLogger(start, info.FullMethod, req, nil, err)
+	}
+
+	tokenC, err := i.validateJWT(*langC, i.auth.SignatureKey, info.FullMethod)
+	if err != nil {
+		return i.writeLogger(start, info.FullMethod, req, nil, err)
+	}
+
+	res, err := handler(*tokenC, req)
+
+	return i.writeLogger(start, info.FullMethod, req, res, err)
 }
