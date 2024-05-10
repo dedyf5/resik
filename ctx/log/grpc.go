@@ -61,12 +61,16 @@ func (h *GRPC) Write() {
 func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	reqByte, _ := json.Marshal(h.req)
 	resByte, _ := json.Marshal(h.res)
+	resString := string(resByte)
+	if resString == "null" {
+		resString = ""
+	}
 	enc.AddString("app", h.appModule.DirectoryName())
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
 	enc.AddString("path", h.uri)
 	enc.AddUint32("status_code", uint32(h.statusCode))
 	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())
 	enc.AddString("req", string(reqByte))
-	enc.AddString("res", string(resByte))
+	enc.AddString("res", resString)
 	return nil
 }
