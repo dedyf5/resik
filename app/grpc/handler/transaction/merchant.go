@@ -27,7 +27,7 @@ func (r *MerchantOmzetGetReq) ToCoreReq() *reqTrxCore.MerchantOmzetGet {
 		limit = &tmp
 	}
 	return &reqTrxCore.MerchantOmzetGet{
-		ID:            r.ID,
+		MerchantID:    r.MerchantID,
 		Mode:          r.Mode,
 		DateTimeStart: r.DateTimeStart,
 		DateTimeEnd:   r.DateTimeEnd,

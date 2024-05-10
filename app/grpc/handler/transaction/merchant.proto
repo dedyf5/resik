@@ -12,7 +12,7 @@ import "app/grpc/proto/status/status.proto";
 import "core/transaction/res/merchant.proto";
 
 message MerchantOmzetGetReq {
-    uint64 ID = 1; // @gotags: json:"id"
+    uint64 MerchantID = 1; // @gotags: json:"merchant_id"
     string Mode = 2; // @gotags: json:"mode"
     string DateTimeStart = 3; // @gotags: json:"datetime_start"
     string DateTimeEnd = 4; // @gotags: json:"datetime_end"
