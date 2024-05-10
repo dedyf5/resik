@@ -67,11 +67,11 @@ func (s *Status) GRPC() *statusGRPC.Status {
 	case http.StatusBadRequest:
 		return statusGRPC.New(codes.InvalidArgument, s.MessageOrDefault())
 	case http.StatusUnauthorized:
-		return statusGRPC.New(codes.InvalidArgument, s.MessageOrDefault())
+		return statusGRPC.New(codes.Unauthenticated, s.MessageOrDefault())
 	case http.StatusNotFound:
-		return statusGRPC.New(codes.InvalidArgument, s.MessageOrDefault())
+		return statusGRPC.New(codes.NotFound, s.MessageOrDefault())
 	case http.StatusInternalServerError:
-		return statusGRPC.New(codes.InvalidArgument, s.MessageOrDefault())
+		return statusGRPC.New(codes.Internal, s.MessageOrDefault())
 	default:
 		return statusGRPC.New(codes.Unknown, s.MessageOrDefault())
 	}
