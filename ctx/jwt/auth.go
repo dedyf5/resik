@@ -78,17 +78,24 @@ func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint
 	return
 }
 
-func AuthClaimsFromString(tokenString string, signatureKey string) *AuthClaims {
+func AuthClaimsFromString(tokenString string, signatureKey string) (claim *AuthClaims, status *resPkg.Status) {
 	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(signatureKey), nil
 	})
 	if err != nil {
-		return nil
+		return nil, &resPkg.Status{
+			Code:       http.StatusBadRequest,
+			Message:    "invalid jwt",
+			CauseError: err,
+		}
 	}
 	if claims, ok := token.Claims.(*AuthClaims); ok {
-		return claims
+		return claims, nil
 	}
-	return nil
+	return nil, &resPkg.Status{
+		Code:    http.StatusBadRequest,
+		Message: "invalid or expired jwt",
+	}
 }
 
 func AuthClaimsFromContext(ctx context.Context) *AuthClaims {

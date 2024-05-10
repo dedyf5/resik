@@ -52,6 +52,10 @@ func (h *TransactionHandler) MerchantOmzetGet(c context.Context, req *MerchantOm
 
 	param := payload.ToParam(ctx)
 
+	if _, err := ctx.UserClaims.MerchantIDIsAccessible(param.MerchantID); err != nil {
+		return nil, err.GRPC().Err()
+	}
+
 	res, err := h.trxService.MerchantOmzetGet(param)
 	if err != nil {
 		return nil, err.GRPC().Err()

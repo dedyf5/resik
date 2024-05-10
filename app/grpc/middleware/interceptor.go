@@ -6,12 +6,15 @@ package middleware
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/dedyf5/resik/ctx"
+	jwtCxt "github.com/dedyf5/resik/ctx/jwt"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
+	"github.com/dedyf5/resik/pkg/array"
 	"github.com/rs/xid"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
@@ -20,15 +23,32 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+type Role string
+
+const (
+	RoleValidToken Role = "ValidToken"
+)
+
 type Interceptor struct {
-	app config.App
-	log *logCtx.Log
+	app         config.App
+	auth        config.Auth
+	log         *logCtx.Log
+	methodRoles map[string][]Role
 }
 
-func NewInterceptor(app config.App, log *logCtx.Log) *Interceptor {
+func NewInterceptor(app config.App, auth config.Auth, log *logCtx.Log) *Interceptor {
 	return &Interceptor{
-		app: app,
-		log: log,
+		app:         app,
+		auth:        auth,
+		log:         log,
+		methodRoles: methodRoles(),
+	}
+}
+
+func methodRoles() map[string][]Role {
+	const transactionService = "/transaction.TransactionService/"
+	return map[string][]Role{
+		transactionService + "MerchantOmzetGet": {RoleValidToken},
 	}
 }
 
@@ -69,6 +89,31 @@ func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*con
 	return &newCtx, nil
 }
 
+func (i *Interceptor) validateJWT(c context.Context, signatureKey, fullMethod string) (*context.Context, error) {
+	meta, ok := metadata.FromIncomingContext(c)
+	if !ok {
+		return nil, status.Error(codes.Internal, "Unable to read metadata")
+	}
+	if i.methodRoles[fullMethod] == nil {
+		return &c, nil
+	}
+	if array.InArray(RoleValidToken, i.methodRoles[fullMethod]) < 0 {
+		return &c, nil
+	}
+	if len(meta["authorization"]) != 1 {
+		return nil, status.Error(codes.Unauthenticated, codes.Unauthenticated.String())
+	}
+	bearer := meta["authorization"][0]
+	token := strings.ReplaceAll(bearer, "Bearer ", "")
+	claim, err := jwtCxt.AuthClaimsFromString(token, signatureKey)
+	if err != nil {
+		return nil, err.GRPC().Err()
+	}
+	newCtx := context.WithValue(c, jwtCxt.AuthClaimsKey, claim)
+
+	return &newCtx, nil
+}
+
 func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	langC, err := i.langCtx(c, i.app.LangDefault)
 	if err != nil {
@@ -78,7 +123,11 @@ func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerIn
 	if err != nil {
 		return nil, err
 	}
-	newCtx := context.WithValue(*logC, ctx.KeyFullMethod, info.FullMethod)
+	tokenC, err := i.validateJWT(*logC, i.auth.SignatureKey, info.FullMethod)
+	if err != nil {
+		return nil, err
+	}
+	newCtx := context.WithValue(*tokenC, ctx.KeyFullMethod, info.FullMethod)
 	start := time.Now()
 	resHandler, err := handler(newCtx, req)
 	logger := logCtx.NewGRPC(i.app.Module, i.log, start, info.FullMethod, req, resHandler, err)

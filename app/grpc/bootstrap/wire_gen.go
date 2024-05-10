@@ -47,7 +47,8 @@ func InitializeHTTP() (*App, func(), error) {
 	serviceService := service.New(transactionRepo, config)
 	transactionHandler := transaction2.New(config, logLog, validate, serviceService)
 	router := newRouter(config, generalHandler, transactionHandler)
-	interceptor := middleware.NewInterceptor(app, logLog)
+	auth := config.Auth
+	interceptor := middleware.NewInterceptor(app, auth, logLog)
 	serverHTTP := newServerHTTP(config, router, interceptor)
 	bootstrapApp, cleanup3, err := newApp(serverHTTP)
 	if err != nil {
@@ -70,7 +71,7 @@ var (
 
 var configGeneral = config.Load(config2.ModuleGRPC)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
 var utilSet = wire.NewSet(validator.New, log.Get)
 

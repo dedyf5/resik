@@ -95,9 +95,10 @@ func JWTMiddleware(signatureKey string) echo.MiddlewareFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token := strings.ReplaceAll(r.Header.Get("Authorization"), "Bearer ", "")
 			if token != "" {
+				claim, _ := jwtCxt.AuthClaimsFromString(token, signatureKey)
 				ctx := context.WithValue(r.Context(),
 					jwtCxt.AuthClaimsKey,
-					jwtCxt.AuthClaimsFromString(token, signatureKey),
+					claim,
 				)
 				r = r.WithContext(ctx)
 			}
