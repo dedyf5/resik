@@ -988,7 +988,7 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.OutletOmzet"
+                                                "$ref": "#/definitions/res.OutletOmzet"
                                             }
                                         }
                                     }
@@ -1130,16 +1130,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.MerchantUpsert": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "example": 123
-                }
-            }
-        },
-        "response.OutletOmzet": {
+        "res.OutletOmzet": {
             "type": "object",
             "properties": {
                 "merchant_name": {
@@ -1148,7 +1139,7 @@ const docTemplaterest = `{
                 },
                 "omzet": {
                     "type": "number",
-                    "example": 50000.5
+                    "example": 5000.5
                 },
                 "outlet_name": {
                     "type": "string",
@@ -1157,6 +1148,15 @@ const docTemplaterest = `{
                 "period": {
                     "type": "string",
                     "example": "2024-02-06"
+                }
+            }
+        },
+        "response.MerchantUpsert": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 123
                 }
             }
         },

@@ -8,8 +8,6 @@ import (
 	"net/http"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
-	trxReq "github.com/dedyf5/resik/app/rest/handler/transaction/request"
-	trxRes "github.com/dedyf5/resik/app/rest/handler/transaction/response"
 	"github.com/dedyf5/resik/config"
 	trxService "github.com/dedyf5/resik/core/transaction"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/req"
@@ -90,8 +88,8 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 // @Produce json
 // @Security BearerAuth
 // @Param       id path int true "Outlet ID"
-// @Param       parameter query request.OutletOmzetGet true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=[]trxRes.OutletOmzet}
+// @Param       parameter query reqTrxCore.OutletOmzetGet true "Query Param"
+// @Success		200	{object}	resPkg.Response{data=[]resTrxCore.OutletOmzet}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/transaction/outlet/{id}/omzet [get]
@@ -101,7 +99,7 @@ func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	var payload trxReq.OutletOmzetGet
+	var payload reqTrxCore.OutletOmzetGet
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
@@ -120,7 +118,7 @@ func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
 
 	return &resPkg.Status{
 		Code: http.StatusOK,
-		Data: trxRes.OutletOmzetFromEntity(res.Data),
+		Data: resTrxCore.OutletOmzetFromEntity(res.Data),
 		Meta: &resPkg.Meta{
 			PageCurrent: param.Filter.Page,
 			Limit:       param.Filter.Limit,
