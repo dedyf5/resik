@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionServiceClient interface {
 	MerchantOmzetGet(ctx context.Context, in *MerchantOmzetGetReq, opts ...grpc.CallOption) (*MerchantOmzetGetRes, error)
+	OutletOmzetGet(ctx context.Context, in *OutletOmzetGetReq, opts ...grpc.CallOption) (*OutletOmzetGetRes, error)
 }
 
 type transactionServiceClient struct {
@@ -42,11 +43,21 @@ func (c *transactionServiceClient) MerchantOmzetGet(ctx context.Context, in *Mer
 	return out, nil
 }
 
+func (c *transactionServiceClient) OutletOmzetGet(ctx context.Context, in *OutletOmzetGetReq, opts ...grpc.CallOption) (*OutletOmzetGetRes, error) {
+	out := new(OutletOmzetGetRes)
+	err := c.cc.Invoke(ctx, "/transaction.TransactionService/OutletOmzetGet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TransactionServiceServer is the server API for TransactionService service.
 // All implementations must embed UnimplementedTransactionServiceServer
 // for forward compatibility
 type TransactionServiceServer interface {
 	MerchantOmzetGet(context.Context, *MerchantOmzetGetReq) (*MerchantOmzetGetRes, error)
+	OutletOmzetGet(context.Context, *OutletOmzetGetReq) (*OutletOmzetGetRes, error)
 	mustEmbedUnimplementedTransactionServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedTransactionServiceServer struct {
 
 func (UnimplementedTransactionServiceServer) MerchantOmzetGet(context.Context, *MerchantOmzetGetReq) (*MerchantOmzetGetRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MerchantOmzetGet not implemented")
+}
+func (UnimplementedTransactionServiceServer) OutletOmzetGet(context.Context, *OutletOmzetGetReq) (*OutletOmzetGetRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OutletOmzetGet not implemented")
 }
 func (UnimplementedTransactionServiceServer) mustEmbedUnimplementedTransactionServiceServer() {}
 
@@ -88,6 +102,24 @@ func _TransactionService_MerchantOmzetGet_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TransactionService_OutletOmzetGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OutletOmzetGetReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionServiceServer).OutletOmzetGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/transaction.TransactionService/OutletOmzetGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionServiceServer).OutletOmzetGet(ctx, req.(*OutletOmzetGetReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TransactionService_ServiceDesc is the grpc.ServiceDesc for TransactionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -98,6 +130,10 @@ var TransactionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MerchantOmzetGet",
 			Handler:    _TransactionService_MerchantOmzetGet_Handler,
+		},
+		{
+			MethodName: "OutletOmzetGet",
+			Handler:    _TransactionService_OutletOmzetGet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
