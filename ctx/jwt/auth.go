@@ -87,6 +87,11 @@ func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint
 }
 
 func AuthClaimsFromString(tokenString string, signatureKey string) (claim *AuthClaims, status *resPkg.Status) {
+	if tokenString == "" {
+		return nil, &resPkg.Status{
+			Code: http.StatusUnauthorized,
+		}
+	}
 	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(signatureKey), nil
 	})
