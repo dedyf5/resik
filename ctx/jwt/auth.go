@@ -33,26 +33,34 @@ type AuthClaims struct {
 	OutletIDs   []uint64 `json:"outlet_ids"`
 }
 
-func (a AuthClaims) Valid() error {
+func (a *AuthClaims) Valid() error {
 	return nil
 }
 
-func (a AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, status *resPkg.Status) {
+func (a *AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, status *resPkg.Status) {
+	if a == nil {
+		return a.statusUnauthorized()
+	}
 	if array.InArray(merchantID, a.MerchantIDs) < 0 {
-		return false, &resPkg.Status{
-			Code: http.StatusUnauthorized,
-		}
+		return a.statusUnauthorized()
 	}
 	return true, nil
 }
 
-func (a AuthClaims) OutletIDIsAccessible(outletID uint64) (ok bool, status *resPkg.Status) {
+func (a *AuthClaims) OutletIDIsAccessible(outletID uint64) (ok bool, status *resPkg.Status) {
+	if a == nil {
+		return a.statusUnauthorized()
+	}
 	if array.InArray(outletID, a.OutletIDs) < 0 {
-		return false, &resPkg.Status{
-			Code: http.StatusUnauthorized,
-		}
+		return a.statusUnauthorized()
 	}
 	return true, nil
+}
+
+func (a *AuthClaims) statusUnauthorized() (bool, *resPkg.Status) {
+	return false, &resPkg.Status{
+		Code: http.StatusUnauthorized,
+	}
 }
 
 func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64, outletIDs []uint64) (token string, status *resPkg.Status) {
