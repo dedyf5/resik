@@ -4,13 +4,12 @@
 
 syntax = "proto3";
 
+package general;
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
+
 import "app/grpc/proto/common/request.proto";
 import "app/grpc/proto/status/status.proto";
 import "core/app/res/app.proto";
-
-package general;
-
-option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
 
 message HomeReq {
     common.Request Common = 1; // @gotags: json:"common"

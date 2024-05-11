@@ -4,12 +4,11 @@
 
 syntax = "proto3";
 
+package general;
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
+
 import "app/grpc/handler/general/home.proto";
 import "google/protobuf/empty.proto";
-
-package general;
-
-option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
 
 service GeneralService {
     rpc Home(google.protobuf.Empty) returns (general.HomeRes) {}

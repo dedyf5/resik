@@ -5,7 +5,6 @@
 syntax = "proto3";
 
 package common;
-
 option go_package = "github.com/dedyf5/resik/app/grpc/proto/common";
 
 message Request {

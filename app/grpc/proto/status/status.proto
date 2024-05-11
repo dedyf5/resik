@@ -5,7 +5,6 @@
 syntax = "proto3";
 
 package status;
-
 option go_package = "github.com/dedyf5/resik/app/grpc/proto/status";
 
 message Status {

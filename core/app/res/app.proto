@@ -5,7 +5,6 @@
 syntax = "proto3";
 
 package res;
-
 option go_package = "github.com/dedyf5/resik/core/app/res";
 
 message App {
