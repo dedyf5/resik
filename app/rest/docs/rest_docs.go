@@ -838,7 +838,7 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.MerchantOmzet"
+                                                "$ref": "#/definitions/res.MerchantOmzet"
                                             }
                                         }
                                     }
@@ -1116,20 +1116,17 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.MerchantOmzet": {
+        "res.MerchantOmzet": {
             "type": "object",
             "properties": {
                 "merchant_name": {
-                    "type": "string",
-                    "example": "Resik Merchant"
+                    "type": "string"
                 },
                 "omzet": {
-                    "type": "number",
-                    "example": 1000000.5
+                    "type": "number"
                 },
                 "period": {
-                    "type": "string",
-                    "example": "2024-02-06"
+                    "type": "string"
                 }
             }
         },

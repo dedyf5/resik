@@ -12,6 +12,8 @@ import (
 	trxRes "github.com/dedyf5/resik/app/rest/handler/transaction/response"
 	"github.com/dedyf5/resik/config"
 	trxService "github.com/dedyf5/resik/core/transaction"
+	reqTrxCore "github.com/dedyf5/resik/core/transaction/req"
+	resTrxCore "github.com/dedyf5/resik/core/transaction/res"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -41,8 +43,8 @@ func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, confi
 // @Produce json
 // @Security BearerAuth
 // @Param       id path int true "Merchant ID"
-// @Param       parameter query request.MerchantOmzetGet true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=[]trxRes.MerchantOmzet}
+// @Param       parameter query reqTrxCore.MerchantOmzetGet true "Query Param"
+// @Success		200	{object}	resPkg.Response{data=[]resTrxCore.MerchantOmzet}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/transaction/merchant/{id}/omzet [get]
@@ -53,7 +55,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 	}
 	ctx.App.Logger().Debug("MerchantOmzetGet")
 
-	var payload trxReq.MerchantOmzetGet
+	var payload reqTrxCore.MerchantOmzetGet
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
@@ -72,7 +74,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 
 	return &resPkg.Status{
 		Code: http.StatusOK,
-		Data: trxRes.MerchantOmzetFromEntity(res.Data),
+		Data: resTrxCore.MerchantOmzetFromEntity(res.Data),
 		Meta: &resPkg.Meta{
 			PageCurrent: param.Filter.Page,
 			Limit:       param.Filter.Limit,

@@ -53,16 +53,13 @@ definitions:
       request:
         type: string
     type: object
-  response.MerchantOmzet:
+  res.MerchantOmzet:
     properties:
       merchant_name:
-        example: Resik Merchant
         type: string
       omzet:
-        example: 1.0000005e+06
         type: number
       period:
-        example: "2024-02-06"
         type: string
     type: object
   response.MerchantUpsert:
@@ -613,7 +610,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/response.MerchantOmzet'
+                    $ref: '#/definitions/res.MerchantOmzet'
                   type: array
               type: object
         "400":
