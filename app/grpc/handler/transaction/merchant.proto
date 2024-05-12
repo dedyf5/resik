@@ -9,10 +9,10 @@ option go_package = "github.com/dedyf5/resik/app/grpc/handler/transaction";
 
 import "app/grpc/proto/meta/meta.proto";
 import "app/grpc/proto/status/status.proto";
-import "core/transaction/res/merchant.proto";
+import "core/transaction/response/merchant.proto";
 
 message MerchantOmzetGetRes {
     status.Status Status = 1; // @gotags: json:"status"
-    repeated res.MerchantOmzet Data = 2; // @gotags: json:"data"
+    repeated response.MerchantOmzet Data = 2; // @gotags: json:"data"
     meta.Meta Meta = 3; // @gotags: json:"meta"
 }

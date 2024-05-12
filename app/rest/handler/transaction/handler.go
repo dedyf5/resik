@@ -11,7 +11,7 @@ import (
 	"github.com/dedyf5/resik/config"
 	trxService "github.com/dedyf5/resik/core/transaction"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
-	resTrxCore "github.com/dedyf5/resik/core/transaction/res"
+	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"

@@ -838,7 +838,7 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/res.MerchantOmzet"
+                                                "$ref": "#/definitions/response.MerchantOmzet"
                                             }
                                         }
                                     }
@@ -988,7 +988,7 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/res.OutletOmzet"
+                                                "$ref": "#/definitions/response.OutletOmzet"
                                             }
                                         }
                                     }
@@ -1121,7 +1121,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "res.MerchantOmzet": {
+        "response.MerchantOmzet": {
             "type": "object",
             "properties": {
                 "merchant_name": {
@@ -1138,7 +1138,16 @@ const docTemplaterest = `{
                 }
             }
         },
-        "res.OutletOmzet": {
+        "response.MerchantUpsert": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 123
+                }
+            }
+        },
+        "response.OutletOmzet": {
             "type": "object",
             "properties": {
                 "merchant_name": {
@@ -1156,15 +1165,6 @@ const docTemplaterest = `{
                 "period": {
                     "type": "string",
                     "example": "2023-11-22"
-                }
-            }
-        },
-        "response.MerchantUpsert": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "example": 123
                 }
             }
         },

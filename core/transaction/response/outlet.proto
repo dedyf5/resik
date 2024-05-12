@@ -4,8 +4,8 @@
 
 syntax = "proto3";
 
-package res;
-option go_package = "github.com/dedyf5/resik/core/transaction/res";
+package response;
+option go_package = "github.com/dedyf5/resik/core/transaction/response";
 
 message OutletOmzet {
     string MerchantName = 1; // @gotags: json:"merchant_name" example:"Resik Merchant"

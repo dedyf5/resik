@@ -827,7 +827,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/res.MerchantOmzet"
+                                                "$ref": "#/definitions/response.MerchantOmzet"
                                             }
                                         }
                                     }
@@ -977,7 +977,7 @@
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/res.OutletOmzet"
+                                                "$ref": "#/definitions/response.OutletOmzet"
                                             }
                                         }
                                     }
@@ -1110,7 +1110,7 @@
                 }
             }
         },
-        "res.MerchantOmzet": {
+        "response.MerchantOmzet": {
             "type": "object",
             "properties": {
                 "merchant_name": {
@@ -1127,7 +1127,16 @@
                 }
             }
         },
-        "res.OutletOmzet": {
+        "response.MerchantUpsert": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 123
+                }
+            }
+        },
+        "response.OutletOmzet": {
             "type": "object",
             "properties": {
                 "merchant_name": {
@@ -1145,15 +1154,6 @@
                 "period": {
                     "type": "string",
                     "example": "2023-11-22"
-                }
-            }
-        },
-        "response.MerchantUpsert": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "example": 123
                 }
             }
         },

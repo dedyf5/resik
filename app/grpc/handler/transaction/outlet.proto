@@ -9,10 +9,10 @@ option go_package = "github.com/dedyf5/resik/app/grpc/handler/transaction";
 
 import "app/grpc/proto/meta/meta.proto";
 import "app/grpc/proto/status/status.proto";
-import "core/transaction/res/outlet.proto";
+import "core/transaction/response/outlet.proto";
 
 message OutletOmzetGetRes {
     status.Status Status = 1; // @gotags: json:"status"
-    repeated res.OutletOmzet Data = 2; // @gotags: json:"data"
+    repeated response.OutletOmzet Data = 2; // @gotags: json:"data"
     meta.Meta Meta = 3; // @gotags: json:"meta"
 }

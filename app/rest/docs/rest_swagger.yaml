@@ -58,7 +58,7 @@ definitions:
         example: id
         type: string
     type: object
-  res.MerchantOmzet:
+  response.MerchantOmzet:
     properties:
       merchant_name:
         example: Resik Merchant
@@ -70,7 +70,13 @@ definitions:
         example: "2023-11-22"
         type: string
     type: object
-  res.OutletOmzet:
+  response.MerchantUpsert:
+    properties:
+      id:
+        example: 123
+        type: integer
+    type: object
+  response.OutletOmzet:
     properties:
       merchant_name:
         example: Resik Merchant
@@ -84,12 +90,6 @@ definitions:
       period:
         example: "2023-11-22"
         type: string
-    type: object
-  response.MerchantUpsert:
-    properties:
-      id:
-        example: 123
-        type: integer
     type: object
   response.Response:
     properties:
@@ -618,7 +618,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/res.MerchantOmzet'
+                    $ref: '#/definitions/response.MerchantOmzet'
                   type: array
               type: object
         "400":
@@ -710,7 +710,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/res.OutletOmzet'
+                    $ref: '#/definitions/response.OutletOmzet'
                   type: array
               type: object
         "400":

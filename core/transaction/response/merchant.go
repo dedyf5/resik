@@ -2,7 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package res
+package response
 
 import trxEntity "github.com/dedyf5/resik/entities/transaction"
 

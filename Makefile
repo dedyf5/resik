@@ -5,8 +5,8 @@ GOGENERATE=$(GOCMD) generate
 generate:
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/request/*.proto
 	protoc-go-inject-tag -input="core/*/request/*.pb.go" -remove_tag_comment
-	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/res/*.proto
-	protoc-go-inject-tag -input="core/*/res/*.pb.go" -remove_tag_comment
+	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/response/*.proto
+	protoc-go-inject-tag -input="core/*/response/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto
 	protoc-go-inject-tag -input="app/grpc/proto/*/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/handler/*/*.proto
@@ -19,8 +19,8 @@ generate:
 generate-grpc:
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/request/*.proto
 	protoc-go-inject-tag -input="core/*/request/*.pb.go" -remove_tag_comment
-	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/res/*.proto
-	protoc-go-inject-tag -input="core/*/res/*.pb.go" -remove_tag_comment
+	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/response/*.proto
+	protoc-go-inject-tag -input="core/*/response/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto
 	protoc-go-inject-tag -input="app/grpc/proto/*/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/handler/*/*.proto
@@ -36,8 +36,8 @@ generate-rest:
 generate-proto:
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/request/*.proto
 	protoc-go-inject-tag -input="core/*/request/*.pb.go" -remove_tag_comment
-	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/res/*.proto
-	protoc-go-inject-tag -input="core/*/res/*.pb.go" -remove_tag_comment
+	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/response/*.proto
+	protoc-go-inject-tag -input="core/*/response/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto
 	protoc-go-inject-tag -input="app/grpc/proto/*/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/handler/*/*.proto

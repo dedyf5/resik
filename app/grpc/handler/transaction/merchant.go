@@ -10,7 +10,7 @@ import (
 	"github.com/dedyf5/resik/app/grpc/proto/meta"
 	"github.com/dedyf5/resik/app/grpc/proto/status"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
-	resTrxCore "github.com/dedyf5/resik/core/transaction/res"
+	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
 	"google.golang.org/grpc/codes"
 )
