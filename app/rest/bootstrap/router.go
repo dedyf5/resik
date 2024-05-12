@@ -61,12 +61,12 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	trxOutlet := trx.Group("/outlet/:id", validateToken, jwtMiddleware)
 	trxOutlet.GET("/omzet", trxHandler.OutletOmzetGet)
 
-	docs.SwaggerInfohttp.Title = r.config.App.Name
-	docs.SwaggerInfohttp.Version = r.config.App.Version
-	docs.SwaggerInfohttp.Host = r.config.App.HostPort()
-	docs.SwaggerInfohttp.Description = r.config.App.APIDocDescription()
+	docs.SwaggerInforest.Title = r.config.App.Name
+	docs.SwaggerInforest.Version = r.config.App.Version
+	docs.SwaggerInforest.Host = r.config.App.HostPort()
+	docs.SwaggerInforest.Description = r.config.App.APIDocDescription()
 	docHandler := echoSwagger.EchoWrapHandler(
-		echoSwagger.InstanceName(docs.SwaggerInfohttp.InfoInstanceName),
+		echoSwagger.InstanceName(docs.SwaggerInforest.InfoInstanceName),
 	)
 	e.GET(fmt.Sprintf("%s*", echoFW.DocPrefix), docHandler)
 }
