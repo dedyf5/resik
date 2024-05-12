@@ -751,6 +751,15 @@
                         "required": true
                     },
                     {
+                        "enum": [
+                            "en",
+                            "id"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "example": "2023-11-22 13:45:00",
                         "name": "datetime_end",
@@ -763,15 +772,6 @@
                         "name": "datetime_start",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "enum": [
-                            "en",
-                            "id"
-                        ],
-                        "type": "string",
-                        "name": "lang",
-                        "in": "query"
                     },
                     {
                         "maximum": 100,
@@ -901,6 +901,15 @@
                         "required": true
                     },
                     {
+                        "enum": [
+                            "en",
+                            "id"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "example": "2023-11-22 13:45:00",
                         "name": "datetime_end",
@@ -913,15 +922,6 @@
                         "name": "datetime_start",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "enum": [
-                            "en",
-                            "id"
-                        ],
-                        "type": "string",
-                        "name": "lang",
-                        "in": "query"
                     },
                     {
                         "maximum": 100,

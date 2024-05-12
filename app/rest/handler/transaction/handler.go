@@ -14,9 +14,14 @@ import (
 	resTrxCore "github.com/dedyf5/resik/core/transaction/res"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
+	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v4"
 )
+
+// necessary to avoid unused package errors
+// commonEntity package is used by swagger
+var _ = commonEntity.Request{}
 
 type Handler struct {
 	config     config.Config
@@ -41,6 +46,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, confi
 // @Produce json
 // @Security BearerAuth
 // @Param       id path int true "Merchant ID"
+// @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqTrxCore.MerchantOmzetGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=[]resTrxCore.MerchantOmzet}
 // @Failure     400 {object}	resPkg.Response{data=nil}
@@ -88,6 +94,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 // @Produce json
 // @Security BearerAuth
 // @Param       id path int true "Outlet ID"
+// @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqTrxCore.OutletOmzetGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=[]resTrxCore.OutletOmzet}
 // @Failure     400 {object}	resPkg.Response{data=nil}

@@ -762,6 +762,15 @@ const docTemplaterest = `{
                         "required": true
                     },
                     {
+                        "enum": [
+                            "en",
+                            "id"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "example": "2023-11-22 13:45:00",
                         "name": "datetime_end",
@@ -774,15 +783,6 @@ const docTemplaterest = `{
                         "name": "datetime_start",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "enum": [
-                            "en",
-                            "id"
-                        ],
-                        "type": "string",
-                        "name": "lang",
-                        "in": "query"
                     },
                     {
                         "maximum": 100,
@@ -912,6 +912,15 @@ const docTemplaterest = `{
                         "required": true
                     },
                     {
+                        "enum": [
+                            "en",
+                            "id"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
                         "type": "string",
                         "example": "2023-11-22 13:45:00",
                         "name": "datetime_end",
@@ -924,15 +933,6 @@ const docTemplaterest = `{
                         "name": "datetime_start",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "enum": [
-                            "en",
-                            "id"
-                        ],
-                        "type": "string",
-                        "name": "lang",
-                        "in": "query"
                     },
                     {
                         "maximum": 100,

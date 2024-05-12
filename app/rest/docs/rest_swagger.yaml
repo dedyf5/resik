@@ -563,6 +563,12 @@ paths:
         name: id
         required: true
         type: integer
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
       - example: "2023-11-22 13:45:00"
         in: query
         name: datetime_end
@@ -572,12 +578,6 @@ paths:
         in: query
         name: datetime_start
         required: true
-        type: string
-      - enum:
-        - en
-        - id
-        in: query
-        name: lang
         type: string
       - example: 10
         in: query
@@ -655,6 +655,12 @@ paths:
         name: id
         required: true
         type: integer
+      - enum:
+        - en
+        - id
+        in: query
+        name: lang
+        type: string
       - example: "2023-11-22 13:45:00"
         in: query
         name: datetime_end
@@ -664,12 +670,6 @@ paths:
         in: query
         name: datetime_start
         required: true
-        type: string
-      - enum:
-        - en
-        - id
-        in: query
-        name: lang
         type: string
       - example: 10
         in: query
