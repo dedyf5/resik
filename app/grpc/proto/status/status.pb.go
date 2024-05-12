@@ -29,8 +29,8 @@ type Status struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Code    string `protobuf:"bytes,1,opt,name=Code,proto3" json:"code"`        
-	Message string `protobuf:"bytes,2,opt,name=Message,proto3" json:"message"`  
+	Code    string `protobuf:"bytes,1,opt,name=Code,proto3" json:"code" example:"0"`        
+	Message string `protobuf:"bytes,2,opt,name=Message,proto3" json:"message" example:"OK"`  
 }
 
 func (x *Status) Reset() {

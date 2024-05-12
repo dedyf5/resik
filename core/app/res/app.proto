@@ -8,13 +8,13 @@ package res;
 option go_package = "github.com/dedyf5/resik/core/app/res";
 
 message App {
-    string App = 1; // @gotags: json:"app"
-    string Version = 2; // @gotags: json:"version"
+    string App = 1; // @gotags: json:"app" example:"Resik REST"
+    string Version = 2; // @gotags: json:"version" example:"Version 0.1"
     AppLang Lang = 3; // @gotags: json:"lang"
 }
 
 message AppLang {
-	string Current = 1; // @gotags: json:"current"
-	string Request = 2; // @gotags: json:"request"
-	string Default = 3; // @gotags: json:"default"
+	string Current = 1; // @gotags: json:"current" example:"id"
+	string Request = 2; // @gotags: json:"request" example:"id"
+	string Default = 3; // @gotags: json:"default" example:"en"
 }

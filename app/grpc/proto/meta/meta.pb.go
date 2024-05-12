@@ -29,8 +29,8 @@ type Meta struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Total uint64    `protobuf:"varint,1,opt,name=Total,proto3" json:"total"`  
-	Limit int32     `protobuf:"varint,2,opt,name=Limit,proto3" json:"limit"`  
+	Total uint64    `protobuf:"varint,1,opt,name=Total,proto3" json:"total" example:"100"`  
+	Limit int32     `protobuf:"varint,2,opt,name=Limit,proto3" json:"limit" example:"10"`  
 	Page  *MetaPage `protobuf:"bytes,3,opt,name=Page,proto3" json:"page"`     
 }
 
@@ -92,11 +92,11 @@ type MetaPage struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	First    int32  `protobuf:"varint,1,opt,name=First,proto3" json:"first"`              
-	Previous *int32 `protobuf:"varint,2,opt,name=Previous,proto3,oneof" json:"previous"`  
-	Current  int32  `protobuf:"varint,3,opt,name=Current,proto3" json:"current"`          
-	Next     *int32 `protobuf:"varint,4,opt,name=Next,proto3,oneof" json:"next"`          
-	Last     int32  `protobuf:"varint,5,opt,name=Last,proto3" json:"last"`                
+	First    int32  `protobuf:"varint,1,opt,name=First,proto3" json:"first" example:"1"`              
+	Previous *int32 `protobuf:"varint,2,opt,name=Previous,proto3,oneof" json:"previous" example:"2"`  
+	Current  int32  `protobuf:"varint,3,opt,name=Current,proto3" json:"current" example:"3"`          
+	Next     *int32 `protobuf:"varint,4,opt,name=Next,proto3,oneof" json:"next" example:"4"`          
+	Last     int32  `protobuf:"varint,5,opt,name=Last,proto3" json:"last" example:"9"`                
 }
 
 func (x *MetaPage) Reset() {

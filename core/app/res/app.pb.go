@@ -29,8 +29,8 @@ type App struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	App     string   `protobuf:"bytes,1,opt,name=App,proto3" json:"app"`          
-	Version string   `protobuf:"bytes,2,opt,name=Version,proto3" json:"version"`  
+	App     string   `protobuf:"bytes,1,opt,name=App,proto3" json:"app" example:"Resik REST"`          
+	Version string   `protobuf:"bytes,2,opt,name=Version,proto3" json:"version" example:"Version 0.1"`  
 	Lang    *AppLang `protobuf:"bytes,3,opt,name=Lang,proto3" json:"lang"`        
 }
 
@@ -92,9 +92,9 @@ type AppLang struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Current string `protobuf:"bytes,1,opt,name=Current,proto3" json:"current"`  
-	Request string `protobuf:"bytes,2,opt,name=Request,proto3" json:"request"`  
-	Default string `protobuf:"bytes,3,opt,name=Default,proto3" json:"default"`  
+	Current string `protobuf:"bytes,1,opt,name=Current,proto3" json:"current" example:"id"`  
+	Request string `protobuf:"bytes,2,opt,name=Request,proto3" json:"request" example:"id"`  
+	Default string `protobuf:"bytes,3,opt,name=Default,proto3" json:"default" example:"en"`  
 }
 
 func (x *AppLang) Reset() {

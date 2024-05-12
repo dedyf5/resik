@@ -11,5 +11,5 @@ message OutletOmzet {
     string MerchantName = 1; // @gotags: json:"merchant_name" example:"Resik Merchant"
     string OutletName = 2; // @gotags: json:"outlet_name" example:"Resik Outlet"
     double Omzet = 3; // @gotags: json:"omzet" example:"5000.5"
-    string Period = 4; // @gotags: json:"period" example:"2024-02-06"
+    string Period = 4; // @gotags: json:"period" example:"2023-11-22"
 }

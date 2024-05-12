@@ -38,28 +38,36 @@ definitions:
   res.App:
     properties:
       app:
+        example: Resik REST
         type: string
       lang:
         $ref: '#/definitions/res.AppLang'
       version:
+        example: Version 0.1
         type: string
     type: object
   res.AppLang:
     properties:
       current:
+        example: id
         type: string
       default:
+        example: en
         type: string
       request:
+        example: id
         type: string
     type: object
   res.MerchantOmzet:
     properties:
       merchant_name:
+        example: Resik Merchant
         type: string
       omzet:
+        example: 5000.5
         type: number
       period:
+        example: "2023-11-22"
         type: string
     type: object
   res.OutletOmzet:
@@ -74,7 +82,7 @@ definitions:
         example: Resik Outlet
         type: string
       period:
-        example: "2024-02-06"
+        example: "2023-11-22"
         type: string
     type: object
   response.MerchantUpsert:
@@ -555,12 +563,12 @@ paths:
         name: id
         required: true
         type: integer
-      - example: "2024-02-01 13:45:00"
+      - example: "2023-11-22 13:45:00"
         in: query
         name: datetime_end
         required: true
         type: string
-      - example: "2024-02-01 13:45:00"
+      - example: "2023-11-22 13:45:00"
         in: query
         name: datetime_start
         required: true
@@ -647,12 +655,12 @@ paths:
         name: id
         required: true
         type: integer
-      - example: "2024-02-01 13:45:00"
+      - example: "2023-11-22 13:45:00"
         in: query
         name: datetime_end
         required: true
         type: string
-      - example: "2024-02-01 13:45:00"
+      - example: "2023-11-22 13:45:00"
         in: query
         name: datetime_start
         required: true

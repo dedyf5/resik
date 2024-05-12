@@ -29,9 +29,9 @@ type MerchantOmzet struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	MerchantName string  `protobuf:"bytes,1,opt,name=MerchantName,proto3" json:"merchant_name"`  
-	Omzet        float64 `protobuf:"fixed64,2,opt,name=Omzet,proto3" json:"omzet"`              
-	Period       string  `protobuf:"bytes,3,opt,name=Period,proto3" json:"period"`              
+	MerchantName string  `protobuf:"bytes,1,opt,name=MerchantName,proto3" json:"merchant_name" example:"Resik Merchant"`  
+	Omzet        float64 `protobuf:"fixed64,2,opt,name=Omzet,proto3" json:"omzet" example:"5000.5"`              
+	Period       string  `protobuf:"bytes,3,opt,name=Period,proto3" json:"period" example:"2023-11-22"`              
 }
 
 func (x *MerchantOmzet) Reset() {

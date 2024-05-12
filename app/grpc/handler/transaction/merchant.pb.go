@@ -32,14 +32,14 @@ type MerchantOmzetGetReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	MerchantID    uint64  `protobuf:"varint,1,opt,name=MerchantID,proto3" json:"merchant_id"`       
-	Mode          string  `protobuf:"bytes,2,opt,name=Mode,proto3" json:"mode"`                    
-	DateTimeStart string  `protobuf:"bytes,3,opt,name=DateTimeStart,proto3" json:"datetime_start"`  
-	DateTimeEnd   string  `protobuf:"bytes,4,opt,name=DateTimeEnd,proto3" json:"datetime_end"`      
-	Search        string  `protobuf:"bytes,5,opt,name=Search,proto3" json:"search"`                
-	Order         *string `protobuf:"bytes,6,opt,name=Order,proto3,oneof" json:"order"`            
-	Page          *uint32 `protobuf:"varint,7,opt,name=Page,proto3,oneof" json:"page"`             
-	Limit         *uint32 `protobuf:"varint,8,opt,name=Limit,proto3,oneof" json:"limit"`           
+	MerchantID    uint64  `protobuf:"varint,1,opt,name=MerchantID,proto3" json:"merchant_id" example:"1"`       
+	Mode          string  `protobuf:"bytes,2,opt,name=Mode,proto3" json:"mode" example:"day"`                    
+	DateTimeStart string  `protobuf:"bytes,3,opt,name=DateTimeStart,proto3" json:"datetime_start" example:"2023-11-22 13:45:00"`  
+	DateTimeEnd   string  `protobuf:"bytes,4,opt,name=DateTimeEnd,proto3" json:"datetime_end" example:"2023-11-22 13:45:00"`      
+	Search        string  `protobuf:"bytes,5,opt,name=Search,proto3" json:"search" example:"keyword"`                
+	Order         *string `protobuf:"bytes,6,opt,name=Order,proto3,oneof" json:"order" example:"-period,merchant_name"`            
+	Page          *uint32 `protobuf:"varint,7,opt,name=Page,proto3,oneof" json:"page" example:"1"`             
+	Limit         *uint32 `protobuf:"varint,8,opt,name=Limit,proto3,oneof" json:"limit" example:"10"`           
 }
 
 func (x *MerchantOmzetGetReq) Reset() {

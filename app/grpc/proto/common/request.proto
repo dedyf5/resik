@@ -8,5 +8,5 @@ package common;
 option go_package = "github.com/dedyf5/resik/app/grpc/proto/common";
 
 message Request {
-    string lang = 1;
+    string Lang = 1; // @gotags: json:"lang" example:"id"
 }

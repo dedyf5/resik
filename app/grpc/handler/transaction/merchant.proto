@@ -12,14 +12,14 @@ import "app/grpc/proto/status/status.proto";
 import "core/transaction/res/merchant.proto";
 
 message MerchantOmzetGetReq {
-    uint64 MerchantID = 1; // @gotags: json:"merchant_id"
-    string Mode = 2; // @gotags: json:"mode"
-    string DateTimeStart = 3; // @gotags: json:"datetime_start"
-    string DateTimeEnd = 4; // @gotags: json:"datetime_end"
-    string Search = 5; // @gotags: json:"search"
-    optional string Order = 6; // @gotags: json:"order"
-    optional uint32 Page = 7; // @gotags: json:"page"
-    optional uint32 Limit = 8; // @gotags: json:"limit"
+    uint64 MerchantID = 1; // @gotags: json:"merchant_id" example:"1"
+    string Mode = 2; // @gotags: json:"mode" example:"day"
+    string DateTimeStart = 3; // @gotags: json:"datetime_start" example:"2023-11-22 13:45:00"
+    string DateTimeEnd = 4; // @gotags: json:"datetime_end" example:"2023-11-22 13:45:00"
+    string Search = 5; // @gotags: json:"search" example:"keyword"
+    optional string Order = 6; // @gotags: json:"order" example:"-period,merchant_name"
+    optional uint32 Page = 7; // @gotags: json:"page" example:"1"
+    optional uint32 Limit = 8; // @gotags: json:"limit" example:"10"
 }
 
 message MerchantOmzetGetRes {

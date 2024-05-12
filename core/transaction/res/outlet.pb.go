@@ -32,7 +32,7 @@ type OutletOmzet struct {
 	MerchantName string  `protobuf:"bytes,1,opt,name=MerchantName,proto3" json:"merchant_name" example:"Resik Merchant"`  
 	OutletName   string  `protobuf:"bytes,2,opt,name=OutletName,proto3" json:"outlet_name" example:"Resik Outlet"`      
 	Omzet        float64 `protobuf:"fixed64,3,opt,name=Omzet,proto3" json:"omzet" example:"5000.5"`              
-	Period       string  `protobuf:"bytes,4,opt,name=Period,proto3" json:"period" example:"2024-02-06"`              
+	Period       string  `protobuf:"bytes,4,opt,name=Period,proto3" json:"period" example:"2023-11-22"`              
 }
 
 func (x *OutletOmzet) Reset() {

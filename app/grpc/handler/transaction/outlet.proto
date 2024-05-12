@@ -14,8 +14,8 @@ import "core/transaction/res/outlet.proto";
 message OutletOmzetGetReq {
     uint64 OutletID = 1; // @gotags: json:"outlet_id" example:"1"
     string Mode = 2; // @gotags: json:"mode" example:"day"
-    string DateTimeStart = 3; // @gotags: json:"datetime_start" example:"2024-02-01 13:45:00"
-    string DateTimeEnd = 4; // @gotags: json:"datetime_end" example:"2024-02-01 13:45:00"
+    string DateTimeStart = 3; // @gotags: json:"datetime_start" example:"2023-11-22 13:45:00"
+    string DateTimeEnd = 4; // @gotags: json:"datetime_end" example:"2023-11-22 13:45:00"
     string Search = 5; // @gotags: json:"search" example:"keyword"
     optional string Order = 6; // @gotags: json:"order" example:"period"
     optional uint32 Page = 7; // @gotags: json:"page" example:"1"

@@ -763,14 +763,14 @@ const docTemplaterest = `{
                     },
                     {
                         "type": "string",
-                        "example": "2024-02-01 13:45:00",
+                        "example": "2023-11-22 13:45:00",
                         "name": "datetime_end",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "example": "2024-02-01 13:45:00",
+                        "example": "2023-11-22 13:45:00",
                         "name": "datetime_start",
                         "in": "query",
                         "required": true
@@ -913,14 +913,14 @@ const docTemplaterest = `{
                     },
                     {
                         "type": "string",
-                        "example": "2024-02-01 13:45:00",
+                        "example": "2023-11-22 13:45:00",
                         "name": "datetime_end",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "example": "2024-02-01 13:45:00",
+                        "example": "2023-11-22 13:45:00",
                         "name": "datetime_start",
                         "in": "query",
                         "required": true
@@ -1092,13 +1092,15 @@ const docTemplaterest = `{
             "type": "object",
             "properties": {
                 "app": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Resik REST"
                 },
                 "lang": {
                     "$ref": "#/definitions/res.AppLang"
                 },
                 "version": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Version 0.1"
                 }
             }
         },
@@ -1106,13 +1108,16 @@ const docTemplaterest = `{
             "type": "object",
             "properties": {
                 "current": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "id"
                 },
                 "default": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "en"
                 },
                 "request": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "id"
                 }
             }
         },
@@ -1120,13 +1125,16 @@ const docTemplaterest = `{
             "type": "object",
             "properties": {
                 "merchant_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Resik Merchant"
                 },
                 "omzet": {
-                    "type": "number"
+                    "type": "number",
+                    "example": 5000.5
                 },
                 "period": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2023-11-22"
                 }
             }
         },
@@ -1147,7 +1155,7 @@ const docTemplaterest = `{
                 },
                 "period": {
                     "type": "string",
-                    "example": "2024-02-06"
+                    "example": "2023-11-22"
                 }
             }
         },

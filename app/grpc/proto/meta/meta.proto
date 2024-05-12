@@ -8,15 +8,15 @@ package meta;
 option go_package = "github.com/dedyf5/resik/app/grpc/proto/meta";
 
 message Meta {
-    uint64 Total = 1; // @gotags: json:"total"
-    int32 Limit = 2; // @gotags: json:"limit"
+    uint64 Total = 1; // @gotags: json:"total" example:"100"
+    int32 Limit = 2; // @gotags: json:"limit" example:"10"
     MetaPage Page = 3; // @gotags: json:"page"
 }
 
 message MetaPage {
-    int32 First = 1; // @gotags: json:"first"
-    optional int32 Previous = 2; // @gotags: json:"previous"
-    int32 Current = 3; // @gotags: json:"current"
-    optional int32 Next = 4; // @gotags: json:"next"
-    int32 Last = 5; // @gotags: json:"last"
+    int32 First = 1; // @gotags: json:"first" example:"1"
+    optional int32 Previous = 2; // @gotags: json:"previous" example:"2"
+    int32 Current = 3; // @gotags: json:"current" example:"3"
+    optional int32 Next = 4; // @gotags: json:"next" example:"4"
+    int32 Last = 5; // @gotags: json:"last" example:"9"
 }

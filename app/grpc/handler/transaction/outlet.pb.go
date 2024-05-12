@@ -34,8 +34,8 @@ type OutletOmzetGetReq struct {
 
 	OutletID      uint64  `protobuf:"varint,1,opt,name=OutletID,proto3" json:"outlet_id" example:"1"`           
 	Mode          string  `protobuf:"bytes,2,opt,name=Mode,proto3" json:"mode" example:"day"`                    
-	DateTimeStart string  `protobuf:"bytes,3,opt,name=DateTimeStart,proto3" json:"datetime_start" example:"2024-02-01 13:45:00"`  
-	DateTimeEnd   string  `protobuf:"bytes,4,opt,name=DateTimeEnd,proto3" json:"datetime_end" example:"2024-02-01 13:45:00"`      
+	DateTimeStart string  `protobuf:"bytes,3,opt,name=DateTimeStart,proto3" json:"datetime_start" example:"2023-11-22 13:45:00"`  
+	DateTimeEnd   string  `protobuf:"bytes,4,opt,name=DateTimeEnd,proto3" json:"datetime_end" example:"2023-11-22 13:45:00"`      
 	Search        string  `protobuf:"bytes,5,opt,name=Search,proto3" json:"search" example:"keyword"`                
 	Order         *string `protobuf:"bytes,6,opt,name=Order,proto3,oneof" json:"order" example:"period"`            
 	Page          *uint32 `protobuf:"varint,7,opt,name=Page,proto3,oneof" json:"page" example:"1"`             
