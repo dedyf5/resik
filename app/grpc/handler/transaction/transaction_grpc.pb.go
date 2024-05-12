@@ -8,6 +8,7 @@ package transaction
 
 import (
 	context "context"
+	request "github.com/dedyf5/resik/core/transaction/request"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,8 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionServiceClient interface {
-	MerchantOmzetGet(ctx context.Context, in *MerchantOmzetGetReq, opts ...grpc.CallOption) (*MerchantOmzetGetRes, error)
-	OutletOmzetGet(ctx context.Context, in *OutletOmzetGetReq, opts ...grpc.CallOption) (*OutletOmzetGetRes, error)
+	MerchantOmzetGet(ctx context.Context, in *request.MerchantOmzetGet, opts ...grpc.CallOption) (*MerchantOmzetGetRes, error)
+	OutletOmzetGet(ctx context.Context, in *request.OutletOmzetGet, opts ...grpc.CallOption) (*OutletOmzetGetRes, error)
 }
 
 type transactionServiceClient struct {
@@ -34,7 +35,7 @@ func NewTransactionServiceClient(cc grpc.ClientConnInterface) TransactionService
 	return &transactionServiceClient{cc}
 }
 
-func (c *transactionServiceClient) MerchantOmzetGet(ctx context.Context, in *MerchantOmzetGetReq, opts ...grpc.CallOption) (*MerchantOmzetGetRes, error) {
+func (c *transactionServiceClient) MerchantOmzetGet(ctx context.Context, in *request.MerchantOmzetGet, opts ...grpc.CallOption) (*MerchantOmzetGetRes, error) {
 	out := new(MerchantOmzetGetRes)
 	err := c.cc.Invoke(ctx, "/transaction.TransactionService/MerchantOmzetGet", in, out, opts...)
 	if err != nil {
@@ -43,7 +44,7 @@ func (c *transactionServiceClient) MerchantOmzetGet(ctx context.Context, in *Mer
 	return out, nil
 }
 
-func (c *transactionServiceClient) OutletOmzetGet(ctx context.Context, in *OutletOmzetGetReq, opts ...grpc.CallOption) (*OutletOmzetGetRes, error) {
+func (c *transactionServiceClient) OutletOmzetGet(ctx context.Context, in *request.OutletOmzetGet, opts ...grpc.CallOption) (*OutletOmzetGetRes, error) {
 	out := new(OutletOmzetGetRes)
 	err := c.cc.Invoke(ctx, "/transaction.TransactionService/OutletOmzetGet", in, out, opts...)
 	if err != nil {
@@ -56,8 +57,8 @@ func (c *transactionServiceClient) OutletOmzetGet(ctx context.Context, in *Outle
 // All implementations must embed UnimplementedTransactionServiceServer
 // for forward compatibility
 type TransactionServiceServer interface {
-	MerchantOmzetGet(context.Context, *MerchantOmzetGetReq) (*MerchantOmzetGetRes, error)
-	OutletOmzetGet(context.Context, *OutletOmzetGetReq) (*OutletOmzetGetRes, error)
+	MerchantOmzetGet(context.Context, *request.MerchantOmzetGet) (*MerchantOmzetGetRes, error)
+	OutletOmzetGet(context.Context, *request.OutletOmzetGet) (*OutletOmzetGetRes, error)
 	mustEmbedUnimplementedTransactionServiceServer()
 }
 
@@ -65,10 +66,10 @@ type TransactionServiceServer interface {
 type UnimplementedTransactionServiceServer struct {
 }
 
-func (UnimplementedTransactionServiceServer) MerchantOmzetGet(context.Context, *MerchantOmzetGetReq) (*MerchantOmzetGetRes, error) {
+func (UnimplementedTransactionServiceServer) MerchantOmzetGet(context.Context, *request.MerchantOmzetGet) (*MerchantOmzetGetRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MerchantOmzetGet not implemented")
 }
-func (UnimplementedTransactionServiceServer) OutletOmzetGet(context.Context, *OutletOmzetGetReq) (*OutletOmzetGetRes, error) {
+func (UnimplementedTransactionServiceServer) OutletOmzetGet(context.Context, *request.OutletOmzetGet) (*OutletOmzetGetRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OutletOmzetGet not implemented")
 }
 func (UnimplementedTransactionServiceServer) mustEmbedUnimplementedTransactionServiceServer() {}
@@ -85,7 +86,7 @@ func RegisterTransactionServiceServer(s grpc.ServiceRegistrar, srv TransactionSe
 }
 
 func _TransactionService_MerchantOmzetGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(MerchantOmzetGetReq)
+	in := new(request.MerchantOmzetGet)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -97,13 +98,13 @@ func _TransactionService_MerchantOmzetGet_Handler(srv interface{}, ctx context.C
 		FullMethod: "/transaction.TransactionService/MerchantOmzetGet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).MerchantOmzetGet(ctx, req.(*MerchantOmzetGetReq))
+		return srv.(TransactionServiceServer).MerchantOmzetGet(ctx, req.(*request.MerchantOmzetGet))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _TransactionService_OutletOmzetGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(OutletOmzetGetReq)
+	in := new(request.OutletOmzetGet)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -115,7 +116,7 @@ func _TransactionService_OutletOmzetGet_Handler(srv interface{}, ctx context.Con
 		FullMethod: "/transaction.TransactionService/OutletOmzetGet",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).OutletOmzetGet(ctx, req.(*OutletOmzetGetReq))
+		return srv.(TransactionServiceServer).OutletOmzetGet(ctx, req.(*request.OutletOmzetGet))
 	}
 	return interceptor(ctx, in, info, handler)
 }

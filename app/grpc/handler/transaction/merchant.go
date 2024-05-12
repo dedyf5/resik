@@ -9,48 +9,24 @@ import (
 
 	"github.com/dedyf5/resik/app/grpc/proto/meta"
 	"github.com/dedyf5/resik/app/grpc/proto/status"
-	reqTrxCore "github.com/dedyf5/resik/core/transaction/req"
+	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/res"
 	"github.com/dedyf5/resik/ctx"
 	"google.golang.org/grpc/codes"
 )
 
-func (r *MerchantOmzetGetReq) ToCoreReq() *reqTrxCore.MerchantOmzetGet {
-	var page *uint = nil
-	if r.Page != nil {
-		tmp := uint(*r.Page)
-		page = &tmp
-	}
-	var limit *uint = nil
-	if r.Limit != nil {
-		tmp := uint(*r.Limit)
-		limit = &tmp
-	}
-	return &reqTrxCore.MerchantOmzetGet{
-		MerchantID:    r.MerchantID,
-		Mode:          r.Mode,
-		DateTimeStart: r.DateTimeStart,
-		DateTimeEnd:   r.DateTimeEnd,
-		Search:        r.Search,
-		Order:         r.Order,
-		Page:          page,
-		Limit:         limit,
-	}
-}
-
-func (h *TransactionHandler) MerchantOmzetGet(c context.Context, req *MerchantOmzetGetReq) (*MerchantOmzetGetRes, error) {
+func (h *TransactionHandler) MerchantOmzetGet(c context.Context, req *reqTrxCore.MerchantOmzetGet) (*MerchantOmzetGetRes, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
 		return nil, err.GRPC().Err()
 	}
 	ctx.App.Logger().Debug("MerchantOmzetGet")
 
-	payload := req.ToCoreReq()
-	if err := h.validator.Struct(payload, ctx.Lang); err != nil {
+	if err := h.validator.Struct(req, ctx.Lang); err != nil {
 		return nil, err.GRPC().Err()
 	}
 
-	param := payload.ToParam(ctx)
+	param := req.ToParam(ctx)
 
 	if _, err := ctx.UserClaims.MerchantIDIsAccessible(param.MerchantID); err != nil {
 		return nil, err.GRPC().Err()

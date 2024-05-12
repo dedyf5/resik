@@ -3,6 +3,8 @@ GOGENERATE=$(GOCMD) generate
 
 ## generate: Generate files
 generate:
+	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/request/*.proto
+	protoc-go-inject-tag -input="core/*/request/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/res/*.proto
 	protoc-go-inject-tag -input="core/*/res/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto
@@ -15,6 +17,8 @@ generate:
 
 ## generate-proto: Generate GRPC files
 generate-grpc:
+	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/request/*.proto
+	protoc-go-inject-tag -input="core/*/request/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/res/*.proto
 	protoc-go-inject-tag -input="core/*/res/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto
@@ -30,6 +34,8 @@ generate-rest:
 
 ## generate-proto: Generate proto files
 generate-proto:
+	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/request/*.proto
+	protoc-go-inject-tag -input="core/*/request/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/res/*.proto
 	protoc-go-inject-tag -input="core/*/res/*.pb.go" -remove_tag_comment
 	protoc --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto

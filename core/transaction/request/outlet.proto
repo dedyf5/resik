@@ -1,0 +1,19 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package request;
+option go_package = "github.com/dedyf5/resik/core/transaction/request";
+
+message OutletOmzetGet {
+    uint64 OutletID = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required,min=1" example:"1"
+    string Mode = 2; // @gotags: json:"mode" query:"mode" validate:"required,oneof=day month year" example:"day"
+    string DateTimeStart = 3; // @gotags: json:"datetime_start" query:"datetime_start" validate:"required,datetime=2006-01-02 15:04:05" example:"2023-11-22 13:45:00"
+    string DateTimeEnd = 4; // @gotags: json:"datetime_end" query:"datetime_end" validate:"required,datetime=2006-01-02 15:04:05" example:"2023-11-22 13:45:00"
+    string Search = 5; // @gotags: json:"search" query:"search" validate:"" example:"keyword"
+    optional string Order = 6; // @gotags: json:"order" query:"order" validate:"omitempty,oneof_order=period omzet merchant_name" example:"period"
+    optional uint32 Page = 7; // @gotags: json:"page" query:"page" validate:"omitempty,min=1" example:"1"
+    optional uint32 Limit = 8; // @gotags: json:"limit" query:"limit" validate:"omitempty,min=1,max=100" example:"10"
+}

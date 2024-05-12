@@ -10,7 +10,7 @@ import (
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
 	"github.com/dedyf5/resik/config"
 	trxService "github.com/dedyf5/resik/core/transaction"
-	reqTrxCore "github.com/dedyf5/resik/core/transaction/req"
+	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/res"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"

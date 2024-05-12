@@ -9,8 +9,10 @@ option go_package = "github.com/dedyf5/resik/app/grpc/handler/transaction";
 
 import "app/grpc/handler/transaction/merchant.proto";
 import "app/grpc/handler/transaction/outlet.proto";
+import "core/transaction/request/merchant.proto";
+import "core/transaction/request/outlet.proto";
 
 service TransactionService {
-    rpc MerchantOmzetGet(transaction.MerchantOmzetGetReq) returns (transaction.MerchantOmzetGetRes);
-    rpc OutletOmzetGet(transaction.OutletOmzetGetReq) returns (transaction.OutletOmzetGetRes);
+    rpc MerchantOmzetGet(request.MerchantOmzetGet) returns (transaction.MerchantOmzetGetRes);
+    rpc OutletOmzetGet(request.OutletOmzetGet) returns (transaction.OutletOmzetGetRes);
 }
