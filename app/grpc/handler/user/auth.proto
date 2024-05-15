@@ -1,0 +1,16 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package user;
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/user";
+
+import "app/grpc/proto/status/status.proto";
+import "core/user/response/auth.proto";
+
+message UserCredentialRes {
+    status.Status status = 1; // @gotags: json:"status"
+    response.UserCredential data = 2; // @gotags: json:"data"
+}

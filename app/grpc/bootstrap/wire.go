@@ -10,15 +10,19 @@ package bootstrap
 import (
 	generalHandler "github.com/dedyf5/resik/app/grpc/handler/general"
 	trxHandler "github.com/dedyf5/resik/app/grpc/handler/transaction"
+	userHandler "github.com/dedyf5/resik/app/grpc/handler/user"
 	"github.com/dedyf5/resik/app/grpc/middleware"
 	"github.com/dedyf5/resik/config"
 	trx "github.com/dedyf5/resik/core/transaction"
 	trxService "github.com/dedyf5/resik/core/transaction/service"
+	user "github.com/dedyf5/resik/core/user"
+	userService "github.com/dedyf5/resik/core/user/service"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	repo "github.com/dedyf5/resik/repositories"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
+	userRepo "github.com/dedyf5/resik/repositories/user"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
@@ -48,17 +52,22 @@ var connSet = wire.NewSet(
 
 var gormRepoSet = wire.NewSet(
 	trxRepo.New,
+	userRepo.New,
 	wire.Bind(new(repo.ITransaction), new(*trxRepo.TransactionRepo)),
+	wire.Bind(new(repo.IUser), new(*userRepo.UserRepo)),
 )
 
 var serviceSet = wire.NewSet(
 	trxService.New,
+	userService.New,
 	wire.Bind(new(trx.IService), new(*trxService.Service)),
+	wire.Bind(new(user.IService), new(*userService.Service)),
 )
 
 var handlerSet = wire.NewSet(
 	generalHandler.New,
 	trxHandler.New,
+	userHandler.New,
 )
 
 func InitializeHTTP() (*App, func(), error) {

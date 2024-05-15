@@ -1,0 +1,13 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package response;
+option go_package = "github.com/dedyf5/resik/core/user/response";
+
+message UserCredential {
+    string Username = 1; // @gotags: json:"username" example:"sakisaki"
+    string Token = 2; // @gotags: json:"token" example:"xxx.xxx.xxx"
+}

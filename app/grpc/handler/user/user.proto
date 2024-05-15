@@ -1,0 +1,15 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package user;
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/user";
+
+import "app/grpc/handler/user/auth.proto";
+import "core/user/request/auth.proto";
+
+service UserService {
+    rpc LoginPost(request.LoginPost) returns (user.UserCredentialRes);
+}
