@@ -55,7 +55,7 @@ func InitializeHTTP() (*App, func(), error) {
 	}
 	userRepo := user.New(gormDB)
 	serviceService := service.New(userRepo, config)
-	userHandler := user2.New(echoEcho, logLog, serviceService, config)
+	userHandler := user2.New(echoEcho, logLog, serviceService)
 	merchantRepo := merchant.New(gormDB)
 	service4 := service2.New(merchantRepo, config)
 	merchantHandler := merchant2.New(config, logLog, echoEcho, service4)

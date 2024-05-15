@@ -8,10 +8,9 @@ import (
 	"net/http"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
-	userReq "github.com/dedyf5/resik/app/rest/handler/user/request"
-	userRes "github.com/dedyf5/resik/app/rest/handler/user/response"
-	"github.com/dedyf5/resik/config"
 	userService "github.com/dedyf5/resik/core/user"
+	reqUserCore "github.com/dedyf5/resik/core/user/request"
+	resUserCore "github.com/dedyf5/resik/core/user/response"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
@@ -21,15 +20,13 @@ import (
 )
 
 type Handler struct {
-	config      config.Config
 	fw          echoFW.IEcho
 	log         *logCtx.Log
 	userService userService.IService
 }
 
-func New(fw echoFW.IEcho, log *logCtx.Log, userService userService.IService, config config.Config) *Handler {
+func New(fw echoFW.IEcho, log *logCtx.Log, userService userService.IService) *Handler {
 	return &Handler{
-		config:      config,
 		log:         log,
 		fw:          fw,
 		userService: userService,
@@ -42,8 +39,8 @@ func New(fw echoFW.IEcho, log *logCtx.Log, userService userService.IService, con
 // @Accept json
 // @Produce json
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Param       payload body userReq.LoginPost true "Payload"
-// @Success		200	{object}	resPkg.Response{data=userRes.UserCredential}
+// @Param       payload body reqUserCore.LoginPost true "Payload"
+// @Success		200	{object}	resPkg.Response{data=resUserCore.UserCredential}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
@@ -55,14 +52,9 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 	}
 	ctx.App.Logger().Debug("LoginPost")
 
-	var payload userReq.LoginPost
+	var payload reqUserCore.LoginPost
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
-		return err
-	}
-
-	var query commonEntity.Request
-	if err := h.fw.StructValidator(echoCtx, &query); err != nil {
 		return err
 	}
 
@@ -73,7 +65,7 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 
 	return &resPkg.Status{
 		Code: http.StatusOK,
-		Data: userRes.UserCredential{
+		Data: resUserCore.UserCredential{
 			Username: payload.Username,
 			Token:    token,
 		},
@@ -87,7 +79,7 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 // @Produce json
 // @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=userRes.UserCredential}
+// @Success		200	{object}	resPkg.Response{data=resUserCore.UserCredential}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/token-refresh [get]
@@ -103,12 +95,6 @@ func (h *Handler) TokenRefreshGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	if ctx.UserClaims == nil {
-		return &resPkg.Status{
-			Code: http.StatusBadRequest,
-		}
-	}
-
 	token, err := h.userService.AuthTokenGenerate(ctx.UserClaims.UserID, ctx.UserClaims.Username)
 	if err != nil {
 		return err
@@ -116,7 +102,7 @@ func (h *Handler) TokenRefreshGet(echoCtx echo.Context) error {
 
 	return &resPkg.Status{
 		Code: http.StatusOK,
-		Data: userRes.UserCredential{
+		Data: resUserCore.UserCredential{
 			Username: ctx.UserClaims.Username,
 			Token:    token,
 		},
