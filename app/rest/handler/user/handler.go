@@ -90,8 +90,8 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 // @Success		200	{object}	resPkg.Response{data=userRes.UserCredential}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
-// @Router		/token-refresh [post]
-func (h *Handler) TokenRefresh(echoCtx echo.Context) error {
+// @Router		/token-refresh [get]
+func (h *Handler) TokenRefreshGet(echoCtx echo.Context) error {
 	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
 	if err != nil {
 		return err

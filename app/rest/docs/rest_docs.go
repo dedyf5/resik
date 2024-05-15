@@ -649,7 +649,7 @@ const docTemplaterest = `{
             }
         },
         "/token-refresh": {
-            "post": {
+            "get": {
                 "security": [
                     {
                         "BearerAuth": []

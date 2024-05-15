@@ -506,7 +506,7 @@ paths:
       tags:
       - merchant
   /token-refresh:
-    post:
+    get:
       consumes:
       - application/json
       description: Request new token by existing token
