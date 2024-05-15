@@ -9,7 +9,9 @@ option go_package = "github.com/dedyf5/resik/app/grpc/handler/user";
 
 import "app/grpc/handler/user/auth.proto";
 import "core/user/request/auth.proto";
+import "google/protobuf/empty.proto";
 
 service UserService {
     rpc LoginPost(request.LoginPost) returns (user.UserCredentialRes);
+    rpc TokenRefreshGet(google.protobuf.Empty) returns (user.UserCredentialRes);
 }
