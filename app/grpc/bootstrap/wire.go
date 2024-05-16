@@ -9,10 +9,13 @@ package bootstrap
 
 import (
 	generalHandler "github.com/dedyf5/resik/app/grpc/handler/general"
+	merchantHandler "github.com/dedyf5/resik/app/grpc/handler/merchant"
 	trxHandler "github.com/dedyf5/resik/app/grpc/handler/transaction"
 	userHandler "github.com/dedyf5/resik/app/grpc/handler/user"
 	"github.com/dedyf5/resik/app/grpc/middleware"
 	"github.com/dedyf5/resik/config"
+	merchant "github.com/dedyf5/resik/core/merchant"
+	merchantService "github.com/dedyf5/resik/core/merchant/service"
 	trx "github.com/dedyf5/resik/core/transaction"
 	trxService "github.com/dedyf5/resik/core/transaction/service"
 	user "github.com/dedyf5/resik/core/user"
@@ -21,6 +24,7 @@ import (
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	repo "github.com/dedyf5/resik/repositories"
+	merchantRepo "github.com/dedyf5/resik/repositories/merchant"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
 	userRepo "github.com/dedyf5/resik/repositories/user"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
@@ -51,21 +55,26 @@ var connSet = wire.NewSet(
 )
 
 var gormRepoSet = wire.NewSet(
+	merchantRepo.New,
 	trxRepo.New,
 	userRepo.New,
+	wire.Bind(new(repo.IMerchant), new(*merchantRepo.MerchantRepo)),
 	wire.Bind(new(repo.ITransaction), new(*trxRepo.TransactionRepo)),
 	wire.Bind(new(repo.IUser), new(*userRepo.UserRepo)),
 )
 
 var serviceSet = wire.NewSet(
+	merchantService.New,
 	trxService.New,
 	userService.New,
+	wire.Bind(new(merchant.IService), new(*merchantService.Service)),
 	wire.Bind(new(trx.IService), new(*trxService.Service)),
 	wire.Bind(new(user.IService), new(*userService.Service)),
 )
 
 var handlerSet = wire.NewSet(
 	generalHandler.New,
+	merchantHandler.New,
 	trxHandler.New,
 	userHandler.New,
 )

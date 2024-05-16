@@ -46,9 +46,11 @@ func NewInterceptor(app config.App, auth config.Auth, log *logCtx.Log) *Intercep
 }
 
 func methodRoles() map[string][]Role {
+	const merchantService = "/merchant.MerchantService/"
 	const transactionService = "/transaction.TransactionService/"
 	const userService = "/user.UserService/"
 	return map[string][]Role{
+		merchantService + "MerchantListGet":     {RoleValidToken},
 		transactionService + "MerchantOmzetGet": {RoleValidToken},
 		transactionService + "OutletOmzetGet":   {RoleValidToken},
 		userService + "TokenRefreshGet":         {RoleValidToken},

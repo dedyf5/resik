@@ -1,0 +1,15 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package merchant;
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/merchant";
+
+import "app/grpc/handler/merchant/list.proto";
+import "core/merchant/request/list.proto";
+
+service MerchantService {
+    rpc MerchantListGet(request.MerchantListGet) returns (merchant.MerchantListGetRes);
+}

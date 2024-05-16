@@ -1,0 +1,18 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package merchant;
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/merchant";
+
+import "app/grpc/proto/meta/meta.proto";
+import "app/grpc/proto/status/status.proto";
+import "core/merchant/response/list.proto";
+
+message MerchantListGetRes {
+    status.Status Status = 1; // @gotags: json:"status"
+    repeated response.MerchantList Data = 2; // @gotags: json:"data"
+    meta.Meta Meta = 3; // @gotags: json:"meta"
+}
