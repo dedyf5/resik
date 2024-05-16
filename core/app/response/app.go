@@ -2,7 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package res
+package response
 
 import (
 	"github.com/dedyf5/resik/config"

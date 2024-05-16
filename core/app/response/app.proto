@@ -4,8 +4,8 @@
 
 syntax = "proto3";
 
-package res;
-option go_package = "github.com/dedyf5/resik/core/app/res";
+package response;
+option go_package = "github.com/dedyf5/resik/core/app/response";
 
 message App {
     string App = 1; // @gotags: json:"app" example:"Resik REST"

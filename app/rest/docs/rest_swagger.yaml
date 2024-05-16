@@ -35,18 +35,18 @@ definitions:
     - name
     - updated_at
     type: object
-  res.App:
+  response.App:
     properties:
       app:
         example: Resik REST
         type: string
       lang:
-        $ref: '#/definitions/res.AppLang'
+        $ref: '#/definitions/response.AppLang'
       version:
         example: Version 0.1
         type: string
     type: object
-  res.AppLang:
+  response.AppLang:
     properties:
       current:
         example: id
@@ -175,7 +175,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/res.App'
+                  $ref: '#/definitions/response.App'
               type: object
         "400":
           description: Bad Request

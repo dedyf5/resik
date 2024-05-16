@@ -8,7 +8,7 @@ import (
 	"context"
 
 	"github.com/dedyf5/resik/app/grpc/proto/status"
-	appRes "github.com/dedyf5/resik/core/app/res"
+	resAppCore "github.com/dedyf5/resik/core/app/response"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/entities/common"
 	"google.golang.org/grpc/codes"
@@ -26,6 +26,6 @@ func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, er
 			Code:    status.CodePlus(codes.OK),
 			Message: ctx.Lang.GetByTemplateData("home_message", common.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
 		},
-		Data: appRes.AppMap(ctx, h.config),
+		Data: resAppCore.AppMap(ctx, h.config),
 	}, nil
 }

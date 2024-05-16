@@ -51,7 +51,7 @@ const docTemplaterest = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/res.App"
+                                            "$ref": "#/definitions/response.App"
                                         }
                                     }
                                 }
@@ -1088,7 +1088,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "res.App": {
+        "response.App": {
             "type": "object",
             "properties": {
                 "app": {
@@ -1096,7 +1096,7 @@ const docTemplaterest = `{
                     "example": "Resik REST"
                 },
                 "lang": {
-                    "$ref": "#/definitions/res.AppLang"
+                    "$ref": "#/definitions/response.AppLang"
                 },
                 "version": {
                     "type": "string",
@@ -1104,7 +1104,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "res.AppLang": {
+        "response.AppLang": {
             "type": "object",
             "properties": {
                 "current": {

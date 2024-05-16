@@ -40,7 +40,7 @@
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/res.App"
+                                            "$ref": "#/definitions/response.App"
                                         }
                                     }
                                 }
@@ -1077,7 +1077,7 @@
                 }
             }
         },
-        "res.App": {
+        "response.App": {
             "type": "object",
             "properties": {
                 "app": {
@@ -1085,7 +1085,7 @@
                     "example": "Resik REST"
                 },
                 "lang": {
-                    "$ref": "#/definitions/res.AppLang"
+                    "$ref": "#/definitions/response.AppLang"
                 },
                 "version": {
                     "type": "string",
@@ -1093,7 +1093,7 @@
                 }
             }
         },
-        "res.AppLang": {
+        "response.AppLang": {
             "type": "object",
             "properties": {
                 "current": {
