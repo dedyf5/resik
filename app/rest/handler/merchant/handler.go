@@ -10,7 +10,6 @@ import (
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
 	"github.com/dedyf5/resik/app/rest/handler/merchant/request"
 	"github.com/dedyf5/resik/app/rest/handler/merchant/response"
-	"github.com/dedyf5/resik/config"
 	merchantCore "github.com/dedyf5/resik/core/merchant"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
@@ -20,15 +19,13 @@ import (
 )
 
 type Handler struct {
-	config          config.Config
 	log             *logCtx.Log
 	fw              echoFW.IEcho
 	merchantService merchantCore.IService
 }
 
-func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService) *Handler {
+func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService) *Handler {
 	return &Handler{
-		config:          config,
 		log:             log,
 		fw:              fw,
 		merchantService: merchantService,
