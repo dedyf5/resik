@@ -51,6 +51,7 @@ func methodRoles() map[string][]Role {
 	const userService = "/user.UserService/"
 	return map[string][]Role{
 		merchantService + "MerchantPost":        {RoleValidToken},
+		merchantService + "MerchantPut":         {RoleValidToken},
 		merchantService + "MerchantListGet":     {RoleValidToken},
 		transactionService + "MerchantOmzetGet": {RoleValidToken},
 		transactionService + "OutletOmzetGet":   {RoleValidToken},

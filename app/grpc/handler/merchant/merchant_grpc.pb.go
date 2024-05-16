@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MerchantServiceClient interface {
 	MerchantPost(ctx context.Context, in *request.MerchantPost, opts ...grpc.CallOption) (*MerchantUpsertRes, error)
+	MerchantPut(ctx context.Context, in *request.MerchantPut, opts ...grpc.CallOption) (*MerchantUpsertRes, error)
 	MerchantListGet(ctx context.Context, in *request.MerchantListGet, opts ...grpc.CallOption) (*MerchantListGetRes, error)
 }
 
@@ -44,6 +45,15 @@ func (c *merchantServiceClient) MerchantPost(ctx context.Context, in *request.Me
 	return out, nil
 }
 
+func (c *merchantServiceClient) MerchantPut(ctx context.Context, in *request.MerchantPut, opts ...grpc.CallOption) (*MerchantUpsertRes, error) {
+	out := new(MerchantUpsertRes)
+	err := c.cc.Invoke(ctx, "/merchant.MerchantService/MerchantPut", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *merchantServiceClient) MerchantListGet(ctx context.Context, in *request.MerchantListGet, opts ...grpc.CallOption) (*MerchantListGetRes, error) {
 	out := new(MerchantListGetRes)
 	err := c.cc.Invoke(ctx, "/merchant.MerchantService/MerchantListGet", in, out, opts...)
@@ -58,6 +68,7 @@ func (c *merchantServiceClient) MerchantListGet(ctx context.Context, in *request
 // for forward compatibility
 type MerchantServiceServer interface {
 	MerchantPost(context.Context, *request.MerchantPost) (*MerchantUpsertRes, error)
+	MerchantPut(context.Context, *request.MerchantPut) (*MerchantUpsertRes, error)
 	MerchantListGet(context.Context, *request.MerchantListGet) (*MerchantListGetRes, error)
 	mustEmbedUnimplementedMerchantServiceServer()
 }
@@ -68,6 +79,9 @@ type UnimplementedMerchantServiceServer struct {
 
 func (UnimplementedMerchantServiceServer) MerchantPost(context.Context, *request.MerchantPost) (*MerchantUpsertRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MerchantPost not implemented")
+}
+func (UnimplementedMerchantServiceServer) MerchantPut(context.Context, *request.MerchantPut) (*MerchantUpsertRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MerchantPut not implemented")
 }
 func (UnimplementedMerchantServiceServer) MerchantListGet(context.Context, *request.MerchantListGet) (*MerchantListGetRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method MerchantListGet not implemented")
@@ -103,6 +117,24 @@ func _MerchantService_MerchantPost_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MerchantService_MerchantPut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(request.MerchantPut)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MerchantServiceServer).MerchantPut(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/merchant.MerchantService/MerchantPut",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MerchantServiceServer).MerchantPut(ctx, req.(*request.MerchantPut))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MerchantService_MerchantListGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(request.MerchantListGet)
 	if err := dec(in); err != nil {
@@ -131,6 +163,10 @@ var MerchantService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MerchantPost",
 			Handler:    _MerchantService_MerchantPost_Handler,
+		},
+		{
+			MethodName: "MerchantPut",
+			Handler:    _MerchantService_MerchantPut_Handler,
 		},
 		{
 			MethodName: "MerchantListGet",

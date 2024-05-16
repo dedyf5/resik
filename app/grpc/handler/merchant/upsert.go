@@ -44,3 +44,38 @@ func (h *MerchantHandler) MerchantPost(c context.Context, req *reqMerchantCore.M
 		},
 	}, nil
 }
+
+func (h *MerchantHandler) MerchantPut(c context.Context, req *reqMerchantCore.MerchantPut) (*MerchantUpsertRes, error) {
+	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
+	if err != nil {
+		return nil, err.GRPC().Err()
+	}
+	ctx.App.Logger().Debug("MerchantPut")
+
+	if err := h.validator.Struct(req, ctx.Lang); err != nil {
+		return nil, err.GRPC().Err()
+	}
+
+	entity, err := req.ToEntity(ctx)
+	if err != nil {
+		return nil, err.GRPC().Err()
+	}
+
+	if _, err = ctx.UserClaims.MerchantIDIsAccessible(entity.ID); err != nil {
+		return nil, err.GRPC().Err()
+	}
+
+	if _, err = h.merchantService.MerchantUpdate(ctx, entity); err != nil {
+		return nil, err.GRPC().Err()
+	}
+
+	return &MerchantUpsertRes{
+		Status: &status.Status{
+			Code:    status.CodePlus(codes.OK),
+			Message: codes.OK.String(),
+		},
+		Data: &resMerchantCore.MerchantUpsert{
+			ID: entity.ID,
+		},
+	}, nil
+}

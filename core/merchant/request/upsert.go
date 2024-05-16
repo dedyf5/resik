@@ -25,3 +25,16 @@ func (m *MerchantPost) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, sta
 		UpdatedAt: *datetime,
 	}, nil
 }
+
+func (m *MerchantPut) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, status *resPkg.Status) {
+	datetime, err := datetime.FromString(m.UpdatedAt, datetime.FormatyyyyMMddHHmmss)
+	if err != nil {
+		return nil, err
+	}
+	return &merchantEntity.Merchant{
+		ID:        m.ID,
+		Name:      m.Name,
+		UpdatedBy: ctx.UserClaims.UserID,
+		UpdatedAt: *datetime,
+	}, nil
+}
