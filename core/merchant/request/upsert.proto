@@ -1,0 +1,13 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package request;
+option go_package = "github.com/dedyf5/resik/core/merchant/request";
+
+message MerchantPost {
+    string Name = 1; // @gotags: json:"name" validate:"required,max=40" example:"Resik Merchant"
+    string CreatedAt = 2; // @gotags: json:"created_at" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-04-14 14:18:00"
+}
