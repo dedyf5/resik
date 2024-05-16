@@ -60,11 +60,6 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 		return err
 	}
 
-	var query commonEntity.Request
-	if err := h.fw.StructValidator(echoCtx, &query); err != nil {
-		return err
-	}
-
 	entity, err := payload.ToEntity(ctx)
 	if err != nil {
 		return err
@@ -113,11 +108,6 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 		return err
 	}
 
-	var param commonEntity.Request
-	if err := h.fw.StructValidator(echoCtx, &param); err != nil {
-		return err
-	}
-
 	entity, err := body.ToEntity(ctx)
 	if err != nil {
 		return err
@@ -149,6 +139,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
+// @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query request.MerchantListGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=response.MerchantUpsert}
 // @Failure     400 {object}	resPkg.Response{data=nil}
@@ -198,6 +189,7 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 // @Produce json
 // @Security BearerAuth
 // @Param       id path int true "Merchant ID"
+// @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query request.MerchantDelete true "Query Param"
 // @Success		204	{object}	nil
 // @Failure     400 {object}	resPkg.Response{data=nil}

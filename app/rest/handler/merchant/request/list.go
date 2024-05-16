@@ -6,13 +6,11 @@ package request
 
 import (
 	"github.com/dedyf5/resik/ctx"
-	commonEntity "github.com/dedyf5/resik/entities/common"
 	paramMerchant "github.com/dedyf5/resik/entities/merchant/param"
 	"github.com/dedyf5/resik/pkg/goku"
 )
 
 type MerchantListGet struct {
-	commonEntity.Request
 	Search string  `json:"search" query:"search" validate:"" example:"keyword"`
 	Order  *string `json:"order" query:"order" validate:"omitempty,oneof_order=name created_at updated_at" example:"name"`
 	Page   *uint   `json:"page" query:"page" validate:"omitempty,min=1" example:"1"`

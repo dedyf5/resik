@@ -5,12 +5,10 @@
 package request
 
 import (
-	"github.com/dedyf5/resik/entities/common"
 	"github.com/dedyf5/resik/entities/merchant"
 )
 
 type MerchantDelete struct {
-	common.Request
 	ID uint64 `json:"-" param:"id" query:"-" validate:"required" example:"123"`
 }
 
