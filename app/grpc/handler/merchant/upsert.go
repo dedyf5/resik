@@ -17,21 +17,21 @@ import (
 func (h *MerchantHandler) MerchantPost(c context.Context, req *reqMerchantCore.MerchantPost) (*MerchantUpsertRes, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 	ctx.App.Logger().Debug("MerchantPost")
 
 	if err := h.validator.Struct(req, ctx.Lang); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	entity, err := req.ToEntity(ctx)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	if _, err := h.merchantService.MerchantInsert(ctx, entity); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	return &MerchantUpsertRes{
@@ -48,25 +48,25 @@ func (h *MerchantHandler) MerchantPost(c context.Context, req *reqMerchantCore.M
 func (h *MerchantHandler) MerchantPut(c context.Context, req *reqMerchantCore.MerchantPut) (*MerchantUpsertRes, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 	ctx.App.Logger().Debug("MerchantPut")
 
 	if err := h.validator.Struct(req, ctx.Lang); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	entity, err := req.ToEntity(ctx)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	if _, err = ctx.UserClaims.MerchantIDIsAccessible(entity.ID); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	if _, err = h.merchantService.MerchantUpdate(ctx, entity); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	return &MerchantUpsertRes{

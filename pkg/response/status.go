@@ -8,7 +8,7 @@ import (
 	"net/http"
 
 	"google.golang.org/grpc/codes"
-	statusGRPC "google.golang.org/grpc/status"
+	"google.golang.org/grpc/status"
 )
 
 // use this Status to wrap error across all apps including non http app
@@ -53,6 +53,23 @@ func (s *Status) Error() string {
 	return ""
 }
 
+func (s *Status) GRPCStatus() *status.Status {
+	switch s.Code {
+	case http.StatusOK, http.StatusCreated:
+		return status.New(codes.OK, s.MessageOrDefault())
+	case http.StatusBadRequest:
+		return status.New(codes.InvalidArgument, s.MessageOrDefault())
+	case http.StatusUnauthorized:
+		return status.New(codes.Unauthenticated, s.MessageOrDefault())
+	case http.StatusNotFound:
+		return status.New(codes.NotFound, s.MessageOrDefault())
+	case http.StatusInternalServerError:
+		return status.New(codes.Internal, s.MessageOrDefault())
+	default:
+		return status.New(codes.Unknown, s.MessageOrDefault())
+	}
+}
+
 func (s *Status) MessageOrDefault() string {
 	if s.Message != "" {
 		return s.Message
@@ -60,19 +77,9 @@ func (s *Status) MessageOrDefault() string {
 	return http.StatusText(s.Code)
 }
 
-func (s *Status) GRPC() *statusGRPC.Status {
-	switch s.Code {
-	case http.StatusOK, http.StatusCreated:
-		return statusGRPC.New(codes.OK, s.MessageOrDefault())
-	case http.StatusBadRequest:
-		return statusGRPC.New(codes.InvalidArgument, s.MessageOrDefault())
-	case http.StatusUnauthorized:
-		return statusGRPC.New(codes.Unauthenticated, s.MessageOrDefault())
-	case http.StatusNotFound:
-		return statusGRPC.New(codes.NotFound, s.MessageOrDefault())
-	case http.StatusInternalServerError:
-		return statusGRPC.New(codes.Internal, s.MessageOrDefault())
-	default:
-		return statusGRPC.New(codes.Unknown, s.MessageOrDefault())
+func (s *Status) CauseErrorMessageOrDefault() string {
+	if s.CauseError != nil {
+		return s.CauseError.Error()
 	}
+	return s.MessageOrDefault()
 }

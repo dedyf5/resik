@@ -18,19 +18,19 @@ import (
 func (h *MerchantHandler) MerchantListGet(c context.Context, req *reqMerchantCore.MerchantListGet) (*MerchantListGetRes, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 	ctx.App.Logger().Debug("MerchantListGet")
 
 	if err := h.validator.Struct(req, ctx.Lang); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	param := req.ToParam(ctx)
 
 	res, err := h.merchantService.MerchantListGet(param)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	code := codes.OK

@@ -102,23 +102,15 @@ func Page(total uint64, limit, pageCurrent int) *resPkg.ResponsePage {
 }
 
 func LoggerFromStatus(status *resPkg.Status) resPkg.Log {
-	msg := status.MessageOrDefault()
-	if err := status.CauseError; err != nil {
-		msg = err.Error()
-	}
 	return resPkg.Log{
 		Response: ResponseFromStatus(status),
-		Message:  msg,
+		Message:  status.CauseErrorMessageOrDefault(),
 	}
 }
 
 func LoggerErrorAuto(status *resPkg.Status) resPkg.Log {
-	msg := status.MessageOrDefault()
-	if err := status.CauseError; err != nil {
-		msg = err.Error()
-	}
 	return resPkg.Log{
 		Response: ResponseErrorAuto(status),
-		Message:  msg,
+		Message:  status.CauseErrorMessageOrDefault(),
 	}
 }

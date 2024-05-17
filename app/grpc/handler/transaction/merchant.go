@@ -18,23 +18,23 @@ import (
 func (h *TransactionHandler) MerchantOmzetGet(c context.Context, req *reqTrxCore.MerchantOmzetGet) (*MerchantOmzetGetRes, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 	ctx.App.Logger().Debug("MerchantOmzetGet")
 
 	if err := h.validator.Struct(req, ctx.Lang); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	param := req.ToParam(ctx)
 
 	if _, err := ctx.UserClaims.MerchantIDIsAccessible(param.MerchantID); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	res, err := h.trxService.MerchantOmzetGet(param)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	return &MerchantOmzetGetRes{

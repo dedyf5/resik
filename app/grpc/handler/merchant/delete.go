@@ -16,20 +16,20 @@ import (
 func (h *MerchantHandler) MerchantDelete(c context.Context, req *reqMerchantCore.MerchantDelete) (*status.Empty, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 	ctx.App.Logger().Debug("MerchantDelete")
 
 	if err = h.validator.Struct(req, ctx.Lang); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	if _, err = ctx.UserClaims.MerchantIDIsAccessible(req.ID); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	if _, err = h.merchantService.MerchantDelete(ctx, req.ToMerchant()); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	return &status.Empty{

@@ -6,71 +6,74 @@ package log
 
 import (
 	"encoding/json"
+	"net/http"
 	"time"
 
 	configEntity "github.com/dedyf5/resik/entities/config"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 type GRPC struct {
-	appModule     configEntity.Module
-	log           *Log
-	start         time.Time
-	statusCode    codes.Code
-	statusMessage string
-	uri           string
-	req           any
-	res           any
+	appModule configEntity.Module
+	log       *Log
+	start     time.Time
+	status    *resPkg.Status
+	uri       string
+	req       any
+	res       any
 }
 
 func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, uri string, req any, res any, err error) *GRPC {
-	statusCode := codes.OK
-	statusMessage := statusCode.String()
+	status := &resPkg.Status{
+		Code: http.StatusOK,
+	}
 	if err != nil {
-		if statusResponse, ok := status.FromError(err); ok {
-			statusCode = statusResponse.Code()
-			statusMessage = statusResponse.Message()
+		switch ty := err.(type) {
+		case *resPkg.Status:
+			status = ty
 		}
 	}
 	return &GRPC{
-		appModule:     appModule,
-		log:           log,
-		start:         start,
-		statusCode:    statusCode,
-		statusMessage: statusMessage,
-		uri:           uri,
-		req:           req,
-		res:           res,
+		appModule: appModule,
+		log:       log,
+		start:     start,
+		status:    status,
+		uri:       uri,
+		req:       req,
+		res:       res,
 	}
 }
 
 func (h *GRPC) Write() {
-	if h.statusCode == codes.OK {
-		h.log.Logger.Info(h.statusMessage, zap.Inline(h))
-		return
-	} else if h.statusCode == codes.InvalidArgument || h.statusCode == codes.PermissionDenied || h.statusCode == codes.Unauthenticated {
-		h.log.Logger.Warn(h.statusMessage, zap.Inline(h))
-		return
+	if h.status.Code >= http.StatusOK && h.status.Code <= http.StatusIMUsed {
+		h.log.Logger.Info(h.status.MessageOrDefault(), zap.Inline(h))
+	} else if h.status.Code >= http.StatusInternalServerError && h.status.Code <= http.StatusNetworkAuthenticationRequired {
+		h.log.Logger.Error(h.status.CauseErrorMessageOrDefault(), zap.Inline(h))
+	} else {
+		h.log.Logger.Warn(h.status.CauseErrorMessageOrDefault(), zap.Inline(h))
 	}
-	h.log.Logger.Error(h.statusMessage, zap.Inline(h))
 }
 
 func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
+	grpc := h.status.GRPCStatus()
 	reqByte, _ := json.Marshal(h.req)
-	resByte, _ := json.Marshal(h.res)
-	resString := string(resByte)
-	if resString == "null" {
-		resString = ""
-	}
 	enc.AddString("app", h.appModule.DirectoryName())
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
 	enc.AddString("path", h.uri)
-	enc.AddUint32("status_code", uint32(h.statusCode))
+	enc.AddUint32("status_code", uint32(grpc.Code()))
 	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())
 	enc.AddString("req", string(reqByte))
-	enc.AddString("res", resString)
+	if h.status.IsError() {
+		enc.AddString("res", h.status.MessageOrDefault())
+	} else {
+		resByte, _ := json.Marshal(h.res)
+		resString := string(resByte)
+		if resString == "null" {
+			resString = ""
+		}
+		enc.AddString("res", resString)
+	}
 	return nil
 }

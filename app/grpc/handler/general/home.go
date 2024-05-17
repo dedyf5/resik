@@ -18,7 +18,7 @@ import (
 func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	return &HomeRes{

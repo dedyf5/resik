@@ -6,6 +6,7 @@ package middleware
 
 import (
 	"context"
+	"net/http"
 	"strings"
 	"time"
 
@@ -15,12 +16,11 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
 	"github.com/dedyf5/resik/pkg/array"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/rs/xid"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
-	"google.golang.org/grpc/status"
 )
 
 type Role string
@@ -63,7 +63,7 @@ func methodRoles() map[string][]Role {
 func (i *Interceptor) logCtx(c context.Context) (*context.Context, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
-		return nil, status.Error(codes.Internal, "Unable to read metadata")
+		return i.errorMetadata()
 	}
 
 	correlationID := xid.New().String()
@@ -85,7 +85,7 @@ func (i *Interceptor) writeLogger(start time.Time, fullMethod string, req any, r
 func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*context.Context, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
-		return nil, status.Error(codes.Internal, "Unable to read metadata")
+		return i.errorMetadata()
 	}
 	var langReq *language.Tag = nil
 	langKey := langCtx.ContextKey.String()
@@ -93,7 +93,7 @@ func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*con
 		if langString := meta[langKey][0]; langString != "" {
 			langRes, err := langCtx.GetLanguageAvailable(langString)
 			if err != nil {
-				return nil, status.Error(codes.InvalidArgument, err.MessageOrDefault())
+				return nil, err
 			}
 			langReq = langRes
 		}
@@ -106,7 +106,7 @@ func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*con
 func (i *Interceptor) validateJWT(c context.Context, signatureKey, fullMethod string) (*context.Context, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
-		return nil, status.Error(codes.Internal, "Unable to read metadata")
+		return i.errorMetadata()
 	}
 	if i.methodRoles[fullMethod] == nil {
 		return &c, nil
@@ -115,17 +115,26 @@ func (i *Interceptor) validateJWT(c context.Context, signatureKey, fullMethod st
 		return &c, nil
 	}
 	if len(meta["authorization"]) != 1 {
-		return nil, status.Error(codes.Unauthenticated, codes.Unauthenticated.String())
+		return nil, &resPkg.Status{
+			Code: http.StatusUnauthorized,
+		}
 	}
 	bearer := meta["authorization"][0]
 	token := strings.ReplaceAll(bearer, "Bearer ", "")
 	claim, err := jwtCxt.AuthClaimsFromString(token, signatureKey)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 	newCtx := context.WithValue(c, jwtCxt.AuthClaimsKey, claim)
 
 	return &newCtx, nil
+}
+
+func (i *Interceptor) errorMetadata() (*context.Context, error) {
+	return nil, &resPkg.Status{
+		Code:    http.StatusInternalServerError,
+		Message: "Unable to read metadata",
+	}
 }
 
 func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {

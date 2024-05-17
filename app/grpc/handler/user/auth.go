@@ -18,17 +18,17 @@ import (
 func (h *UserHandler) LoginPost(c context.Context, req *reqUserCore.LoginPost) (*UserCredentialRes, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 	ctx.App.Logger().Debug("LoginPost")
 
 	if err := h.validator.Struct(req, ctx.Lang); err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	token, err := h.userService.Auth(req.ToParam(ctx))
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	return &UserCredentialRes{
@@ -46,13 +46,13 @@ func (h *UserHandler) LoginPost(c context.Context, req *reqUserCore.LoginPost) (
 func (h *UserHandler) TokenRefreshGet(c context.Context, _ *emptypb.Empty) (*UserCredentialRes, error) {
 	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 	ctx.App.Logger().Debug("TokenRefreshGet")
 
 	token, err := h.userService.AuthTokenGenerate(ctx.UserClaims.UserID, ctx.UserClaims.Username)
 	if err != nil {
-		return nil, err.GRPC().Err()
+		return nil, err
 	}
 
 	return &UserCredentialRes{
