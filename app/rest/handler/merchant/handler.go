@@ -8,9 +8,9 @@ import (
 	"net/http"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
-	"github.com/dedyf5/resik/app/rest/handler/merchant/request"
-	"github.com/dedyf5/resik/app/rest/handler/merchant/response"
 	merchantCore "github.com/dedyf5/resik/core/merchant"
+	reqMerchantCore "github.com/dedyf5/resik/core/merchant/request"
+	resMerchantCore "github.com/dedyf5/resik/core/merchant/response"
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
@@ -39,8 +39,8 @@ func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService
 // @Produce json
 // @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Param       payload body request.MerchantPost true "Payload"
-// @Success		201	{object}	resPkg.Response{data=response.MerchantUpsert}
+// @Param       payload body reqMerchantCore.MerchantPost true "Payload"
+// @Success		201	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant [post]
@@ -51,7 +51,7 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 	}
 	ctx.App.Logger().Debug("MerchantPost")
 
-	var payload request.MerchantPost
+	var payload reqMerchantCore.MerchantPost
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
@@ -72,7 +72,7 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 		Message: ctx.Lang.GetByTemplateData("successfully_created_val", commonEntity.Map{
 			"val": "merchant",
 		}),
-		Data: &response.MerchantUpsert{
+		Data: &resMerchantCore.MerchantUpsert{
 			ID: entity.ID,
 		},
 	}
@@ -86,8 +86,8 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 // @Security BearerAuth
 // @Param       id path int true "Merchant ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Param       payload body request.MerchantPut true "Payload"
-// @Success		200	{object}	resPkg.Response{data=response.MerchantUpsert}
+// @Param       payload body reqMerchantCore.MerchantPut true "Payload"
+// @Success		200	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
@@ -99,7 +99,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 	}
 	ctx.App.Logger().Debug("MerchantPut")
 
-	var body request.MerchantPut
+	var body reqMerchantCore.MerchantPut
 
 	if err := h.fw.StructValidator(echoCtx, &body); err != nil {
 		return err
@@ -124,7 +124,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 		Message: ctx.Lang.GetByTemplateData("successfully_updated_val", commonEntity.Map{
 			"val": "merchant",
 		}),
-		Data: &response.MerchantUpsert{
+		Data: &resMerchantCore.MerchantUpsert{
 			ID: entity.ID,
 		},
 	}
@@ -137,8 +137,8 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 // @Produce json
 // @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Param       parameter query request.MerchantListGet true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=response.MerchantUpsert}
+// @Param       parameter query reqMerchantCore.MerchantListGet true "Query Param"
+// @Success		200	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     404 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
@@ -150,7 +150,7 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 	}
 	ctx.App.Logger().Debug("MerchantListGet")
 
-	var payload request.MerchantListGet
+	var payload reqMerchantCore.MerchantListGet
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
@@ -170,7 +170,7 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 
 	return &resPkg.Status{
 		Code: code,
-		Data: response.MerchantListFromEntity(res.Data),
+		Data: resMerchantCore.MerchantListFromEntity(res.Data),
 		Meta: &resPkg.Meta{
 			PageCurrent: param.Filter.Page,
 			Limit:       param.Filter.Limit,
@@ -187,7 +187,7 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 // @Security BearerAuth
 // @Param       id path int true "Merchant ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Param       parameter query request.MerchantDelete true "Query Param"
+// @Param       parameter query reqMerchantCore.MerchantDelete true "Query Param"
 // @Success		204	{object}	nil
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     401 {object}	resPkg.Response{data=nil}
@@ -200,7 +200,7 @@ func (h *Handler) MerchantDelete(echoCtx echo.Context) error {
 	}
 	ctx.App.Logger().Debug("MerchantDelete")
 
-	var param request.MerchantDelete
+	var param reqMerchantCore.MerchantDelete
 	if err := h.fw.StructValidator(echoCtx, &param); err != nil {
 		return err
 	}

@@ -244,7 +244,7 @@ const docTemplaterest = `{
                     },
                     {
                         "type": "string",
-                        "example": "name",
+                        "example": "name,-updated_at",
                         "name": "order",
                         "in": "query"
                     },
@@ -1067,7 +1067,8 @@ const docTemplaterest = `{
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 40
+                    "maxLength": 40,
+                    "example": "Resik Merchant"
                 }
             }
         },
@@ -1080,7 +1081,8 @@ const docTemplaterest = `{
             "properties": {
                 "name": {
                     "type": "string",
-                    "maxLength": 40
+                    "maxLength": 40,
+                    "example": "Resik Merchant"
                 },
                 "updated_at": {
                     "type": "string",
