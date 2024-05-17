@@ -9,6 +9,8 @@ option go_package = "github.com/dedyf5/resik/app/grpc/handler/merchant";
 
 import "app/grpc/handler/merchant/list.proto";
 import "app/grpc/handler/merchant/upsert.proto";
+import "app/grpc/proto/status/status.proto";
+import "core/merchant/request/delete.proto";
 import "core/merchant/request/list.proto";
 import "core/merchant/request/upsert.proto";
 
@@ -16,4 +18,5 @@ service MerchantService {
     rpc MerchantPost(request.MerchantPost) returns (merchant.MerchantUpsertRes);
     rpc MerchantPut(request.MerchantPut) returns (merchant.MerchantUpsertRes);
     rpc MerchantListGet(request.MerchantListGet) returns (merchant.MerchantListGetRes);
+    rpc MerchantDelete(request.MerchantDelete) returns (status.Empty);
 }

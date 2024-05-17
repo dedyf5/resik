@@ -11,3 +11,8 @@ message Status {
     string Code = 1; // @gotags: json:"code" example:"0"
     string Message = 2; // @gotags: json:"message" example:"OK"
 }
+
+message Empty {
+    string Code = 1; // @gotags: json:"-"
+    string Message = 2; // @gotags: json:"-"
+}

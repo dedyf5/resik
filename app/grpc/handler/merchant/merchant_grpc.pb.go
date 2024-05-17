@@ -8,10 +8,11 @@ package merchant
 
 import (
 	context "context"
+	status "github.com/dedyf5/resik/app/grpc/proto/status"
 	request "github.com/dedyf5/resik/core/merchant/request"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
+	status1 "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -26,6 +27,7 @@ type MerchantServiceClient interface {
 	MerchantPost(ctx context.Context, in *request.MerchantPost, opts ...grpc.CallOption) (*MerchantUpsertRes, error)
 	MerchantPut(ctx context.Context, in *request.MerchantPut, opts ...grpc.CallOption) (*MerchantUpsertRes, error)
 	MerchantListGet(ctx context.Context, in *request.MerchantListGet, opts ...grpc.CallOption) (*MerchantListGetRes, error)
+	MerchantDelete(ctx context.Context, in *request.MerchantDelete, opts ...grpc.CallOption) (*status.Empty, error)
 }
 
 type merchantServiceClient struct {
@@ -63,6 +65,15 @@ func (c *merchantServiceClient) MerchantListGet(ctx context.Context, in *request
 	return out, nil
 }
 
+func (c *merchantServiceClient) MerchantDelete(ctx context.Context, in *request.MerchantDelete, opts ...grpc.CallOption) (*status.Empty, error) {
+	out := new(status.Empty)
+	err := c.cc.Invoke(ctx, "/merchant.MerchantService/MerchantDelete", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MerchantServiceServer is the server API for MerchantService service.
 // All implementations must embed UnimplementedMerchantServiceServer
 // for forward compatibility
@@ -70,6 +81,7 @@ type MerchantServiceServer interface {
 	MerchantPost(context.Context, *request.MerchantPost) (*MerchantUpsertRes, error)
 	MerchantPut(context.Context, *request.MerchantPut) (*MerchantUpsertRes, error)
 	MerchantListGet(context.Context, *request.MerchantListGet) (*MerchantListGetRes, error)
+	MerchantDelete(context.Context, *request.MerchantDelete) (*status.Empty, error)
 	mustEmbedUnimplementedMerchantServiceServer()
 }
 
@@ -78,13 +90,16 @@ type UnimplementedMerchantServiceServer struct {
 }
 
 func (UnimplementedMerchantServiceServer) MerchantPost(context.Context, *request.MerchantPost) (*MerchantUpsertRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MerchantPost not implemented")
+	return nil, status1.Errorf(codes.Unimplemented, "method MerchantPost not implemented")
 }
 func (UnimplementedMerchantServiceServer) MerchantPut(context.Context, *request.MerchantPut) (*MerchantUpsertRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MerchantPut not implemented")
+	return nil, status1.Errorf(codes.Unimplemented, "method MerchantPut not implemented")
 }
 func (UnimplementedMerchantServiceServer) MerchantListGet(context.Context, *request.MerchantListGet) (*MerchantListGetRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MerchantListGet not implemented")
+	return nil, status1.Errorf(codes.Unimplemented, "method MerchantListGet not implemented")
+}
+func (UnimplementedMerchantServiceServer) MerchantDelete(context.Context, *request.MerchantDelete) (*status.Empty, error) {
+	return nil, status1.Errorf(codes.Unimplemented, "method MerchantDelete not implemented")
 }
 func (UnimplementedMerchantServiceServer) mustEmbedUnimplementedMerchantServiceServer() {}
 
@@ -153,6 +168,24 @@ func _MerchantService_MerchantListGet_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MerchantService_MerchantDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(request.MerchantDelete)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MerchantServiceServer).MerchantDelete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/merchant.MerchantService/MerchantDelete",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MerchantServiceServer).MerchantDelete(ctx, req.(*request.MerchantDelete))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MerchantService_ServiceDesc is the grpc.ServiceDesc for MerchantService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -171,6 +204,10 @@ var MerchantService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MerchantListGet",
 			Handler:    _MerchantService_MerchantListGet_Handler,
+		},
+		{
+			MethodName: "MerchantDelete",
+			Handler:    _MerchantService_MerchantDelete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
