@@ -5,7 +5,6 @@
 package general
 
 import (
-	"errors"
 	"net/http"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
@@ -46,12 +45,6 @@ func (h *Handler) Home(echoCtx echo.Context) error {
 	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
 	if err != nil {
 		return err
-	}
-
-	return &resPkg.Status{
-		Code:       http.StatusInternalServerError,
-		Message:    "error untuk menungso",
-		CauseError: errors.New("error dari native"),
 	}
 
 	var payload commonEntity.Request
