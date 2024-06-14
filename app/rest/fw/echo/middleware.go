@@ -11,7 +11,6 @@ import (
 	"time"
 
 	jwtCxt "github.com/dedyf5/resik/ctx/jwt"
-	"github.com/dedyf5/resik/ctx/lang"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
@@ -90,7 +89,7 @@ func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 		SigningKey: []byte(signatureKey),
 		ErrorHandler: func(c echo.Context, err error) error {
 			ctx := c.Request().Context()
-			langRes, langErr := lang.FromContext(ctx)
+			langRes, langErr := langCtx.FromContext(ctx)
 			if langErr != nil {
 				return &resPkg.Status{
 					Code:       http.StatusInternalServerError,
