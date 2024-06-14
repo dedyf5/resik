@@ -9,6 +9,7 @@ import (
 	"github.com/go-playground/locales"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/id"
+	"github.com/go-playground/locales/ja"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/text/language"
 )
@@ -24,6 +25,7 @@ type translation struct {
 var Map map[language.Tag][]translation = map[language.Tag][]translation{
 	language.Indonesian: Indonesian,
 	language.English:    English,
+	language.Japanese:   Japanese,
 }
 
 func Translators() (res []locales.Translator) {
@@ -37,6 +39,8 @@ func LanguageToTranslator(lang language.Tag) locales.Translator {
 	switch lang.String() {
 	case "id":
 		return id.New()
+	case "ja":
+		return ja.New()
 	}
 	return en.New()
 }

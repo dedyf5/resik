@@ -1,0 +1,9 @@
+{
+    "app_name": "Resik",
+    "version_name": "バージョン {{.code}}",
+    "home_message": "{{.app_name}} バージョン {{.code}}",
+    "validation_type_message": "{{.field}タイプは{{.expected}}である必要がありますが、{{.actual}}を取得しました",
+    "incorrect_username_or_password": "ユーザーネームまたはパスワードが間違っています",
+    "successfully_created_val": "{{.val}}の作成に成功しました",
+    "successfully_updated_val": "{{.val}}の更新に成功しました"
+}

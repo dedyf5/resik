@@ -20,7 +20,7 @@ import (
 )
 
 var Default = language.English
-var Available []language.Tag = []language.Tag{Default, language.Indonesian}
+var Available []language.Tag = []language.Tag{Default, language.Indonesian, language.Japanese}
 
 type langKey string
 
