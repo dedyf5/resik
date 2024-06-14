@@ -4,6 +4,8 @@
     "home_message": "{{.app_name}} Versi {{.code}}",
     "validation_type_message": "tipe {{.field}} harus {{.expected}}, bukan {{.actual}}",
     "incorrect_username_or_password": "Username atau Password salah",
+    "unauthorized": "Akses tidak diizinkan",
+    "invalid_or_expired_session_login_again": "Sesi login tidak sesuai atau sudah kedaluwarsa, silahkan login kembali",
     "successfully_created_val": "Berhasil membuat {{.val}}",
     "successfully_updated_val": "Berhasil memperbarui {{.val}}"
 }

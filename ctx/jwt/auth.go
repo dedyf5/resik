@@ -7,8 +7,10 @@ package jwt
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/entities/config"
 	"github.com/dedyf5/resik/pkg/array"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -120,4 +122,19 @@ func AuthClaimsFromContext(ctx context.Context) *AuthClaims {
 		return claims
 	}
 	return nil
+}
+
+func HTTPStatusError(err error, lang *lang.Lang) *resPkg.Status {
+	if strings.Contains(err.Error(), "invalid") {
+		return &resPkg.Status{
+			Code:       http.StatusUnauthorized,
+			Message:    lang.GetByMessageID("invalid_or_expired_session_login_again"),
+			CauseError: err,
+		}
+	}
+	return &resPkg.Status{
+		Code:       http.StatusUnauthorized,
+		Message:    lang.GetByMessageID("unauthorized"),
+		CauseError: err,
+	}
 }

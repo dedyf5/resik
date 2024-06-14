@@ -4,6 +4,8 @@
     "home_message": "{{.app_name}} Version {{.code}}",
     "validation_type_message": "{{.field}} type must be {{.expected}}, got {{.actual}}",
     "incorrect_username_or_password": "Incorrect username or password",
+    "unauthorized": "Unauthorized",
+    "invalid_or_expired_session_login_again": "Invalid or expired session, please login again",
     "successfully_created_val": "Successfully created {{.val}}",
     "successfully_updated_val": "Successfully updated {{.val}}"
 }

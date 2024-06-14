@@ -11,9 +11,11 @@ import (
 	"time"
 
 	jwtCxt "github.com/dedyf5/resik/ctx/jwt"
+	"github.com/dedyf5/resik/ctx/lang"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -86,6 +88,17 @@ func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 			return new(jwtCxt.AuthClaims)
 		},
 		SigningKey: []byte(signatureKey),
+		ErrorHandler: func(c echo.Context, err error) error {
+			ctx := c.Request().Context()
+			langRes, langErr := lang.FromContext(ctx)
+			if langErr != nil {
+				return &resPkg.Status{
+					Code:       http.StatusInternalServerError,
+					CauseError: langErr,
+				}
+			}
+			return jwtCxt.HTTPStatusError(err, langRes)
+		},
 	}
 	return echojwt.WithConfig(jwtConfig)
 }
