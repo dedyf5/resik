@@ -57,6 +57,6 @@ func (h *Handler) Home(echoCtx echo.Context) error {
 	return &resPkg.Status{
 		Code:    http.StatusOK,
 		Message: lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
-		Data:    resAppCore.AppMap(ctx, h.config),
+		Data:    resAppCore.AppMap(ctx, h.config, &payload),
 	}
 }

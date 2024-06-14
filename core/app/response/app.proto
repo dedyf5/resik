@@ -17,4 +17,5 @@ message AppLang {
 	string Current = 1; // @gotags: json:"current" example:"id"
 	string Request = 2; // @gotags: json:"request" example:"id"
 	string Default = 3; // @gotags: json:"default" example:"en"
+    repeated string Available = 4; // @gotags: json:"available"
 }

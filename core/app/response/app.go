@@ -7,9 +7,10 @@ package response
 import (
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/entities/common"
 )
 
-func AppMap(ctx *ctx.Ctx, config config.Config) *App {
+func AppMap(ctx *ctx.Ctx, config config.Config, req *common.Request) *App {
 	lang := ctx.Lang
 	langReqCode := ""
 	if lang.LangReq != nil {
@@ -19,9 +20,10 @@ func AppMap(ctx *ctx.Ctx, config config.Config) *App {
 		App:     config.App.Name,
 		Version: config.App.Version,
 		Lang: &AppLang{
-			Current: lang.LanguageReqOrDefault().String(),
-			Request: langReqCode,
-			Default: config.App.LangDefault.String(),
+			Current:   lang.LanguageReqOrDefault().String(),
+			Request:   langReqCode,
+			Default:   config.App.LangDefault.String(),
+			Available: req.LangAvailable(),
 		},
 	}
 }

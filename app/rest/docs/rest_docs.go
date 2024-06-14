@@ -32,7 +32,8 @@ const docTemplaterest = `{
                     {
                         "enum": [
                             "en",
-                            "id"
+                            "id",
+                            "ja"
                         ],
                         "type": "string",
                         "name": "lang",
@@ -114,7 +115,8 @@ const docTemplaterest = `{
                     {
                         "enum": [
                             "en",
-                            "id"
+                            "id",
+                            "ja"
                         ],
                         "type": "string",
                         "name": "lang",
@@ -228,7 +230,8 @@ const docTemplaterest = `{
                     {
                         "enum": [
                             "en",
-                            "id"
+                            "id",
+                            "ja"
                         ],
                         "type": "string",
                         "name": "lang",
@@ -358,7 +361,8 @@ const docTemplaterest = `{
                     {
                         "enum": [
                             "en",
-                            "id"
+                            "id",
+                            "ja"
                         ],
                         "type": "string",
                         "name": "lang",
@@ -461,7 +465,8 @@ const docTemplaterest = `{
                     {
                         "enum": [
                             "en",
-                            "id"
+                            "id",
+                            "ja"
                         ],
                         "type": "string",
                         "name": "lang",
@@ -580,7 +585,8 @@ const docTemplaterest = `{
                     {
                         "enum": [
                             "en",
-                            "id"
+                            "id",
+                            "ja"
                         ],
                         "type": "string",
                         "name": "lang",
@@ -670,7 +676,8 @@ const docTemplaterest = `{
                     {
                         "enum": [
                             "en",
-                            "id"
+                            "id",
+                            "ja"
                         ],
                         "type": "string",
                         "name": "lang",
@@ -764,7 +771,8 @@ const docTemplaterest = `{
                     {
                         "enum": [
                             "en",
-                            "id"
+                            "id",
+                            "ja"
                         ],
                         "type": "string",
                         "name": "lang",
@@ -914,7 +922,8 @@ const docTemplaterest = `{
                     {
                         "enum": [
                             "en",
-                            "id"
+                            "id",
+                            "ja"
                         ],
                         "type": "string",
                         "name": "lang",
@@ -1109,6 +1118,12 @@ const docTemplaterest = `{
         "response.AppLang": {
             "type": "object",
             "properties": {
+                "available": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "current": {
                     "type": "string",
                     "example": "id"

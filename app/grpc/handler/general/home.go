@@ -21,11 +21,13 @@ func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, er
 		return nil, err
 	}
 
+	req := common.Request{}
+
 	return &HomeRes{
 		Status: &status.Status{
 			Code:    status.CodePlus(codes.OK),
 			Message: ctx.Lang.GetByTemplateData("home_message", common.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
 		},
-		Data: resAppCore.AppMap(ctx, h.config),
+		Data: resAppCore.AppMap(ctx, h.config, &req),
 	}, nil
 }
