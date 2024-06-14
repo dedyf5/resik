@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	jwtCxt "github.com/dedyf5/resik/ctx/jwt"
+	jwtCtx "github.com/dedyf5/resik/ctx/jwt"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
@@ -84,7 +84,7 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Modu
 func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 	jwtConfig := echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
-			return new(jwtCxt.AuthClaims)
+			return new(jwtCtx.AuthClaims)
 		},
 		SigningKey: []byte(signatureKey),
 		ErrorHandler: func(c echo.Context, err error) error {
@@ -96,7 +96,7 @@ func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 					CauseError: langErr,
 				}
 			}
-			return jwtCxt.HTTPStatusError(err, langRes)
+			return jwtCtx.HTTPStatusError(err, langRes)
 		},
 	}
 	return echojwt.WithConfig(jwtConfig)
@@ -107,9 +107,9 @@ func JWTMiddleware(signatureKey string) echo.MiddlewareFunc {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token := strings.ReplaceAll(r.Header.Get("Authorization"), "Bearer ", "")
 			if token != "" {
-				claim, _ := jwtCxt.AuthClaimsFromString(token, signatureKey)
+				claim, _ := jwtCtx.AuthClaimsFromString(token, signatureKey)
 				ctx := context.WithValue(r.Context(),
-					jwtCxt.AuthClaimsKey,
+					jwtCtx.AuthClaimsKey,
 					claim,
 				)
 				r = r.WithContext(ctx)
