@@ -82,10 +82,13 @@ func (i *Interceptor) writeLogger(start time.Time, fullMethod string, req any, r
 	return res, err
 }
 
-func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*context.Context, error) {
+func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*context.Context, *langCtx.Lang, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
-		return i.errorMetadata()
+		return nil, nil, &resPkg.Status{
+			Code:    http.StatusInternalServerError,
+			Message: "Unable to read metadata",
+		}
 	}
 	var langReq *language.Tag = nil
 	langKey := langCtx.ContextKey.String()
@@ -93,17 +96,18 @@ func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*con
 		if langString := meta[langKey][0]; langString != "" {
 			langRes, err := langCtx.GetLanguageAvailable(langString)
 			if err != nil {
-				return nil, err
+				return nil, nil, err
 			}
 			langReq = langRes
 		}
 	}
-	newCtx := context.WithValue(c, langCtx.ContextKey, langCtx.NewLang(langDefault, langReq, ""))
+	langRes := langCtx.NewLang(langDefault, langReq, "")
+	newCtx := context.WithValue(c, langCtx.ContextKey, langRes)
 
-	return &newCtx, nil
+	return &newCtx, langRes, nil
 }
 
-func (i *Interceptor) validateJWT(c context.Context, signatureKey, fullMethod string) (*context.Context, error) {
+func (i *Interceptor) validateJWT(c context.Context, lang *langCtx.Lang, signatureKey, fullMethod string) (*context.Context, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
 		return i.errorMetadata()
@@ -121,7 +125,7 @@ func (i *Interceptor) validateJWT(c context.Context, signatureKey, fullMethod st
 	}
 	bearer := meta["authorization"][0]
 	token := strings.ReplaceAll(bearer, "Bearer ", "")
-	claim, err := jwtCxt.AuthClaimsFromString(token, signatureKey)
+	claim, err := jwtCxt.AuthClaimsFromString(token, signatureKey, lang)
 	if err != nil {
 		return nil, err
 	}
@@ -146,12 +150,12 @@ func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerIn
 		return handler, err
 	}
 
-	langC, err := i.langCtx(*logC, i.app.LangDefault)
+	langC, langRes, err := i.langCtx(*logC, i.app.LangDefault)
 	if err != nil {
 		return i.writeLogger(start, info.FullMethod, req, nil, err)
 	}
 
-	tokenC, err := i.validateJWT(*langC, i.auth.SignatureKey, info.FullMethod)
+	tokenC, err := i.validateJWT(*langC, langRes, i.auth.SignatureKey, info.FullMethod)
 	if err != nil {
 		return i.writeLogger(start, info.FullMethod, req, nil, err)
 	}

@@ -6,6 +6,7 @@ package jwt
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strings"
 	"time"
@@ -88,10 +89,12 @@ func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint
 	return
 }
 
-func AuthClaimsFromString(tokenString string, signatureKey string) (claim *AuthClaims, status *resPkg.Status) {
+func AuthClaimsFromString(tokenString string, signatureKey string, lang *lang.Lang) (claim *AuthClaims, status *resPkg.Status) {
 	if tokenString == "" {
 		return nil, &resPkg.Status{
-			Code: http.StatusUnauthorized,
+			Code:       http.StatusUnauthorized,
+			Message:    lang.GetByMessageID("unauthorized"),
+			CauseError: errors.New("missing value in request header"),
 		}
 	}
 	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
@@ -99,8 +102,8 @@ func AuthClaimsFromString(tokenString string, signatureKey string) (claim *AuthC
 	})
 	if err != nil {
 		return nil, &resPkg.Status{
-			Code:       http.StatusBadRequest,
-			Message:    "invalid jwt",
+			Code:       http.StatusUnauthorized,
+			Message:    lang.GetByMessageID("invalid_or_expired_session_login_again"),
 			CauseError: err,
 		}
 	}
@@ -108,8 +111,9 @@ func AuthClaimsFromString(tokenString string, signatureKey string) (claim *AuthC
 		return claims, nil
 	}
 	return nil, &resPkg.Status{
-		Code:    http.StatusBadRequest,
-		Message: "invalid or expired jwt",
+		Code:       http.StatusUnauthorized,
+		Message:    lang.GetByMessageID("invalid_or_expired_session_login_again"),
+		CauseError: errors.New("error while casting AuthClaims"),
 	}
 }
 

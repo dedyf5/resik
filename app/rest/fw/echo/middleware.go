@@ -102,13 +102,18 @@ func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 	return echojwt.WithConfig(jwtConfig)
 }
 
-func JWTMiddleware(signatureKey string) echo.MiddlewareFunc {
+func JWTMiddleware(signatureKey string, langDef language.Tag) echo.MiddlewareFunc {
 	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			token := strings.ReplaceAll(r.Header.Get("Authorization"), "Bearer ", "")
 			if token != "" {
-				claim, _ := jwtCtx.AuthClaimsFromString(token, signatureKey)
-				ctx := context.WithValue(r.Context(),
+				c := r.Context()
+				langRes, langErr := langCtx.FromContext(c)
+				if langErr != nil {
+					langRes = langCtx.NewLang(langDef, nil, r.Header.Get("Accept-Language"))
+				}
+				claim, _ := jwtCtx.AuthClaimsFromString(token, signatureKey, langRes)
+				ctx := context.WithValue(c,
 					jwtCtx.AuthClaimsKey,
 					claim,
 				)

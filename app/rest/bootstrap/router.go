@@ -39,7 +39,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	e := server.echo
 
 	validateToken := echoFW.ValidateTokenMiddleware(r.config.Auth.SignatureKey)
-	jwtMiddleware := echoFW.JWTMiddleware(r.config.Auth.SignatureKey)
+	jwtMiddleware := echoFW.JWTMiddleware(r.config.Auth.SignatureKey, r.config.App.LangDefault)
 
 	generalHandler := r.generalHandler
 	e.GET("/", generalHandler.Home)
