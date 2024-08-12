@@ -32,4 +32,4 @@ go run main.go help
 
 ## License
 
-[MIT](https://github.com/dedyf5/resik/blob/master/LICENSE)
+[MIT](https://github.com/dedyf5/resik?tab=MIT-1-ov-file)
