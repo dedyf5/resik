@@ -2,7 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package main
+package grpc
 
 import "github.com/dedyf5/resik/app/grpc/bootstrap"
 
@@ -10,7 +10,7 @@ var app *bootstrap.App
 var cleanup func()
 var err error
 
-func main() {
+func Run() {
 	app, cleanup, err = bootstrap.InitializeHTTP()
 
 	if err != nil {

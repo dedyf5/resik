@@ -7,20 +7,12 @@ package cmd
 import (
 	"os"
 
+	"github.com/dedyf5/resik/config"
 	"github.com/spf13/cobra"
 )
 
-const AppLogoASCII string = `
- ____           _ _    
-|  _ \ ___  ___(_) | __
-| |_) / _ \/ __| | |/ /
-|  _ <  __/\__ \ |   < 
-|_| \_\___||___/_|_|\_\
-
-`
-
 var mainCMD = &cobra.Command{
-	Short: AppLogoASCII,
+	Short: config.AppLogoASCII,
 }
 
 func Execute() {

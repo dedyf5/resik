@@ -13,7 +13,6 @@ import (
 	"time"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
-	"github.com/dedyf5/resik/cmd"
 	"github.com/dedyf5/resik/config"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/pkg/color"
@@ -51,7 +50,7 @@ func (s *ServerHTTP) Start() {
 	addr := s.config.App.HostPort()
 	appName := color.Format(color.GREEN, s.config.App.Name)
 	version := color.Format(color.YELLOW, s.config.App.Version)
-	fmt.Printf("%s%s version %s\n\n", cmd.AppLogoASCII, appName, version)
+	fmt.Printf("%s%s version %s\n\n", config.AppLogoASCII, appName, version)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
 	go func() {
 		err := s.echo.Start(addr)

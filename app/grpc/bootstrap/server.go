@@ -11,7 +11,6 @@ import (
 	"net"
 
 	"github.com/dedyf5/resik/app/grpc/middleware"
-	"github.com/dedyf5/resik/cmd"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/pkg/color"
 	"google.golang.org/grpc"
@@ -47,7 +46,7 @@ func (s *ServerHTTP) Start() {
 	addr := s.config.App.HostPort()
 	appName := color.Format(color.GREEN, s.config.App.Name)
 	version := color.Format(color.YELLOW, s.config.App.Version)
-	fmt.Printf("%s%s version %s\n\n", cmd.AppLogoASCII, appName, version)
+	fmt.Printf("%s%s version %s\n\n", config.AppLogoASCII, appName, version)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
 	s.router.routerSetup(s.grpcServer)
 	go func() {

@@ -14,6 +14,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+const AppLogoASCII string = `
+ ____           _ _    
+|  _ \ ___  ___(_) | __
+| |_) / _ \/ __| | |/ /
+|  _ <  __/\__ \ |   < 
+|_| \_\___||___/_|_|\_\
+
+`
+
 type (
 	Config struct {
 		App      configEntity.App
