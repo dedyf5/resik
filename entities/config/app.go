@@ -47,3 +47,7 @@ func (a *App) APIDocDescription() string {
 func (t Module) DirectoryName() string {
 	return strings.ToLower(string(t))
 }
+
+func (t Module) Key(k string) string {
+	return fmt.Sprintf("%v_%v", t, k)
+}
