@@ -1,0 +1,129 @@
+# ============================================================================
+# SERVICES: Defines the containers to be run
+# ============================================================================
+services:
+
+  # --- Golang Application Service (REST Mode) ---
+  # This is a container instance running the resik binary in REST mode.
+  resik-rest:
+    # Instructions to build the Docker Image from the Dockerfile in the current directory (.).
+    # Use 'image: your_registry/resik:latest' if you push the Image to a registry.
+    build: .
+    # Tags the built Image.
+    image: resik:latest
+    # Assigns a specific name to the container (makes identification easier).
+    container_name: resik_rest_container
+    # Connects this container to the custom network.
+    networks:
+      - app-network
+    # Publishes the REST port from the container to the host.
+    ports:
+      - "8081:8081" # HOST_PORT:CONTAINER_PORT
+
+    # --- Application Configuration (Hybrid: Env Var + Secrets) ---
+
+    # 1. Load Standard (Non-Sensitive) Configuration from the .env file
+    env_file:
+      - ./app/rest/config/.env # This file must be in the project root
+
+    # 2. Set Environment Variables Pointing to Secret File Paths
+    #    These variables are only relevant inside containers using Docker Secrets.
+    #    The variable names here MUST MATCH what the Golang code (config.go) looks for.
+    environment:
+      # Secret path for Database (following REST consistent naming)
+      REST_DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username # /run/secrets/ + secret name
+      REST_DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password # /run/secrets/ + secret name
+      # Secret path for Auth Signature Key (following REST consistent naming)
+      REST_AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
+      # ... other secret path variables for REST mode ...
+
+    # 3. Grant This Container Access to the Required Secrets
+    #    List of secret names defined in the global 'secrets' section below.
+    secrets:
+      - database_username # Secret name matching global definition
+      - database_password # Secret name matching global definition
+      - auth_signature_key # Secret name matching global definition
+      # ... other secrets needed by the REST service (matching global definition) ...
+
+    # Defines the command to be executed by the container (arguments for ENTRYPOINT in Dockerfile).
+    command: ["rest"] # <= Run the resik binary in REST mode
+
+    # Container restart policy.
+    restart: always
+
+    # Optional: Defines dependencies (this container needs the database to run)
+    # depends_on:
+    #   - mariadb
+
+  # --- Golang Application Service (gRPC Mode) ---
+  # This is another container instance running the resik binary in gRPC mode.
+  resik-grpc:
+    build: . # Using the same Dockerfile
+    image: resik:latest # Using the same Image
+    container_name: resik_grpc_container # <--- Container name MUST be unique
+    networks:
+      - app-network
+    # Publishes the gRPC port from the container to the host.
+    ports:
+      - "7071:7071" # HOST_PORT:CONTAINER_PORT
+
+    # --- Application Configuration (Hybrid: Env Var + Secrets) ---
+
+    # 1. Load Standard (Non-Sensitive) Configuration from the .env file
+    env_file:
+      - ./app/grpc/config/.env # Using the same .env file
+
+    # 2. Set Environment Variables Pointing to Secret File Paths
+    #    Use consistent naming for gRPC mode.
+    environment:
+      # Secret path for Database (following GRPC consistent naming)
+      GRPC_DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username # /run/secrets/ + secret name
+      GRPC_DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password # /run/secrets/ + secret name
+      # Secret path for Auth Signature Key (following GRPC consistent naming)
+      GRPC_AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
+      # ... other secret path variables for GRPC mode ...
+
+    # 3. Grant This Container Access to the Required Secrets
+    #    List of secret names defined in the global 'secrets' section below.
+    secrets:
+      - database_username # Secret name matching global definition
+      - database_password # Secret name matching global definition
+      - auth_signature_key # Secret name matching global definition
+      # ... other secrets needed by the GRPC service (matching global definition) ...
+
+
+    # Defines the command to be executed by the container.
+    command: ["grpc"] # <= Run the resik binary in gRPC mode
+
+    # Container restart policy.
+    restart: always
+
+# ============================================================================
+# NETWORKS: Defines custom networks to connect services
+# ============================================================================
+networks:
+  # Custom network name. Containers in this network can communicate
+  # using service names (e.g., 'resik-rest' can connect to 'mariadb').
+  app-network:
+    driver: bridge # Default driver for networks on a single host
+
+# ============================================================================
+# SECRETS: Defines secrets to be used by services
+# ============================================================================
+secrets:
+  # Each entry here is a definition of one secret.
+  # 'file:' refers to the path of the file on the HOST containing the secret content.
+  # The secret name (on the left) will become the filename in /run/secrets/ inside the container.
+
+  # Secret for the application database username (used by resik-rest & resik-grpc logic)
+  # Consistent secret names per mode for explicitness
+  database_username:
+    file: ./.secrets/database_username.txt # Path to file on HOST
+
+  database_password:
+    file: ./.secrets/database_password.txt # Path to file on HOST
+
+  auth_signature_key:
+    file: ./.secrets/auth_signature_key.txt # Path to file on HOST
+
+  # ... other secrets needed ...

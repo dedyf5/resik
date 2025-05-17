@@ -7,6 +7,8 @@ package config
 import (
 	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/drivers"
@@ -37,7 +39,7 @@ func Load(module configEntity.Module) *Config {
 	viper.SetConfigType("env")
 	viper.SetConfigFile(fmt.Sprintf("./app/%s/config/.env", module.DirectoryName()))
 	if err := viper.ReadInConfig(); err != nil {
-		log.Print("ERROR read env", err.Error())
+		log.Print("WARNING: Failed to read env", err.Error())
 	}
 
 	viper.AutomaticEnv()
@@ -50,6 +52,32 @@ func Load(module configEntity.Module) *Config {
 	conf.loadLog(module)
 
 	return &conf
+}
+
+func getSecretFromFileOrEnv(secretFilePathEnvVarName, fallbackEnvVarName string) string {
+	secretFilePath := viper.GetString(secretFilePathEnvVarName)
+
+	if secretFilePath != "" {
+		content, err := readSecretFile(secretFilePath)
+		if err != nil {
+			log.Fatalf("FATAL: Failed to read secret from file pointed by %s (%s): %v", secretFilePathEnvVarName, secretFilePath, err)
+		}
+		return content
+	} else {
+		fallbackValue := viper.GetString(fallbackEnvVarName)
+		return fallbackValue
+	}
+}
+
+func readSecretFile(filepath string) (string, error) {
+	if filepath == "" {
+		return "", fmt.Errorf("secret file path is empty")
+	}
+	content, err := os.ReadFile(filepath)
+	if err != nil {
+		return "", fmt.Errorf("failed to read secret file %s: %w", filepath, err)
+	}
+	return strings.TrimSpace(string(content)), nil
 }
 
 func (conf *Config) loadApp(module configEntity.Module) {
@@ -89,8 +117,8 @@ func (conf *Config) loadDatabase(module configEntity.Module) {
 
 	db.Host = viper.GetString(module.Key("DATABASE_HOST"))
 	db.Port = viper.GetInt(module.Key("DATABASE_PORT"))
-	db.Username = viper.GetString(module.Key("DATABASE_USERNAME"))
-	db.Password = viper.GetString(module.Key("DATABASE_PASSWORD"))
+	db.Username = getSecretFromFileOrEnv(module.Key("DATABASE_USERNAME_PATH_FILE"), module.Key("DATABASE_USERNAME"))
+	db.Password = getSecretFromFileOrEnv(module.Key("DATABASE_PASSWORD_PATH_FILE"), module.Key("DATABASE_PASSWORD"))
 	db.Schema = viper.GetString(module.Key("DATABASE_SCHEMA"))
 	db.MaxOpenConns = viper.GetInt(module.Key("DATABASE_MAX_OPEN_CONS"))
 	db.MaxIdleConns = viper.GetInt(module.Key("DATABASE_MAX_IDLE_CONS"))
@@ -103,7 +131,7 @@ func (conf *Config) loadDatabase(module configEntity.Module) {
 func (conf *Config) loadAuth(module configEntity.Module) {
 	conf.Auth = configEntity.Auth{
 		Expires:      viper.GetUint64(module.Key("AUTH_EXPIRES")),
-		SignatureKey: viper.GetString(module.Key("AUTH_SIGNATURE_KEY")),
+		SignatureKey: getSecretFromFileOrEnv(module.Key("AUTH_SIGNATURE_KEY_PATH_FILE"), module.Key("AUTH_SIGNATURE_KEY")),
 	}
 }
 
