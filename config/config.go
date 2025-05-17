@@ -54,8 +54,6 @@ func Load(module configEntity.Module) *Config {
 
 func (conf *Config) loadApp(module configEntity.Module) {
 	envStr := viper.GetString(module.Key("APP_ENV"))
-	fmt.Println("KEY=", module.Key("APP_ENV"))
-	fmt.Println("VAL=", envStr)
 	env := configEntity.EnvDevelopment
 	switch envStr {
 	case "staging":
