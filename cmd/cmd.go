@@ -22,7 +22,7 @@ func Execute() {
 }
 
 func init() {
-	mainCMD.SetHelpFunc(runHelp)
+	mainCMD.SetHelpTemplate(mainHelpTemplate)
 	mainCMD.AddCommand(runGRPC)
 	mainCMD.AddCommand(runREST)
 	mainCMD.AddCommand(runMigrate)

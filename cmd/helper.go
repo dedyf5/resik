@@ -5,12 +5,9 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/dedyf5/resik/app/grpc"
 	"github.com/dedyf5/resik/app/rest"
 	"github.com/dedyf5/resik/cmd/migrator"
-	"github.com/dedyf5/resik/config"
 	"github.com/spf13/cobra"
 )
 
@@ -74,17 +71,19 @@ var runMigrateVersion = &cobra.Command{
 	},
 }
 
-var runHelp = func(_ *cobra.Command, _ []string) {
-	fmt.Print(config.AppLogoASCII + usage)
-}
+var mainHelpTemplate = `{{with (or .Long .Short)}}{{. | trimTrailingWhitespaces}}
 
-var usage = `
-Usage:
-  [command]
+{{end}}Usage:
+  {{.UseLine}}{{if .HasAvailableSubCommands}}
 
-Available Commands:
-  grpc 		To run gRPC app
-  rest 		To run REST app
-  migrate	Database migration commands
+Available Commands:{{range .Commands}}{{if (or .IsAvailableCommand (eq .Name "help"))}}
+  {{rpad .Name .NamePadding }} {{.Short}}{{end}}{{end}}{{end}}{{if .HasAvailableLocalFlags}}
 
+Flags:
+{{.LocalFlags.FlagUsages | trimTrailingWhitespaces}}{{end}}{{if .HasAvailableInheritedFlags}}
+
+Global Flags:
+{{.InheritedFlags.FlagUsages | trimTrailingWhitespaces}}{{end}}
+
+Use "{{.CommandPath}} [command] --help" for more information about a command.
 `
