@@ -42,7 +42,8 @@ func InitializeHTTP() (*App, func(), error) {
 	validate := validator.New(tag)
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
-	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig)
+	bool2 := _wireBoolValue
+	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig, bool2)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -79,6 +80,7 @@ func InitializeHTTP() (*App, func(), error) {
 
 var (
 	_wireConfigValue = *configGeneral
+	_wireBoolValue   = false
 )
 
 // wire.go:
@@ -91,7 +93,7 @@ var utilSet = wire.NewSet(validator.New, log.Get)
 
 var interceptorSet = wire.NewSet(middleware.NewInterceptor)
 
-var connSet = wire.NewSet(drivers.NewMySQLConnection, drivers.NewGorm)
+var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm)
 
 var gormRepoSet = wire.NewSet(merchant.New, transaction.New, user.New, wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)))
 

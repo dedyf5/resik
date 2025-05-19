@@ -44,12 +44,13 @@ type SQLConfig struct {
 	IsDebug         bool
 }
 
-func NewMySQLConnection(config SQLConfig) (*sql.DB, func(), error) {
+func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func(), error) {
 	dsnCfgs := map[string]string{
-		"charset":    "utf8",
-		"parseTime":  "True",
-		"loc":        "Asia%2FJakarta",
-		"autocommit": "True",
+		"charset":         "utf8",
+		"parseTime":       "True",
+		"loc":             "Asia%2FJakarta",
+		"multiStatements": fmt.Sprintf("%t", isMultiStatements),
+		"autocommit":      "True",
 	}
 	dsnCfgStr := make([]string, 0)
 	for key, val := range dsnCfgs {

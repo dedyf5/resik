@@ -25,4 +25,9 @@ func init() {
 	mainCMD.SetHelpFunc(runHelp)
 	mainCMD.AddCommand(runGRPC)
 	mainCMD.AddCommand(runREST)
+	mainCMD.AddCommand(runMigrate)
+
+	runMigrate.AddCommand(runMigrateUp)
+	runMigrate.AddCommand(runMigrateDown)
+	runMigrate.AddCommand(runMigrateVersion)
 }

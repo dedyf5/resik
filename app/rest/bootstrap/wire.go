@@ -52,6 +52,7 @@ var fwSet = wire.NewSet(
 )
 
 var connSet = wire.NewSet(
+	wire.Value(false),
 	drivers.NewMySQLConnection,
 	drivers.NewGorm,
 )
