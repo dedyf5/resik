@@ -37,6 +37,11 @@ services:
       AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
       # ... other secret path variables for REST mode ...
 
+      # Database connection details passed directly as environment variables.
+      # The Go application should read these from the container's environment.
+      DATABASE_HOST: mariadb # Uses the MariaDB service name as the hostname within the Docker network.
+      DATABASE_PORT: 3306
+
     # 3. Grant This Container Access to the Required Secrets
     #    List of secret names defined in the global 'secrets' section below.
     secrets:
@@ -51,9 +56,10 @@ services:
     # Container restart policy.
     restart: always
 
-    # Optional: Defines dependencies (this container needs the database to run)
-    # depends_on:
-    #   - mariadb
+    # Defines service dependencies. This container requires the database to be healthy.
+    depends_on:
+      mariadb:
+        condition: service_healthy # Waits for MariaDB to be healthy before starting.
 
   # --- Golang Application Service (gRPC Mode) ---
   # This is another container instance running the resik binary in gRPC mode.
@@ -83,6 +89,9 @@ services:
       AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
       # ... other secret path variables for GRPC mode ...
 
+      DATABASE_HOST: mariadb
+      DATABASE_PORT: 3306
+
     # 3. Grant This Container Access to the Required Secrets
     #    List of secret names defined in the global 'secrets' section below.
     secrets:
@@ -97,6 +106,71 @@ services:
 
     # Container restart policy.
     restart: always
+
+    depends_on:
+      mariadb:
+        condition: service_healthy # Waits for MariaDB to be healthy before starting.
+
+  # --- Database Migration Service ---
+  # This container is designed to run database migrations and then exit.
+  # It will be explicitly invoked by the CI/CD pipeline (e.g., 'docker compose run --rm resik-migrate migrate up').
+  # The 'command' specified here is the default, but it will be overridden by the 'docker compose run' command
+  # when executed in CI/CD.
+  resik-migrate:
+    build: . # Uses the same Dockerfile as the application.
+    image: resik:latest # Uses the same application image.
+    container_name: resik_migrate_container
+    networks:
+      - app-network
+    env_file:
+      - .env # This file must be in the project root
+    environment:
+      # Database connection details needed for the migration tool.
+      DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username
+      DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password
+      DATABASE_HOST: mariadb
+      DATABASE_PORT: 3306
+    secrets:
+      - database_username
+      - database_password
+    command: ["migrate", "up"] # The command to run the migrations.
+    restart: "no" # CRUCIAL: Migrations are a one-off task; the container should not restart if completed or failed.
+    depends_on:
+      mariadb:
+        condition: service_healthy # Migrations must wait for MariaDB to be healthy.
+
+  # --- MariaDB Database Service ---
+  mariadb:
+    image: mariadb:11.4 # Uses MariaDB version 11.4 LTS as requested.
+    container_name: mariadb_container
+    networks:
+      - app-network
+    ports:
+      - "3307:3306" # Optional: Publishes the DB port to the host for external access (e.g., MySQL Workbench).
+    environment:
+      # Environment variables for MariaDB initialization.
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/database_root_password # Reads root password from Docker secret file.
+      MYSQL_DATABASE: ${DATABASE_SCHEMA} # Database name to be created.
+      MYSQL_USER_FILE: /run/secrets/database_username # Reads username from Docker secret file.
+      MYSQL_PASSWORD_FILE: /run/secrets/database_password # Reads password from Docker secret file.
+    volumes:
+      # Mounts a named volume for persistent database data.
+      # Data in this volume will persist even if the MariaDB container is removed.
+      - db_data:/var/lib/mysql
+      # Optional: Uncomment if you have SQL scripts for initial database setup.
+      # These scripts will be executed by MariaDB's entrypoint when the container starts for the first time.
+      # - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck: # Healthcheck to ensure the database is ready to accept connections.
+      test: ["CMD-SHELL", "password=$$(cat /run/secrets/database_root_password) && mariadb-admin ping -h localhost -u root -p\"$$password\""]
+      interval: 10s # Checks every 10 seconds.
+      timeout: 5s # Times out after 5 seconds if no response.
+      retries: 5 # Retries 5 times before declaring unhealthy.
+      start_period: 30s # Gives the database 30 seconds to start up initially before health checks begin.
+    restart: always # Always restarts the database container if it stops.
+    secrets:
+      - database_root_password
+      - database_username
+      - database_password
 
 # ============================================================================
 # NETWORKS: Defines custom networks to connect services
@@ -123,7 +197,18 @@ secrets:
   database_password:
     file: ./.secrets/database_password.txt # Path to file on HOST
 
+  database_root_password:
+    file: ./.secrets/database_root_password.txt # Path to file on HOST
+
   auth_signature_key:
     file: ./.secrets/auth_signature_key.txt # Path to file on HOST
 
   # ... other secrets needed ...
+
+# ============================================================================
+# VOLUMES: Defines named volumes for persistent data storage.
+# Data in named volumes persists even if containers are removed, providing
+# data longevity for stateful services like databases.
+# ============================================================================
+volumes:
+  db_data:
