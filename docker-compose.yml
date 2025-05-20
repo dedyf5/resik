@@ -24,17 +24,17 @@ services:
 
     # 1. Load Standard (Non-Sensitive) Configuration from the .env file
     env_file:
-      - ./app/rest/config/.env # This file must be in the project root
+      - .env # This file must be in the project root
 
     # 2. Set Environment Variables Pointing to Secret File Paths
     #    These variables are only relevant inside containers using Docker Secrets.
     #    The variable names here MUST MATCH what the Golang code (config.go) looks for.
     environment:
       # Secret path for Database (following REST consistent naming)
-      REST_DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username # /run/secrets/ + secret name
-      REST_DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password # /run/secrets/ + secret name
+      DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username # /run/secrets/ + secret name
+      DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password # /run/secrets/ + secret name
       # Secret path for Auth Signature Key (following REST consistent naming)
-      REST_AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
+      AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
       # ... other secret path variables for REST mode ...
 
     # 3. Grant This Container Access to the Required Secrets
@@ -71,16 +71,16 @@ services:
 
     # 1. Load Standard (Non-Sensitive) Configuration from the .env file
     env_file:
-      - ./app/grpc/config/.env # Using the same .env file
+      - .env # This file must be in the project root
 
     # 2. Set Environment Variables Pointing to Secret File Paths
     #    Use consistent naming for gRPC mode.
     environment:
       # Secret path for Database (following GRPC consistent naming)
-      GRPC_DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username # /run/secrets/ + secret name
-      GRPC_DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password # /run/secrets/ + secret name
+      DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username # /run/secrets/ + secret name
+      DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password # /run/secrets/ + secret name
       # Secret path for Auth Signature Key (following GRPC consistent naming)
-      GRPC_AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
+      AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
       # ... other secret path variables for GRPC mode ...
 
     # 3. Grant This Container Access to the Required Secrets

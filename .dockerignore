@@ -1,7 +1,7 @@
+.secrets
 .git
-app/grpc/config/.env
-app/rest/config/.env
 logs/
 .vscode/
 .DS_Store
+.env
 resik

@@ -36,10 +36,14 @@ type (
 )
 
 func Load(module configEntity.Module) *Config {
-	viper.SetConfigType("env")
-	viper.SetConfigFile(fmt.Sprintf("./app/%s/config/.env", module.DirectoryName()))
-	if err := viper.ReadInConfig(); err != nil {
-		log.Print("WARNING: Failed to read env", err.Error())
+	if _, err := os.Stat(".env"); err == nil {
+		viper.SetConfigType("env")
+		viper.SetConfigFile(".env")
+		if err := viper.ReadInConfig(); err != nil {
+			log.Printf("WARNING: Failed to read .env file: %v", err)
+		}
+	} else {
+		log.Print("INFO: No .env file found, relying on environment variables")
 	}
 
 	viper.AutomaticEnv()
@@ -108,18 +112,18 @@ func (conf *Config) loadHTTP(module configEntity.Module) {
 
 func (conf *Config) loadDatabase(module configEntity.Module) {
 	db := drivers.SQLConfig{}
-	switch viper.GetString(module.Key("DATABASE_ENGINE")) {
+	switch viper.GetString("DATABASE_ENGINE") {
 	case "mysql":
 		db.Engine = drivers.MySQL
 	case "postgres":
 		db.Engine = drivers.PostgreSQL
 	}
 
-	db.Host = viper.GetString(module.Key("DATABASE_HOST"))
-	db.Port = viper.GetInt(module.Key("DATABASE_PORT"))
-	db.Username = getSecretFromFileOrEnv(module.Key("DATABASE_USERNAME_PATH_FILE"), module.Key("DATABASE_USERNAME"))
-	db.Password = getSecretFromFileOrEnv(module.Key("DATABASE_PASSWORD_PATH_FILE"), module.Key("DATABASE_PASSWORD"))
-	db.Schema = viper.GetString(module.Key("DATABASE_SCHEMA"))
+	db.Host = viper.GetString("DATABASE_HOST")
+	db.Port = viper.GetInt("DATABASE_PORT")
+	db.Username = getSecretFromFileOrEnv("DATABASE_USERNAME_PATH_FILE", "DATABASE_USERNAME")
+	db.Password = getSecretFromFileOrEnv("DATABASE_PASSWORD_PATH_FILE", "DATABASE_PASSWORD")
+	db.Schema = viper.GetString("DATABASE_SCHEMA")
 	db.MaxOpenConns = viper.GetInt(module.Key("DATABASE_MAX_OPEN_CONS"))
 	db.MaxIdleConns = viper.GetInt(module.Key("DATABASE_MAX_IDLE_CONS"))
 	db.ConnMaxLifetime = viper.GetInt(module.Key("DATABASE_CONN_MAX_LIFETIME"))
@@ -131,7 +135,7 @@ func (conf *Config) loadDatabase(module configEntity.Module) {
 func (conf *Config) loadAuth(module configEntity.Module) {
 	conf.Auth = configEntity.Auth{
 		Expires:      viper.GetUint64(module.Key("AUTH_EXPIRES")),
-		SignatureKey: getSecretFromFileOrEnv(module.Key("AUTH_SIGNATURE_KEY_PATH_FILE"), module.Key("AUTH_SIGNATURE_KEY")),
+		SignatureKey: getSecretFromFileOrEnv("AUTH_SIGNATURE_KEY_PATH_FILE", "AUTH_SIGNATURE_KEY"),
 	}
 }
 

@@ -52,8 +52,6 @@ WORKDIR /opt/resik
 
 # Copy artifacts from builder stage
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/resik .
-COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/app/grpc/config ./app/grpc/config
-COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/app/rest/config ./app/rest/config
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/app/rest/docs ./app/rest/docs
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/static ./static
 
