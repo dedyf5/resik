@@ -1,0 +1,76 @@
+name: CI (Testing Phase)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.3"
+
+      - name: Install protoc and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
+
+          if [ -n "$ACT" ]; then
+            sudo apt-get install -y gh
+          fi
+
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+          go install github.com/favadi/protoc-go-inject-tag@latest
+          go install github.com/google/wire/cmd/wire@latest
+          go install github.com/swaggo/swag/cmd/swag@latest
+
+      - name: Set up Go modules
+        run: |
+          go mod download
+          go mod tidy
+          go mod verify
+
+      - name: Run 'make generate'
+        run: |
+          make generate-proto PROTOC_FLAGS="--experimental_allow_proto3_optional"
+          go mod tidy
+          make generate-doc
+          make generate-wire
+
+      - name: Run Go tests
+        run: go test ./... -v
+
+      - name: Log test success
+        if: success()
+        run: echo "✅ All tests passed."
+
+  trigger_deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Install GitHub CLI (for act)
+        if: env.ACT
+        run: sudo apt-get update && sudo apt-get install -y gh
+
+      - name: Trigger CD Workflow
+        run: |
+          echo "Triggering CD workflow..."
+          # Login to GitHub CLI using the secret token.
+          gh auth login --with-token ${{ secrets.CD_REPO_TOKEN }}
+
+          # Triggering the workflow in the target repository.
+          # -r: Specifies the target repository (owner/repo-name).
+          # -f ref=main: Passes the 'ref' input to the target workflow, which will be used to checkout the 'main' branch in the target repo.
+          gh workflow run ${{ vars.CD_REPO_WORKFLOW_NAME }} -r ${{ vars.CD_REPO_PATH }} -f ref=main
