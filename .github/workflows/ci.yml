@@ -74,4 +74,4 @@ jobs:
           gh api -X POST \
             /repos/${{ vars.CD_REPO_PATH }}/dispatches \
             -f event_type=trigger_deploy \
-            -F client_payload='{"ref":"${GITHUB_REF}"}'
+            -F client_payload="{\"ref\":\"${GITHUB_REF}\"}"
