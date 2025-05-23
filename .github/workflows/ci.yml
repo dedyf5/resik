@@ -73,5 +73,5 @@ jobs:
           # Triggering the workflow in the target repository.
           gh api -X POST \
             /repos/${{ vars.CD_REPO_PATH }}/dispatches \
-            -f event_type="trigger_deploy" \
-            -f client_payload='{"ref": "${{ github.ref }}"}'
+            -f event_type=trigger_deploy \
+            -F client_payload='{"ref":"${GITHUB_REF}"}'
