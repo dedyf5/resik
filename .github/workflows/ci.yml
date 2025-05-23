@@ -71,6 +71,7 @@ jobs:
           gh auth login --with-token ${{ secrets.CD_REPO_TOKEN }}
 
           # Triggering the workflow in the target repository.
-          # -r: Specifies the target repository (owner/repo-name).
-          # -f ref=main: Passes the 'ref' input to the target workflow, which will be used to checkout the 'main' branch in the target repo.
-          gh workflow run ${{ vars.CD_REPO_WORKFLOW_NAME }} -r ${{ vars.CD_REPO_PATH }} -f ref=main
+          gh api -X POST \
+            /repos/${{ vars.CD_REPO_PATH }}/dispatches \
+            -f event_type="trigger_deploy" \
+            -f client_payload='{"ref": "${{ github.ref }}"}'
