@@ -18,7 +18,7 @@ services:
       - app-network
     # Publishes the REST port from the container to the host.
     ports:
-      - "8081:8081" # HOST_PORT:CONTAINER_PORT
+      - "${REST_APP_PORT}:${REST_APP_PORT}" # HOST_PORT:CONTAINER_PORT
 
     # --- Application Configuration (Hybrid: Env Var + Secrets) ---
 
@@ -71,7 +71,7 @@ services:
       - app-network
     # Publishes the gRPC port from the container to the host.
     ports:
-      - "7071:7071" # HOST_PORT:CONTAINER_PORT
+      - "${GRPC_APP_PORT}:${GRPC_APP_PORT}" # HOST_PORT:CONTAINER_PORT
 
     # --- Application Configuration (Hybrid: Env Var + Secrets) ---
 
