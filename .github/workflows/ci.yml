@@ -68,10 +68,11 @@ jobs:
         run: |
           echo "Triggering CD workflow..."
           # Login to GitHub CLI using the secret token.
-          gh auth login --with-token ${{ secrets.CD_REPO_TOKEN }}
+          gh auth login --with-token <<< ${{ secrets.CD_REPO_TOKEN }}
 
           # Triggering the workflow in the target repository.
           gh api -X POST \
             /repos/${{ vars.CD_REPO_PATH }}/dispatches \
             -f event_type=trigger_deploy \
-            -F client_payload="{\"ref\":\"${GITHUB_REF}\"}"
+            -H "Accept: application/vnd.github.everest-preview+json" \
+            --input <(echo '{"event_type":"trigger_deploy","client_payload":{"ref":"'"${GITHUB_REF}"'"}}')
