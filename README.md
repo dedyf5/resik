@@ -13,7 +13,7 @@ go run main.go grpc
 ```
 #### Help
 ```
-go run main.go help
+go run main.go --help
 ```
 
 ### Features
