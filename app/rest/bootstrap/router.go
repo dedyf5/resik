@@ -63,7 +63,9 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 
 	docs.SwaggerInforest.Title = r.config.App.Name
 	docs.SwaggerInforest.Version = r.config.App.Version
-	docs.SwaggerInforest.Host = r.config.App.HostPort()
+	docs.SwaggerInforest.Host = r.config.App.Public.HostPort()
+	docs.SwaggerInforest.Schemes = []string{r.config.App.Public.Schema}
+	docs.SwaggerInforest.BasePath = r.config.App.Public.BasePath
 	docs.SwaggerInforest.Description = r.config.App.APIDocDescription()
 	docHandler := echoSwagger.EchoWrapHandler(
 		echoSwagger.InstanceName(docs.SwaggerInforest.InfoInstanceName),

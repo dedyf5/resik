@@ -101,6 +101,12 @@ func (conf *Config) loadApp(module configEntity.Module) {
 		LangDefault: langCtx.GetLanguageOrDefault(viper.GetString(module.Key("APP_LANG_DEFAULT"))),
 		Host:        viper.GetString(module.Key("APP_HOST")),
 		Port:        viper.GetUint(module.Key("APP_PORT")),
+		Public: configEntity.AppPublic{
+			Host:     viper.GetString(module.Key("APP_PUBLIC_HOST")),
+			Port:     viper.GetUint(module.Key("APP_PUBLIC_PORT")),
+			Schema:   viper.GetString(module.Key("APP_PUBLIC_SCHEMA")),
+			BasePath: viper.GetString(module.Key("APP_PUBLIC_BASE_PATH")),
+		},
 	}
 }
 

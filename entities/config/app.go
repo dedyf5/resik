@@ -34,6 +34,14 @@ type App struct {
 	LangDefault language.Tag
 	Host        string
 	Port        uint
+	Public      AppPublic
+}
+
+type AppPublic struct {
+	Host     string
+	Port     uint
+	Schema   string
+	BasePath string
 }
 
 func (a *App) HostPort() string {
@@ -50,4 +58,11 @@ func (t Module) DirectoryName() string {
 
 func (t Module) Key(k string) string {
 	return fmt.Sprintf("%v_%v", t, k)
+}
+
+func (p *AppPublic) HostPort() string {
+	if p.Port == 0 {
+		return p.Host
+	}
+	return fmt.Sprintf("%v:%v", p.Host, p.Port)
 }
