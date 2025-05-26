@@ -103,7 +103,7 @@ go run main.go --help
 
 You can run the tests using the following command:
 
-## Using `make test`
+### Using `make test`
 
 ```bash
 make test
