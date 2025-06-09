@@ -96,8 +96,21 @@ go run main.go --help
 
 ## API Documentation
 
-- REST API: [Swagger UI](http://localhost:8081/swagger/index.html) (after running the app)
-- gRPC: Proto files are located under the [app/grpc/](/app/grpc/) and [core/](/core/) directories. Look for files with the `.proto` extension.
+### REST API
+
+- **Server Address**:
+  - Default: `http://localhost:8081`
+  - Configurable in `.env` using: `REST_APP_PUBLIC_SCHEMA`, `REST_APP_PUBLIC_HOST`, `REST_APP_PUBLIC_PORT`.
+- **Swagger UI**:
+  - Accessible at the server address (e.g., http://localhost:8081/docs/swagger/index.html) after running the app.
+
+### gRPC API
+
+- **Server Address**:
+  - Default: `grpc://localhost:7071`
+  - Configurable in `.env` using: `GRPC_APP_HOST`, `GRPC_APP_PORT`.
+- **API Definitions (Proto Files)**:
+  - Located under the [app/grpc/](/app/grpc/) and [core/](/core/) directories.
 
 ## Testing
 
