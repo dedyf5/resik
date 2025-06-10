@@ -11,6 +11,7 @@ Clean Architecture implementation in Golang for building REST and gRPC applicati
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Configuration](#configuration)
+  - [Database Migration](#database-migration)
   - [How to run Resik?](#how-to-run-resik)
 - [API Documentation](#api-documentation)
 - [Testing](#testing)
@@ -28,6 +29,7 @@ Clean Architecture implementation in Golang for building REST and gRPC applicati
   - Form Validation
   - JWT Authentication & Authorization
   - Dependency Injection
+  - Database Migration Support
   - Structured Logging
 
 - **Developer Experience**
@@ -72,6 +74,14 @@ Copy `.env.example` to `.env` and modify the values:
 
 ```bash
 cp .env.example .env
+```
+
+### Database Migration
+
+Before running the application for the first time, or after any database schema changes, you need to run the database migrations. Use the following command:
+
+```bash
+go run main.go migrate up
 ```
 
 ### How to run Resik?
