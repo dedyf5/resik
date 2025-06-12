@@ -5,10 +5,10 @@
 package outlet
 
 import (
+	"slices"
 	"time"
 
 	"github.com/dedyf5/resik/entities/merchant"
-	"github.com/dedyf5/resik/pkg/array"
 )
 
 const TABLE_NAME = "outlet"
@@ -40,7 +40,7 @@ func GetUniqueMerchantIDsAndOutletIDs(outlets []Outlet) (merchantIDs, OutletIDs 
 		if v.ID > 0 {
 			OIDs = append(OIDs, v.ID)
 		}
-		if array.InArray(v.MerchantID, MIDs) < 0 {
+		if !slices.Contains(MIDs, v.MerchantID) {
 			MIDs = append(MIDs, v.MerchantID)
 		}
 	}

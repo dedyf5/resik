@@ -7,6 +7,7 @@ package middleware
 import (
 	"context"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
@@ -15,7 +16,6 @@ import (
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
-	"github.com/dedyf5/resik/pkg/array"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/rs/xid"
 	"golang.org/x/text/language"
@@ -115,7 +115,7 @@ func (i *Interceptor) validateJWT(c context.Context, lang *langCtx.Lang, signatu
 	if i.methodRoles[fullMethod] == nil {
 		return &c, nil
 	}
-	if array.InArray(RoleValidToken, i.methodRoles[fullMethod]) < 0 {
+	if !slices.Contains(i.methodRoles[fullMethod], RoleValidToken) {
 		return &c, nil
 	}
 	if len(meta["authorization"]) != 1 {

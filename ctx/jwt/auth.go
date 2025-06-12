@@ -8,12 +8,12 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
 	"github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/entities/config"
-	"github.com/dedyf5/resik/pkg/array"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -44,7 +44,7 @@ func (a *AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, status 
 	if a == nil {
 		return a.statusUnauthorized()
 	}
-	if array.InArray(merchantID, a.MerchantIDs) < 0 {
+	if !slices.Contains(a.MerchantIDs, merchantID) {
 		return a.statusUnauthorized()
 	}
 	return true, nil
@@ -54,7 +54,7 @@ func (a *AuthClaims) OutletIDIsAccessible(outletID uint64) (ok bool, status *res
 	if a == nil {
 		return a.statusUnauthorized()
 	}
-	if array.InArray(outletID, a.OutletIDs) < 0 {
+	if !slices.Contains(a.OutletIDs, outletID) {
 		return a.statusUnauthorized()
 	}
 	return true, nil

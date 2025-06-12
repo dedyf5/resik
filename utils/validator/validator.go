@@ -11,11 +11,11 @@ import (
 	"net/http"
 	"reflect"
 	"regexp"
+	"slices"
 	"strings"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	transLang "github.com/dedyf5/resik/ctx/lang/translations"
-	"github.com/dedyf5/resik/pkg/array"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -167,7 +167,7 @@ func isOneOfOrder(fl validator.FieldLevel) bool {
 
 	fields := strings.Split(fl.Field().String(), ",")
 	for _, field := range fields {
-		if array.InArray(field, vals) < 0 {
+		if !slices.Contains(vals, field) {
 			return false
 		}
 	}

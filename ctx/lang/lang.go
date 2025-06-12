@@ -10,10 +10,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"strings"
 
 	commonEntity "github.com/dedyf5/resik/entities/common"
-	"github.com/dedyf5/resik/pkg/array"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
@@ -145,7 +145,7 @@ func LanguageIsAvailable(lang string) (bool, *resPkg.Status) {
 	for _, v := range Available {
 		langCodes = append(langCodes, v.String())
 	}
-	if array.InArray(lang, langCodes) < 0 {
+	if !slices.Contains(langCodes, lang) {
 		msg := fmt.Sprintf("lang must be one of [%s]", strings.Join(langCodes, ", "))
 		return false, &resPkg.Status{
 			Code:    http.StatusBadRequest,
