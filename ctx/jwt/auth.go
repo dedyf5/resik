@@ -44,17 +44,18 @@ func (a *AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, status 
 	if a == nil {
 		return a.statusUnauthorized()
 	}
-	if !slices.Contains(a.MerchantIDs, merchantID) {
-		return a.statusUnauthorized()
-	}
-	return true, nil
+	return a.checkAccess(a.MerchantIDs, merchantID)
 }
 
 func (a *AuthClaims) OutletIDIsAccessible(outletID uint64) (ok bool, status *resPkg.Status) {
 	if a == nil {
 		return a.statusUnauthorized()
 	}
-	if !slices.Contains(a.OutletIDs, outletID) {
+	return a.checkAccess(a.OutletIDs, outletID)
+}
+
+func (a *AuthClaims) checkAccess(IDs []uint64, ID uint64) (ok bool, status *resPkg.Status) {
+	if !slices.Contains(IDs, ID) {
 		return a.statusUnauthorized()
 	}
 	return true, nil
