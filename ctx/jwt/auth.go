@@ -98,7 +98,7 @@ func AuthClaimsFromString(tokenString string, signatureKey string, lang *lang.La
 			CauseError: errors.New("missing value in request header"),
 		}
 	}
-	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(t *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(t *jwt.Token) (any, error) {
 		return []byte(signatureKey), nil
 	})
 	if err != nil {
