@@ -9,10 +9,14 @@ package bootstrap
 import (
 	"github.com/dedyf5/resik/app/rest/fw/echo"
 	"github.com/dedyf5/resik/app/rest/handler/general"
+	"github.com/dedyf5/resik/app/rest/handler/health"
 	merchant2 "github.com/dedyf5/resik/app/rest/handler/merchant"
 	transaction2 "github.com/dedyf5/resik/app/rest/handler/transaction"
 	user2 "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
+	health2 "github.com/dedyf5/resik/core/health"
+	"github.com/dedyf5/resik/core/health/checkers"
+	service4 "github.com/dedyf5/resik/core/health/service"
 	merchant3 "github.com/dedyf5/resik/core/merchant"
 	service2 "github.com/dedyf5/resik/core/merchant/service"
 	transaction3 "github.com/dedyf5/resik/core/transaction"
@@ -58,12 +62,16 @@ func InitializeHTTP() (*App, func(), error) {
 	serviceService := service.New(userRepo, config)
 	userHandler := user2.New(echoEcho, logLog, serviceService)
 	merchantRepo := merchant.New(gormDB)
-	service4 := service2.New(merchantRepo, config)
-	merchantHandler := merchant2.New(logLog, echoEcho, service4)
+	service5 := service2.New(merchantRepo, config)
+	merchantHandler := merchant2.New(logLog, echoEcho, service5)
 	transactionRepo := transaction.New(gormDB)
-	service5 := service3.New(transactionRepo, config)
-	transactionHandler := transaction2.New(echoEcho, logLog, service5, config)
-	router := newRouter(config, handler, userHandler, merchantHandler, transactionHandler)
+	service6 := service3.New(transactionRepo, config)
+	transactionHandler := transaction2.New(echoEcho, logLog, service6, config)
+	checker := checkers.NewDatabaseChecker(db, config)
+	v := provideCheckerSlice(checker)
+	iService := service4.New(v)
+	healthHandler := health.New(logLog, echoEcho, iService)
+	router := newRouter(config, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
 	bootstrapApp, cleanup3, err := newApp(serverHTTP, router)
 	if err != nil {
 		cleanup2()
@@ -96,6 +104,12 @@ var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers
 
 var gormRepoSet = wire.NewSet(user.New, merchant.New, transaction.New, wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
 
-var serviceSet = wire.NewSet(service.New, service2.New, service3.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)))
+var serviceSet = wire.NewSet(service.New, service2.New, service3.New, service4.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)))
 
-var handlerSet = wire.NewSet(general.New, user2.New, merchant2.New, transaction2.New)
+var handlerSet = wire.NewSet(general.New, user2.New, merchant2.New, transaction2.New, health.New)
+
+func provideCheckerSlice(dbChk health2.Checker) []health2.Checker {
+	return []health2.Checker{dbChk}
+}
+
+var healthCheckSet = wire.NewSet(checkers.NewDatabaseChecker, provideCheckerSlice)

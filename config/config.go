@@ -134,6 +134,7 @@ func (conf *Config) loadDatabase(module configEntity.Module) {
 	db.MaxIdleConns = viper.GetInt(module.Key("DATABASE_MAX_IDLE_CONS"))
 	db.ConnMaxLifetime = viper.GetInt(module.Key("DATABASE_CONN_MAX_LIFETIME"))
 	db.ConnMaxIdleTime = viper.GetInt(module.Key("DATABASE_CONN_MAX_IDLETIME"))
+	db.HealthCheckTimeoutSeconds = viper.GetInt("DATABASE_HEALTHCHECK_TIMEOUT_SECONDS")
 	db.IsDebug = viper.GetBool(module.Key("DATABASE_IS_DEBUG"))
 	conf.Database = db
 }

@@ -6,6 +6,7 @@ package bootstrap
 
 import (
 	generalHandler "github.com/dedyf5/resik/app/grpc/handler/general"
+	healthHandler "github.com/dedyf5/resik/app/grpc/handler/health"
 	merchantHandler "github.com/dedyf5/resik/app/grpc/handler/merchant"
 	trxHandler "github.com/dedyf5/resik/app/grpc/handler/transaction"
 	userHandler "github.com/dedyf5/resik/app/grpc/handler/user"
@@ -19,15 +20,17 @@ type Router struct {
 	merchantHandler *merchantHandler.MerchantHandler
 	trxHandler      *trxHandler.TransactionHandler
 	userHandler     *userHandler.UserHandler
+	healthHandler   *healthHandler.HealthHandler
 }
 
-func newRouter(config config.Config, generalHandler *generalHandler.GeneralHandler, merchantHandler *merchantHandler.MerchantHandler, trxHandler *trxHandler.TransactionHandler, userHandler *userHandler.UserHandler) *Router {
+func newRouter(config config.Config, generalHandler *generalHandler.GeneralHandler, merchantHandler *merchantHandler.MerchantHandler, trxHandler *trxHandler.TransactionHandler, userHandler *userHandler.UserHandler, healthHandler *healthHandler.HealthHandler) *Router {
 	return &Router{
 		config:          config,
 		generalHandler:  generalHandler,
 		merchantHandler: merchantHandler,
 		trxHandler:      trxHandler,
 		userHandler:     userHandler,
+		healthHandler:   healthHandler,
 	}
 }
 
@@ -36,4 +39,5 @@ func (r *Router) routerSetup(grpcServer *grpc.Server) {
 	merchantHandler.RegisterMerchantServiceServer(grpcServer, r.merchantHandler)
 	trxHandler.RegisterTransactionServiceServer(grpcServer, r.trxHandler)
 	userHandler.RegisterUserServiceServer(grpcServer, r.userHandler)
+	healthHandler.RegisterHealthServiceServer(grpcServer, r.healthHandler)
 }

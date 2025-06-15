@@ -10,6 +10,7 @@ import (
 	"github.com/dedyf5/resik/app/rest/docs"
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
 	generalHandler "github.com/dedyf5/resik/app/rest/handler/general"
+	healthHandler "github.com/dedyf5/resik/app/rest/handler/health"
 	merchantHandler "github.com/dedyf5/resik/app/rest/handler/merchant"
 	trxHandler "github.com/dedyf5/resik/app/rest/handler/transaction"
 	userHandler "github.com/dedyf5/resik/app/rest/handler/user"
@@ -23,15 +24,17 @@ type Router struct {
 	merchantHandler *merchantHandler.Handler
 	userHandler     *userHandler.Handler
 	trxHandler      *trxHandler.Handler
+	healthHandler   *healthHandler.HealthHandler
 }
 
-func newRouter(config config.Config, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, merchantHandler *merchantHandler.Handler, trxHandler *trxHandler.Handler) *Router {
+func newRouter(config config.Config, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, merchantHandler *merchantHandler.Handler, trxHandler *trxHandler.Handler, healthHandler *healthHandler.HealthHandler) *Router {
 	return &Router{
 		config:          config,
 		generalHandler:  generalHandler,
 		userHandler:     userHandler,
 		merchantHandler: merchantHandler,
 		trxHandler:      trxHandler,
+		healthHandler:   healthHandler,
 	}
 }
 
@@ -60,6 +63,10 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	trxMerchant.GET("/omzet", trxHandler.MerchantOmzetGet)
 	trxOutlet := trx.Group("/outlet/:id", validateToken, jwtMiddleware)
 	trxOutlet.GET("/omzet", trxHandler.OutletOmzetGet)
+
+	healthH := r.healthHandler
+	e.GET("/healthz", healthH.HealthHealthzGet)
+	e.GET("/readyz", healthH.HealthReadyzGet)
 
 	docs.SwaggerInforest.Title = r.config.App.Name
 	docs.SwaggerInforest.Version = r.config.App.Version

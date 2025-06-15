@@ -1,0 +1,29 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package health;
+
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/health";
+
+import "app/grpc/proto/status/status.proto";
+import "core/health/response/healthz.proto";
+import "core/health/response/readyz.proto";
+import "google/protobuf/empty.proto";
+
+message HealthHealthzGetRes {
+    status.Status Status = 1; // @gotags: json:"status"
+    response.HealthHealthz Data = 2; // @gotags: json:"data"
+}
+
+message HealthReadyzGetRes {
+    status.Status Status = 1; // @gotags: json:"status"
+    response.HealthReadyz Data = 2; // @gotags: json:"data"
+}
+
+service HealthService {
+    rpc HealthzGet(google.protobuf.Empty) returns (HealthHealthzGetRes);
+    rpc ReadyzGet(google.protobuf.Empty) returns (HealthReadyzGetRes);
+}

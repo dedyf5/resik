@@ -64,6 +64,35 @@ definitions:
         example: id
         type: string
     type: object
+  response.HealthHealthz:
+    properties:
+      accessed_at:
+        example: "2025-06-14 16:42:00"
+        type: string
+    type: object
+  response.HealthReadyz:
+    properties:
+      accessed_at:
+        example: "2025-06-14 16:42:00"
+        type: string
+      checks:
+        items:
+          $ref: '#/definitions/response.HealthReadyzCheck'
+        type: array
+      overall_status:
+        example: UP
+        type: string
+    type: object
+  response.HealthReadyzCheck:
+    properties:
+      error:
+        type: string
+      name:
+        type: string
+      status:
+        example: UP
+        type: string
+    type: object
   response.MerchantOmzet:
     properties:
       merchant_name:
@@ -205,6 +234,52 @@ paths:
       summary: Get Home
       tags:
       - home
+  /healthz:
+    get:
+      consumes:
+      - application/json
+      description: Checks if the application is running
+      parameters:
+      - enum:
+        - en
+        - id
+        - ja
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.HealthHealthz'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "503":
+          description: Service Unavailable
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Liveness check
+      tags:
+      - health
   /login:
     post:
       consumes:
@@ -517,6 +592,52 @@ paths:
       summary: Update Merchant
       tags:
       - merchant
+  /readyz:
+    get:
+      consumes:
+      - application/json
+      description: Checks if the application and its dependencies are ready
+      parameters:
+      - enum:
+        - en
+        - id
+        - ja
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.HealthReadyz'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+        "503":
+          description: Service Unavailable
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  type: object
+              type: object
+      summary: Readiness check
+      tags:
+      - health
   /token-refresh:
     get:
       consumes:

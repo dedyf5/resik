@@ -1,0 +1,12 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package response;
+option go_package = "github.com/dedyf5/resik/core/health/response";
+
+message HealthHealthz {
+    string AccessedAt = 1; // @gotags: json:"accessed_at" example:"2025-06-14 16:42:00"
+}

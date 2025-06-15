@@ -1,0 +1,20 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package response;
+option go_package = "github.com/dedyf5/resik/core/health/response";
+
+message HealthReadyz {
+    string OverallStatus = 1; // @gotags: json:"overall_status" example:"UP"
+    repeated HealthReadyzCheck Checks = 2; // @gotags: json:"checks"
+    string AccessedAt = 3; // @gotags: json:"accessed_at" example:"2025-06-14 16:42:00"
+}
+
+message HealthReadyzCheck {
+    string name = 1; // @gotags: json:"name"
+    string status = 2; // @gotags: json:"status" example:"UP"
+    optional string Error = 3; // @gotags: json:"error"
+}

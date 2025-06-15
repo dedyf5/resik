@@ -31,17 +31,18 @@ func (engine SQLEngine) String() string {
 }
 
 type SQLConfig struct {
-	Engine          SQLEngine
-	Host            string
-	Port            int
-	Username        string
-	Password        string
-	Schema          string
-	MaxOpenConns    int
-	MaxIdleConns    int
-	ConnMaxLifetime int
-	ConnMaxIdleTime int
-	IsDebug         bool
+	Engine                    SQLEngine
+	Host                      string
+	Port                      int
+	Username                  string
+	Password                  string
+	Schema                    string
+	MaxOpenConns              int
+	MaxIdleConns              int
+	ConnMaxLifetime           int
+	ConnMaxIdleTime           int
+	HealthCheckTimeoutSeconds int
+	IsDebug                   bool
 }
 
 func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func(), error) {

@@ -8,11 +8,15 @@ package bootstrap
 
 import (
 	"github.com/dedyf5/resik/app/grpc/handler/general"
+	"github.com/dedyf5/resik/app/grpc/handler/health"
 	merchant2 "github.com/dedyf5/resik/app/grpc/handler/merchant"
 	transaction2 "github.com/dedyf5/resik/app/grpc/handler/transaction"
 	user2 "github.com/dedyf5/resik/app/grpc/handler/user"
 	"github.com/dedyf5/resik/app/grpc/middleware"
 	"github.com/dedyf5/resik/config"
+	health2 "github.com/dedyf5/resik/core/health"
+	"github.com/dedyf5/resik/core/health/checkers"
+	service4 "github.com/dedyf5/resik/core/health/service"
 	merchant3 "github.com/dedyf5/resik/core/merchant"
 	"github.com/dedyf5/resik/core/merchant/service"
 	transaction3 "github.com/dedyf5/resik/core/transaction"
@@ -56,12 +60,16 @@ func InitializeHTTP() (*App, func(), error) {
 	serviceService := service.New(merchantRepo, config)
 	merchantHandler := merchant2.New(logLog, validate, serviceService)
 	transactionRepo := transaction.New(gormDB)
-	service4 := service2.New(transactionRepo, config)
-	transactionHandler := transaction2.New(config, logLog, validate, service4)
+	service5 := service2.New(transactionRepo, config)
+	transactionHandler := transaction2.New(config, logLog, validate, service5)
 	userRepo := user.New(gormDB)
-	service5 := service3.New(userRepo, config)
-	userHandler := user2.New(logLog, validate, service5)
-	router := newRouter(config, generalHandler, merchantHandler, transactionHandler, userHandler)
+	service6 := service3.New(userRepo, config)
+	userHandler := user2.New(logLog, validate, service6)
+	checker := checkers.NewDatabaseChecker(db, config)
+	v := provideCheckerSlice(checker)
+	iService := service4.New(v)
+	healthHandler := health.New(iService)
+	router := newRouter(config, generalHandler, merchantHandler, transactionHandler, userHandler, healthHandler)
 	auth := config.Auth
 	interceptor := middleware.NewInterceptor(app, auth, logLog)
 	serverHTTP := newServerHTTP(config, router, interceptor)
@@ -97,6 +105,12 @@ var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers
 
 var gormRepoSet = wire.NewSet(merchant.New, transaction.New, user.New, wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)))
 
-var serviceSet = wire.NewSet(service.New, service2.New, service3.New, wire.Bind(new(merchant3.IService), new(*service.Service)), wire.Bind(new(transaction3.IService), new(*service2.Service)), wire.Bind(new(user3.IService), new(*service3.Service)))
+var serviceSet = wire.NewSet(service.New, service2.New, service3.New, service4.New, wire.Bind(new(merchant3.IService), new(*service.Service)), wire.Bind(new(transaction3.IService), new(*service2.Service)), wire.Bind(new(user3.IService), new(*service3.Service)))
 
-var handlerSet = wire.NewSet(general.New, merchant2.New, transaction2.New, user2.New)
+var handlerSet = wire.NewSet(general.New, merchant2.New, transaction2.New, user2.New, health.New)
+
+func provideCheckerSlice(dbChk health2.Checker) []health2.Checker {
+	return []health2.Checker{dbChk}
+}
+
+var healthCheckSet = wire.NewSet(checkers.NewDatabaseChecker, provideCheckerSlice)
