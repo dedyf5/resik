@@ -33,8 +33,14 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o resik .
 # ----------------------------------------
 FROM alpine:3.21
 
-# Install minimal runtime dependencies
+# Install minimal runtime dependencies and healthcheck tools
 RUN apk add --no-cache ca-certificates tzdata && \
+    apk add --no-cache curl wget && \
+    # Install grpcurl - adjust version and architecture as needed
+    GRPCURL_VERSION=1.9.3 && \
+    wget "https://github.com/fullstorydev/grpcurl/releases/download/v${GRPCURL_VERSION}/grpcurl_${GRPCURL_VERSION}_linux_x86_64.tar.gz" -O /tmp/grpcurl.tar.gz && \
+    tar -xzf /tmp/grpcurl.tar.gz -C /usr/local/bin grpcurl && \
+    rm /tmp/grpcurl.tar.gz && \
     update-ca-certificates
 
 # Create non-root user and group
@@ -54,6 +60,12 @@ WORKDIR /opt/resik
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/resik .
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/app/rest/docs ./app/rest/docs
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/static ./static
+
+# Copy .proto files needed for grpcurl health checks
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/app/grpc/handler/health/health.proto ./app/grpc/handler/health/health.proto
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/app/grpc/proto/status/status.proto ./app/grpc/proto/status/status.proto
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/core/health/response/healthz.proto ./core/health/response/healthz.proto
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/core/health/response/readyz.proto ./core/health/response/readyz.proto
 
 # Switch to non-root user and set entrypoint
 USER ${APP_USER}

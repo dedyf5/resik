@@ -60,6 +60,14 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy # Waits for MariaDB to be healthy before starting.
+    healthcheck:
+      # Command to test the health. Uses curl to hit the /healthz endpoint.
+      # Exits with 0 if healthy (HTTP 2xx), non-zero otherwise.
+      test: ["CMD-SHELL", "curl -f http://localhost:${REST_APP_PORT}/healthz || exit 1"]
+      interval: 15s # How often to run the check.
+      timeout: 5s # How long to wait for a response.
+      retries: 3 # How many consecutive failures before marking as unhealthy.
+      start_period: 20s # Grace period for the container to start before checks begin.
 
   # --- Golang Application Service (gRPC Mode) ---
   # This is another container instance running the resik binary in gRPC mode.
@@ -110,6 +118,14 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy # Waits for MariaDB to be healthy before starting.
+    healthcheck:
+      # Command to test the health. Uses grpcurl to call the HealthzGet method.
+      # Exits with 0 if healthy, non-zero otherwise.
+      test: ["CMD-SHELL", "grpcurl -plaintext -import-path ./ -proto app/grpc/handler/health/health.proto localhost:${GRPC_APP_PORT} health.HealthService/HealthzGet || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
   # --- Database Migration Service ---
   # This container is designed to run database migrations and then exit.
