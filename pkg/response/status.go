@@ -65,6 +65,8 @@ func (s *Status) GRPCStatus() *status.Status {
 		return status.New(codes.NotFound, s.MessageOrDefault())
 	case http.StatusInternalServerError:
 		return status.New(codes.Internal, s.MessageOrDefault())
+	case http.StatusServiceUnavailable:
+		return status.New(codes.Unavailable, s.MessageOrDefault())
 	default:
 		return status.New(codes.Unknown, s.MessageOrDefault())
 	}

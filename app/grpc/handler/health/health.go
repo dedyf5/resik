@@ -6,11 +6,13 @@ package health
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	status "github.com/dedyf5/resik/app/grpc/proto/status"
 	coreHealth "github.com/dedyf5/resik/core/health"
 	"github.com/dedyf5/resik/core/health/response"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/dedyf5/resik/utils/datetime"
 	codes "google.golang.org/grpc/codes"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -29,15 +31,16 @@ func New(hs coreHealth.IService) *HealthHandler {
 
 func (h *HealthHandler) HealthzGet(c context.Context, _ *emptypb.Empty) (*HealthHealthzGetRes, error) {
 	isLive, statusMsg := h.healthService.LivenessCheck(c)
-	code := codes.OK
 	if !isLive {
-		statusMsg = "NOT_SERVING"
-		code = codes.Unavailable
+		return nil, &resPkg.Status{
+			Code:    http.StatusServiceUnavailable,
+			Message: "NOT_SERVING",
+		}
 	}
 
 	return &HealthHealthzGetRes{
 		Status: &status.Status{
-			Code:    status.CodePlus(code),
+			Code:    status.CodePlus(codes.OK),
 			Message: statusMsg,
 		},
 		Data: &response.HealthHealthz{
