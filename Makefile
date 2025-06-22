@@ -2,7 +2,7 @@ GOCMD=go
 GOGENERATE=$(GOCMD) generate
 
 ## generate: Generate files
-generate: generate-proto generate-doc generate-wire
+generate: generate-proto generate-doc generate-go
 
 ## generate-proto: Generate gRPC files
 generate-grpc: generate-proto generate-wire
@@ -25,6 +25,10 @@ generate-proto:
 generate-wire:
 	wire gen ./app/grpc/bootstrap
 	wire gen ./app/rest/bootstrap
+
+## generate-go: Run go generate to create mocks, wire and other generated files
+generate-go:
+	$(GOGENERATE) ./...
 
 ## generate-doc: Generate documentation
 generate-doc:
