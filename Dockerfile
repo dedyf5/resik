@@ -8,6 +8,7 @@ RUN apk add --no-cache git gcc musl-dev make protoc protobuf protobuf-dev
 
 # Install required Go tools (pinned versions)
 RUN go install github.com/google/wire/cmd/wire@v0.6.0 && \
+    go install github.com/golang/mock/mockgen@latest && \
     go install github.com/swaggo/swag/cmd/swag@v1.16.4 && \
     go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.6 && \
     go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1 && \
