@@ -68,17 +68,11 @@ COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/app/grpc/proto/status/
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/core/health/response/healthz.proto ./core/health/response/healthz.proto
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/core/health/response/readyz.proto ./core/health/response/readyz.proto
 
-# Add OCI labels for GitHub Package linking and other metadata.
-ARG BUILD_DATE
-ARG BUILD_SHA
-ARG VERSION
+# Add OCI labels for GitHub Package linking.
 LABEL org.opencontainers.image.source="https://github.com/dedyf5/resik" \
       org.opencontainers.image.title="Resik" \
       org.opencontainers.image.description="Clean Architecture implementation in Golang for building REST and gRPC applications." \
-      org.opencontainers.image.licenses="MIT" \
-      org.opencontainers.image.created=$BUILD_DATE \
-      org.opencontainers.image.revision=$BUILD_SHA \
-      org.opencontainers.image.version=$VERSION
+      org.opencontainers.image.licenses="MIT"
 
 # Switch to non-root user and set entrypoint
 USER ${APP_USER}
