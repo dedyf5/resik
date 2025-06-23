@@ -18,8 +18,8 @@ import (
 	trxParam "github.com/dedyf5/resik/entities/transaction/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	trxRepoMock "github.com/dedyf5/resik/repositories/mock"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 	"golang.org/x/text/language"
 )
 

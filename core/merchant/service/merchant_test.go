@@ -12,8 +12,8 @@ import (
 
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/ctx"
-	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 	"golang.org/x/text/language"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
