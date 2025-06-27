@@ -4,6 +4,7 @@
 
 package health
 
+//go:generate mockgen -source checker.go -package mock -destination ./mock/checker.go
 import "time"
 
 type CheckStatus string
