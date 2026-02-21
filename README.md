@@ -41,7 +41,7 @@ Clean Architecture implementation in Golang for building REST and gRPC applicati
 
 ### Prerequisites
 
-- Ensure you have **[Go](https://go.dev/)** (version 1.24 or higher) installed on your system.
+- Ensure you have **[Go](https://go.dev/)** (version 1.26 or higher) installed on your system.
 - You will need **[Make](https://www.gnu.org/software/make/)** to run build commands.
 - If you plan to work with gRPC definitions, you'll need to install **[protoc](https://protobuf.dev/installation/)** (the Protocol Buffer compiler), **[protoc-gen-go](https://github.com/protocolbuffers/protobuf-go)**, and **[protoc-gen-go-grpc](https://github.com/grpc/grpc-go/tree/master/cmd/protoc-gen-go-grpc)**.
 - If you intend to use API documentation generation, make sure you have **[swag](https://github.com/swaggo/swag)** installed.
