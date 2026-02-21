@@ -1,17 +1,17 @@
 # ----------------------------------------
 # Stage 1: Build Application
 # ----------------------------------------
-FROM golang:1.24.3-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 # Install build tools and dependencies
 RUN apk add --no-cache git gcc musl-dev make protoc protobuf protobuf-dev
 
 # Install required Go tools (pinned versions)
-RUN go install github.com/google/wire/cmd/wire@v0.6.0 && \
+RUN go install github.com/google/wire/cmd/wire@v0.7.0 && \
     go install go.uber.org/mock/mockgen@latest && \
-    go install github.com/swaggo/swag/cmd/swag@v1.16.4 && \
-    go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.6 && \
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.5.1 && \
+    go install github.com/swaggo/swag/cmd/swag@v1.16.6 && \
+    go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.11 && \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest && \
     go install github.com/favadi/protoc-go-inject-tag@latest
 
 # Set working directory and enable module caching
