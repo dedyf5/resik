@@ -1,8 +1,6 @@
 module github.com/dedyf5/resik
 
-go 1.24.0
-
-toolchain go1.24.4
+go 1.26
 
 require (
 	github.com/go-playground/locales v0.14.1
