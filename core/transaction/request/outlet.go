@@ -26,11 +26,11 @@ func (o *OutletOmzetGet) ToParam(c *ctx.Ctx) *trxParam.OutletOmzetGet {
 	}
 	return &trxParam.OutletOmzetGet{
 		Ctx:      c,
-		OutletID: o.OutletID,
+		OutletID: o.OutletId,
 		GroupPeriod: groupperiod.GroupPeriod{
 			Mode:          groupperiod.Mode(o.Mode),
-			DatetimeStart: o.DateTimeStart,
-			DatetimeEnd:   o.DateTimeEnd,
+			DatetimeStart: o.DatetimeStart,
+			DatetimeEnd:   o.DatetimeEnd,
 		},
 		Filter: goku.Filter{
 			Search: o.Search,

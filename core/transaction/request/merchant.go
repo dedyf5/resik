@@ -26,11 +26,11 @@ func (m *MerchantOmzetGet) ToParam(c *ctx.Ctx) *trxParam.MerchantOmzetGet {
 	}
 	return &trxParam.MerchantOmzetGet{
 		Ctx:        c,
-		MerchantID: m.MerchantID,
+		MerchantID: m.MerchantId,
 		GroupPeriod: groupperiod.GroupPeriod{
 			Mode:          groupperiod.Mode(m.Mode),
-			DatetimeStart: m.DateTimeStart,
-			DatetimeEnd:   m.DateTimeEnd,
+			DatetimeStart: m.DatetimeStart,
+			DatetimeEnd:   m.DatetimeEnd,
 		},
 		Filter: goku.Filter{
 			Search: m.Search,

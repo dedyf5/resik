@@ -8,7 +8,7 @@ package response;
 option go_package = "github.com/dedyf5/resik/core/transaction/response";
 
 message MerchantOmzet {
-    string MerchantName = 1; // @gotags: json:"merchant_name" example:"Resik Merchant"
-    double Omzet = 2; // @gotags: json:"omzet" example:"5000.5"
-    string Period = 3; // @gotags: json:"period" example:"2023-11-22"
+    string merchant_name = 1; // @gotags: json:"merchant_name" example:"Resik Merchant"
+    double omzet = 2; // @gotags: json:"omzet" example:"5000.5"
+    string period = 3; // @gotags: json:"period" example:"2023-11-22"
 }

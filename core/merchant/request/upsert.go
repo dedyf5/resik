@@ -32,7 +32,7 @@ func (m *MerchantPut) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, stat
 		return nil, err
 	}
 	return &merchantEntity.Merchant{
-		ID:        m.ID,
+		ID:        m.Id,
 		Name:      m.Name,
 		UpdatedBy: ctx.UserClaims.UserID,
 		UpdatedAt: *datetime,

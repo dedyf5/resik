@@ -40,7 +40,7 @@ func (h *MerchantHandler) MerchantPost(c context.Context, req *reqMerchantCore.M
 			Message: codes.OK.String(),
 		},
 		Data: &resMerchantCore.MerchantUpsert{
-			ID: entity.ID,
+			Id: entity.ID,
 		},
 	}, nil
 }
@@ -75,7 +75,7 @@ func (h *MerchantHandler) MerchantPut(c context.Context, req *reqMerchantCore.Me
 			Message: codes.OK.String(),
 		},
 		Data: &resMerchantCore.MerchantUpsert{
-			ID: entity.ID,
+			Id: entity.ID,
 		},
 	}, nil
 }

@@ -8,14 +8,14 @@ package response;
 option go_package = "github.com/dedyf5/resik/core/app/response";
 
 message App {
-    string App = 1; // @gotags: json:"app" example:"Resik REST"
-    string Version = 2; // @gotags: json:"version" example:"Version 0.1"
-    AppLang Lang = 3; // @gotags: json:"lang"
+    string app = 1; // @gotags: json:"app" example:"Resik REST"
+    string version = 2; // @gotags: json:"version" example:"Version 0.1"
+    AppLang lang = 3; // @gotags: json:"lang"
 }
 
 message AppLang {
-	string Current = 1; // @gotags: json:"current" example:"id"
-	string Request = 2; // @gotags: json:"request" example:"id"
-	string Default = 3; // @gotags: json:"default" example:"en"
-    repeated string Available = 4; // @gotags: json:"available"
+	string current = 1; // @gotags: json:"current" example:"id"
+	string request = 2; // @gotags: json:"request" example:"id"
+	string default = 3; // @gotags: json:"default" example:"en"
+    repeated string available = 4; // @gotags: json:"available"
 }

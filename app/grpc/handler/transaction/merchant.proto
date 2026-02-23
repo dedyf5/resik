@@ -12,7 +12,7 @@ import "app/grpc/proto/status/status.proto";
 import "core/transaction/response/merchant.proto";
 
 message MerchantOmzetGetRes {
-    status.Status Status = 1; // @gotags: json:"status"
-    repeated response.MerchantOmzet Data = 2; // @gotags: json:"data"
-    meta.Meta Meta = 3; // @gotags: json:"meta"
+    status.Status status = 1; // @gotags: json:"status"
+    repeated response.MerchantOmzet data = 2; // @gotags: json:"data"
+    meta.Meta meta = 3; // @gotags: json:"meta"
 }

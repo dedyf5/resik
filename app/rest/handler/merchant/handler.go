@@ -73,7 +73,7 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 			"val": "merchant",
 		}),
 		Data: &resMerchantCore.MerchantUpsert{
-			ID: entity.ID,
+			Id: entity.ID,
 		},
 	}
 }
@@ -125,7 +125,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 			"val": "merchant",
 		}),
 		Data: &resMerchantCore.MerchantUpsert{
-			ID: entity.ID,
+			Id: entity.ID,
 		},
 	}
 }
@@ -205,7 +205,7 @@ func (h *Handler) MerchantDelete(echoCtx echo.Context) error {
 		return err
 	}
 
-	if _, err = ctx.UserClaims.MerchantIDIsAccessible(param.ID); err != nil {
+	if _, err = ctx.UserClaims.MerchantIDIsAccessible(param.Id); err != nil {
 		return err
 	}
 
