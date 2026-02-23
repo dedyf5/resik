@@ -49,11 +49,24 @@ func New(langDefault language.Tag) *Validate {
 	}
 
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
-		name := strings.SplitN(fld.Tag.Get("json"), ",", 2)[0]
-		if name == "-" {
-			return ""
+		jsonTag := fld.Tag.Get("json")
+
+		if jsonTag != "" && jsonTag != "-" {
+			for name := range strings.SplitSeq(jsonTag, ",") {
+				return name
+			}
 		}
-		return name
+
+		protoTag := fld.Tag.Get("protobuf")
+		if protoTag != "" {
+			for p := range strings.SplitSeq(protoTag, ",") {
+				if after, ok := strings.CutPrefix(p, "name="); ok {
+					return after
+				}
+			}
+		}
+
+		return fld.Name
 	})
 
 	for lang, translations := range transLang.Map {

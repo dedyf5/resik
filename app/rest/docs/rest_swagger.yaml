@@ -686,7 +686,7 @@ paths:
       summary: Token Refresh
       tags:
       - user
-  /transaction/merchant/{id}/omzet:
+  /transaction/merchant/{merchant_id}/omzet:
     get:
       consumes:
       - application/json
@@ -694,7 +694,7 @@ paths:
       parameters:
       - description: Merchant ID
         in: path
-        name: id
+        name: merchant_id
         required: true
         type: integer
       - enum:
@@ -779,7 +779,7 @@ paths:
       summary: Get Merchant Omzet
       tags:
       - transaction
-  /transaction/outlet/{id}/omzet:
+  /transaction/outlet/{outlet_id}/omzet:
     get:
       consumes:
       - application/json
@@ -787,7 +787,7 @@ paths:
       parameters:
       - description: Outlet ID
         in: path
-        name: id
+        name: outlet_id
         required: true
         type: integer
       - enum:

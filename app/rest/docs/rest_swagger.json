@@ -897,7 +897,7 @@
                 }
             }
         },
-        "/transaction/merchant/{id}/omzet": {
+        "/transaction/merchant/{merchant_id}/omzet": {
             "get": {
                 "security": [
                     {
@@ -919,7 +919,7 @@
                     {
                         "type": "integer",
                         "description": "Merchant ID",
-                        "name": "id",
+                        "name": "merchant_id",
                         "in": "path",
                         "required": true
                     },
@@ -1048,7 +1048,7 @@
                 }
             }
         },
-        "/transaction/outlet/{id}/omzet": {
+        "/transaction/outlet/{outlet_id}/omzet": {
             "get": {
                 "security": [
                     {
@@ -1070,7 +1070,7 @@
                     {
                         "type": "integer",
                         "description": "Outlet ID",
-                        "name": "id",
+                        "name": "outlet_id",
                         "in": "path",
                         "required": true
                     },

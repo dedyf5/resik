@@ -29,7 +29,7 @@ type MerchantOmzetGet struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	MerchantId    uint64  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"-" param:"id" query:"-" validate:"required,min=1" example:"1"`          
+	MerchantId    uint64  `protobuf:"varint,1,opt,name=merchant_id,json=merchantId,proto3" json:"-" param:"merchant_id" query:"-" validate:"required,min=1" example:"1"`          
 	Mode          string  `protobuf:"bytes,2,opt,name=mode,proto3" json:"mode" query:"mode" validate:"required,oneof=day month year" example:"day"`                                         
 	DatetimeStart string  `protobuf:"bytes,3,opt,name=datetime_start,json=datetimeStart,proto3" json:"datetime_start" query:"datetime_start" validate:"required,datetime=2006-01-02 15:04:05" example:"2023-11-22 13:45:00"`  
 	DatetimeEnd   string  `protobuf:"bytes,4,opt,name=datetime_end,json=datetimeEnd,proto3" json:"datetime_end" query:"datetime_end" validate:"required,datetime=2006-01-02 15:04:05" example:"2023-11-22 13:45:00"`        

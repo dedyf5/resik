@@ -59,9 +59,9 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transaction")
-	trxMerchant := trx.Group("/merchant/:id", validateToken, jwtMiddleware)
+	trxMerchant := trx.Group("/merchant/:merchant_id", validateToken, jwtMiddleware)
 	trxMerchant.GET("/omzet", trxHandler.MerchantOmzetGet)
-	trxOutlet := trx.Group("/outlet/:id", validateToken, jwtMiddleware)
+	trxOutlet := trx.Group("/outlet/:outlet_id", validateToken, jwtMiddleware)
 	trxOutlet.GET("/omzet", trxHandler.OutletOmzetGet)
 
 	healthH := r.healthHandler
