@@ -908,7 +908,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/transaction/merchant/{id}/omzet": {
+        "/transaction/merchant/{merchant_id}/omzet": {
             "get": {
                 "security": [
                     {
@@ -930,7 +930,7 @@ const docTemplaterest = `{
                     {
                         "type": "integer",
                         "description": "Merchant ID",
-                        "name": "id",
+                        "name": "merchant_id",
                         "in": "path",
                         "required": true
                     },
