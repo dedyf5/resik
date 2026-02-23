@@ -8,7 +8,7 @@ package request;
 option go_package = "github.com/dedyf5/resik/core/transaction/request";
 
 message OutletOmzetGet {
-    uint64 outlet_id = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required,min=1" example:"1"
+    uint64 outlet_id = 1; // @gotags: json:"-" param:"outlet_id" query:"-" validate:"required,min=1" example:"1"
     string mode = 2; // @gotags: json:"mode" query:"mode" validate:"required,oneof=day month year" example:"day"
     string datetime_start = 3; // @gotags: json:"datetime_start" query:"datetime_start" validate:"required,datetime=2006-01-02 15:04:05" example:"2023-11-22 13:45:00"
     string datetime_end = 4; // @gotags: json:"datetime_end" query:"datetime_end" validate:"required,datetime=2006-01-02 15:04:05" example:"2023-11-22 13:45:00"

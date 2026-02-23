@@ -1059,7 +1059,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/transaction/outlet/{id}/omzet": {
+        "/transaction/outlet/{outlet_id}/omzet": {
             "get": {
                 "security": [
                     {
@@ -1081,7 +1081,7 @@ const docTemplaterest = `{
                     {
                         "type": "integer",
                         "description": "Outlet ID",
-                        "name": "id",
+                        "name": "outlet_id",
                         "in": "path",
                         "required": true
                     },
