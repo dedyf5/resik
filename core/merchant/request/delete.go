@@ -8,6 +8,6 @@ import "github.com/dedyf5/resik/entities/merchant"
 
 func (m *MerchantDelete) ToMerchant() *merchant.Merchant {
 	return &merchant.Merchant{
-		ID: m.ID,
+		ID: m.Id,
 	}
 }

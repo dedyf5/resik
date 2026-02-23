@@ -12,10 +12,10 @@ import "app/grpc/proto/status/status.proto";
 import "core/app/response/app.proto";
 
 message HomeReq {
-    common.Request Common = 1; // @gotags: json:"common"
+    common.Request common = 1; // @gotags: json:"common"
 }
 
 message HomeRes {
-    status.Status Status = 1; // @gotags: json:"status"
-    response.App Data = 2; // @gotags: json:"data"
+    status.Status status = 1; // @gotags: json:"status"
+    response.App data = 2; // @gotags: json:"data"
 }

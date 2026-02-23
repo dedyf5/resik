@@ -8,5 +8,5 @@ package response;
 option go_package = "github.com/dedyf5/resik/core/health/response";
 
 message HealthHealthz {
-    string AccessedAt = 1; // @gotags: json:"accessed_at" example:"2025-06-14 16:42:00"
+    string accessed_at = 1; // @gotags: json:"accessed_at" example:"2025-06-14 16:42:00"
 }

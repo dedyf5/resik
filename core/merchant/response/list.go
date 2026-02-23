@@ -13,7 +13,7 @@ func MerchantListFromEntity(src []merchantEntity.Merchant) (res []*MerchantList)
 	format := datetime.FormatyyyyMMddHHmmss.ToString()
 	for _, v := range src {
 		res = append(res, &MerchantList{
-			ID:        v.ID,
+			Id:        v.ID,
 			Name:      v.Name,
 			CreatedAt: v.CreatedAt.Format(format),
 			UpdatedAt: v.UpdatedAt.Format(format),
