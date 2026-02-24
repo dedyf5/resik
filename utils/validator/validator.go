@@ -15,10 +15,16 @@ import (
 	"strings"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
-	transLang "github.com/dedyf5/resik/ctx/lang/translations"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	"github.com/go-playground/locales"
+	"github.com/go-playground/locales/en"
+	"github.com/go-playground/locales/id"
+	"github.com/go-playground/locales/ja"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	enTrans "github.com/go-playground/validator/v10/translations/en"
+	idTrans "github.com/go-playground/validator/v10/translations/id"
+	jaTrans "github.com/go-playground/validator/v10/translations/ja"
 	"golang.org/x/text/language"
 )
 
@@ -42,11 +48,7 @@ func New(langDefault language.Tag) *Validate {
 		log.Panic("error register validation tag oneof_order")
 	}
 
-	uni := ut.New(transLang.LanguageToTranslator(langDefault), transLang.Translators()...)
-	trans, found := uni.GetTranslator(langDefault.String())
-	if !found {
-		log.Panic("translator not found")
-	}
+	uni := ut.New(LanguageToTranslator(langDefault), Translators()...)
 
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
 		jsonTag := fld.Tag.Get("json")
@@ -69,24 +71,9 @@ func New(langDefault language.Tag) *Validate {
 		return fld.Name
 	})
 
-	for lang, translations := range transLang.Map {
-		engine, _ := uni.FindTranslator(lang.String())
-		for _, translation := range translations {
-			var err error = nil
-			if translation.CustomTransFunc != nil && translation.CustomRegisFunc != nil {
-				err = validate.RegisterTranslation(translation.Tag, engine, translation.CustomRegisFunc, translation.CustomTransFunc)
-			} else if translation.CustomTransFunc != nil && translation.CustomRegisFunc == nil {
-				err = validate.RegisterTranslation(translation.Tag, engine, registrationFunc(translation.Tag, translation.Translation, translation.Override), translation.CustomTransFunc)
-			} else if translation.CustomTransFunc == nil && translation.CustomRegisFunc != nil {
-				err = validate.RegisterTranslation(translation.Tag, engine, translation.CustomRegisFunc, translateFunc)
-			} else {
-				err = validate.RegisterTranslation(translation.Tag, engine, registrationFunc(translation.Tag, translation.Translation, translation.Override), translateFunc)
-			}
-			if err != nil {
-				log.Panicf("register translation failed (lang: %s) %s", lang.String(), err.Error())
-			}
-		}
-	}
+	registerAllTranslations(validate, uni)
+
+	trans, _ := uni.GetTranslator(langDefault.String())
 
 	return &Validate{
 		instance:            validate,
@@ -94,6 +81,45 @@ func New(langDefault language.Tag) *Validate {
 		translatorDefault:   trans,
 		universalTranslator: uni,
 	}
+}
+
+func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator) {
+	// Indonesian
+	if t, found := uni.GetTranslator(language.Indonesian.String()); found {
+		idTrans.RegisterDefaultTranslations(v, t)
+		registerOneOfOrder(v, t, "{0} harus berupa salah satu dari [{1}]")
+	}
+
+	// English
+	if t, found := uni.GetTranslator(language.English.String()); found {
+		enTrans.RegisterDefaultTranslations(v, t)
+		registerOneOfOrder(v, t, "{0} must be one of [{1}]")
+	}
+
+	// Japanese
+	if t, found := uni.GetTranslator(language.Japanese.String()); found {
+		jaTrans.RegisterDefaultTranslations(v, t)
+		registerOneOfOrder(v, t, "{0}は[{1}]のうちのいずれかでなければなりません")
+	}
+}
+
+func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) {
+	v.RegisterTranslation("oneof_order", trans, func(ut ut.Translator) error {
+		return ut.Add("oneof_order", msg, true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		s := strings.ReplaceAll(fe.Param(), "'", "")
+		s = strings.ReplaceAll(s, `\"`, ``)
+		base := strings.Split(s, " ")
+		vals := make([]string, 0, len(base)*2)
+		for _, v := range base {
+			vals = append(vals, v)
+			vals = append(vals, fmt.Sprintf("-%s", v))
+		}
+		param := strings.Join(vals, " ")
+
+		t, _ := ut.T("oneof_order", fe.Field(), param)
+		return t
+	})
 }
 
 func (v *Validate) Struct(payloadStruct interface{}, lang *langCtx.Lang) *resPkg.Status {
@@ -170,16 +196,16 @@ func (v *Validate) Translator(lang language.Tag) ut.Translator {
 
 func isOneOfOrder(fl validator.FieldLevel) bool {
 	s := strings.ReplaceAll(fl.Param(), "'", "")
-	s = strings.ReplaceAll(s, `"`, ``)
+	s = strings.ReplaceAll(s, "\"", "")
 	base := strings.Split(s, " ")
-	vals := make([]string, 0, cap(base)*2)
+	vals := make([]string, 0, len(base)*2)
 	for _, v := range base {
 		vals = append(vals, v)
 		vals = append(vals, fmt.Sprintf("-%s", v))
 	}
 
-	fields := strings.Split(fl.Field().String(), ",")
-	for _, field := range fields {
+	fields := strings.SplitSeq(fl.Field().String(), ",")
+	for field := range fields {
 		if !slices.Contains(vals, field) {
 			return false
 		}
@@ -195,22 +221,19 @@ func getLanguage(langDef language.Tag, lang *langCtx.Lang) language.Tag {
 	return lang.LanguageReqOrDefault()
 }
 
-func registrationFunc(tag string, translation string, override bool) validator.RegisterTranslationsFunc {
-	return func(ut ut.Translator) (err error) {
-		if err = ut.Add(tag, translation, override); err != nil {
-			return
-		}
-
-		return
+func Translators() (res []locales.Translator) {
+	for _, v := range langCtx.Available {
+		res = append(res, LanguageToTranslator(v))
 	}
+	return
 }
 
-func translateFunc(ut ut.Translator, fe validator.FieldError) string {
-	t, err := ut.T(fe.Tag(), fe.Field())
-	if err != nil {
-		log.Printf("warning: error translating FieldError: %#v", fe)
-		return fe.(error).Error()
+func LanguageToTranslator(lang language.Tag) locales.Translator {
+	switch lang {
+	case language.Indonesian:
+		return id.New()
+	case language.Japanese:
+		return ja.New()
 	}
-
-	return t
+	return en.New()
 }
