@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"slices"
 	"strings"
@@ -56,7 +57,9 @@ func NewLocalizer(bundle *i18n.Bundle, langDefault language.Tag, langReq *langua
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
 	for _, v := range Available {
 		sourcePath := fmt.Sprintf("%s/%s.json", termDir, v.String())
-		bundle.LoadMessageFile(sourcePath)
+		if _, err := bundle.LoadMessageFile(sourcePath); err != nil {
+			log.Printf("[lang] failed to load message file %s: %v", sourcePath, err)
+		}
 	}
 	return i18n.NewLocalizer(bundle, GetLanguageReqOrDefault(langDefault, langReq).String(), langAccept)
 }
