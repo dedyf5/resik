@@ -86,25 +86,37 @@ func New(langDefault language.Tag) *Validate {
 func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator) {
 	// Indonesian
 	if t, found := uni.GetTranslator(language.Indonesian.String()); found {
-		idTrans.RegisterDefaultTranslations(v, t)
-		registerOneOfOrder(v, t, "{0} harus berupa salah satu dari [{1}]")
+		if err := idTrans.RegisterDefaultTranslations(v, t); err != nil {
+			log.Printf("[validator] failed to register ID translation: %v", err)
+		}
+		if err := registerOneOfOrder(v, t, "{0} harus berupa salah satu dari [{1}]"); err != nil {
+			log.Printf("[validator] failed to register oneof_order for ID: %v", err)
+		}
 	}
 
 	// English
 	if t, found := uni.GetTranslator(language.English.String()); found {
-		enTrans.RegisterDefaultTranslations(v, t)
-		registerOneOfOrder(v, t, "{0} must be one of [{1}]")
+		if err := enTrans.RegisterDefaultTranslations(v, t); err != nil {
+			log.Printf("[validator] failed to register EN translation: %v", err)
+		}
+		if err := registerOneOfOrder(v, t, "{0} must be one of [{1}]"); err != nil {
+			log.Printf("[validator] failed to register oneof_order for EN: %v", err)
+		}
 	}
 
 	// Japanese
 	if t, found := uni.GetTranslator(language.Japanese.String()); found {
-		jaTrans.RegisterDefaultTranslations(v, t)
-		registerOneOfOrder(v, t, "{0}は[{1}]のうちのいずれかでなければなりません")
+		if err := jaTrans.RegisterDefaultTranslations(v, t); err != nil {
+			log.Printf("[validator] failed to register JA translation: %v", err)
+		}
+		if err := registerOneOfOrder(v, t, "{0}は[{1}]のうちのいずれかでなければなりません"); err != nil {
+			log.Printf("[validator] failed to register oneof_order for JA: %v", err)
+		}
 	}
 }
 
-func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) {
-	v.RegisterTranslation("oneof_order", trans, func(ut ut.Translator) error {
+func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) error {
+	return v.RegisterTranslation("oneof_order", trans, func(ut ut.Translator) error {
 		return ut.Add("oneof_order", msg, true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
 		s := strings.ReplaceAll(fe.Param(), "'", "")
