@@ -19,7 +19,6 @@ import (
 	transaction "github.com/dedyf5/resik/entities/transaction"
 	param0 "github.com/dedyf5/resik/entities/transaction/param"
 	user "github.com/dedyf5/resik/entities/user"
-	param1 "github.com/dedyf5/resik/entities/user/param"
 	response "github.com/dedyf5/resik/pkg/response"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -222,19 +221,19 @@ func (mr *MockIUserMockRecorder) OutletMerchantByUserIDGetData(userID any) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletMerchantByUserIDGetData", reflect.TypeOf((*MockIUser)(nil).OutletMerchantByUserIDGetData), userID)
 }
 
-// UserByUsernameAndPasswordGetData mocks base method.
-func (m *MockIUser) UserByUsernameAndPasswordGetData(arg0 param1.Auth) (*user.User, *response.Status) {
+// UserByUsername mocks base method.
+func (m *MockIUser) UserByUsername(arg0 *ctx.Ctx, username string) (*user.User, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UserByUsernameAndPasswordGetData", arg0)
+	ret := m.ctrl.Call(m, "UserByUsername", arg0, username)
 	ret0, _ := ret[0].(*user.User)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
-// UserByUsernameAndPasswordGetData indicates an expected call of UserByUsernameAndPasswordGetData.
-func (mr *MockIUserMockRecorder) UserByUsernameAndPasswordGetData(arg0 any) *gomock.Call {
+// UserByUsername indicates an expected call of UserByUsername.
+func (mr *MockIUserMockRecorder) UserByUsername(arg0, username any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserByUsernameAndPasswordGetData", reflect.TypeOf((*MockIUser)(nil).UserByUsernameAndPasswordGetData), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserByUsername", reflect.TypeOf((*MockIUser)(nil).UserByUsername), arg0, username)
 }
 
 // MockIMerchant is a mock of IMerchant interface.

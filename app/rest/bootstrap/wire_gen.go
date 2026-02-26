@@ -26,6 +26,7 @@ import (
 	"github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	config2 "github.com/dedyf5/resik/entities/config"
+	"github.com/dedyf5/resik/pkg/hash"
 	"github.com/dedyf5/resik/repositories"
 	"github.com/dedyf5/resik/repositories/merchant"
 	"github.com/dedyf5/resik/repositories/transaction"
@@ -59,7 +60,10 @@ func InitializeHTTP() (*App, func(), error) {
 		return nil, nil, err
 	}
 	userRepo := user.New(gormDB)
-	serviceService := service.New(userRepo, config)
+	auth := config.Auth
+	argon2Config := provideHasherConfig(auth)
+	iHash := hash.NewArgon2Hasher(argon2Config)
+	serviceService := service.New(userRepo, iHash, config)
 	userHandler := user2.New(echoEcho, logLog, serviceService)
 	merchantRepo := merchant.New(gormDB)
 	service5 := service2.New(merchantRepo, config)
@@ -94,7 +98,7 @@ var (
 
 var configGeneral = config.Load(config2.ModuleREST)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
 var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)), log.Get)
 
@@ -104,7 +108,9 @@ var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers
 
 var gormRepoSet = wire.NewSet(user.New, merchant.New, transaction.New, wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
 
-var serviceSet = wire.NewSet(service.New, service2.New, service3.New, service4.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)))
+var serviceSet = wire.NewSet(
+	provideHasherConfig, hash.NewArgon2Hasher, service.New, service2.New, service3.New, service4.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)),
+)
 
 var handlerSet = wire.NewSet(general.New, user2.New, merchant2.New, transaction2.New, health.New)
 
@@ -113,3 +119,10 @@ func provideCheckerSlice(dbChk health2.Checker) []health2.Checker {
 }
 
 var healthCheckSet = wire.NewSet(checkers.NewDatabaseChecker, provideCheckerSlice)
+
+func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
+	return &hash.Argon2Config{
+		Memory:     conf.HashMemory,
+		Iterations: conf.HashIterations,
+	}
+}

@@ -14,7 +14,7 @@ import (
 )
 
 func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Status) {
-	user, err := s.userRepo.UserByUsernameAndPasswordGetData(param)
+	user, err := s.userRepo.UserByUsername(param.Ctx, param.Username)
 	if err != nil {
 		return "", err
 	}
@@ -22,6 +22,14 @@ func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Statu
 		return "", &resPkg.Status{
 			Code:    http.StatusUnauthorized,
 			Message: param.Ctx.Lang.GetByMessageID("incorrect_username_or_password"),
+		}
+	}
+
+	if ok, err := s.hasher.Compare(param.Password, user.Password); !ok || err != nil {
+		return "", &resPkg.Status{
+			Code:       http.StatusUnauthorized,
+			Message:    param.Ctx.Lang.GetByMessageID("incorrect_username_or_password"),
+			CauseError: err,
 		}
 	}
 

@@ -5,6 +5,8 @@
 package config
 
 type Auth struct {
-	Expires      uint64
-	SignatureKey string
+	Expires        uint64
+	SignatureKey   string
+	HashMemory     uint32
+	HashIterations uint32
 }

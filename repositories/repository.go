@@ -12,7 +12,6 @@ import (
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
-	paramUser "github.com/dedyf5/resik/entities/user/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
@@ -29,7 +28,7 @@ type ITransaction interface {
 }
 
 type IUser interface {
-	UserByUsernameAndPasswordGetData(param paramUser.Auth) (user *userEntity.User, status *resPkg.Status)
+	UserByUsername(ctx *ctx.Ctx, username string) (user *userEntity.User, status *resPkg.Status)
 	MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, status *resPkg.Status)
 	OutletMerchantByUserIDGetData(userID uint64) (outlets []outletEntity.Outlet, status *resPkg.Status)
 }
