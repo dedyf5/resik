@@ -141,8 +141,10 @@ func (conf *Config) loadDatabase(module configEntity.Module) {
 
 func (conf *Config) loadAuth(module configEntity.Module) {
 	conf.Auth = configEntity.Auth{
-		Expires:      viper.GetUint64(module.Key("AUTH_EXPIRES")),
-		SignatureKey: getSecretFromFileOrEnv("AUTH_SIGNATURE_KEY_PATH_FILE", "AUTH_SIGNATURE_KEY"),
+		Expires:        viper.GetUint64(module.Key("AUTH_EXPIRES")),
+		SignatureKey:   getSecretFromFileOrEnv("AUTH_SIGNATURE_KEY_PATH_FILE", "AUTH_SIGNATURE_KEY"),
+		HashMemory:     viper.GetUint32("AUTH_HASH_MEMORY"),
+		HashIterations: viper.GetUint32("AUTH_HASH_ITERATIONS"),
 	}
 }
 

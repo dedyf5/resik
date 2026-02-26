@@ -17,6 +17,7 @@ import (
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	paramUser "github.com/dedyf5/resik/entities/user/param"
+	hashMock "github.com/dedyf5/resik/pkg/hash/mock"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	userMock "github.com/dedyf5/resik/repositories/mock"
 	"github.com/stretchr/testify/assert"
@@ -33,7 +34,7 @@ func TestAuth(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo, ctx, userService := setup(ctrl)
+	userRepo, hasher, ctx, userService := setup(ctrl)
 
 	param := paramUser.Auth{
 		Ctx:      ctx,
@@ -41,21 +42,41 @@ func TestAuth(t *testing.T) {
 		Password: "",
 	}
 
-	t.Run("UserByUsernameAndPasswordGetData-ERROR-500", func(t *testing.T) {
+	userExpected := &userEntity.User{
+		ID:       1,
+		Username: username,
+	}
+
+	t.Run("UserByUsername-ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
 		gomock.InOrder(
-			userRepo.EXPECT().UserByUsernameAndPasswordGetData(param).Return(nil, statusErr),
+			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(nil, statusErr),
 		)
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
 		assert.Equal(t, "", token)
 	})
 
-	t.Run("UserByUsernameAndPasswordGetData-ERROR-401", func(t *testing.T) {
+	t.Run("UserByUsername-ERROR-401-1", func(t *testing.T) {
 		gomock.InOrder(
-			userRepo.EXPECT().UserByUsernameAndPasswordGetData(param).Return(nil, nil),
+			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(nil, nil),
+		)
+		statusErr := &resPkg.Status{
+			Code:    http.StatusUnauthorized,
+			Message: param.Ctx.Lang.GetByMessageID("incorrect_username_or_password"),
+		}
+		token, err := userService.Auth(param)
+		assert.NotNil(t, err)
+		assert.Equal(t, statusErr, err)
+		assert.Equal(t, "", token)
+	})
+
+	t.Run("UserByUsername-ERROR-401-2", func(t *testing.T) {
+		gomock.InOrder(
+			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(userExpected, nil),
+			hasher.EXPECT().Compare(param.Password, userExpected.Password).Return(false, nil),
 		)
 		statusErr := &resPkg.Status{
 			Code:    http.StatusUnauthorized,
@@ -73,7 +94,8 @@ func TestAuth(t *testing.T) {
 			Username: username,
 		}
 		gomock.InOrder(
-			userRepo.EXPECT().UserByUsernameAndPasswordGetData(param).Return(userExpected, nil),
+			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(userExpected, nil),
+			hasher.EXPECT().Compare(param.Password, userExpected.Password).Return(true, nil),
 			userRepo.EXPECT().OutletMerchantByUserIDGetData(userID).Return(outletsExpected(), nil),
 		)
 		token, err := userService.Auth(param)
@@ -86,7 +108,7 @@ func TestAuthTokenGenerate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo, _, userService := setup(ctrl)
+	userRepo, _, _, userService := setup(ctrl)
 
 	t.Run("OutletMerchantByUserIDGetData-ERROR", func(t *testing.T) {
 		statusErr := &resPkg.Status{
@@ -127,10 +149,11 @@ func outletsExpected() []outletEntity.Outlet {
 	}
 }
 
-func setup(ctrl *gomock.Controller) (userRepo *userMock.MockIUser, ctx *ctx.Ctx, userService *Service) {
+func setup(ctrl *gomock.Controller) (userRepo *userMock.MockIUser, hasher *hashMock.MockIHash, ctx *ctx.Ctx, userService *Service) {
 	userRepo = userMock.NewMockIUser(ctrl)
+	hasher = hashMock.NewMockIHash(ctrl)
 	config, ctx := env()
-	userService = New(userRepo, config)
+	userService = New(userRepo, hasher, config)
 	return
 }
 

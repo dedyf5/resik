@@ -8,17 +8,17 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/dedyf5/resik/ctx"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	userEntity "github.com/dedyf5/resik/entities/user"
-	paramUser "github.com/dedyf5/resik/entities/user/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"gorm.io/gorm"
 )
 
-func (r *UserRepo) UserByUsernameAndPasswordGetData(param paramUser.Auth) (user *userEntity.User, status *resPkg.Status) {
+func (r *UserRepo) UserByUsername(ctx *ctx.Ctx, username string) (user *userEntity.User, status *resPkg.Status) {
 	var res userEntity.User
-	err := r.DB.WithContext(param.Ctx.Context).First(&res, "username = ? AND password = ?", param.Username, param.Password).Error
+	err := r.DB.WithContext(ctx.Context).First(&res, "username = ?", username).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil

@@ -27,6 +27,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
+	pkgHash "github.com/dedyf5/resik/pkg/hash"
 	repo "github.com/dedyf5/resik/repositories"
 	merchantRepo "github.com/dedyf5/resik/repositories/merchant"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
@@ -39,7 +40,7 @@ var configGeneral = config.Load(configEntity.ModuleREST)
 
 var configGeneralSet = wire.NewSet(
 	wire.Value(*configGeneral),
-	wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Log"),
+	wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Auth", "Log"),
 	wire.FieldsOf(new(configEntity.App), "Env", "LangDefault"),
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
 )
@@ -71,6 +72,8 @@ var gormRepoSet = wire.NewSet(
 )
 
 var serviceSet = wire.NewSet(
+	provideHasherConfig,
+	pkgHash.NewArgon2Hasher,
 	userService.New,
 	merchantService.New,
 	trxService.New,
@@ -96,6 +99,13 @@ var healthCheckSet = wire.NewSet(
 	dbChecker.NewDatabaseChecker,
 	provideCheckerSlice,
 )
+
+func provideHasherConfig(conf configEntity.Auth) *pkgHash.Argon2Config {
+	return &pkgHash.Argon2Config{
+		Memory:     conf.HashMemory,
+		Iterations: conf.HashIterations,
+	}
+}
 
 func InitializeHTTP() (*App, func(), error) {
 	wire.Build(
