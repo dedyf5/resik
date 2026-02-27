@@ -5,6 +5,7 @@
 package log
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -98,42 +99,75 @@ func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	return nil
 }
 
-// maskBinaryFields processes a struct (typically a gRPC request or response) and returns
-// a map representation where all binary fields ([]byte) are replaced with a descriptive
-// string indicating their size.
+// maskBinaryFields serves as a universal utility to sanitize data payloads for logging.
+// It recursively processes various data types (Structs, Maps, Slices, and Buffers)
+// to identify and mask binary data, ensuring logs remain concise and human-readable.
 //
-// It performs the following optimizations and features:
-//   - Field Name Prioritization: Resolves keys using "json" tag first, then "protobuf"
-//     name tag, and finally the struct field name.
-//   - Caching: Uses a global sync.Map to cache struct metadata (field indices, names,
-//     and types) to minimize reflection overhead on subsequent calls.
-//   - Memory Efficiency: Leverages Go 1.24+ iterators (strings.SplitSeq) for zero-allocation
-//     tag parsing during initial metadata discovery.
-//   - Safety: Gracefully handles pointers, nil values, and unexported fields to prevent
-//     runtime panics.
+// Key Features and Optimizations:
+//   - Multi-Protocol Support: Seamlessly handles gRPC structs (using reflection/tags)
+//     and REST payloads (unmarshaled maps or raw *bytes.Buffer).
+//   - Field Name Resolution: Prioritizes "json" tags, followed by "protobuf" name
+//     attributes, falling back to original struct field names for consistency.
+//   - Performance via Caching: Utilizes a global sync.Map to store struct metadata
+//     (field indices and tags), significantly reducing reflection overhead in high-throughput environments.
+//   - Smart Buffer Handling: Automatically attempts to unmarshal *bytes.Buffer
+//     if it contains JSON; otherwise, it masks the entire buffer as a binary label.
+//   - Recursive Sanitization: Deeply traverses nested maps, slices, and pointers
+//     to ensure all binary content is identified and masked.
 //
-// This is primarily used in logging interceptors to prevent large binary payloads
-// from bloating logs or causing performance degradation during JSON marshaling.
+// This utility is essential for logging interceptors/middleware to prevent
+// large binary payloads (e.g., file uploads, protobuf bytes) from causing
+// memory pressure or bloating log storage.
 func maskBinaryFields(data any) any {
 	if data == nil {
 		return nil
 	}
 
+	if buf, ok := data.(*bytes.Buffer); ok {
+		if buf == nil {
+			return nil
+		}
+		var rawData any
+		if err := json.Unmarshal(buf.Bytes(), &rawData); err == nil {
+			return maskBinaryFields(rawData)
+		}
+		return fmt.Sprintf("[BINARY: %d bytes]", buf.Len())
+	}
+
 	v := reflect.ValueOf(data)
-	if v.Kind() == reflect.Pointer {
+
+	for v.Kind() == reflect.Pointer {
 		if v.IsNil() {
-			return data
+			return nil
 		}
 		v = v.Elem()
 	}
 
-	if v.Kind() != reflect.Struct {
-		return data
+	switch v.Kind() {
+	case reflect.Struct:
+		return handleStructMasking(v)
+
+	case reflect.Map:
+		return handleMapMasking(v)
+
+	case reflect.Slice:
+		if v.Type().Elem().Kind() == reflect.Uint8 {
+			return fmt.Sprintf("[BINARY: %d bytes]", v.Len())
+		}
+		return handleSliceMasking(v)
+
+	default:
+		return v.Interface()
 	}
+}
 
+// handleStructMasking extracts and masks fields from a reflect.Value of kind Struct.
+// It leverages a metadata cache to maintain high performance and resolves field
+// names according to the framework's tag priority (JSON > Protobuf > FieldName).
+func handleStructMasking(v reflect.Value) any {
 	t := v.Type()
-
 	var infos []fieldInfo
+
 	if val, ok := fieldCache.Load(t); ok {
 		infos = val.([]fieldInfo)
 	} else {
@@ -174,17 +208,39 @@ func maskBinaryFields(data any) any {
 
 	m := make(map[string]any, len(infos))
 	for _, info := range infos {
-		valField := v.Field(info.index)
+		fieldVal := v.Field(info.index)
 		if info.isBinary {
-			if !valField.IsNil() {
-				m[info.name] = fmt.Sprintf("[BINARY: %d bytes]", valField.Len())
+			if !fieldVal.IsNil() {
+				m[info.name] = fmt.Sprintf("[BINARY: %d bytes]", fieldVal.Len())
 			} else {
 				m[info.name] = nil
 			}
 		} else {
-			m[info.name] = valField.Interface()
+			m[info.name] = maskBinaryFields(fieldVal.Interface())
 		}
 	}
-
 	return m
+}
+
+// handleMapMasking iterates through map keys and recursively applies masking
+// to their values. It is primarily used for processing REST request/response
+// payloads that have been unmarshaled into map[string]any.
+func handleMapMasking(v reflect.Value) any {
+	m := make(map[string]any, v.Len())
+	for _, key := range v.MapKeys() {
+		strKey := fmt.Sprintf("%v", key.Interface())
+		m[strKey] = maskBinaryFields(v.MapIndex(key).Interface())
+	}
+	return m
+}
+
+// handleSliceMasking processes slice or array elements. If the slice is a
+// byte slice ([]uint8), it returns a summary string. For other types,
+// it recursively processes each element to ensure nested binary data is masked.
+func handleSliceMasking(v reflect.Value) any {
+	s := make([]any, v.Len())
+	for i := 0; i < v.Len(); i++ {
+		s[i] = maskBinaryFields(v.Index(i).Interface())
+	}
+	return s
 }

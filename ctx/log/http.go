@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	configEntity "github.com/dedyf5/resik/entities/config"
@@ -19,19 +20,21 @@ import (
 
 type HTTP struct {
 	http.ResponseWriter
-	appModule  configEntity.Module
-	log        *Log
-	start      time.Time
-	statusCode int
-	method     string
-	uri        string
-	userAgent  string
-	body       *bytes.Buffer
+	appModule    configEntity.Module
+	log          *Log
+	start        time.Time
+	statusCode   int
+	method       string
+	uri          string
+	contentType  string
+	userAgent    string
+	requestBody  []byte
+	responseBody *bytes.Buffer
 }
 
-func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, log *Log, start time.Time, method, uri, userAgent string) *HTTP {
+func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, log *Log, start time.Time, method, uri, contentType, userAgent string, requestBody []byte) *HTTP {
 	var buf bytes.Buffer
-	return &HTTP{w, appModule, log, start, http.StatusOK, method, uri, userAgent, &buf}
+	return &HTTP{w, appModule, log, start, http.StatusOK, method, uri, contentType, userAgent, requestBody, &buf}
 }
 
 func (h *HTTP) WriteHeader(code int) {
@@ -45,7 +48,7 @@ func (h *HTTP) Write(buf []byte) (int, error) {
 	if err != nil {
 		panic(fmt.Sprintf("error encode new body response error: %s", err.Error()))
 	}
-	h.body.Write(bodyByte)
+	h.responseBody.Write(bodyByte)
 	h.writeLogger(loggerRes)
 	return h.ResponseWriter.Write(bodyByte)
 }
@@ -69,10 +72,37 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
 	enc.AddString("method", h.method)
 	enc.AddString("path", h.uri)
+	enc.AddString("content_type", h.contentType)
 	enc.AddString("user_agent", h.userAgent)
 	enc.AddInt("status_code", h.statusCode)
 	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())
-	enc.AddString("response", h.body.String())
+
+	if strings.HasPrefix(h.contentType, "multipart/form-data") {
+		enc.AddString("req", "[MULTIPART: binary data omitted]")
+	} else {
+		var rawData any
+		if err := json.Unmarshal(h.requestBody, &rawData); err == nil {
+			cleanReq := maskBinaryFields(rawData)
+			reqByte, _ := json.Marshal(cleanReq)
+			enc.AddString("req", string(reqByte))
+		} else {
+			bodyStr := string(h.requestBody)
+			if len(bodyStr) > 1000 {
+				enc.AddString("req", bodyStr[:1000]+"[truncated]")
+			} else {
+				enc.AddString("req", bodyStr)
+			}
+		}
+	}
+
+	res := maskBinaryFields(h.responseBody)
+	switch v := res.(type) {
+	case string:
+		enc.AddString("res", v)
+	default:
+		enc.AddReflected("res", v)
+	}
+
 	return nil
 }
 

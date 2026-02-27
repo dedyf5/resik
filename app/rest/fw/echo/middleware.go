@@ -5,7 +5,9 @@
 package echo
 
 import (
+	"bytes"
 	"context"
+	"io"
 	"net/http"
 	"strings"
 	"time"
@@ -58,6 +60,17 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Modu
 				return
 			}
 
+			var requestBody []byte
+			contentType := r.Header.Get("Content-Type")
+
+			if !strings.HasPrefix(contentType, "multipart/form-data") && r.Body != nil && r.Body != http.NoBody {
+				bodyBytes, err := io.ReadAll(r.Body)
+				if err == nil {
+					r.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+					requestBody = bodyBytes
+				}
+			}
+
 			correlationID := xid.New().String()
 			ctx := context.WithValue(
 				r.Context(),
@@ -72,7 +85,7 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Modu
 
 			w.Header().Add(logCtx.CorrelationIDKeyXHeader.String(), correlationID)
 
-			lrw := logCtx.NewHTTP(w, appModule, log, time.Now(), r.Method, r.RequestURI, r.UserAgent())
+			lrw := logCtx.NewHTTP(w, appModule, log, time.Now(), r.Method, r.RequestURI, contentType, r.UserAgent(), requestBody)
 
 			r = r.WithContext(log.WithContext(ctx))
 
