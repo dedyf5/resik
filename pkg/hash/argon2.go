@@ -10,6 +10,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 
 	"golang.org/x/crypto/argon2"
@@ -30,6 +31,7 @@ type Argon2Config struct {
 
 type argon2Hasher struct {
 	config *Argon2Config
+	source io.Reader
 }
 
 func NewArgon2Hasher(config *Argon2Config) IHash {
@@ -51,12 +53,13 @@ func NewArgon2Hasher(config *Argon2Config) IHash {
 
 	return &argon2Hasher{
 		config: config,
+		source: rand.Reader,
 	}
 }
 
 func (h *argon2Hasher) Hash(password string) (string, error) {
 	salt := make([]byte, h.config.SaltLength)
-	if _, err := rand.Read(salt); err != nil {
+	if _, err := h.source.Read(salt); err != nil {
 		return "", err
 	}
 
