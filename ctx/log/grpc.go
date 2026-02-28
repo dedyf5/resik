@@ -30,16 +30,24 @@ type GRPC struct {
 	res       any
 }
 
-// fieldInfo stores pre-computed metadata for a single struct field.
+// fieldInfo stores pre-computed metadata for a single struct field to optimize
+// subsequent masking operations by avoiding repetitive reflection lookups.
 type fieldInfo struct {
-	index    int
-	name     string
-	isBinary bool
+	index       int
+	name        string
+	isBinary    bool
+	isSensitive bool
 }
 
-// fieldCache serves as a global registry for struct metadata to avoid
-// expensive reflection calls on every log entry.
+// fieldCache serves as a global registry for struct metadata.
 var fieldCache sync.Map
+
+// sensitiveFields defines the blacklist of field names that should be masked.
+// Names are checked in a case-insensitive manner.
+var sensitiveFields = map[string]struct{}{
+	"password": {},
+	"token":    {},
+}
 
 func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, uri string, req any, res any, err error) *GRPC {
 	status := &resPkg.Status{
@@ -101,23 +109,14 @@ func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 
 // maskBinaryFields serves as a universal utility to sanitize data payloads for logging.
 // It recursively processes various data types (Structs, Maps, Slices, and Buffers)
-// to identify and mask binary data, ensuring logs remain concise and human-readable.
+// to identify and mask both binary data and sensitive information.
 //
 // Key Features and Optimizations:
-//   - Multi-Protocol Support: Seamlessly handles gRPC structs (using reflection/tags)
-//     and REST payloads (unmarshaled maps or raw *bytes.Buffer).
-//   - Field Name Resolution: Prioritizes "json" tags, followed by "protobuf" name
-//     attributes, falling back to original struct field names for consistency.
-//   - Performance via Caching: Utilizes a global sync.Map to store struct metadata
-//     (field indices and tags), significantly reducing reflection overhead in high-throughput environments.
-//   - Smart Buffer Handling: Automatically attempts to unmarshal *bytes.Buffer
-//     if it contains JSON; otherwise, it masks the entire buffer as a binary label.
-//   - Recursive Sanitization: Deeply traverses nested maps, slices, and pointers
-//     to ensure all binary content is identified and masked.
-//
-// This utility is essential for logging interceptors/middleware to prevent
-// large binary payloads (e.g., file uploads, protobuf bytes) from causing
-// memory pressure or bloating log storage.
+//   - Multi-Protocol Support: Handles gRPC structs and REST payloads (maps or *bytes.Buffer).
+//   - Sensitive Data Masking: Automatically masks fields like 'password' or 'token' using [MASKED].
+//   - Binary Masking: Replaces large []byte data with a descriptive size label to prevent log bloat.
+//   - Field Name Resolution: Prioritizes "json" tags, followed by "protobuf" name attributes.
+//   - Performance via Caching: Uses sync.Map to store metadata, minimizing reflection overhead.
 func maskBinaryFields(data any) any {
 	if data == nil {
 		return nil
@@ -162,8 +161,7 @@ func maskBinaryFields(data any) any {
 }
 
 // handleStructMasking extracts and masks fields from a reflect.Value of kind Struct.
-// It leverages a metadata cache to maintain high performance and resolves field
-// names according to the framework's tag priority (JSON > Protobuf > FieldName).
+// It leverages a metadata cache and performs case-insensitive sensitivity checks.
 func handleStructMasking(v reflect.Value) any {
 	t := v.Type()
 	var infos []fieldInfo
@@ -180,27 +178,13 @@ func handleStructMasking(v reflect.Value) any {
 				continue
 			}
 
-			fieldName := structField.Name
-			if jsonTag := structField.Tag.Get("json"); jsonTag != "" && jsonTag != "-" {
-				parts := strings.Split(jsonTag, ",")
-				if parts[0] != "" {
-					fieldName = parts[0]
-				}
-			} else if protoTag := structField.Tag.Get("protobuf"); protoTag != "" {
-				for part := range strings.SplitSeq(protoTag, ",") {
-					if name, found := strings.CutPrefix(part, "name="); found {
-						fieldName = name
-						break
-					}
-				}
-			}
-
-			isBinary := f.Kind() == reflect.Slice && f.Type().Elem().Kind() == reflect.Uint8
+			fieldName := resolveFieldName(structField)
 
 			infos = append(infos, fieldInfo{
-				index:    i,
-				name:     fieldName,
-				isBinary: isBinary,
+				index:       i,
+				name:        fieldName,
+				isBinary:    f.Kind() == reflect.Slice && f.Type().Elem().Kind() == reflect.Uint8,
+				isSensitive: isSensitive(fieldName), // Pre-compute sensitivity
 			})
 		}
 		fieldCache.Store(t, infos)
@@ -208,7 +192,13 @@ func handleStructMasking(v reflect.Value) any {
 
 	m := make(map[string]any, len(infos))
 	for _, info := range infos {
+		if info.isSensitive {
+			m[info.name] = "[MASKED]"
+			continue
+		}
+
 		fieldVal := v.Field(info.index)
+
 		if info.isBinary {
 			if !fieldVal.IsNil() {
 				m[info.name] = fmt.Sprintf("[BINARY: %d bytes]", fieldVal.Len())
@@ -222,25 +212,59 @@ func handleStructMasking(v reflect.Value) any {
 	return m
 }
 
-// handleMapMasking iterates through map keys and recursively applies masking
-// to their values. It is primarily used for processing REST request/response
-// payloads that have been unmarshaled into map[string]any.
+// handleMapMasking iterates through map keys and applies sensitivity checks
+// to keys and recursive masking to values.
 func handleMapMasking(v reflect.Value) any {
 	m := make(map[string]any, v.Len())
 	for _, key := range v.MapKeys() {
-		strKey := fmt.Sprintf("%v", key.Interface())
-		m[strKey] = maskBinaryFields(v.MapIndex(key).Interface())
+		var strKey string
+		if key.Kind() == reflect.String {
+			strKey = key.String()
+		} else {
+			strKey = fmt.Sprintf("%v", key.Interface())
+		}
+
+		if isSensitive(strKey) {
+			m[strKey] = "[MASKED]"
+		} else {
+			m[strKey] = maskBinaryFields(v.MapIndex(key).Interface())
+		}
 	}
 	return m
 }
 
-// handleSliceMasking processes slice or array elements. If the slice is a
-// byte slice ([]uint8), it returns a summary string. For other types,
-// it recursively processes each element to ensure nested binary data is masked.
+// handleSliceMasking processes each element of a slice recursively.
 func handleSliceMasking(v reflect.Value) any {
 	s := make([]any, v.Len())
 	for i := 0; i < v.Len(); i++ {
 		s[i] = maskBinaryFields(v.Index(i).Interface())
 	}
 	return s
+}
+
+// resolveFieldName determines the final key name for a struct field based on
+// priority: "json" tag > "protobuf" name > struct field name.
+func resolveFieldName(f reflect.StructField) string {
+	if jsonTag := f.Tag.Get("json"); jsonTag != "" && jsonTag != "-" {
+		parts := strings.Split(jsonTag, ",")
+		if parts[0] != "" {
+			return parts[0]
+		}
+	}
+
+	if protoTag := f.Tag.Get("protobuf"); protoTag != "" {
+		for part := range strings.SplitSeq(protoTag, ",") {
+			if name, found := strings.CutPrefix(part, "name="); found {
+				return name
+			}
+		}
+	}
+
+	return f.Name
+}
+
+// isSensitive checks if a field name matches the sensitive blacklist.
+func isSensitive(name string) bool {
+	_, ok := sensitiveFields[strings.ToLower(name)]
+	return ok
 }
