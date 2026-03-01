@@ -46,11 +46,11 @@ func New(fw echoFW.IEcho, log *logCtx.Log, userService userService.IService) *Ha
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/login [post]
 func (h *Handler) LoginPost(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
-	ctx.App.Logger().Debug("LoginPost")
+	h.log.Debug("LoginPost")
 
 	var payload reqUserCore.LoginPost
 
@@ -84,18 +84,18 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/token-refresh [get]
 func (h *Handler) TokenRefreshGet(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
-	ctx.App.Logger().Debug("TokenRefresh")
+	h.log.Debug("TokenRefresh")
 
 	var query commonEntity.Request
 	if err := h.fw.StructValidator(echoCtx, &query); err != nil {
 		return err
 	}
 
-	token, err := h.userService.AuthTokenGenerate(ctx.UserClaims.UserID, ctx.UserClaims.Username)
+	token, err := h.userService.AuthTokenGenerate(ctx.UserClaims().UserID, ctx.UserClaims().Username)
 	if err != nil {
 		return err
 	}
@@ -103,7 +103,7 @@ func (h *Handler) TokenRefreshGet(echoCtx echo.Context) error {
 	return &resPkg.Status{
 		Code: http.StatusOK,
 		Data: resUserCore.UserCredential{
-			Username: ctx.UserClaims.Username,
+			Username: ctx.UserClaims().Username,
 			Token:    token,
 		},
 	}

@@ -25,7 +25,7 @@ func (m *MerchantListGet) ToParam(c *ctx.Ctx) *paramMerchant.MerchantListGet {
 	}
 	return &paramMerchant.MerchantListGet{
 		Ctx:         c,
-		MerchantIDs: c.UserClaims.MerchantIDs,
+		MerchantIDs: c.UserClaims().MerchantIDs,
 		Filter: goku.Filter{
 			Search: m.Search,
 			Page:   page,

@@ -72,11 +72,11 @@ func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, uri strin
 
 func (h *GRPC) Write() {
 	if h.status.Code >= http.StatusOK && h.status.Code <= http.StatusIMUsed {
-		h.log.Logger.Info(h.status.MessageOrDefault(), zap.Inline(h))
+		h.log.logger.Info(h.status.MessageOrDefault(), zap.Inline(h))
 	} else if h.status.Code >= http.StatusInternalServerError && h.status.Code <= http.StatusNetworkAuthenticationRequired {
-		h.log.Logger.Error(h.status.CauseErrorMessageOrDefault(), zap.Inline(h))
+		h.log.logger.Error(h.status.CauseErrorMessageOrDefault(), zap.Inline(h))
 	} else {
-		h.log.Logger.Warn(h.status.CauseErrorMessageOrDefault(), zap.Inline(h))
+		h.log.logger.Warn(h.status.CauseErrorMessageOrDefault(), zap.Inline(h))
 	}
 }
 

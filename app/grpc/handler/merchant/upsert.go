@@ -15,13 +15,13 @@ import (
 )
 
 func (h *MerchantHandler) MerchantPost(c context.Context, req *reqMerchantCore.MerchantPost) (*MerchantUpsertRes, error) {
-	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
+	ctx, err := ctx.NewCtx(c, h.log)
 	if err != nil {
 		return nil, err
 	}
-	ctx.App.Logger().Debug("MerchantPost")
+	ctx.Log().Debug("MerchantPost")
 
-	if err := h.validator.Struct(req, ctx.Lang); err != nil {
+	if err := h.validator.Struct(req, ctx.Lang()); err != nil {
 		return nil, err
 	}
 
@@ -46,13 +46,13 @@ func (h *MerchantHandler) MerchantPost(c context.Context, req *reqMerchantCore.M
 }
 
 func (h *MerchantHandler) MerchantPut(c context.Context, req *reqMerchantCore.MerchantPut) (*MerchantUpsertRes, error) {
-	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
+	ctx, err := ctx.NewCtx(c, h.log)
 	if err != nil {
 		return nil, err
 	}
-	ctx.App.Logger().Debug("MerchantPut")
+	ctx.Log().Debug("MerchantPut")
 
-	if err := h.validator.Struct(req, ctx.Lang); err != nil {
+	if err := h.validator.Struct(req, ctx.Lang()); err != nil {
 		return nil, err
 	}
 
@@ -61,7 +61,7 @@ func (h *MerchantHandler) MerchantPut(c context.Context, req *reqMerchantCore.Me
 		return nil, err
 	}
 
-	if _, err = ctx.UserClaims.MerchantIDIsAccessible(entity.ID); err != nil {
+	if _, err = ctx.UserClaims().MerchantIDIsAccessible(entity.ID); err != nil {
 		return nil, err
 	}
 

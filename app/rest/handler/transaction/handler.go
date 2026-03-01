@@ -53,11 +53,11 @@ func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, confi
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/transaction/merchant/{merchant_id}/omzet [get]
 func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
-	ctx.App.Logger().Debug("MerchantOmzetGet")
+	h.log.Debug("MerchantOmzetGet")
 
 	var payload reqTrxCore.MerchantOmzetGet
 
@@ -67,7 +67,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 
 	param := payload.ToParam(ctx)
 
-	if _, err := ctx.UserClaims.MerchantIDIsAccessible(param.MerchantID); err != nil {
+	if _, err := ctx.UserClaims().MerchantIDIsAccessible(param.MerchantID); err != nil {
 		return err
 	}
 
@@ -101,7 +101,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/transaction/outlet/{outlet_id}/omzet [get]
 func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
@@ -114,7 +114,7 @@ func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
 
 	param := payload.ToParam(ctx)
 
-	if _, err := ctx.UserClaims.OutletIDIsAccessible(param.OutletID); err != nil {
+	if _, err := ctx.UserClaims().OutletIDIsAccessible(param.OutletID); err != nil {
 		return err
 	}
 

@@ -45,11 +45,11 @@ func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant [post]
 func (h *Handler) MerchantPost(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
-	ctx.App.Logger().Debug("MerchantPost")
+	h.log.Debug("MerchantPost")
 
 	var payload reqMerchantCore.MerchantPost
 
@@ -69,7 +69,7 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 
 	return &resPkg.Status{
 		Code: http.StatusCreated,
-		Message: ctx.Lang.GetByTemplateData("successfully_created_val", commonEntity.Map{
+		Message: ctx.Lang().GetByTemplateData("successfully_created_val", commonEntity.Map{
 			"val": "merchant",
 		}),
 		Data: &resMerchantCore.MerchantUpsert{
@@ -93,11 +93,11 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant/{id} [put]
 func (h *Handler) MerchantPut(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
-	ctx.App.Logger().Debug("MerchantPut")
+	h.log.Debug("MerchantPut")
 
 	var body reqMerchantCore.MerchantPut
 
@@ -110,7 +110,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 		return err
 	}
 
-	if _, err = ctx.UserClaims.MerchantIDIsAccessible(entity.ID); err != nil {
+	if _, err = ctx.UserClaims().MerchantIDIsAccessible(entity.ID); err != nil {
 		return err
 	}
 
@@ -121,7 +121,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 
 	return &resPkg.Status{
 		Code: http.StatusOK,
-		Message: ctx.Lang.GetByTemplateData("successfully_updated_val", commonEntity.Map{
+		Message: ctx.Lang().GetByTemplateData("successfully_updated_val", commonEntity.Map{
 			"val": "merchant",
 		}),
 		Data: &resMerchantCore.MerchantUpsert{
@@ -144,11 +144,11 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant [get]
 func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
-	ctx.App.Logger().Debug("MerchantListGet")
+	h.log.Debug("MerchantListGet")
 
 	var payload reqMerchantCore.MerchantListGet
 
@@ -194,18 +194,18 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant/{id} [delete]
 func (h *Handler) MerchantDelete(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
-	ctx.App.Logger().Debug("MerchantDelete")
+	h.log.Debug("MerchantDelete")
 
 	var param reqMerchantCore.MerchantDelete
 	if err := h.fw.StructValidator(echoCtx, &param); err != nil {
 		return err
 	}
 
-	if _, err = ctx.UserClaims.MerchantIDIsAccessible(param.Id); err != nil {
+	if _, err = ctx.UserClaims().MerchantIDIsAccessible(param.Id); err != nil {
 		return err
 	}
 

@@ -11,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dedyf5/resik/ctx"
 	jwtCxt "github.com/dedyf5/resik/ctx/jwt"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
@@ -60,7 +59,7 @@ func methodRoles() map[string][]Role {
 	}
 }
 
-func (i *Interceptor) logCtx(c context.Context) (*context.Context, error) {
+func (i *Interceptor) logCtx(c context.Context, path string) (*context.Context, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
 		return i.errorMetadata()
@@ -70,7 +69,10 @@ func (i *Interceptor) logCtx(c context.Context) (*context.Context, error) {
 	newMeta := meta.Copy()
 	newMeta.Append(logCtx.CorrelationIDKeyContext.String(), correlationID)
 	newMeta.Append(logCtx.CorrelationIDKeyXHeader.String(), correlationID)
+
 	i.log.CorrelationID = correlationID
+	i.log.Path = path
+
 	newCtx := metadata.NewIncomingContext(c, newMeta)
 
 	return &newCtx, nil
@@ -143,9 +145,8 @@ func (i *Interceptor) errorMetadata() (*context.Context, error) {
 
 func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	start := time.Now()
-	methodCtx := context.WithValue(c, ctx.KeyFullMethod, info.FullMethod)
 
-	logC, err := i.logCtx(methodCtx)
+	logC, err := i.logCtx(c, info.FullMethod)
 	if err != nil {
 		return handler, err
 	}
