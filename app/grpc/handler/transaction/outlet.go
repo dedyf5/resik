@@ -16,19 +16,19 @@ import (
 )
 
 func (h *TransactionHandler) OutletOmzetGet(c context.Context, req *reqTrxCore.OutletOmzetGet) (*OutletOmzetGetRes, error) {
-	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
+	ctx, err := ctx.NewCtx(c, h.log)
 	if err != nil {
 		return nil, err
 	}
-	ctx.App.Logger().Debug("OutletOmzetGet")
+	ctx.Log().Debug("OutletOmzetGet")
 
-	if err := h.validator.Struct(req, ctx.Lang); err != nil {
+	if err := h.validator.Struct(req, ctx.Lang()); err != nil {
 		return nil, err
 	}
 
 	param := req.ToParam(ctx)
 
-	if _, err := ctx.UserClaims.OutletIDIsAccessible(param.OutletID); err != nil {
+	if _, err := ctx.UserClaims().OutletIDIsAccessible(param.OutletID); err != nil {
 		return nil, err
 	}
 

@@ -16,7 +16,7 @@ import (
 )
 
 func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, error) {
-	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
+	ctx, err := ctx.NewCtx(c, h.log)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, er
 	return &HomeRes{
 		Status: &status.Status{
 			Code:    status.CodePlus(codes.OK),
-			Message: ctx.Lang.GetByTemplateData("home_message", common.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
+			Message: ctx.Lang().GetByTemplateData("home_message", common.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
 		},
 		Data: resAppCore.AppMap(ctx, h.config, &req),
 	}, nil

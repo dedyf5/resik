@@ -7,12 +7,14 @@ package service
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"testing"
 
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/ctx"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/log"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	trxParam "github.com/dedyf5/resik/entities/transaction/param"
@@ -174,9 +176,7 @@ func env() (conf config.Config, c *ctx.Ctx) {
 			Port:        8081,
 		},
 	}
-	c = &ctx.Ctx{
-		Context: context.Background(),
-		Lang:    langCtx.NewLang(language.English, &language.English, ""),
-	}
+	context := context.WithValue(context.Background(), langCtx.ContextKey, langCtx.NewLangTermDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.TermDir)))
+	c, _ = ctx.NewCtx(context, &log.Log{})
 	return
 }

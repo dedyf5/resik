@@ -5,7 +5,6 @@
 package log
 
 import (
-	"context"
 	"os"
 	"sync"
 	"time"
@@ -17,11 +16,12 @@ import (
 )
 
 type Log struct {
-	Logger        *zap.Logger
+	logger        *zap.Logger
+	AppModule     configEntity.Module
 	CorrelationID string
+	Path          string
+	QueryString   *string
 }
-
-type contextKey struct{}
 
 type CorrelationIDKey string
 
@@ -44,14 +44,7 @@ var logLevelSeverity = map[zapcore.Level]string{
 	zapcore.FatalLevel:  "emergency",
 }
 
-type ILog interface {
-	Error(msg string)
-	Warn(msg string)
-	Info(msg string)
-	Debug(msg string)
-}
-
-func Get(logEntity configEntity.Log) *Log {
+func Get(logEntity configEntity.Log, appModule configEntity.Module) *Log {
 	once.Do(func() {
 		stdout := zapcore.AddSync(os.Stdout)
 		encoderConfig := zapcore.EncoderConfig{
@@ -79,7 +72,8 @@ func Get(logEntity configEntity.Log) *Log {
 		}
 		core := zapcore.NewTee(coreConfig...)
 		log = &Log{
-			Logger: zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel)),
+			logger:    zap.New(core, zap.AddCaller(), zap.AddStacktrace(zapcore.ErrorLevel)),
+			AppModule: appModule,
 		}
 	})
 	return log
@@ -89,50 +83,28 @@ func CustomEncodeLevel(level zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(logLevelSeverity[level])
 }
 
-func FromContext(ctx context.Context) *Log {
-	if l, ok := ctx.Value(contextKey{}).(*Log); ok {
-		return l
-	} else if l := log; l != nil {
-		return l
+func (l *Log) Error(msg string) {
+	l.logger.Error(msg, l.ZapFields()...)
+}
+
+func (l *Log) Warn(msg string) {
+	l.logger.Warn(msg, l.ZapFields()...)
+}
+
+func (l *Log) Info(msg string) {
+	l.logger.Info(msg, l.ZapFields()...)
+}
+
+func (l *Log) Debug(msg string) {
+	l.logger.Debug(msg, l.ZapFields()...)
+}
+
+func (l *Log) ZapFields() (fields []zap.Field) {
+	fields = append(fields, zap.String("app", l.AppModule.DirectoryName()), zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.String("path", l.Path))
+	if l.QueryString != nil {
+		fields = append(fields, zap.String("query_string", *l.QueryString))
 	}
-
-	return &Log{
-		Logger: zap.NewNop(),
-	}
-}
-
-func WithContext(ctx context.Context, l *Log) context.Context {
-	if lp, ok := ctx.Value(contextKey{}).(*Log); ok {
-		if lp == l {
-			return ctx
-		}
-	}
-
-	return context.WithValue(ctx, contextKey{}, l)
-}
-
-func (l *Log) Error(service *Service, msg string) {
-	l.Logger.Error(msg, zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.Inline(service))
-}
-
-func (l *Log) Warn(service *Service, msg string) {
-	l.Logger.Warn(msg, zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.Inline(service))
-}
-
-func (l *Log) Info(service *Service, msg string) {
-	l.Logger.Info(msg, zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.Inline(service))
-}
-
-func (l *Log) Debug(service *Service, msg string) {
-	l.Logger.Debug(msg, zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.Inline(service))
-}
-
-func (l *Log) FromContext(ctx context.Context) *Log {
-	return FromContext(ctx)
-}
-
-func (l *Log) WithContext(ctx context.Context) context.Context {
-	return WithContext(ctx, l)
+	return
 }
 
 func (k CorrelationIDKey) String() string {

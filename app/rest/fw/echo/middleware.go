@@ -80,14 +80,13 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Modu
 
 			r = r.WithContext(ctx)
 
-			// log.Logger = log.Logger.With(zap.String(string(correlationIDCtxKey), correlationID))
 			log.CorrelationID = correlationID
+			log.Path = r.URL.Path
+			log.QueryString = &r.URL.RawQuery
 
 			w.Header().Add(logCtx.CorrelationIDKeyXHeader.String(), correlationID)
 
 			lrw := logCtx.NewHTTP(w, appModule, log, time.Now(), r.Method, r.RequestURI, contentType, r.UserAgent(), requestBody)
-
-			r = r.WithContext(log.WithContext(ctx))
 
 			h.ServeHTTP(lrw, r)
 		})

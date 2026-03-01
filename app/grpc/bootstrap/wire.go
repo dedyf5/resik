@@ -40,8 +40,8 @@ var configGeneral = config.Load(configEntity.ModuleGRPC)
 
 var configGeneralSet = wire.NewSet(
 	wire.Value(*configGeneral),
-	wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Auth", "Log"),
-	wire.FieldsOf(new(configEntity.App), "Env", "LangDefault"),
+	wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Auth", "Log"),
+	wire.FieldsOf(new(configEntity.App), "Env", "LangDefault", "Module"),
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
 )
 

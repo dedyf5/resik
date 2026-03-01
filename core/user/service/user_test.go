@@ -13,6 +13,7 @@ import (
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/ctx"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/log"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	userEntity "github.com/dedyf5/resik/entities/user"
@@ -65,7 +66,7 @@ func TestAuth(t *testing.T) {
 		)
 		statusErr := &resPkg.Status{
 			Code:    http.StatusUnauthorized,
-			Message: param.Ctx.Lang.GetByMessageID("incorrect_username_or_password"),
+			Message: param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"),
 		}
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
@@ -80,7 +81,7 @@ func TestAuth(t *testing.T) {
 		)
 		statusErr := &resPkg.Status{
 			Code:    http.StatusUnauthorized,
-			Message: param.Ctx.Lang.GetByMessageID("incorrect_username_or_password"),
+			Message: param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"),
 		}
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
@@ -167,9 +168,7 @@ func env() (conf config.Config, c *ctx.Ctx) {
 			Port:        8081,
 		},
 	}
-	c = &ctx.Ctx{
-		Context: context.Background(),
-		Lang:    langCtx.NewLangTermDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.TermDir)),
-	}
+	context := context.WithValue(context.Background(), langCtx.ContextKey, langCtx.NewLangTermDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.TermDir)))
+	c, _ = ctx.NewCtx(context, &log.Log{})
 	return
 }

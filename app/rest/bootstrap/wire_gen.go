@@ -40,9 +40,10 @@ import (
 func InitializeHTTP() (*App, func(), error) {
 	config := _wireConfigValue
 	configLog := config.Log
-	logLog := log.Get(configLog)
-	serverHTTP := newServerHTTP(config, logLog)
 	app := config.App
+	module := app.Module
+	logLog := log.Get(configLog, module)
+	serverHTTP := newServerHTTP(config, logLog)
 	tag := app.LangDefault
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
@@ -98,7 +99,7 @@ var (
 
 var configGeneral = config.Load(config2.ModuleREST)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "APP", "HTTP", "Database", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault", "Module"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
 var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)), log.Get)
 

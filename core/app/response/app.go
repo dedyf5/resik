@@ -11,7 +11,7 @@ import (
 )
 
 func AppMap(ctx *ctx.Ctx, config config.Config, req *common.Request) *App {
-	lang := ctx.Lang
+	lang := ctx.Lang()
 	langReqCode := ""
 	if lang.LangReq != nil {
 		langReqCode = lang.LangReq.String()

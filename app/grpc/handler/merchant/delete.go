@@ -14,17 +14,17 @@ import (
 )
 
 func (h *MerchantHandler) MerchantDelete(c context.Context, req *reqMerchantCore.MerchantDelete) (*status.Empty, error) {
-	ctx, err := ctx.NewHTTPFromGRPC(c, h.log)
+	ctx, err := ctx.NewCtx(c, h.log)
 	if err != nil {
 		return nil, err
 	}
-	ctx.App.Logger().Debug("MerchantDelete")
+	ctx.Log().Debug("MerchantDelete")
 
-	if err = h.validator.Struct(req, ctx.Lang); err != nil {
+	if err = h.validator.Struct(req, ctx.Lang()); err != nil {
 		return nil, err
 	}
 
-	if _, err = ctx.UserClaims.MerchantIDIsAccessible(req.Id); err != nil {
+	if _, err = ctx.UserClaims().MerchantIDIsAccessible(req.Id); err != nil {
 		return nil, err
 	}
 

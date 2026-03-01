@@ -17,6 +17,7 @@ import (
 	"golang.org/x/text/language"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/log"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	"github.com/dedyf5/resik/entities/merchant/param"
@@ -193,9 +194,7 @@ func env() (conf config.Config, c *ctx.Ctx) {
 			Port:        8081,
 		},
 	}
-	c = &ctx.Ctx{
-		Context: context.Background(),
-		Lang:    langCtx.NewLangTermDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.TermDir)),
-	}
+	context := context.WithValue(context.Background(), langCtx.ContextKey, langCtx.NewLangTermDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.TermDir)))
+	c, _ = ctx.NewCtx(context, &log.Log{})
 	return
 }

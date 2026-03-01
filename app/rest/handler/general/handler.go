@@ -42,7 +42,7 @@ func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho) *Handler {
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/ [get]
 func (h *Handler) Home(echoCtx echo.Context) error {
-	ctx, err := ctx.NewHTTP(echoCtx.Request().Context(), h.log, echoCtx.Request().RequestURI)
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (h *Handler) Home(echoCtx echo.Context) error {
 		return err
 	}
 
-	lang := ctx.Lang
+	lang := ctx.Lang()
 	return &resPkg.Status{
 		Code:    http.StatusOK,
 		Message: lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
