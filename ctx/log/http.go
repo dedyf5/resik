@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -25,16 +26,16 @@ type HTTP struct {
 	start        time.Time
 	statusCode   int
 	method       string
-	uri          string
+	url          *url.URL
 	contentType  string
 	userAgent    string
 	requestBody  []byte
 	responseBody *bytes.Buffer
 }
 
-func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, log *Log, start time.Time, method, uri, contentType, userAgent string, requestBody []byte) *HTTP {
+func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, log *Log, start time.Time, method string, url *url.URL, contentType, userAgent string, requestBody []byte) *HTTP {
 	var buf bytes.Buffer
-	return &HTTP{w, appModule, log, start, http.StatusOK, method, uri, contentType, userAgent, requestBody, &buf}
+	return &HTTP{w, appModule, log, start, http.StatusOK, method, url, contentType, userAgent, requestBody, &buf}
 }
 
 func (h *HTTP) WriteHeader(code int) {
@@ -71,7 +72,8 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString("app", h.appModule.DirectoryName())
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
 	enc.AddString("method", h.method)
-	enc.AddString("path", h.uri)
+	enc.AddString("path", h.url.Path)
+	enc.AddString("query_string", h.url.RawQuery)
 	enc.AddString("content_type", h.contentType)
 	enc.AddString("user_agent", h.userAgent)
 	enc.AddInt("status_code", h.statusCode)
