@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -25,16 +26,16 @@ type HTTP struct {
 	start        time.Time
 	statusCode   int
 	method       string
-	uri          string
+	url          *url.URL
 	contentType  string
 	userAgent    string
 	requestBody  []byte
 	responseBody *bytes.Buffer
 }
 
-func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, log *Log, start time.Time, method, uri, contentType, userAgent string, requestBody []byte) *HTTP {
+func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, log *Log, start time.Time, method string, url *url.URL, contentType, userAgent string, requestBody []byte) *HTTP {
 	var buf bytes.Buffer
-	return &HTTP{w, appModule, log, start, http.StatusOK, method, uri, contentType, userAgent, requestBody, &buf}
+	return &HTTP{w, appModule, log, start, http.StatusOK, method, url, contentType, userAgent, requestBody, &buf}
 }
 
 func (h *HTTP) WriteHeader(code int) {
@@ -68,29 +69,30 @@ func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 }
 
 func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	enc.AddString("app", h.appModule.DirectoryName())
+	enc.AddString("module", h.appModule.DirectoryName())
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
 	enc.AddString("method", h.method)
-	enc.AddString("path", h.uri)
+	enc.AddString("path", h.url.Path)
+	enc.AddString("query_string", h.url.RawQuery)
 	enc.AddString("content_type", h.contentType)
 	enc.AddString("user_agent", h.userAgent)
 	enc.AddInt("status_code", h.statusCode)
 	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())
 
 	if strings.HasPrefix(h.contentType, "multipart/form-data") {
-		enc.AddString("req", "[MULTIPART: binary data omitted]")
+		enc.AddString("request_body", "[MULTIPART: binary data omitted]")
 	} else {
 		var rawData any
 		if err := json.Unmarshal(h.requestBody, &rawData); err == nil {
 			cleanReq := maskBinaryFields(rawData)
 			reqByte, _ := json.Marshal(cleanReq)
-			enc.AddString("req", string(reqByte))
+			enc.AddString("request_body", string(reqByte))
 		} else {
 			bodyStr := string(h.requestBody)
 			if len(bodyStr) > 1000 {
-				enc.AddString("req", bodyStr[:1000]+"[truncated]")
+				enc.AddString("request_body", bodyStr[:1000]+"[truncated]")
 			} else {
-				enc.AddString("req", bodyStr)
+				enc.AddString("request_body", bodyStr)
 			}
 		}
 	}
@@ -98,9 +100,9 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	res := maskBinaryFields(h.responseBody)
 	switch v := res.(type) {
 	case string:
-		enc.AddString("res", v)
+		enc.AddString("response_body", v)
 	default:
-		enc.AddReflected("res", v)
+		enc.AddReflected("response_body", v)
 	}
 
 	return nil

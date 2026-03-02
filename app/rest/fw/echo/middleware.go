@@ -86,7 +86,7 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Modu
 
 			w.Header().Add(logCtx.CorrelationIDKeyXHeader.String(), correlationID)
 
-			lrw := logCtx.NewHTTP(w, appModule, log, time.Now(), r.Method, r.RequestURI, contentType, r.UserAgent(), requestBody)
+			lrw := logCtx.NewHTTP(w, appModule, log, time.Now(), r.Method, r.URL, contentType, r.UserAgent(), requestBody)
 
 			h.ServeHTTP(lrw, r)
 		})
