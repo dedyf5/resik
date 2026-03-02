@@ -21,13 +21,13 @@ import (
 )
 
 type GRPC struct {
-	appModule configEntity.Module
-	log       *Log
-	start     time.Time
-	status    *resPkg.Status
-	uri       string
-	req       any
-	res       any
+	appModule    configEntity.Module
+	log          *Log
+	start        time.Time
+	status       *resPkg.Status
+	path         string
+	requestBody  any
+	responseBody any
 }
 
 // fieldInfo stores pre-computed metadata for a single struct field to optimize
@@ -49,7 +49,7 @@ var sensitiveFields = map[string]struct{}{
 	"token":    {},
 }
 
-func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, uri string, req any, res any, err error) *GRPC {
+func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, path string, requestBody any, responseBody any, err error) *GRPC {
 	status := &resPkg.Status{
 		Code: http.StatusOK,
 	}
@@ -60,13 +60,13 @@ func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, uri strin
 		}
 	}
 	return &GRPC{
-		appModule: appModule,
-		log:       log,
-		start:     start,
-		status:    status,
-		uri:       uri,
-		req:       req,
-		res:       res,
+		appModule:    appModule,
+		log:          log,
+		start:        start,
+		status:       status,
+		path:         path,
+		requestBody:  requestBody,
+		responseBody: responseBody,
 	}
 }
 
@@ -83,26 +83,26 @@ func (h *GRPC) Write() {
 func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	grpc := h.status.GRPCStatus()
 
-	cleanReq := maskBinaryFields(h.req)
+	cleanReq := maskBinaryFields(h.requestBody)
 	reqByte, _ := json.Marshal(cleanReq)
 
-	enc.AddString("app", h.appModule.DirectoryName())
+	enc.AddString("module", h.appModule.DirectoryName())
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
-	enc.AddString("path", h.uri)
+	enc.AddString("path", h.path)
 	enc.AddUint32("status_code", uint32(grpc.Code()))
 	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())
-	enc.AddString("req", string(reqByte))
+	enc.AddString("request_body", string(reqByte))
 
 	if h.status.IsError() {
-		enc.AddString("res", h.status.MessageOrDefault())
+		enc.AddString("response_body", h.status.MessageOrDefault())
 	} else {
-		cleanRes := maskBinaryFields(h.res)
+		cleanRes := maskBinaryFields(h.responseBody)
 		resByte, _ := json.Marshal(cleanRes)
 		resString := string(resByte)
 		if resString == "null" {
 			resString = ""
 		}
-		enc.AddString("res", resString)
+		enc.AddString("response_body", resString)
 	}
 	return nil
 }

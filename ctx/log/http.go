@@ -69,7 +69,7 @@ func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 }
 
 func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	enc.AddString("app", h.appModule.DirectoryName())
+	enc.AddString("module", h.appModule.DirectoryName())
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
 	enc.AddString("method", h.method)
 	enc.AddString("path", h.url.Path)
@@ -80,19 +80,19 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())
 
 	if strings.HasPrefix(h.contentType, "multipart/form-data") {
-		enc.AddString("req", "[MULTIPART: binary data omitted]")
+		enc.AddString("request_body", "[MULTIPART: binary data omitted]")
 	} else {
 		var rawData any
 		if err := json.Unmarshal(h.requestBody, &rawData); err == nil {
 			cleanReq := maskBinaryFields(rawData)
 			reqByte, _ := json.Marshal(cleanReq)
-			enc.AddString("req", string(reqByte))
+			enc.AddString("request_body", string(reqByte))
 		} else {
 			bodyStr := string(h.requestBody)
 			if len(bodyStr) > 1000 {
-				enc.AddString("req", bodyStr[:1000]+"[truncated]")
+				enc.AddString("request_body", bodyStr[:1000]+"[truncated]")
 			} else {
-				enc.AddString("req", bodyStr)
+				enc.AddString("request_body", bodyStr)
 			}
 		}
 	}
@@ -100,9 +100,9 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	res := maskBinaryFields(h.responseBody)
 	switch v := res.(type) {
 	case string:
-		enc.AddString("res", v)
+		enc.AddString("response_body", v)
 	default:
-		enc.AddReflected("res", v)
+		enc.AddReflected("response_body", v)
 	}
 
 	return nil

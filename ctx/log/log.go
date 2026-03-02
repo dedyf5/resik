@@ -100,7 +100,7 @@ func (l *Log) Debug(msg string) {
 }
 
 func (l *Log) ZapFields() (fields []zap.Field) {
-	fields = append(fields, zap.String("app", l.AppModule.DirectoryName()), zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.String("path", l.Path))
+	fields = append(fields, zap.String("module", l.AppModule.DirectoryName()), zap.String(CorrelationIDKeyContext.String(), l.CorrelationID), zap.String("path", l.Path))
 	if l.QueryString != nil {
 		fields = append(fields, zap.String("query_string", *l.QueryString))
 	}
