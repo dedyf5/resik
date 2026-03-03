@@ -92,13 +92,15 @@ func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	if h.status.IsError() {
 		enc.AddString("response_body", h.status.MessageOrDefault())
 	} else {
-		cleanRes := maskBinaryFields(h.responseBody)
-		resByte, _ := json.Marshal(cleanRes)
-		resString := string(resByte)
-		if resString == "null" {
-			resString = ""
+		res := maskBinaryFields(h.responseBody)
+		switch v := res.(type) {
+		case string:
+			enc.AddString("response_body", v)
+		default:
+			if err := enc.AddReflected("response_body", v); err != nil {
+				enc.AddString("response_body_error", err.Error())
+			}
 		}
-		enc.AddString("response_body", resString)
 	}
 	return nil
 }
