@@ -102,7 +102,9 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	case string:
 		enc.AddString("response_body", v)
 	default:
-		enc.AddReflected("response_body", v)
+		if err := enc.AddReflected("response_body", v); err != nil {
+			enc.AddString("response_body_error", err.Error())
+		}
 	}
 
 	return nil
