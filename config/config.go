@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/drivers"
@@ -132,16 +133,16 @@ func (conf *Config) loadDatabase(module configEntity.Module) {
 	db.Schema = viper.GetString("DATABASE_SCHEMA")
 	db.MaxOpenConns = viper.GetInt(module.Key("DATABASE_MAX_OPEN_CONS"))
 	db.MaxIdleConns = viper.GetInt(module.Key("DATABASE_MAX_IDLE_CONS"))
-	db.ConnMaxLifetime = viper.GetInt(module.Key("DATABASE_CONN_MAX_LIFETIME"))
-	db.ConnMaxIdleTime = viper.GetInt(module.Key("DATABASE_CONN_MAX_IDLETIME"))
-	db.HealthCheckTimeoutSeconds = viper.GetInt("DATABASE_HEALTHCHECK_TIMEOUT_SECONDS")
+	db.ConnMaxLifetime = getDuration(module.Key("DATABASE_CONN_MAX_LIFETIME"))
+	db.ConnMaxIdleTime = getDuration(module.Key("DATABASE_CONN_MAX_IDLETIME"))
+	db.HealthCheckTimeout = getDuration("DATABASE_HEALTHCHECK_TIMEOUT")
 	db.IsDebug = viper.GetBool(module.Key("DATABASE_IS_DEBUG"))
 	conf.Database = db
 }
 
 func (conf *Config) loadAuth(module configEntity.Module) {
 	conf.Auth = configEntity.Auth{
-		Expires:        viper.GetUint64(module.Key("AUTH_EXPIRES")),
+		Expires:        getDuration(module.Key("AUTH_EXPIRES")),
 		SignatureKey:   getSecretFromFileOrEnv("AUTH_SIGNATURE_KEY_PATH_FILE", "AUTH_SIGNATURE_KEY"),
 		HashMemory:     viper.GetUint32("AUTH_HASH_MEMORY"),
 		HashIterations: viper.GetUint32("AUTH_HASH_ITERATIONS"),
@@ -152,4 +153,18 @@ func (conf *Config) loadLog(module configEntity.Module) {
 	conf.Log = configEntity.Log{
 		File: viper.GetString(module.Key("LOG_FILE")),
 	}
+}
+
+// getDuration retrieves a string value from the configuration using the provided key
+// and parses it into a time.Duration.
+//
+// The value in the configuration should follow the format supported by time.ParseDuration,
+// such as "300s", "5m", or "24h". If the key is missing or the value is not a valid
+// duration string, the application will log a fatal error and exit.
+func getDuration(key string) (duration time.Duration) {
+	duration, err := time.ParseDuration(viper.GetString(key))
+	if err != nil {
+		log.Fatalf("[config] field '%s' has an invalid format: %v (valid examples: '1h', '30m', '3600s')", key, err)
+	}
+	return
 }

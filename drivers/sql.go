@@ -31,18 +31,18 @@ func (engine SQLEngine) String() string {
 }
 
 type SQLConfig struct {
-	Engine                    SQLEngine
-	Host                      string
-	Port                      int
-	Username                  string
-	Password                  string
-	Schema                    string
-	MaxOpenConns              int
-	MaxIdleConns              int
-	ConnMaxLifetime           int
-	ConnMaxIdleTime           int
-	HealthCheckTimeoutSeconds int
-	IsDebug                   bool
+	Engine             SQLEngine
+	Host               string
+	Port               int
+	Username           string
+	Password           string
+	Schema             string
+	MaxOpenConns       int
+	MaxIdleConns       int
+	ConnMaxLifetime    time.Duration
+	ConnMaxIdleTime    time.Duration
+	HealthCheckTimeout time.Duration
+	IsDebug            bool
 }
 
 func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func(), error) {
@@ -91,12 +91,12 @@ func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func
 
 	conn.SetConnMaxLifetime(time.Second * 300)
 	if config.ConnMaxLifetime != 0 {
-		conn.SetConnMaxLifetime(time.Second * time.Duration(config.ConnMaxLifetime))
+		conn.SetConnMaxLifetime(config.ConnMaxLifetime)
 	}
 
 	conn.SetConnMaxIdleTime(time.Second * 300)
 	if config.ConnMaxIdleTime != 0 {
-		conn.SetConnMaxIdleTime(time.Second * time.Duration(config.ConnMaxIdleTime))
+		conn.SetConnMaxIdleTime(config.ConnMaxIdleTime)
 	}
 
 	go func() {

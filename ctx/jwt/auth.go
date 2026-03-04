@@ -68,11 +68,10 @@ func (a *AuthClaims) statusUnauthorized() (bool, *resPkg.Status) {
 }
 
 func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64, outletIDs []uint64) (token string, status *resPkg.Status) {
-	duration := time.Duration(authConfig.Expires) * time.Second
 	claims := AuthClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    appConfig.Name,
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(duration)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(authConfig.Expires)),
 		},
 		UserID:      userID,
 		Username:    username,

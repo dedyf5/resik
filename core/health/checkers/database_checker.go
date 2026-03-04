@@ -25,11 +25,7 @@ type DBCheckerConfig struct {
 
 func NewDatabaseChecker(db *sql.DB, config config.Config) health.Checker {
 	cfg := DBCheckerConfig{Name: "database"}
-	if config.Database.HealthCheckTimeoutSeconds > 0 {
-		cfg.Timeout = time.Duration(config.Database.HealthCheckTimeoutSeconds) * time.Second
-	} else {
-		cfg.Timeout = 2 * time.Second
-	}
+	cfg.Timeout = config.Database.HealthCheckTimeout
 	return &DatabaseChecker{db: db, cfg: cfg}
 }
 
