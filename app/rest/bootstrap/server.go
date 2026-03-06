@@ -53,7 +53,13 @@ func (s *ServerHTTP) Start() {
 	fmt.Printf("%s%s version %s\n\n", config.AppLogoASCII, appName, version)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
 	go func() {
-		err := s.echo.Start(addr)
+		err := s.echo.StartServer(&http.Server{
+			Addr:              addr,
+			ReadHeaderTimeout: s.config.HTTP.ReadHeaderTimeout,
+			ReadTimeout:       s.config.HTTP.ReadTimeout,
+			WriteTimeout:      s.config.HTTP.WriteTimeout,
+			IdleTimeout:       s.config.HTTP.IdleTimeout,
+		})
 		if err != nil {
 			if errors.Is(err, http.ErrServerClosed) {
 				log.Println("HTTP SERVER CLOSED")
