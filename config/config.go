@@ -112,8 +112,15 @@ func (conf *Config) loadApp(module configEntity.Module) {
 }
 
 func (conf *Config) loadHTTP(module configEntity.Module) {
+	if conf.App.Module != configEntity.ModuleREST {
+		return
+	}
+
 	conf.HTTP = configEntity.HTTP{
-		ClientTimeout: viper.GetUint(module.Key("HTTP_CLIENT_TIMEOUT")),
+		ReadHeaderTimeout: viper.GetDuration(module.Key("HTTP_READ_HEADER_TIMEOUT")),
+		ReadTimeout:       viper.GetDuration(module.Key("HTTP_READ_TIMEOUT")),
+		WriteTimeout:      viper.GetDuration(module.Key("HTTP_WRITE_TIMEOUT")),
+		IdleTimeout:       viper.GetDuration(module.Key("HTTP_IDLE_TIMEOUT")),
 	}
 }
 

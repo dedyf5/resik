@@ -4,6 +4,11 @@
 
 package config
 
+import "time"
+
 type HTTP struct {
-	ClientTimeout uint
+	ReadHeaderTimeout time.Duration
+	ReadTimeout       time.Duration
+	WriteTimeout      time.Duration
+	IdleTimeout       time.Duration
 }
