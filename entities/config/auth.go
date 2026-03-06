@@ -4,8 +4,10 @@
 
 package config
 
+import "time"
+
 type Auth struct {
-	Expires        uint64
+	Expires        time.Duration `mapstructure:"expires" yaml:"expires" json:"expires"`
 	SignatureKey   string
 	HashMemory     uint32
 	HashIterations uint32
