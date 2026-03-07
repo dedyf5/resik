@@ -13,21 +13,21 @@ import (
 func (m *MerchantListGet) ToParam(c *ctx.Ctx) *paramMerchant.MerchantListGet {
 	orderStr := "name"
 	if m.Order != nil {
-		orderStr = *m.Order
+		orderStr = m.GetOrder()
 	}
 	var page int = 1
 	if m.Page != nil {
-		page = int(*m.Page)
+		page = int(m.GetPage())
 	}
 	var limit int = 10
 	if m.Limit != nil {
-		limit = int(*m.Limit)
+		limit = int(m.GetLimit())
 	}
 	return &paramMerchant.MerchantListGet{
 		Ctx:         c,
 		MerchantIDs: c.UserClaims().MerchantIDs,
 		Filter: goku.Filter{
-			Search: m.Search,
+			Search: m.GetSearch(),
 			Page:   page,
 			Limit:  limit,
 		},

@@ -58,7 +58,7 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 		return err
 	}
 
-	token, err := h.userService.Auth(param.Auth{Ctx: ctx, Username: payload.Username, Password: payload.Password})
+	token, err := h.userService.Auth(param.Auth{Ctx: ctx, Username: payload.GetUsername(), Password: payload.GetPassword()})
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 	return &resPkg.Status{
 		Code: http.StatusOK,
 		Data: resUserCore.UserCredential{
-			Username: payload.Username,
+			Username: payload.GetUsername(),
 			Token:    token,
 		},
 	}

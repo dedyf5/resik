@@ -1,0 +1,26 @@
+version: "2"
+
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    - protogetter
+    - errchkjson
+    - errorlint
+    - perfsprint
+    - prealloc
+    - gosec
+    - testifylint
+    - bodyclose
+    - errcheck
+    - goconst
+    - gocritic
+    - govet
+    - ineffassign
+    - nilerr
+    - noctx
+    - staticcheck
+    - unconvert
+    - unused

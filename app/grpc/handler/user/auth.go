@@ -37,7 +37,7 @@ func (h *UserHandler) LoginPost(c context.Context, req *reqUserCore.LoginPost) (
 			Message: codes.OK.String(),
 		},
 		Data: &resUserCore.UserCredential{
-			Username: req.Username,
+			Username: req.GetUsername(),
 			Token:    token,
 		},
 	}, nil

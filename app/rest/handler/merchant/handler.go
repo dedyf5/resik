@@ -205,7 +205,7 @@ func (h *Handler) MerchantDelete(echoCtx echo.Context) error {
 		return err
 	}
 
-	if _, err = ctx.UserClaims().MerchantIDIsAccessible(param.Id); err != nil {
+	if _, err = ctx.UserClaims().MerchantIDIsAccessible(param.GetId()); err != nil {
 		return err
 	}
 

@@ -14,26 +14,26 @@ import (
 func (m *MerchantOmzetGet) ToParam(c *ctx.Ctx) *trxParam.MerchantOmzetGet {
 	orderStr := "period"
 	if m.Order != nil {
-		orderStr = *m.Order
+		orderStr = m.GetOrder()
 	}
 	var page int = 1
 	if m.Page != nil {
-		page = int(*m.Page)
+		page = int(m.GetPage())
 	}
 	var limit int = 10
 	if m.Limit != nil {
-		limit = int(*m.Limit)
+		limit = int(m.GetLimit())
 	}
 	return &trxParam.MerchantOmzetGet{
 		Ctx:        c,
-		MerchantID: m.MerchantId,
+		MerchantID: m.GetMerchantId(),
 		GroupPeriod: groupperiod.GroupPeriod{
-			Mode:          groupperiod.Mode(m.Mode),
-			DatetimeStart: m.DatetimeStart,
-			DatetimeEnd:   m.DatetimeEnd,
+			Mode:          groupperiod.Mode(m.GetMode()),
+			DatetimeStart: m.GetDatetimeStart(),
+			DatetimeEnd:   m.GetDatetimeEnd(),
 		},
 		Filter: goku.Filter{
-			Search: m.Search,
+			Search: m.GetSearch(),
 			Page:   page,
 			Limit:  limit,
 		},
