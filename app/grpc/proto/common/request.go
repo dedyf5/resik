@@ -8,6 +8,6 @@ import commonEntity "github.com/dedyf5/resik/entities/common"
 
 func (r *Request) ToRequestEntity() commonEntity.Request {
 	return commonEntity.Request{
-		Lang: r.Lang,
+		Lang: r.GetLang(),
 	}
 }

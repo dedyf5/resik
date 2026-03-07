@@ -12,7 +12,7 @@ import (
 func (l *LoginPost) ToParam(c *ctx.Ctx) userParam.Auth {
 	return userParam.Auth{
 		Ctx:      c,
-		Username: l.Username,
-		Password: l.Password,
+		Username: l.GetUsername(),
+		Password: l.GetPassword(),
 	}
 }

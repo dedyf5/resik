@@ -14,26 +14,26 @@ import (
 func (o *OutletOmzetGet) ToParam(c *ctx.Ctx) *trxParam.OutletOmzetGet {
 	orderStr := "period"
 	if o.Order != nil {
-		orderStr = *o.Order
+		orderStr = o.GetOrder()
 	}
 	var page int = 1
 	if o.Page != nil {
-		page = int(*o.Page)
+		page = int(o.GetPage())
 	}
 	var limit int = 10
 	if o.Limit != nil {
-		limit = int(*o.Limit)
+		limit = int(o.GetLimit())
 	}
 	return &trxParam.OutletOmzetGet{
 		Ctx:      c,
-		OutletID: o.OutletId,
+		OutletID: o.GetOutletId(),
 		GroupPeriod: groupperiod.GroupPeriod{
-			Mode:          groupperiod.Mode(o.Mode),
-			DatetimeStart: o.DatetimeStart,
-			DatetimeEnd:   o.DatetimeEnd,
+			Mode:          groupperiod.Mode(o.GetMode()),
+			DatetimeStart: o.GetDatetimeStart(),
+			DatetimeEnd:   o.GetDatetimeEnd(),
 		},
 		Filter: goku.Filter{
-			Search: o.Search,
+			Search: o.GetSearch(),
 			Page:   page,
 			Limit:  limit,
 		},

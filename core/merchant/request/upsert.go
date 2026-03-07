@@ -12,14 +12,14 @@ import (
 )
 
 func (m *MerchantPost) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, status *resPkg.Status) {
-	datetime, err := datetime.FromString(m.CreatedAt, datetime.FormatyyyyMMddHHmmss)
+	datetime, err := datetime.FromString(m.GetCreatedAt(), datetime.FormatyyyyMMddHHmmss)
 	if err != nil {
 		return nil, err
 	}
 	userID := ctx.UserClaims().UserID
 	return &merchantEntity.Merchant{
 		UserID:    userID,
-		Name:      m.Name,
+		Name:      m.GetName(),
 		CreatedBy: userID,
 		CreatedAt: *datetime,
 		UpdatedBy: userID,
@@ -28,13 +28,13 @@ func (m *MerchantPost) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, sta
 }
 
 func (m *MerchantPut) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, status *resPkg.Status) {
-	datetime, err := datetime.FromString(m.UpdatedAt, datetime.FormatyyyyMMddHHmmss)
+	datetime, err := datetime.FromString(m.GetUpdatedAt(), datetime.FormatyyyyMMddHHmmss)
 	if err != nil {
 		return nil, err
 	}
 	return &merchantEntity.Merchant{
-		ID:        m.Id,
-		Name:      m.Name,
+		ID:        m.GetId(),
+		Name:      m.GetName(),
 		UpdatedBy: ctx.UserClaims().UserID,
 		UpdatedAt: *datetime,
 	}, nil

@@ -24,7 +24,7 @@ func (h *MerchantHandler) MerchantDelete(c context.Context, req *reqMerchantCore
 		return nil, err
 	}
 
-	if _, err = ctx.UserClaims().MerchantIDIsAccessible(req.Id); err != nil {
+	if _, err = ctx.UserClaims().MerchantIDIsAccessible(req.GetId()); err != nil {
 		return nil, err
 	}
 
