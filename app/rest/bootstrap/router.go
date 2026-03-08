@@ -5,8 +5,6 @@
 package bootstrap
 
 import (
-	"fmt"
-
 	"github.com/dedyf5/resik/app/rest/docs"
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
 	generalHandler "github.com/dedyf5/resik/app/rest/handler/general"
@@ -77,5 +75,5 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	docHandler := echoSwagger.EchoWrapHandler(
 		echoSwagger.InstanceName(docs.SwaggerInforest.InfoInstanceName),
 	)
-	e.GET(fmt.Sprintf("%s*", echoFW.DocPrefix), docHandler)
+	e.GET(echoFW.DocPrefix+"*", docHandler)
 }

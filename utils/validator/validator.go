@@ -6,7 +6,6 @@ package validator
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"reflect"
@@ -125,7 +124,7 @@ func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) 
 		vals := make([]string, 0, len(base)*2)
 		for _, v := range base {
 			vals = append(vals, v)
-			vals = append(vals, fmt.Sprintf("-%s", v))
+			vals = append(vals, "-"+v)
 		}
 		param := strings.Join(vals, " ")
 
@@ -213,7 +212,7 @@ func isOneOfOrder(fl validator.FieldLevel) bool {
 	vals := make([]string, 0, len(base)*2)
 	for _, v := range base {
 		vals = append(vals, v)
-		vals = append(vals, fmt.Sprintf("-%s", v))
+		vals = append(vals, "-"+v)
 	}
 
 	fields := strings.SplitSeq(fl.Field().String(), ",")

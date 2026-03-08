@@ -7,7 +7,6 @@ package log
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -47,7 +46,7 @@ func (h *HTTP) Write(buf []byte) (int, error) {
 	loggerRes := getLogResponse(buf)
 	bodyByte, err := json.Marshal(loggerRes.Response)
 	if err != nil {
-		panic(fmt.Sprintf("error encode new body response error: %s", err.Error()))
+		panic("error encode new body response error: " + err.Error())
 	}
 	h.responseBody.Write(bodyByte)
 	h.writeLogger(loggerRes)

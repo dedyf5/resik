@@ -5,6 +5,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -76,7 +77,7 @@ func getSecretFromFileOrEnv(secretFilePathEnvVarName, fallbackEnvVarName string)
 
 func readSecretFile(filepath string) (string, error) {
 	if filepath == "" {
-		return "", fmt.Errorf("secret file path is empty")
+		return "", errors.New("secret file path is empty")
 	}
 	content, err := os.ReadFile(filepath)
 	if err != nil {
