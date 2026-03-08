@@ -79,15 +79,18 @@ func (h *GRPC) Write() {
 func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	grpc := h.status.GRPCStatus()
 
-	cleanReq := maskBinaryFields(h.requestBody)
-	reqByte, _ := json.Marshal(cleanReq)
-
 	enc.AddString("module", h.appModule.DirectoryName())
 	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
 	enc.AddString("path", h.path)
 	enc.AddUint32("status_code", uint32(grpc.Code()))
 	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())
+
+	cleanReq := maskBinaryFields(h.requestBody)
+	reqByte, err := json.Marshal(cleanReq)
 	enc.AddString("request_body", string(reqByte))
+	if err != nil {
+		enc.AddString("request_body_error", err.Error())
+	}
 
 	if h.status.IsError() {
 		enc.AddString("response_body", h.status.MessageOrDefault())

@@ -84,8 +84,11 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 		var rawData any
 		if err := json.Unmarshal(h.requestBody, &rawData); err == nil {
 			cleanReq := maskBinaryFields(rawData)
-			reqByte, _ := json.Marshal(cleanReq)
+			reqByte, err := json.Marshal(cleanReq)
 			enc.AddString("request_body", string(reqByte))
+			if err != nil {
+				enc.AddString("request_body_error", err.Error())
+			}
 		} else {
 			bodyStr := string(h.requestBody)
 			if len(bodyStr) > 1000 {
