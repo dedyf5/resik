@@ -6,6 +6,7 @@ package migrator
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"io/fs"
 	"log"
@@ -27,7 +28,7 @@ func initMigrateInstance() (*migrate.Migrate, error) {
 	dbConfig := configREST.Database
 
 	if dbConfig.Host == "" || dbConfig.Port == 0 || dbConfig.Schema == "" || dbConfig.Username == "" || dbConfig.Password == "" {
-		return nil, fmt.Errorf("error loading complete database configuration")
+		return nil, errors.New("error loading complete database configuration")
 	}
 
 	migrationFiles, err := fs.Sub(embeddedMigrations, "migrations")

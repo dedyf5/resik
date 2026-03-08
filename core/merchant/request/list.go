@@ -15,11 +15,11 @@ func (m *MerchantListGet) ToParam(c *ctx.Ctx) *paramMerchant.MerchantListGet {
 	if m.Order != nil {
 		orderStr = m.GetOrder()
 	}
-	var page int = 1
+	page := 1
 	if m.Page != nil {
 		page = int(m.GetPage())
 	}
-	var limit int = 10
+	limit := 10
 	if m.Limit != nil {
 		limit = int(m.GetLimit())
 	}

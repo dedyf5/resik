@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -50,10 +51,10 @@ func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func
 		"charset":         "utf8",
 		"parseTime":       "True",
 		"loc":             "Asia%2FJakarta",
-		"multiStatements": fmt.Sprintf("%t", isMultiStatements),
+		"multiStatements": strconv.FormatBool(isMultiStatements),
 		"autocommit":      "True",
 	}
-	dsnCfgStr := make([]string, 0)
+	dsnCfgStr := make([]string, 0, len(dsnCfgs))
 	for key, val := range dsnCfgs {
 		dsnCfgStr = append(dsnCfgStr, fmt.Sprintf("%s=%s", key, val))
 	}

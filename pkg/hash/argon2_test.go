@@ -7,7 +7,6 @@ package hash
 import (
 	"crypto/rand"
 	"errors"
-	"fmt"
 	"strings"
 	"testing"
 
@@ -131,7 +130,7 @@ func TestArgon2Hasher_Compare(t *testing.T) {
 		{
 			name:          "Fail - Sscanf version malformed",
 			encodedHash:   "$argon2id$v=abc$m=8192,t=1,p=1$salt$hash",
-			expectedError: fmt.Errorf("sscanf error"),
+			expectedError: errors.New("sscanf error"),
 		},
 		{
 			name:          "Fail - Incompatible version",
@@ -141,17 +140,17 @@ func TestArgon2Hasher_Compare(t *testing.T) {
 		{
 			name:          "Fail - Sscanf params malformed",
 			encodedHash:   "$argon2id$v=19$m=abc,t=1,p=1$salt$hash",
-			expectedError: fmt.Errorf("sscanf error"),
+			expectedError: errors.New("sscanf error"),
 		},
 		{
 			name:          "Fail - Invalid base64 salt",
 			encodedHash:   "$argon2id$v=19$m=8192,t=1,p=1$invalid_salt!$hash",
-			expectedError: fmt.Errorf("base64 error"),
+			expectedError: errors.New("base64 error"),
 		},
 		{
 			name:          "Fail - Invalid base64 hash",
 			encodedHash:   "$argon2id$v=19$m=8192,t=1,p=1$c2FsdA$hash%invalid",
-			expectedError: fmt.Errorf("base64 error"),
+			expectedError: errors.New("base64 error"),
 		},
 		{
 			name:          "Success - Match",

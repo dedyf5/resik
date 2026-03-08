@@ -16,11 +16,11 @@ func (o *OutletOmzetGet) ToParam(c *ctx.Ctx) *trxParam.OutletOmzetGet {
 	if o.Order != nil {
 		orderStr = o.GetOrder()
 	}
-	var page int = 1
+	page := 1
 	if o.Page != nil {
 		page = int(o.GetPage())
 	}
-	var limit int = 10
+	limit := 10
 	if o.Limit != nil {
 		limit = int(o.GetLimit())
 	}

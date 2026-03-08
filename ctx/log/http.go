@@ -7,7 +7,6 @@ package log
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
@@ -47,7 +46,7 @@ func (h *HTTP) Write(buf []byte) (int, error) {
 	loggerRes := getLogResponse(buf)
 	bodyByte, err := json.Marshal(loggerRes.Response)
 	if err != nil {
-		panic(fmt.Sprintf("error encode new body response error: %s", err.Error()))
+		panic("error encode new body response error: " + err.Error())
 	}
 	h.responseBody.Write(bodyByte)
 	h.writeLogger(loggerRes)
@@ -85,8 +84,11 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 		var rawData any
 		if err := json.Unmarshal(h.requestBody, &rawData); err == nil {
 			cleanReq := maskBinaryFields(rawData)
-			reqByte, _ := json.Marshal(cleanReq)
+			reqByte, err := json.Marshal(cleanReq)
 			enc.AddString("request_body", string(reqByte))
+			if err != nil {
+				enc.AddString("request_body_error", err.Error())
+			}
 		} else {
 			bodyStr := string(h.requestBody)
 			if len(bodyStr) > 1000 {
