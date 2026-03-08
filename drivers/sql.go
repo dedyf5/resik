@@ -54,7 +54,7 @@ func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func
 		"multiStatements": strconv.FormatBool(isMultiStatements),
 		"autocommit":      "True",
 	}
-	dsnCfgStr := make([]string, 0)
+	dsnCfgStr := make([]string, 0, len(dsnCfgs))
 	for key, val := range dsnCfgs {
 		dsnCfgStr = append(dsnCfgStr, fmt.Sprintf("%s=%s", key, val))
 	}
