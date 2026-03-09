@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	statusProto "github.com/dedyf5/resik/app/grpc/proto/status"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"go.uber.org/zap"
@@ -49,12 +50,18 @@ func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, path stri
 	status := &resPkg.Status{
 		Code: http.StatusOK,
 	}
+
+	if s := statusProto.Extract(responseBody); s != nil {
+		status.Message = s.GetMessage()
+	}
+
 	if err != nil {
 		switch ty := err.(type) {
 		case *resPkg.Status:
 			status = ty
 		}
 	}
+
 	return &GRPC{
 		appModule:    appModule,
 		log:          log,
