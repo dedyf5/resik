@@ -5,6 +5,7 @@
 package bootstrap
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -24,8 +25,9 @@ type ServerHTTP struct {
 	interceptor *middleware.Interceptor
 }
 
-func newServerHTTP(config config.Config, router *Router, interceptor *middleware.Interceptor) *ServerHTTP {
-	listener, err := net.Listen("tcp", fmt.Sprintf(":%d", config.App.Port))
+func newServerHTTP(c context.Context, config config.Config, router *Router, interceptor *middleware.Interceptor) *ServerHTTP {
+	lc := net.ListenConfig{}
+	listener, err := lc.Listen(c, "tcp", fmt.Sprintf(":%d", config.App.Port))
 	if err != nil {
 		log.Fatalf("HTTP SERVER LISTEN ERROR: %s", err.Error())
 		return nil

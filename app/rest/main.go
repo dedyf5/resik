@@ -4,7 +4,14 @@
 
 package rest
 
-import "github.com/dedyf5/resik/app/rest/bootstrap"
+import (
+	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/dedyf5/resik/app/rest/bootstrap"
+)
 
 var app *bootstrap.App
 var cleanup func()
@@ -14,7 +21,10 @@ var err error
 // @in header
 // @name Authorization
 func Run() {
-	app, cleanup, err = bootstrap.InitializeHTTP()
+	c, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	app, cleanup, err = bootstrap.InitializeHTTP(c)
 
 	if err != nil {
 		panic(err)
@@ -24,6 +34,7 @@ func Run() {
 		panic("Failed to initialize app")
 	}
 
-	app.Start()
+	app.Start(c)
+
 	defer cleanup()
 }

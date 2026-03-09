@@ -7,6 +7,7 @@
 package bootstrap
 
 import (
+	"context"
 	"github.com/dedyf5/resik/app/grpc/handler/general"
 	"github.com/dedyf5/resik/app/grpc/handler/health"
 	merchant2 "github.com/dedyf5/resik/app/grpc/handler/merchant"
@@ -37,7 +38,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeHTTP() (*App, func(), error) {
+func InitializeHTTP(c context.Context) (*App, func(), error) {
 	config := _wireConfigValue
 	configLog := config.Log
 	app := config.App
@@ -76,7 +77,7 @@ func InitializeHTTP() (*App, func(), error) {
 	healthHandler := health.New(iService)
 	router := newRouter(config, generalHandler, merchantHandler, transactionHandler, userHandler, healthHandler)
 	interceptor := middleware.NewInterceptor(app, auth, logLog)
-	serverHTTP := newServerHTTP(config, router, interceptor)
+	serverHTTP := newServerHTTP(c, config, router, interceptor)
 	bootstrapApp, cleanup3, err := newApp(serverHTTP)
 	if err != nil {
 		cleanup2()

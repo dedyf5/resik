@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"time"
 
@@ -46,20 +47,26 @@ func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 	}
 }
 
-func (s *ServerHTTP) Start() {
+func (s *ServerHTTP) Start(c context.Context) {
 	addr := s.config.App.HostPort()
 	appName := color.Format(color.GREEN, s.config.App.Name)
 	version := color.Format(color.YELLOW, s.config.App.Version)
 	fmt.Printf("%s%s version %s\n\n", config.AppLogoASCII, appName, version)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
+
 	go func() {
-		err := s.echo.StartServer(&http.Server{
+		server := &http.Server{
 			Addr:              addr,
 			ReadHeaderTimeout: s.config.HTTP.ReadHeaderTimeout,
 			ReadTimeout:       s.config.HTTP.ReadTimeout,
 			WriteTimeout:      s.config.HTTP.WriteTimeout,
 			IdleTimeout:       s.config.HTTP.IdleTimeout,
-		})
+			BaseContext: func(_ net.Listener) context.Context {
+				return c
+			},
+		}
+
+		err := s.echo.StartServer(server)
 		if err != nil {
 			if errors.Is(err, http.ErrServerClosed) {
 				log.Println("HTTP SERVER CLOSED")
