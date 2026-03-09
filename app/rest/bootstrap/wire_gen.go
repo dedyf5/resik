@@ -7,6 +7,7 @@
 package bootstrap
 
 import (
+	"context"
 	"github.com/dedyf5/resik/app/rest/fw/echo"
 	"github.com/dedyf5/resik/app/rest/handler/general"
 	"github.com/dedyf5/resik/app/rest/handler/health"
@@ -37,7 +38,7 @@ import (
 
 // Injectors from wire.go:
 
-func InitializeHTTP() (*App, func(), error) {
+func InitializeHTTP(c context.Context) (*App, func(), error) {
 	config := _wireConfigValue
 	configLog := config.Log
 	app := config.App
