@@ -8,6 +8,8 @@
 package bootstrap
 
 import (
+	"context"
+
 	generalHandler "github.com/dedyf5/resik/app/grpc/handler/general"
 	healthHandler "github.com/dedyf5/resik/app/grpc/handler/health"
 	merchantHandler "github.com/dedyf5/resik/app/grpc/handler/merchant"
@@ -105,7 +107,7 @@ func provideHasherConfig(conf configEntity.Auth) *pkgHash.Argon2Config {
 	}
 }
 
-func InitializeHTTP() (*App, func(), error) {
+func InitializeHTTP(c context.Context) (*App, func(), error) {
 	wire.Build(
 		configGeneralSet,
 		utilSet,

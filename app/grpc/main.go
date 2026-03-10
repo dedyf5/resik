@@ -4,14 +4,24 @@
 
 package grpc
 
-import "github.com/dedyf5/resik/app/grpc/bootstrap"
+import (
+	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/dedyf5/resik/app/grpc/bootstrap"
+)
 
 var app *bootstrap.App
 var cleanup func()
 var err error
 
 func Run() {
-	app, cleanup, err = bootstrap.InitializeHTTP()
+	c, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	app, cleanup, err = bootstrap.InitializeHTTP(c)
 
 	if err != nil {
 		panic(err)
@@ -21,6 +31,7 @@ func Run() {
 		panic("Failed to initialize app")
 	}
 
-	app.Start()
+	app.Start(c)
+
 	defer cleanup()
 }

@@ -7,10 +7,7 @@ package bootstrap
 import (
 	"context"
 	"log"
-	"os"
-	"os/signal"
 	"runtime"
-	"syscall"
 )
 
 type App struct {
@@ -26,28 +23,12 @@ func newApp(serverHTTP *ServerHTTP) (*App, func(), error) {
 	}, nil
 }
 
-func (app *App) Start() {
+func (app *App) Start(c context.Context) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
-
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	terminalHandler := make(chan os.Signal, 1)
-	signal.Notify(
-		terminalHandler,
-		os.Interrupt,
-		syscall.SIGHUP,
-		syscall.SIGTERM,
-		syscall.SIGQUIT,
-	)
-
-	go func() {
-		in := <-terminalHandler
-		log.Printf("SYSTEM CALL: %+v", in)
-		cancel()
-	}()
 
 	app.serverHTTP.Start()
 
-	<-ctx.Done()
+	<-c.Done()
+
+	log.Println("received shutdown signal, stopping application...")
 }
