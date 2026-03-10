@@ -47,13 +47,17 @@ func initMigrateInstance() (*migrate.Migrate, error) {
 	}
 	databaseDriver, err := mysql.WithInstance(dbConn, &mysql.Config{})
 	if err != nil {
-		dbConn.Close()
+		if errClose := dbConn.Close(); errClose != nil {
+			return nil, fmt.Errorf("error closing database connection: %w", errClose)
+		}
 		return nil, fmt.Errorf("error creating database driver: %w", err)
 	}
 
 	m, err := migrate.NewWithInstance("goembed", sourceDriver, dbConfig.Schema, databaseDriver)
 	if err != nil {
-		dbConn.Close()
+		if errClose := dbConn.Close(); errClose != nil {
+			return nil, fmt.Errorf("error closing database connection: %w", errClose)
+		}
 		return nil, fmt.Errorf("error creating migrate instance: %w", err)
 	}
 
@@ -65,7 +69,12 @@ func RunUp(stepsStr string) error {
 	if err != nil {
 		return fmt.Errorf("failed to initialize migrator: %w", err)
 	}
-	defer m.Close()
+
+	defer func() {
+		if errClose, _ := m.Close(); errClose != nil {
+			log.Printf("error closing migrator: %v", errClose)
+		}
+	}()
 
 	log.Println("Running migrations UP...")
 	var migrateErr error
@@ -97,7 +106,12 @@ func RunDown(stepsStr string) error {
 	if err != nil {
 		return fmt.Errorf("failed to initialize migrator: %w", err)
 	}
-	defer m.Close()
+
+	defer func() {
+		if errClose, _ := m.Close(); errClose != nil {
+			log.Printf("error closing migrator: %v", errClose)
+		}
+	}()
 
 	log.Println("Running migrations DOWN...")
 	var migrateErr error
@@ -129,7 +143,12 @@ func RunVersion() error {
 	if err != nil {
 		return fmt.Errorf("failed to initialize migrator: %w", err)
 	}
-	defer m.Close()
+
+	defer func() {
+		if errClose, _ := m.Close(); errClose != nil {
+			log.Printf("error closing migrator: %v", errClose)
+		}
+	}()
 
 	version, dirty, err := m.Version()
 	if err != nil && err != migrate.ErrNilVersion {
