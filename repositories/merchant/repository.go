@@ -10,8 +10,8 @@ type MerchantRepo struct {
 	DB *gorm.DB
 }
 
-func New(DB *gorm.DB) *MerchantRepo {
+func New(db *gorm.DB) *MerchantRepo {
 	return &MerchantRepo{
-		DB: DB,
+		DB: db,
 	}
 }

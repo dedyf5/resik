@@ -54,8 +54,8 @@ func (a *AuthClaims) OutletIDIsAccessible(outletID uint64) (ok bool, status *res
 	return a.checkAccess(a.OutletIDs, outletID)
 }
 
-func (a *AuthClaims) checkAccess(IDs []uint64, ID uint64) (ok bool, status *resPkg.Status) {
-	if !slices.Contains(IDs, ID) {
+func (a *AuthClaims) checkAccess(ids []uint64, id uint64) (ok bool, status *resPkg.Status) {
+	if !slices.Contains(ids, id) {
 		return a.statusUnauthorized()
 	}
 	return true, nil

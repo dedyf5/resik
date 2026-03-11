@@ -12,8 +12,8 @@ type TransactionRepo struct {
 	DB *gorm.DB
 }
 
-func New(DB *gorm.DB) *TransactionRepo {
+func New(db *gorm.DB) *TransactionRepo {
 	return &TransactionRepo{
-		DB: DB,
+		DB: db,
 	}
 }

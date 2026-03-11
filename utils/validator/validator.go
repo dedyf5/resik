@@ -143,7 +143,7 @@ func (v *Validate) Struct(payloadStruct interface{}, lang *langCtx.Lang) *resPkg
 
 	err := v.instance.Struct(payloadStruct)
 	if err != nil {
-		if _, ok := err.(*validator.InvalidValidationError); ok {
+		if _, ok := errors.AsType[*validator.InvalidValidationError](err); ok {
 			return &resPkg.Status{
 				Code: http.StatusInternalServerError,
 			}
@@ -155,7 +155,7 @@ func (v *Validate) Struct(payloadStruct interface{}, lang *langCtx.Lang) *resPkg
 }
 
 func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status {
-	errs, ok := err.(validator.ValidationErrors)
+	errs, ok := errors.AsType[validator.ValidationErrors](err)
 	if !ok {
 		return &resPkg.Status{
 			Code: http.StatusBadRequest,
@@ -176,12 +176,9 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 		value := e.Translate(v.Translator(getLanguage(v.langDefault, lang)))
 		value = regexp.MustCompile(e.Field()).ReplaceAllString(value, field)
 
-		switch e.Tag() {
-		case "datetime":
-			{
-				value = regexDate.ReplaceAllString(value, "yyyy-MM-dd")
-				value = regexTime.ReplaceAllString(value, "HH:mm:ss")
-			}
+		if e.Tag() == "datetime" {
+			value = regexDate.ReplaceAllString(value, "yyyy-MM-dd")
+			value = regexTime.ReplaceAllString(value, "HH:mm:ss")
 		}
 
 		errMap[field] = value

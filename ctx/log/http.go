@@ -58,11 +58,13 @@ func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 	if loggerRes != nil {
 		msg = loggerRes.Message
 	}
-	if h.statusCode >= http.StatusOK && h.statusCode <= http.StatusIMUsed {
+
+	switch {
+	case h.statusCode >= http.StatusOK && h.statusCode <= http.StatusIMUsed:
 		h.log.logger.Info(msg, zap.Inline(h))
-	} else if h.statusCode >= http.StatusInternalServerError && h.statusCode <= http.StatusNetworkAuthenticationRequired {
+	case h.statusCode >= http.StatusInternalServerError && h.statusCode <= http.StatusNetworkAuthenticationRequired:
 		h.log.logger.Error(msg, zap.Inline(h))
-	} else {
+	default:
 		h.log.logger.Warn(msg, zap.Inline(h))
 	}
 }

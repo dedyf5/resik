@@ -32,7 +32,7 @@ func (Outlet) TableName() string {
 	return TABLE_NAME
 }
 
-func GetUniqueMerchantIDsAndOutletIDs(outlets []Outlet) (merchantIDs, OutletIDs []uint64) {
+func GetUniqueMerchantIDsAndOutletIDs(outlets []Outlet) (merchantIDs, outletIDs []uint64) {
 	length := len(outlets)
 	MIDs := make([]uint64, 0, length)
 	OIDs := make([]uint64, 0, length)

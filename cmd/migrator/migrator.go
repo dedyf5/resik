@@ -47,13 +47,17 @@ func initMigrateInstance() (*migrate.Migrate, error) {
 	}
 	databaseDriver, err := mysql.WithInstance(dbConn, &mysql.Config{})
 	if err != nil {
-		dbConn.Close()
+		if errClose := dbConn.Close(); errClose != nil {
+			return nil, fmt.Errorf("error closing database connection: %w", errClose)
+		}
 		return nil, fmt.Errorf("error creating database driver: %w", err)
 	}
 
 	m, err := migrate.NewWithInstance("goembed", sourceDriver, dbConfig.Schema, databaseDriver)
 	if err != nil {
-		dbConn.Close()
+		if errClose := dbConn.Close(); errClose != nil {
+			return nil, fmt.Errorf("error closing database connection: %w", errClose)
+		}
 		return nil, fmt.Errorf("error creating migrate instance: %w", err)
 	}
 
@@ -65,7 +69,12 @@ func RunUp(stepsStr string) error {
 	if err != nil {
 		return fmt.Errorf("failed to initialize migrator: %w", err)
 	}
-	defer m.Close()
+
+	defer func() {
+		if errClose, _ := m.Close(); errClose != nil {
+			log.Printf("error closing migrator: %v", errClose)
+		}
+	}()
 
 	log.Println("Running migrations UP...")
 	var migrateErr error
@@ -80,10 +89,10 @@ func RunUp(stepsStr string) error {
 		migrateErr = m.Up()
 	}
 
-	if migrateErr != nil && migrateErr != migrate.ErrNoChange {
+	if migrateErr != nil && !errors.Is(migrateErr, migrate.ErrNoChange) {
 		return fmt.Errorf("migration UP failed: %w", migrateErr)
 	}
-	if migrateErr == migrate.ErrNoChange {
+	if errors.Is(migrateErr, migrate.ErrNoChange) {
 		log.Println("Migration UP: No change.")
 	} else {
 		log.Println("Migration UP completed successfully.")
@@ -97,7 +106,12 @@ func RunDown(stepsStr string) error {
 	if err != nil {
 		return fmt.Errorf("failed to initialize migrator: %w", err)
 	}
-	defer m.Close()
+
+	defer func() {
+		if errClose, _ := m.Close(); errClose != nil {
+			log.Printf("error closing migrator: %v", errClose)
+		}
+	}()
 
 	log.Println("Running migrations DOWN...")
 	var migrateErr error
@@ -112,10 +126,10 @@ func RunDown(stepsStr string) error {
 		migrateErr = m.Down()
 	}
 
-	if migrateErr != nil && migrateErr != migrate.ErrNoChange {
+	if migrateErr != nil && !errors.Is(migrateErr, migrate.ErrNoChange) {
 		return fmt.Errorf("migration DOWN failed: %w", migrateErr)
 	}
-	if migrateErr == migrate.ErrNoChange {
+	if errors.Is(migrateErr, migrate.ErrNoChange) {
 		log.Println("Migration DOWN: No change.")
 	} else {
 		log.Println("Migration DOWN completed successfully.")
@@ -129,13 +143,18 @@ func RunVersion() error {
 	if err != nil {
 		return fmt.Errorf("failed to initialize migrator: %w", err)
 	}
-	defer m.Close()
+
+	defer func() {
+		if errClose, _ := m.Close(); errClose != nil {
+			log.Printf("error closing migrator: %v", errClose)
+		}
+	}()
 
 	version, dirty, err := m.Version()
-	if err != nil && err != migrate.ErrNilVersion {
+	if err != nil && !errors.Is(err, migrate.ErrNilVersion) {
 		return fmt.Errorf("error getting migration version: %w", err)
 	}
-	if err == migrate.ErrNilVersion {
+	if errors.Is(err, migrate.ErrNilVersion) {
 		log.Println("No migration version found.")
 	} else {
 		log.Printf("Migration version: %d, Dirty: %t", version, dirty)

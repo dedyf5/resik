@@ -12,8 +12,8 @@ type UserRepo struct {
 	DB *gorm.DB
 }
 
-func New(DB *gorm.DB) *UserRepo {
+func New(db *gorm.DB) *UserRepo {
 	return &UserRepo{
-		DB: DB,
+		DB: db,
 	}
 }

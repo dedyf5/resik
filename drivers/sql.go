@@ -100,16 +100,6 @@ func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func
 		conn.SetConnMaxIdleTime(config.ConnMaxIdleTime)
 	}
 
-	go func() {
-		ticker := time.NewTicker(time.Second * 10)
-		defer ticker.Stop()
-		for range ticker.C {
-			if err := conn.Ping(); err != nil {
-				os.Exit(0)
-			}
-		}
-	}()
-
 	cleanup := func() {
 		if err := conn.Close(); err != nil {
 			log.Printf("failed to close mysql connection %e", err)
