@@ -176,12 +176,9 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 		value := e.Translate(v.Translator(getLanguage(v.langDefault, lang)))
 		value = regexp.MustCompile(e.Field()).ReplaceAllString(value, field)
 
-		switch e.Tag() {
-		case "datetime":
-			{
-				value = regexDate.ReplaceAllString(value, "yyyy-MM-dd")
-				value = regexTime.ReplaceAllString(value, "HH:mm:ss")
-			}
+		if e.Tag() == "datetime" {
+			value = regexDate.ReplaceAllString(value, "yyyy-MM-dd")
+			value = regexTime.ReplaceAllString(value, "HH:mm:ss")
 		}
 
 		errMap[field] = value
