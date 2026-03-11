@@ -5,6 +5,7 @@
 package echo
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -50,11 +51,12 @@ func HTTPErrorHandler(err error, ctx echo.Context) {
 		return
 	}
 
-	switch res := err.(type) {
-	case *resPkg.Status:
+	if res, ok := errors.AsType[*resPkg.Status](err); ok {
 		_ = ctx.JSON(res.Code, httpUtil.LoggerFromStatus(res))
 		return
-	case *echo.HTTPError:
+	}
+
+	if res, ok := errors.AsType[*echo.HTTPError](err); ok {
 		_ = ctx.JSON(res.Code, httpUtil.LoggerFromStatus(&resPkg.Status{
 			Code:    res.Code,
 			Message: fmt.Sprintf("%s", res.Message),

@@ -89,10 +89,10 @@ func RunUp(stepsStr string) error {
 		migrateErr = m.Up()
 	}
 
-	if migrateErr != nil && migrateErr != migrate.ErrNoChange {
+	if migrateErr != nil && !errors.Is(migrateErr, migrate.ErrNoChange) {
 		return fmt.Errorf("migration UP failed: %w", migrateErr)
 	}
-	if migrateErr == migrate.ErrNoChange {
+	if errors.Is(migrateErr, migrate.ErrNoChange) {
 		log.Println("Migration UP: No change.")
 	} else {
 		log.Println("Migration UP completed successfully.")
@@ -126,10 +126,10 @@ func RunDown(stepsStr string) error {
 		migrateErr = m.Down()
 	}
 
-	if migrateErr != nil && migrateErr != migrate.ErrNoChange {
+	if migrateErr != nil && !errors.Is(migrateErr, migrate.ErrNoChange) {
 		return fmt.Errorf("migration DOWN failed: %w", migrateErr)
 	}
-	if migrateErr == migrate.ErrNoChange {
+	if errors.Is(migrateErr, migrate.ErrNoChange) {
 		log.Println("Migration DOWN: No change.")
 	} else {
 		log.Println("Migration DOWN completed successfully.")
@@ -151,10 +151,10 @@ func RunVersion() error {
 	}()
 
 	version, dirty, err := m.Version()
-	if err != nil && err != migrate.ErrNilVersion {
+	if err != nil && !errors.Is(err, migrate.ErrNilVersion) {
 		return fmt.Errorf("error getting migration version: %w", err)
 	}
-	if err == migrate.ErrNilVersion {
+	if errors.Is(err, migrate.ErrNilVersion) {
 		log.Println("No migration version found.")
 	} else {
 		log.Printf("Migration version: %d, Dirty: %t", version, dirty)

@@ -6,6 +6,7 @@ package log
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"sync"
 	"time"
@@ -56,9 +57,8 @@ func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, path stri
 	}
 
 	if err != nil {
-		switch ty := err.(type) {
-		case *resPkg.Status:
-			status = ty
+		if statusErr, ok := errors.AsType[*resPkg.Status](err); ok {
+			status = statusErr
 		}
 	}
 
