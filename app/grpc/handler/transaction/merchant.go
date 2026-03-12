@@ -37,12 +37,17 @@ func (h *TransactionHandler) MerchantOmzetGet(c context.Context, req *reqTrxCore
 		return nil, err
 	}
 
+	metaRes, err := meta.MetaSetup(res.Total, param.Filter.Limit, param.Filter.Page)
+	if err != nil {
+		return nil, err
+	}
+
 	return &MerchantOmzetGetRes{
 		Status: &status.Status{
 			Code:    status.CodePlus(codes.OK),
 			Message: codes.OK.String(),
 		},
 		Data: resTrxCore.MerchantOmzetFromEntity(res.Data),
-		Meta: meta.MetaSetup(res.Total, param.Filter.Limit, param.Filter.Page),
+		Meta: metaRes,
 	}, nil
 }

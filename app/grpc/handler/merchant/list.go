@@ -38,12 +38,17 @@ func (h *MerchantHandler) MerchantListGet(c context.Context, req *reqMerchantCor
 		code = codes.NotFound
 	}
 
+	metaRes, err := meta.MetaSetup(res.Total, param.Filter.Limit, param.Filter.Page)
+	if err != nil {
+		return nil, err
+	}
+
 	return &MerchantListGetRes{
 		Status: &status.Status{
 			Code:    status.CodePlus(code),
 			Message: code.String(),
 		},
 		Data: response.MerchantListFromEntity(res.Data),
-		Meta: meta.MetaSetup(res.Total, param.Filter.Limit, param.Filter.Page),
+		Meta: metaRes,
 	}, nil
 }

@@ -37,12 +37,17 @@ func (h *TransactionHandler) OutletOmzetGet(c context.Context, req *reqTrxCore.O
 		return nil, err
 	}
 
+	metaRes, err := meta.MetaSetup(res.Total, param.Filter.Limit, param.Filter.Page)
+	if err != nil {
+		return nil, err
+	}
+
 	return &OutletOmzetGetRes{
 		Status: &status.Status{
 			Code:    status.CodePlus(codes.OK),
 			Message: codes.OK.String(),
 		},
 		Data: resTrxCore.OutletOmzetFromEntity(res.Data),
-		Meta: meta.MetaSetup(res.Total, param.Filter.Limit, param.Filter.Page),
+		Meta: metaRes,
 	}, nil
 }
