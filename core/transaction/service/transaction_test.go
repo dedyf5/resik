@@ -43,7 +43,7 @@ func TestMerchantOmzetGet(t *testing.T) {
 			CauseError: errNative,
 		}
 		gomock.InOrder(
-			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(uint64(0), statusErr),
+			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(int64(0), statusErr),
 		)
 		res, err := trxService.MerchantOmzetGet(&p)
 		assert.Nil(t, res)
@@ -59,7 +59,7 @@ func TestMerchantOmzetGet(t *testing.T) {
 			CauseError: errNative,
 		}
 		gomock.InOrder(
-			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(uint64(1), nil),
+			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(int64(1), nil),
 			trxRepo.EXPECT().MerchantOmzetGetData(&p).Return(nil, statusErr),
 		)
 		res, err := trxService.MerchantOmzetGet(&p)
@@ -77,16 +77,16 @@ func TestMerchantOmzetGet(t *testing.T) {
 			Omzet:        500.75,
 			Period:       "2024-03-07",
 		})
-		resUint64 := uint64(len(expRes))
+		resInt64 := int64(len(expRes))
 		gomock.InOrder(
-			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(resUint64, nil),
+			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(resInt64, nil),
 			trxRepo.EXPECT().MerchantOmzetGetData(&p).Return(expRes, nil),
 		)
 		res, err := trxService.MerchantOmzetGet(&p)
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, resUint64, res.Total)
-		assert.Equal(t, int(resUint64), len(res.Data))
+		assert.Equal(t, resInt64, res.Total)
+		assert.Equal(t, int(resInt64), len(res.Data))
 		assert.Equal(t, expRes, res.Data)
 	})
 }
@@ -109,7 +109,7 @@ func TestOutletOmzetGet(t *testing.T) {
 			CauseError: errNative,
 		}
 		gomock.InOrder(
-			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(uint64(0), statusErr),
+			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(int64(0), statusErr),
 		)
 		res, err := trxService.OutletOmzetGet(&p)
 		assert.Nil(t, res)
@@ -125,7 +125,7 @@ func TestOutletOmzetGet(t *testing.T) {
 			CauseError: errNative,
 		}
 		gomock.InOrder(
-			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(uint64(1), nil),
+			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(int64(1), nil),
 			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(nil, statusErr),
 		)
 		res, err := trxService.OutletOmzetGet(&p)
@@ -145,16 +145,16 @@ func TestOutletOmzetGet(t *testing.T) {
 			Omzet:        500.75,
 			Period:       "2024-03-07",
 		})
-		resUint64 := uint64(len(expRes))
+		resInt64 := int64(len(expRes))
 		gomock.InOrder(
-			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resUint64, nil),
+			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resInt64, nil),
 			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(expRes, nil),
 		)
 		res, err := trxService.OutletOmzetGet(&p)
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
-		assert.Equal(t, resUint64, res.Total)
-		assert.Equal(t, int(resUint64), len(res.Data))
+		assert.Equal(t, resInt64, res.Total)
+		assert.Equal(t, int(resInt64), len(res.Data))
 		assert.Equal(t, expRes, res.Data)
 	})
 }

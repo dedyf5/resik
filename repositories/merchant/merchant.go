@@ -71,7 +71,7 @@ func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet)
 	return
 }
 
-func (r *MerchantRepo) MerchantListGetTotal(param *paramMerchant.MerchantListGet) (total uint64, status *resPkg.Status) {
+func (r *MerchantRepo) MerchantListGetTotal(param *paramMerchant.MerchantListGet) (total int64, status *resPkg.Status) {
 	query := r.MerchantListBaseQuery(param).Select("COUNT(id) AS total")
 	err := query.Take(&total).Error
 	if err != nil {

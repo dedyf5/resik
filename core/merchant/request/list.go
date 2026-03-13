@@ -15,22 +15,10 @@ func (m *MerchantListGet) ToParam(c *ctx.Ctx) *paramMerchant.MerchantListGet {
 	if m.Order != nil {
 		orderStr = m.GetOrder()
 	}
-	page := 1
-	if m.Page != nil {
-		page = int(m.GetPage())
-	}
-	limit := 10
-	if m.Limit != nil {
-		limit = int(m.GetLimit())
-	}
 	return &paramMerchant.MerchantListGet{
 		Ctx:         c,
 		MerchantIDs: c.UserClaims().MerchantIDs,
-		Filter: goku.Filter{
-			Search: m.GetSearch(),
-			Page:   page,
-			Limit:  limit,
-		},
-		Orders: goku.OrdersBuilder(orderStr),
+		Filter:      *goku.NewFilter(m.GetSearch(), m.GetPage(), m.GetLimit()),
+		Orders:      goku.OrdersBuilder(orderStr),
 	}
 }

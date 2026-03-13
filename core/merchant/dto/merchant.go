@@ -8,5 +8,5 @@ import "github.com/dedyf5/resik/entities/merchant"
 
 type MerchantList struct {
 	Data  []merchant.Merchant
-	Total uint64
+	Total int64
 }

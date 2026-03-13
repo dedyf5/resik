@@ -132,7 +132,7 @@ func TestMerchantListGet(t *testing.T) {
 	}
 
 	t.Run("MerchantListGetTotal-ERROR", func(t *testing.T) {
-		var totalExpected uint64 = 0
+		var totalExpected int64 = 0
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -144,7 +144,7 @@ func TestMerchantListGet(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	var totalExpected uint64 = 1
+	var totalExpected int64 = 1
 	t.Run("MerchantListGetData-ERROR", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,

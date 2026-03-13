@@ -16,14 +16,6 @@ func (o *OutletOmzetGet) ToParam(c *ctx.Ctx) *trxParam.OutletOmzetGet {
 	if o.Order != nil {
 		orderStr = o.GetOrder()
 	}
-	page := 1
-	if o.Page != nil {
-		page = int(o.GetPage())
-	}
-	limit := 10
-	if o.Limit != nil {
-		limit = int(o.GetLimit())
-	}
 	return &trxParam.OutletOmzetGet{
 		Ctx:      c,
 		OutletID: o.GetOutletId(),
@@ -32,11 +24,7 @@ func (o *OutletOmzetGet) ToParam(c *ctx.Ctx) *trxParam.OutletOmzetGet {
 			DatetimeStart: o.GetDatetimeStart(),
 			DatetimeEnd:   o.GetDatetimeEnd(),
 		},
-		Filter: goku.Filter{
-			Search: o.GetSearch(),
-			Page:   page,
-			Limit:  limit,
-		},
+		Filter: *goku.NewFilter(o.GetSearch(), o.GetPage(), o.GetLimit()),
 		Orders: goku.OrdersBuilder(orderStr),
 	}
 }

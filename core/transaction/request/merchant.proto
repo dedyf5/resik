@@ -14,6 +14,6 @@ message MerchantOmzetGet {
     string datetime_end = 4; // @gotags: json:"datetime_end" query:"datetime_end" validate:"required,datetime=2006-01-02 15:04:05" example:"2023-11-22 13:45:00"
     string search = 5; // @gotags: json:"search" query:"search" validate:"" example:"keyword"
     optional string order = 6; // @gotags: json:"order" query:"order" validate:"omitempty,oneof_order=period omzet merchant_name" example:"period"
-    optional uint32 page = 7; // @gotags: json:"page" query:"page" validate:"omitempty,min=1" example:"1"
-    optional uint32 limit = 8; // @gotags: json:"limit" query:"limit" validate:"omitempty,min=1,max=100" example:"10"
+    optional int32 page = 7; // @gotags: json:"page" query:"page" validate:"omitempty,min=1" example:"1"
+    optional int32 limit = 8; // @gotags: json:"limit" query:"limit" validate:"omitempty,min=1,max=100" example:"10"
 }

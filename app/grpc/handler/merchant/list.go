@@ -7,11 +7,11 @@ package merchant
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/meta"
 	"github.com/dedyf5/resik/app/grpc/proto/status"
 	reqMerchantCore "github.com/dedyf5/resik/core/merchant/request"
 	"github.com/dedyf5/resik/core/merchant/response"
 	"github.com/dedyf5/resik/ctx"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"google.golang.org/grpc/codes"
 )
 
@@ -38,17 +38,16 @@ func (h *MerchantHandler) MerchantListGet(c context.Context, req *reqMerchantCor
 		code = codes.NotFound
 	}
 
-	metaRes, err := meta.MetaSetup(res.Total, param.Filter.Limit, param.Filter.Page)
-	if err != nil {
-		return nil, err
-	}
-
 	return &MerchantListGetRes{
 		Status: &status.Status{
 			Code:    status.CodePlus(code),
 			Message: code.String(),
 		},
 		Data: response.MerchantListFromEntity(res.Data),
-		Meta: metaRes,
+		Meta: resPkg.ResponseMetaSetup(
+			res.Total,
+			param.Filter.Raw().LimitOrDefault(),
+			param.Filter.Raw().PageOrDefault(),
+		),
 	}, nil
 }

@@ -123,10 +123,10 @@ func (mr *MockITransactionMockRecorder) MerchantOmzetGetData(arg0 any) *gomock.C
 }
 
 // MerchantOmzetGetTotal mocks base method.
-func (m *MockITransaction) MerchantOmzetGetTotal(arg0 *param0.MerchantOmzetGet) (uint64, *response.Status) {
+func (m *MockITransaction) MerchantOmzetGetTotal(arg0 *param0.MerchantOmzetGet) (int64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MerchantOmzetGetTotal", arg0)
-	ret0, _ := ret[0].(uint64)
+	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
@@ -153,10 +153,10 @@ func (mr *MockITransactionMockRecorder) OutletOmzetGetData(arg0 any) *gomock.Cal
 }
 
 // OutletOmzetGetTotal mocks base method.
-func (m *MockITransaction) OutletOmzetGetTotal(arg0 *param0.OutletOmzetGet) (uint64, *response.Status) {
+func (m *MockITransaction) OutletOmzetGetTotal(arg0 *param0.OutletOmzetGet) (int64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "OutletOmzetGetTotal", arg0)
-	ret0, _ := ret[0].(uint64)
+	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
@@ -306,10 +306,10 @@ func (mr *MockIMerchantMockRecorder) MerchantListGetData(arg0 any) *gomock.Call 
 }
 
 // MerchantListGetTotal mocks base method.
-func (m *MockIMerchant) MerchantListGetTotal(arg0 *param.MerchantListGet) (uint64, *response.Status) {
+func (m *MockIMerchant) MerchantListGetTotal(arg0 *param.MerchantListGet) (int64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "MerchantListGetTotal", arg0)
-	ret0, _ := ret[0].(uint64)
+	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
