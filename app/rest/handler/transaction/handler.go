@@ -80,8 +80,8 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 		Code: http.StatusOK,
 		Data: resTrxCore.MerchantOmzetFromEntity(res.Data),
 		Meta: &resPkg.Meta{
-			PageCurrent: param.Filter.Page,
-			Limit:       param.Filter.Limit,
+			PageCurrent: param.Filter.Raw().PageOrDefault(),
+			Limit:       param.Filter.Raw().LimitOrDefault(),
 			Total:       res.Total,
 		},
 	}
@@ -127,8 +127,8 @@ func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
 		Code: http.StatusOK,
 		Data: resTrxCore.OutletOmzetFromEntity(res.Data),
 		Meta: &resPkg.Meta{
-			PageCurrent: param.Filter.Page,
-			Limit:       param.Filter.Limit,
+			PageCurrent: param.Filter.Raw().PageOrDefault(),
+			Limit:       param.Filter.Raw().LimitOrDefault(),
 			Total:       res.Total,
 		},
 	}

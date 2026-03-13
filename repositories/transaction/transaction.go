@@ -52,7 +52,7 @@ func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet)
 	return
 }
 
-func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total uint64, status *resPkg.Status) {
+func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total int64, status *resPkg.Status) {
 	query, status := r.MerchantOmzetGetQuery(param)
 	if status != nil {
 		return 0, status
@@ -128,7 +128,7 @@ func (r *TransactionRepo) OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (re
 	return
 }
 
-func (r *TransactionRepo) OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (total uint64, status *resPkg.Status) {
+func (r *TransactionRepo) OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (total int64, status *resPkg.Status) {
 	query, status := r.OutletOmzetGetQuery(param)
 	if status != nil {
 		return 0, status

@@ -16,6 +16,8 @@ generate-proto:
 	protoc-go-inject-tag -input="core/*/request/*.pb.go" -remove_tag_comment
 	protoc $(PROTOC_FLAGS) --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/response/*.proto
 	protoc-go-inject-tag -input="core/*/response/*.pb.go" -remove_tag_comment
+	protoc $(PROTOC_FLAGS) --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. pkg/response/*.proto
+	protoc-go-inject-tag -input="pkg/response/*.pb.go" -remove_tag_comment
 	protoc $(PROTOC_FLAGS) --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/proto/*/*.proto
 	protoc-go-inject-tag -input="app/grpc/proto/*/*.pb.go" -remove_tag_comment
 	protoc $(PROTOC_FLAGS) --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. app/grpc/handler/*/*.proto

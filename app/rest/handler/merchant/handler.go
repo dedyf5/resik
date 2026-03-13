@@ -172,8 +172,8 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 		Code: code,
 		Data: resMerchantCore.MerchantListFromEntity(res.Data),
 		Meta: &resPkg.Meta{
-			PageCurrent: param.Filter.Page,
-			Limit:       param.Filter.Limit,
+			PageCurrent: param.Filter.Raw().PageOrDefault(),
+			Limit:       param.Filter.Raw().LimitOrDefault(),
 			Total:       res.Total,
 		},
 	}

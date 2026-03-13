@@ -8,5 +8,5 @@ import trxEntity "github.com/dedyf5/resik/entities/transaction"
 
 type OutletOmzet struct {
 	Data  []trxEntity.OutletOmzet
-	Total uint64
+	Total int64
 }

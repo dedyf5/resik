@@ -7,11 +7,11 @@ package transaction
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/meta"
 	"github.com/dedyf5/resik/app/grpc/proto/status"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"google.golang.org/grpc/codes"
 )
 
@@ -37,17 +37,16 @@ func (h *TransactionHandler) MerchantOmzetGet(c context.Context, req *reqTrxCore
 		return nil, err
 	}
 
-	metaRes, err := meta.MetaSetup(res.Total, param.Filter.Limit, param.Filter.Page)
-	if err != nil {
-		return nil, err
-	}
-
 	return &MerchantOmzetGetRes{
 		Status: &status.Status{
 			Code:    status.CodePlus(codes.OK),
 			Message: codes.OK.String(),
 		},
 		Data: resTrxCore.MerchantOmzetFromEntity(res.Data),
-		Meta: metaRes,
+		Meta: resPkg.ResponseMetaSetup(
+			res.Total,
+			param.Filter.Raw().LimitOrDefault(),
+			param.Filter.Raw().PageOrDefault(),
+		),
 	}, nil
 }
