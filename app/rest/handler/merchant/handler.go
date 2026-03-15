@@ -138,7 +138,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 // @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqMerchantCore.MerchantListGet true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
+// @Success		200	{object}	resPkg.Response{data=[]resMerchantCore.MerchantList}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     404 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
