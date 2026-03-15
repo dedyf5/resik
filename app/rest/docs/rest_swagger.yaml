@@ -93,6 +93,21 @@ definitions:
         example: UP
         type: string
     type: object
+  response.MerchantList:
+    properties:
+      created_at:
+        example: "2024-01-14 11:40:00"
+        type: string
+      id:
+        example: 123
+        type: integer
+      name:
+        example: Resik Merchant
+        type: string
+      updated_at:
+        example: "2024-01-14 11:40:00"
+        type: string
+    type: object
   response.MerchantOmzet:
     properties:
       merchant_name:
@@ -383,7 +398,9 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/response.MerchantUpsert'
+                  items:
+                    $ref: '#/definitions/response.MerchantList'
+                  type: array
               type: object
         "400":
           description: Bad Request

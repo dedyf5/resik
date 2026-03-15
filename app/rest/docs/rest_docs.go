@@ -360,7 +360,10 @@ const docTemplaterest = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.MerchantUpsert"
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.MerchantList"
+                                            }
                                         }
                                     }
                                 }
@@ -1344,6 +1347,27 @@ const docTemplaterest = `{
                 "status": {
                     "type": "string",
                     "example": "UP"
+                }
+            }
+        },
+        "response.MerchantList": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-14 11:40:00"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 123
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Resik Merchant"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-14 11:40:00"
                 }
             }
         },
