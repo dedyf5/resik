@@ -171,7 +171,7 @@ func TestMerchantListGet(t *testing.T) {
 		)
 		res, err := merchantService.MerchantListGet(param)
 		assert.Nil(t, err)
-		assert.Equal(t, len(merchants), len(res.Data))
+		assert.Len(t, res.Data, len(merchants))
 		assert.Equal(t, merchants[0].ID, res.Data[0].ID)
 		assert.Equal(t, merchants[0].Name, res.Data[0].Name)
 	})

@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewArgon2Hasher(t *testing.T) {
@@ -85,14 +86,14 @@ func TestArgon2Hasher_Hash(t *testing.T) {
 	t.Run("Fail - When randomness source fails", func(t *testing.T) {
 		hasher := &argon2Hasher{config: config, source: &errorReader{}}
 		encodedHash, err := hasher.Hash("any_password")
-		assert.Error(t, err)
+		require.Error(t, err)
 		assert.Empty(t, encodedHash)
 	})
 
 	t.Run("Success - Should generate valid encoded hash", func(t *testing.T) {
 		hasher := &argon2Hasher{config: config, source: rand.Reader}
 		encodedHash, err := hasher.Hash("secret")
-		assert.NoError(t, err)
+		require.NoError(t, err)
 		assert.True(t, strings.HasPrefix(encodedHash, "$argon2id$"))
 	})
 
@@ -170,9 +171,9 @@ func TestArgon2Hasher_Compare(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			match, err := hasher.Compare(tt.password, tt.encodedHash)
 			if tt.expectedError != nil {
-				assert.Error(t, err)
+				require.Error(t, err)
 			} else {
-				assert.NoError(t, err)
+				require.NoError(t, err)
 			}
 			assert.Equal(t, tt.expectedMatch, match)
 		})

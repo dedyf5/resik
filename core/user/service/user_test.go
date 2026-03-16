@@ -57,7 +57,7 @@ func TestAuth(t *testing.T) {
 		)
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
-		assert.Equal(t, "", token)
+		assert.Empty(t, token)
 	})
 
 	t.Run("UserByUsername-ERROR-401-1", func(t *testing.T) {
@@ -71,7 +71,7 @@ func TestAuth(t *testing.T) {
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr, err)
-		assert.Equal(t, "", token)
+		assert.Empty(t, token)
 	})
 
 	t.Run("UserByUsername-ERROR-401-2", func(t *testing.T) {
@@ -86,7 +86,7 @@ func TestAuth(t *testing.T) {
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr, err)
-		assert.Equal(t, "", token)
+		assert.Empty(t, token)
 	})
 
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
@@ -101,7 +101,7 @@ func TestAuth(t *testing.T) {
 		)
 		token, err := userService.Auth(param)
 		assert.Nil(t, err)
-		assert.NotEqual(t, "", token)
+		assert.NotEmpty(t, token)
 	})
 }
 
@@ -119,7 +119,7 @@ func TestAuthTokenGenerate(t *testing.T) {
 			userRepo.EXPECT().OutletMerchantByUserIDGetData(userID).Return(nil, statusErr),
 		)
 		res, err := userService.AuthTokenGenerate(userID, username)
-		assert.Equal(t, "", res)
+		assert.Empty(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr, err)
 	})
@@ -130,7 +130,7 @@ func TestAuthTokenGenerate(t *testing.T) {
 		)
 		res, err := userService.AuthTokenGenerate(userID, username)
 		assert.Nil(t, err)
-		assert.NotEqual(t, "", res)
+		assert.NotEmpty(t, res)
 	})
 }
 

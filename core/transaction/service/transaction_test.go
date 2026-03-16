@@ -86,7 +86,7 @@ func TestMerchantOmzetGet(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, resInt64, res.Total)
-		assert.Equal(t, int(resInt64), len(res.Data))
+		assert.Len(t, res.Data, int(resInt64))
 		assert.Equal(t, expRes, res.Data)
 	})
 }
@@ -154,7 +154,7 @@ func TestOutletOmzetGet(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, resInt64, res.Total)
-		assert.Equal(t, int(resInt64), len(res.Data))
+		assert.Len(t, res.Data, int(resInt64))
 		assert.Equal(t, expRes, res.Data)
 	})
 }
