@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -75,14 +76,18 @@ func getSecretFromFileOrEnv(secretFilePathEnvVarName, fallbackEnvVarName string)
 	}
 }
 
-func readSecretFile(filepath string) (string, error) {
-	if filepath == "" {
+func readSecretFile(path string) (string, error) {
+	if path == "" {
 		return "", errors.New("secret file path is empty")
 	}
-	content, err := os.ReadFile(filepath)
+
+	cleanPath := filepath.Clean(path)
+
+	content, err := os.ReadFile(cleanPath)
 	if err != nil {
-		return "", fmt.Errorf("failed to read secret file %s: %w", filepath, err)
+		return "", fmt.Errorf("failed to read secret file %s: %w", cleanPath, err)
 	}
+
 	return strings.TrimSpace(string(content)), nil
 }
 
