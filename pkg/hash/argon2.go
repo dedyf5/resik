@@ -11,6 +11,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"strings"
 
 	"golang.org/x/crypto/argon2"
@@ -18,6 +19,7 @@ import (
 
 var (
 	ErrInvalidHash         = errors.New("invalid hash format")
+	ErrHashTooLong         = errors.New("hash length exceeds uint32 limit")
 	ErrIncompatibleVersion = errors.New("incompatible argon2 version")
 )
 
@@ -110,7 +112,13 @@ func (h *argon2Hasher) Compare(password, encodedHash string) (bool, error) {
 		return false, err
 	}
 
-	keyLength := uint32(len(decodedHash))
+	hashLen := len(decodedHash)
+	if hashLen > math.MaxUint32 {
+		return false, ErrHashTooLong
+	}
+
+	keyLength := uint32(hashLen)
+
 	comparisonHash := argon2.IDKey([]byte(password), salt, iterations, memory, parallelism, keyLength)
 
 	if subtle.ConstantTimeCompare(decodedHash, comparisonHash) == 1 {
