@@ -29,7 +29,7 @@ import (
 
 //go:generate mockgen -source validator.go -package mock -destination ./mock/validator.go
 type IValidate interface {
-	Struct(payloadStruct interface{}, lang *langCtx.Lang) *resPkg.Status
+	Struct(payloadStruct any, lang *langCtx.Lang) *resPkg.Status
 	ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status
 }
 
@@ -133,7 +133,7 @@ func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) 
 	})
 }
 
-func (v *Validate) Struct(payloadStruct interface{}, lang *langCtx.Lang) *resPkg.Status {
+func (v *Validate) Struct(payloadStruct any, lang *langCtx.Lang) *resPkg.Status {
 	if payloadStruct == nil {
 		return &resPkg.Status{
 			Code:       http.StatusInternalServerError,

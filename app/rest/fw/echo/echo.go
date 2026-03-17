@@ -19,7 +19,7 @@ import (
 const DocPrefix string = "/docs/swagger"
 
 type IEcho interface {
-	StructValidator(ctx echo.Context, payload interface{}) error
+	StructValidator(ctx echo.Context, payload any) error
 }
 
 type Echo struct {
@@ -32,7 +32,7 @@ func New(validator validatorUtil.IValidate) *Echo {
 	}
 }
 
-func (e *Echo) StructValidator(ctx echo.Context, payload interface{}) error {
+func (e *Echo) StructValidator(ctx echo.Context, payload any) error {
 	if err := ctx.Bind(payload); err != nil {
 		return err
 	}
