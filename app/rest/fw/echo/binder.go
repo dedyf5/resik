@@ -18,12 +18,12 @@ import (
 )
 
 type Binder interface {
-	Bind(i interface{}, c echo.Context) error
-	BindHeaders(c echo.Context, i interface{}) error
-	BindBody(c echo.Context, i interface{}) error
-	BindQueryParams(c echo.Context, i interface{}) error
-	BindPathParams(c echo.Context, i interface{}) error
-	ParamValidator(c echo.Context, i interface{}) error
+	Bind(i any, c echo.Context) error
+	BindHeaders(c echo.Context, i any) error
+	BindBody(c echo.Context, i any) error
+	BindQueryParams(c echo.Context, i any) error
+	BindPathParams(c echo.Context, i any) error
+	ParamValidator(c echo.Context, i any) error
 	JSONErrorFormatter(c echo.Context, err error) error
 }
 
@@ -41,23 +41,23 @@ func NewBinder() Binder {
 	return binder
 }
 
-func (b *bind) BindHeaders(c echo.Context, i interface{}) error {
+func (b *bind) BindHeaders(c echo.Context, i any) error {
 	return b.def.BindHeaders(c, i)
 }
 
-func (b *bind) BindBody(c echo.Context, i interface{}) error {
+func (b *bind) BindBody(c echo.Context, i any) error {
 	return b.def.BindBody(c, i)
 }
 
-func (b *bind) BindQueryParams(c echo.Context, i interface{}) error {
+func (b *bind) BindQueryParams(c echo.Context, i any) error {
 	return b.def.BindQueryParams(c, i)
 }
 
-func (b *bind) BindPathParams(c echo.Context, i interface{}) error {
+func (b *bind) BindPathParams(c echo.Context, i any) error {
 	return b.def.BindPathParams(c, i)
 }
 
-func (b *bind) Bind(i interface{}, c echo.Context) error {
+func (b *bind) Bind(i any, c echo.Context) error {
 	if err := b.ParamValidator(c, i); err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (b *bind) Bind(i interface{}, c echo.Context) error {
 	return nil
 }
 
-func (b *bind) ParamValidator(c echo.Context, i interface{}) error {
+func (b *bind) ParamValidator(c echo.Context, i any) error {
 	if i == nil {
 		return nil
 	}

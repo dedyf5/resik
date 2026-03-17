@@ -22,7 +22,7 @@ type Status struct {
 	// message for engineer
 	CauseError error `json:"cause_error"`
 
-	Data   interface{}       `json:"data"`
+	Data   any               `json:"data"`
 	Meta   *Meta             `json:"meta"`
 	Detail map[string]string `json:"detail"`
 }

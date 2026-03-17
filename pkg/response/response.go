@@ -6,7 +6,7 @@ package response
 
 type Response struct {
 	Status ResponseStatus `json:"status"`
-	Data   interface{}    `json:"data,omitempty"`
+	Data   any            `json:"data,omitempty"`
 	Meta   *ResponseMeta  `json:"meta,omitempty"`
 }
 
