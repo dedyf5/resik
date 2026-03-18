@@ -30,7 +30,7 @@ type MerchantPost struct {
 	unknownFields protoimpl.UnknownFields
 
 	Name      string `protobuf:"bytes,1,opt,name=name,proto3" json:"name" validate:"required,max=40" example:"Resik Merchant"`                             
-	CreatedAt string `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-04-14 14:18:00"`  
+	CreatedAt string `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00" example:"2024-04-14T14:18:00Z"`  
 }
 
 func (x *MerchantPost) Reset() {
@@ -86,7 +86,7 @@ type MerchantPut struct {
 
 	Id        uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"-" param:"id" query:"-" validate:"required" example:"123"`                                
 	Name      string `protobuf:"bytes,2,opt,name=name,proto3" json:"name" validate:"required,max=40" example:"Resik Merchant"`                             
-	UpdatedAt string `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at" validate:"required,datetime=2006-01-02 15:04:05" example:"2024-04-14 14:18:00"`  
+	UpdatedAt string `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00" example:"2024-04-14T14:18:00Z"`  
 }
 
 func (x *MerchantPut) Reset() {

@@ -14,7 +14,6 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-	"github.com/dedyf5/resik/utils/datetime"
 	"github.com/labstack/echo/v4"
 )
 
@@ -60,7 +59,7 @@ func (h *HealthHandler) HealthHealthzGet(echoCtx echo.Context) error {
 		Code:    code,
 		Message: statusMsg,
 		Data: &response.HealthHealthz{
-			AccessedAt: time.Now().Format(datetime.FormatyyyyMMddHHmmss.ToString()),
+			AccessedAt: time.Now().UTC().Format(time.RFC3339),
 		},
 	}
 }
@@ -93,7 +92,7 @@ func (h *HealthHandler) HealthReadyzGet(echoCtx echo.Context) error {
 		Message: string(status.OverallStatus),
 		Data: &response.HealthReadyz{
 			OverallStatus: string(status.OverallStatus),
-			AccessedAt:    status.Timestamp.Format(datetime.FormatyyyyMMddHHmmss.ToString()),
+			AccessedAt:    status.Timestamp.UTC().Format(time.RFC3339),
 			Checks:        response.HealthReadyzCheckFromCheckDetail(status.Checks),
 		},
 	}

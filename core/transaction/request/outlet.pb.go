@@ -31,8 +31,8 @@ type OutletOmzetGet struct {
 
 	OutletId      uint64  `protobuf:"varint,1,opt,name=outlet_id,json=outletId,proto3" json:"-" param:"outlet_id" query:"-" validate:"required,min=1" example:"1"`                
 	Mode          string  `protobuf:"bytes,2,opt,name=mode,proto3" json:"mode" query:"mode" validate:"required,oneof=day month year" example:"day"`                                         
-	DatetimeStart string  `protobuf:"bytes,3,opt,name=datetime_start,json=datetimeStart,proto3" json:"datetime_start" query:"datetime_start" validate:"required,datetime=2006-01-02 15:04:05" example:"2023-11-22 13:45:00"`  
-	DatetimeEnd   string  `protobuf:"bytes,4,opt,name=datetime_end,json=datetimeEnd,proto3" json:"datetime_end" query:"datetime_end" validate:"required,datetime=2006-01-02 15:04:05" example:"2023-11-22 13:45:00"`        
+	DatetimeStart string  `protobuf:"bytes,3,opt,name=datetime_start,json=datetimeStart,proto3" json:"datetime_start" query:"datetime_start" validate:"required,datetime=2006-01-02T15:04:05Z07:00" example:"2023-11-22T13:45:00Z"`  
+	DatetimeEnd   string  `protobuf:"bytes,4,opt,name=datetime_end,json=datetimeEnd,proto3" json:"datetime_end" query:"datetime_end" validate:"required,datetime=2006-01-02T15:04:05Z07:00" example:"2023-11-22T13:45:00Z"`        
 	Search        string  `protobuf:"bytes,5,opt,name=search,proto3" json:"search" query:"search" example:"keyword"`                                     
 	Order         *string `protobuf:"bytes,6,opt,name=order,proto3,oneof" json:"order" query:"order" validate:"omitempty,oneof_order=period omzet merchant_name" example:"period"`                                 
 	Page          *int32  `protobuf:"varint,7,opt,name=page,proto3,oneof" json:"page" query:"page" validate:"omitempty,min=1" example:"1"`                                  
