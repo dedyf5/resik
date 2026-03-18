@@ -50,7 +50,7 @@ func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func
 	dsnCfgs := map[string]string{
 		"charset":         "utf8",
 		"parseTime":       "True",
-		"loc":             "Asia%2FJakarta",
+		"loc":             "UTC",
 		"multiStatements": strconv.FormatBool(isMultiStatements),
 		"autocommit":      "True",
 	}

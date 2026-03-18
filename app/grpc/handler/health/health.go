@@ -13,7 +13,6 @@ import (
 	coreHealth "github.com/dedyf5/resik/core/health"
 	"github.com/dedyf5/resik/core/health/response"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-	"github.com/dedyf5/resik/utils/datetime"
 	codes "google.golang.org/grpc/codes"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
@@ -44,7 +43,7 @@ func (h *HealthHandler) HealthzGet(c context.Context, _ *emptypb.Empty) (*Health
 			Message: statusMsg,
 		},
 		Data: &response.HealthHealthz{
-			AccessedAt: time.Now().Format(datetime.FormatyyyyMMddHHmmss.ToString()),
+			AccessedAt: time.Now().UTC().Format(time.RFC3339),
 		},
 	}, nil
 }
@@ -75,7 +74,7 @@ func (h *HealthHandler) ReadyzGet(c context.Context, _ *emptypb.Empty) (*HealthR
 		},
 		Data: &response.HealthReadyz{
 			OverallStatus: string(readinessStatus.OverallStatus),
-			AccessedAt:    readinessStatus.Timestamp.Format(datetime.FormatyyyyMMddHHmmss.ToString()),
+			AccessedAt:    readinessStatus.Timestamp.UTC().Format(time.RFC3339),
 			Checks:        protoChecks,
 		},
 	}, nil

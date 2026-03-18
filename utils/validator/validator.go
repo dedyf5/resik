@@ -166,7 +166,8 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 
 	regexKey := regexp.MustCompile(`^[^.]*.`)
 	regexDate := regexp.MustCompile("2006-01-02")
-	regexTime := regexp.MustCompile("15:04:05")
+	regexTime := regexp.MustCompile("T15:04:05")
+	regexZone := regexp.MustCompile("Z07:00")
 	first := ""
 	for k, e := range errs {
 		// replace nested field name
@@ -178,7 +179,8 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 
 		if e.Tag() == "datetime" {
 			value = regexDate.ReplaceAllString(value, "yyyy-MM-dd")
-			value = regexTime.ReplaceAllString(value, "HH:mm:ss")
+			value = regexTime.ReplaceAllString(value, "'T'HH:mm:ss")
+			value = regexZone.ReplaceAllString(value, ".SSSZZ")
 		}
 
 		errMap[field] = value

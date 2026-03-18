@@ -949,14 +949,14 @@ const docTemplaterest = `{
                     },
                     {
                         "type": "string",
-                        "example": "2023-11-22 13:45:00",
+                        "example": "2023-11-22T13:45:00Z",
                         "name": "datetime_end",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "example": "2023-11-22 13:45:00",
+                        "example": "2023-11-22T13:45:00Z",
                         "name": "datetime_start",
                         "in": "query",
                         "required": true
@@ -1100,14 +1100,14 @@ const docTemplaterest = `{
                     },
                     {
                         "type": "string",
-                        "example": "2023-11-22 13:45:00",
+                        "example": "2023-11-22T13:45:00Z",
                         "name": "datetime_end",
                         "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "example": "2023-11-22 13:45:00",
+                        "example": "2023-11-22T13:45:00Z",
                         "name": "datetime_start",
                         "in": "query",
                         "required": true
@@ -1241,7 +1241,7 @@ const docTemplaterest = `{
             "properties": {
                 "created_at": {
                     "type": "string",
-                    "example": "2024-04-14 14:18:00"
+                    "example": "2024-04-14T14:18:00Z"
                 },
                 "name": {
                     "type": "string",
@@ -1264,7 +1264,7 @@ const docTemplaterest = `{
                 },
                 "updated_at": {
                     "type": "string",
-                    "example": "2024-04-14 14:18:00"
+                    "example": "2024-04-14T14:18:00Z"
                 }
             }
         },
@@ -1355,7 +1355,7 @@ const docTemplaterest = `{
             "properties": {
                 "created_at": {
                     "type": "string",
-                    "example": "2024-01-14 11:40:00"
+                    "example": "2024-01-14T11:40:00Z"
                 },
                 "id": {
                     "type": "integer",
@@ -1367,7 +1367,7 @@ const docTemplaterest = `{
                 },
                 "updated_at": {
                     "type": "string",
-                    "example": "2024-01-14 11:40:00"
+                    "example": "2024-01-14T11:40:00Z"
                 }
             }
         },
