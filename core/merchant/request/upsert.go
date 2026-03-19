@@ -14,7 +14,7 @@ import (
 )
 
 func (m *MerchantPost) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, status *resPkg.Status) {
-	datetime, err := datetime.FromString(m.GetCreatedAt(), time.RFC3339)
+	datetime, err := datetime.FromString(m.GetCreatedAt(), time.RFC3339, ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func (m *MerchantPost) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, sta
 }
 
 func (m *MerchantPut) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, status *resPkg.Status) {
-	datetime, err := datetime.FromString(m.GetUpdatedAt(), time.RFC3339)
+	datetime, err := datetime.FromString(m.GetUpdatedAt(), time.RFC3339, ctx)
 	if err != nil {
 		return nil, err
 	}

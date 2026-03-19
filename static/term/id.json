@@ -6,6 +6,7 @@
     "incorrect_username_or_password": "Username atau Password salah",
     "unauthorized": "Akses tidak diizinkan",
     "invalid_or_expired_session_login_again": "Sesi login tidak sesuai atau sudah kedaluwarsa, silahkan login kembali",
+    "invalid_time_format": "format waktu tidak valid",
     "successfully_created_val": "Berhasil membuat {{.val}}",
     "successfully_updated_val": "Berhasil memperbarui {{.val}}"
 }

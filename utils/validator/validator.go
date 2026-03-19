@@ -101,6 +101,16 @@ func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator)
 		if err := registerOneOfOrder(v, t, "{0} must be one of [{1}]"); err != nil {
 			log.Printf("[validator] failed to register oneof_order for EN: %v", err)
 		}
+
+		err := v.RegisterTranslation("timezone", t, func(ut ut.Translator) error {
+			return ut.Add("timezone", "{0} must be a valid timezone", true)
+		}, func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("timezone", fe.Field())
+			return t
+		})
+		if err != nil {
+			log.Printf("[validator] failed to register timezone translation for EN: %v", err)
+		}
 	}
 
 	// Japanese
@@ -110,6 +120,16 @@ func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator)
 		}
 		if err := registerOneOfOrder(v, t, "{0}は[{1}]のうちのいずれかでなければなりません"); err != nil {
 			log.Printf("[validator] failed to register oneof_order for JA: %v", err)
+		}
+
+		err := v.RegisterTranslation("timezone", t, func(ut ut.Translator) error {
+			return ut.Add("timezone", "{0}は有効なタイムゾーンである必要があります", true)
+		}, func(ut ut.Translator, fe validator.FieldError) string {
+			t, _ := ut.T("timezone", fe.Field())
+			return t
+		})
+		if err != nil {
+			log.Printf("[validator] failed to register timezone translation for JA: %v", err)
 		}
 	}
 }

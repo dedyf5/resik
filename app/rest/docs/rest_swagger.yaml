@@ -759,6 +759,11 @@ paths:
         in: query
         name: search
         type: string
+      - example: Asia/Jakarta
+        in: query
+        name: timezone
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -851,6 +856,11 @@ paths:
       - example: keyword
         in: query
         name: search
+        type: string
+      - example: Asia/Jakarta
+        in: query
+        name: timezone
+        required: true
         type: string
       produces:
       - application/json

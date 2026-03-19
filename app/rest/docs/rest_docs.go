@@ -999,6 +999,13 @@ const docTemplaterest = `{
                         "example": "keyword",
                         "name": "search",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "Asia/Jakarta",
+                        "name": "timezone",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1150,6 +1157,13 @@ const docTemplaterest = `{
                         "example": "keyword",
                         "name": "search",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "Asia/Jakarta",
+                        "name": "timezone",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
