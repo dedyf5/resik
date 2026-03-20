@@ -4,6 +4,10 @@
 
 package groupperiod
 
+import (
+	"time"
+)
+
 type Mode string
 
 const (
@@ -14,8 +18,9 @@ const (
 
 type GroupPeriod struct {
 	Mode          Mode
-	DatetimeStart string // yyyy-MM-dd HH:mm:ss
-	DatetimeEnd   string // yyyy-MM-dd HH:mm:ss
+	DatetimeStart *time.Time
+	DatetimeEnd   *time.Time
+	Timezone      string
 }
 
 func (m Mode) DateFormatMySQL() string {
@@ -28,4 +33,12 @@ func (m Mode) DateFormatMySQL() string {
 		return "%Y"
 	}
 	return ""
+}
+
+func (g *GroupPeriod) DatetimeStartString() string {
+	return g.DatetimeStart.UTC().Format("2006-01-02 15:04:05")
+}
+
+func (g *GroupPeriod) DatetimeEndString() string {
+	return g.DatetimeEnd.UTC().Format("2006-01-02 15:04:05")
 }

@@ -6,6 +6,7 @@
     "incorrect_username_or_password": "ユーザーネームまたはパスワードが間違っています",
     "unauthorized": "無許可",
     "invalid_or_expired_session_login_again": "セッションの期限が切れました、再度ログインしてください",
+    "invalid_time_format": "時刻形式が正しくありません",
     "successfully_created_val": "{{.val}}の作成に成功しました",
     "successfully_updated_val": "{{.val}}の更新に成功しました"
 }

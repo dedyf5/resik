@@ -65,7 +65,10 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	param := payload.ToParam(ctx)
+	param, err := payload.ToParam(ctx)
+	if err != nil {
+		return err
+	}
 
 	if _, err := ctx.UserClaims().MerchantIDIsAccessible(param.MerchantID); err != nil {
 		return err
@@ -112,7 +115,10 @@ func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	param := payload.ToParam(ctx)
+	param, err := payload.ToParam(ctx)
+	if err != nil {
+		return err
+	}
 
 	if _, err := ctx.UserClaims().OutletIDIsAccessible(param.OutletID); err != nil {
 		return err

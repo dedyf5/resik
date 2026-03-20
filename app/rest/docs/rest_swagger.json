@@ -988,6 +988,13 @@
                         "example": "keyword",
                         "name": "search",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "Asia/Jakarta",
+                        "name": "timezone",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1139,6 +1146,13 @@
                         "example": "keyword",
                         "name": "search",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "Asia/Jakarta",
+                        "name": "timezone",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {

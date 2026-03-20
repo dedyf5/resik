@@ -76,14 +76,14 @@ func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet
 		WithContext(param.Ctx.Context).
 		Select(`
 		t1.merchant_id,
-		DATE_FORMAT(t1.created_at, '`+param.GroupPeriod.Mode.DateFormatMySQL()+`') period,
+		DATE_FORMAT(CONVERT_TZ(t1.created_at, 'UTC', ?), ?) period,
 		SUM(t1.bill_total) AS omzet,
 		m1.name AS merchant_name
-		`).
+		`, param.GroupPeriod.Timezone, param.GroupPeriod.Mode.DateFormatMySQL()).
 		Table(trxEntity.TABLE_NAME+" AS t1").
 		Joins("INNER JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = t1.merchant_id").
 		Where("t1.merchant_id = ?", param.MerchantID).
-		Where("t1.created_at >= ? AND t1.created_at < ?", param.GroupPeriod.DatetimeStart, param.GroupPeriod.DatetimeEnd).
+		Where("t1.created_at >= ? AND t1.created_at < ?", param.GroupPeriod.DatetimeStartString(), param.GroupPeriod.DatetimeEndString()).
 		Group("t1.merchant_id, period")
 	if search := param.Filter.Search; search != "" {
 		query = query.Where("m1.name LIKE ?", "%"+search+"%")
@@ -152,17 +152,17 @@ func (r *TransactionRepo) OutletOmzetGetQuery(param *paramTrx.OutletOmzetGet) (q
 		WithContext(param.Ctx.Context).
 		Select(`
 		t1.merchant_id,
-		DATE_FORMAT(t1.created_at, '`+param.GroupPeriod.Mode.DateFormatMySQL()+`') period,
+		DATE_FORMAT(CONVERT_TZ(t1.created_at, 'UTC', ?), ?) period,
 		SUM(t1.bill_total) AS omzet,
 		m1.name AS merchant_name,
 		t1.outlet_id,
 		o1.name AS outlet_name
-		`).
+		`, param.GroupPeriod.Timezone, param.GroupPeriod.Mode.DateFormatMySQL()).
 		Table(trxEntity.TABLE_NAME+" AS t1").
 		Joins("INNER JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = t1.merchant_id").
 		Joins("INNER JOIN "+outletEntity.TABLE_NAME+" AS o1 ON o1.id = t1.outlet_id").
 		Where("t1.outlet_id = ?", param.OutletID).
-		Where("t1.created_at >= ? AND t1.created_at < ?", param.GroupPeriod.DatetimeStart, param.GroupPeriod.DatetimeEnd).
+		Where("t1.created_at >= ? AND t1.created_at < ?", param.GroupPeriod.DatetimeStartString(), param.GroupPeriod.DatetimeEndString()).
 		Group("t1.outlet_id, period")
 	if search := param.Filter.Search; search != "" {
 		query = query.Where("m1.name LIKE ? OR o1.name LIKE ?", "%"+search+"%", "%"+search+"%")
