@@ -14,8 +14,8 @@ import (
 
 //go:generate mockgen -source merchant.go -package mock -destination ./mock/merchant.go
 type IService interface {
-	MerchantInsert(ctx *ctx.Ctx, merchant *merchant.Merchant) (ok bool, status *response.Status)
-	MerchantUpdate(ctx *ctx.Ctx, merchant *merchant.Merchant) (ok bool, status *response.Status)
-	MerchantListGet(param *param.MerchantListGet) (res *dto.MerchantList, status *response.Status)
-	MerchantDelete(ctx *ctx.Ctx, param *merchant.Merchant) (ok bool, status *response.Status)
+	MerchantInsert(ctx *ctx.Ctx, merchant *merchant.Merchant) (ok bool, err *response.Status)
+	MerchantUpdate(ctx *ctx.Ctx, merchant *merchant.Merchant) (ok bool, err *response.Status)
+	MerchantListGet(param *param.MerchantListGet) (res *dto.MerchantList, err *response.Status)
+	MerchantDelete(ctx *ctx.Ctx, param *merchant.Merchant) (ok bool, err *response.Status)
 }

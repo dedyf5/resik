@@ -16,10 +16,10 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, status *resPkg.Status) {
-	query, status := r.MerchantOmzetGetQuery(param)
-	if status != nil {
-		return res, status
+func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, err *resPkg.Status) {
+	query, err := r.MerchantOmzetGetQuery(param)
+	if err != nil {
+		return res, err
 	}
 
 	query = query.
@@ -42,36 +42,36 @@ func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet)
 		query = query.Order(order)
 	}
 
-	err := query.Find(&res).Error
-	if err != nil {
+	errQuery := query.Find(&res).Error
+	if errQuery != nil {
 		return res, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
-			CauseError: err,
+			CauseError: errQuery,
 		}
 	}
 	return
 }
 
-func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total int64, status *resPkg.Status) {
-	query, status := r.MerchantOmzetGetQuery(param)
-	if status != nil {
-		return 0, status
+func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total int64, err *resPkg.Status) {
+	query, err := r.MerchantOmzetGetQuery(param)
+	if err != nil {
+		return 0, err
 	}
 	query = r.DB.
 		WithContext(param.Ctx.Context).
 		Select("COUNT(x.merchant_id)").
 		Table("(?) AS x", query)
-	err := query.Take(&total).Error
-	if err != nil {
+	errQuery := query.Take(&total).Error
+	if errQuery != nil {
 		return 0, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
-			CauseError: err,
+			CauseError: errQuery,
 		}
 	}
 	return
 }
 
-func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet) (query *gorm.DB, status *resPkg.Status) {
+func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet) (query *gorm.DB, err *resPkg.Status) {
 	query = r.DB.
 		WithContext(param.Ctx.Context).
 		Select(`
@@ -91,10 +91,10 @@ func (r *TransactionRepo) MerchantOmzetGetQuery(param *paramTrx.MerchantOmzetGet
 	return
 }
 
-func (r *TransactionRepo) OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (res []trxEntity.OutletOmzet, status *resPkg.Status) {
-	query, status := r.OutletOmzetGetQuery(param)
-	if status != nil {
-		return res, status
+func (r *TransactionRepo) OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (res []trxEntity.OutletOmzet, err *resPkg.Status) {
+	query, err := r.OutletOmzetGetQuery(param)
+	if err != nil {
+		return res, err
 	}
 
 	query = query.
@@ -118,17 +118,17 @@ func (r *TransactionRepo) OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (re
 		query = query.Order(order)
 	}
 
-	err := query.Find(&res).Error
-	if err != nil {
+	errQuery := query.Find(&res).Error
+	if errQuery != nil {
 		return res, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
-			CauseError: err,
+			CauseError: errQuery,
 		}
 	}
 	return
 }
 
-func (r *TransactionRepo) OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (total int64, status *resPkg.Status) {
+func (r *TransactionRepo) OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (total int64, err *resPkg.Status) {
 	query, status := r.OutletOmzetGetQuery(param)
 	if status != nil {
 		return 0, status
@@ -137,17 +137,17 @@ func (r *TransactionRepo) OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (t
 		WithContext(param.Ctx.Context).
 		Select("COUNT(x.outlet_id)").
 		Table("(?) AS x", query)
-	err := query.Take(&total).Error
-	if err != nil {
+	errQuery := query.Take(&total).Error
+	if errQuery != nil {
 		return 0, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
-			CauseError: err,
+			CauseError: errQuery,
 		}
 	}
 	return
 }
 
-func (r *TransactionRepo) OutletOmzetGetQuery(param *paramTrx.OutletOmzetGet) (query *gorm.DB, status *resPkg.Status) {
+func (r *TransactionRepo) OutletOmzetGetQuery(param *paramTrx.OutletOmzetGet) (query *gorm.DB, err *resPkg.Status) {
 	query = r.DB.
 		WithContext(param.Ctx.Context).
 		Select(`

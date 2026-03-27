@@ -13,7 +13,7 @@ import (
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
-func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Status) {
+func (s *Service) Auth(param paramUser.Auth) (token string, err *resPkg.Status) {
 	user, err := s.userRepo.UserByUsername(param.Ctx, param.Username)
 	if err != nil {
 		return "", err
@@ -36,7 +36,7 @@ func (s *Service) Auth(param paramUser.Auth) (token string, status *resPkg.Statu
 	return s.AuthTokenGenerate(user.ID, user.Username)
 }
 
-func (s *Service) AuthTokenGenerate(userID uint64, username string) (token string, status *resPkg.Status) {
+func (s *Service) AuthTokenGenerate(userID uint64, username string) (token string, err *resPkg.Status) {
 	outlets, err := s.userRepo.OutletMerchantByUserIDGetData(userID)
 	if err != nil {
 		return "", err
@@ -44,6 +44,6 @@ func (s *Service) AuthTokenGenerate(userID uint64, username string) (token strin
 
 	merchantIDs, outletIDs := outlet.GetUniqueMerchantIDsAndOutletIDs(outlets)
 
-	token, status = jwtCtx.AuthTokenGenerate(s.config.App, s.config.Auth, userID, username, merchantIDs, outletIDs)
+	token, err = jwtCtx.AuthTokenGenerate(s.config.App, s.config.Auth, userID, username, merchantIDs, outletIDs)
 	return
 }
