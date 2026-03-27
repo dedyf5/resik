@@ -12,6 +12,6 @@ import (
 
 //go:generate mockgen -source transaction.go -package mock -destination ./mock/transaction.go
 type IService interface {
-	MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res *trxDTO.MerchantOmzet, status *resPkg.Status)
-	OutletOmzetGet(param *paramTrx.OutletOmzetGet) (res *trxDTO.OutletOmzet, status *resPkg.Status)
+	MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res *trxDTO.MerchantOmzet, err *resPkg.Status)
+	OutletOmzetGet(param *paramTrx.OutletOmzetGet) (res *trxDTO.OutletOmzet, err *resPkg.Status)
 }

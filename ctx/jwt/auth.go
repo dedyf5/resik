@@ -40,21 +40,21 @@ func (a *AuthClaims) Valid() error {
 	return nil
 }
 
-func (a *AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, status *resPkg.Status) {
+func (a *AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, err *resPkg.Status) {
 	if a == nil {
 		return a.statusUnauthorized()
 	}
 	return a.checkAccess(a.MerchantIDs, merchantID)
 }
 
-func (a *AuthClaims) OutletIDIsAccessible(outletID uint64) (ok bool, status *resPkg.Status) {
+func (a *AuthClaims) OutletIDIsAccessible(outletID uint64) (ok bool, err *resPkg.Status) {
 	if a == nil {
 		return a.statusUnauthorized()
 	}
 	return a.checkAccess(a.OutletIDs, outletID)
 }
 
-func (a *AuthClaims) checkAccess(ids []uint64, id uint64) (ok bool, status *resPkg.Status) {
+func (a *AuthClaims) checkAccess(ids []uint64, id uint64) (ok bool, err *resPkg.Status) {
 	if !slices.Contains(ids, id) {
 		return a.statusUnauthorized()
 	}
@@ -67,7 +67,7 @@ func (a *AuthClaims) statusUnauthorized() (bool, *resPkg.Status) {
 	}
 }
 
-func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64, outletIDs []uint64) (token string, status *resPkg.Status) {
+func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64, outletIDs []uint64) (token string, err *resPkg.Status) {
 	claims := AuthClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    appConfig.Name,
@@ -79,17 +79,17 @@ func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint
 		OutletIDs:   outletIDs,
 	}
 	tokenGen := jwt.NewWithClaims(AUTH_SIGNING_METHOD, claims)
-	token, err := tokenGen.SignedString([]byte(authConfig.SignatureKey))
-	if err != nil {
+	token, errToken := tokenGen.SignedString([]byte(authConfig.SignatureKey))
+	if errToken != nil {
 		return "", &resPkg.Status{
 			Code:       http.StatusInternalServerError,
-			CauseError: err,
+			CauseError: errToken,
 		}
 	}
 	return
 }
 
-func AuthClaimsFromString(tokenString string, signatureKey string, lang *lang.Lang) (claim *AuthClaims, status *resPkg.Status) {
+func AuthClaimsFromString(tokenString string, signatureKey string, lang *lang.Lang) (claim *AuthClaims, err *resPkg.Status) {
 	if tokenString == "" {
 		return nil, &resPkg.Status{
 			Code:       http.StatusUnauthorized,
@@ -97,14 +97,14 @@ func AuthClaimsFromString(tokenString string, signatureKey string, lang *lang.La
 			CauseError: errors.New("missing value in request header"),
 		}
 	}
-	token, err := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(t *jwt.Token) (any, error) {
+	token, errParse := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(t *jwt.Token) (any, error) {
 		return []byte(signatureKey), nil
 	})
-	if err != nil {
+	if errParse != nil {
 		return nil, &resPkg.Status{
 			Code:       http.StatusUnauthorized,
 			Message:    lang.GetByMessageID("invalid_or_expired_session_login_again"),
-			CauseError: err,
+			CauseError: errParse,
 		}
 	}
 	if claims, ok := token.Claims.(*AuthClaims); ok {

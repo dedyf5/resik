@@ -31,13 +31,15 @@ func OrdersBuilder(str string) []Order {
 	if str == "" {
 		return res
 	}
-	list := strings.Split(str, ",")
-	for _, v := range list {
+
+	list := strings.SplitSeq(str, ",")
+	for v := range list {
 		if v == "" || v == "-" {
 			continue
 		}
 		res = append(res, OrderBuilder(v))
 	}
+
 	return res
 }
 

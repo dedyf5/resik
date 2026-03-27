@@ -15,7 +15,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *MerchantRepo) MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status) {
+func (r *MerchantRepo) MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status) {
 	result := r.DB.WithContext(ctx.Context).Create(merchant)
 	if result.Error != nil {
 		return false, &resPkg.Status{
@@ -26,7 +26,7 @@ func (r *MerchantRepo) MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Mer
 	return true, nil
 }
 
-func (r *MerchantRepo) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status) {
+func (r *MerchantRepo) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status) {
 	result := r.DB.WithContext(ctx.Context).
 		Exec("UPDATE "+merchantEntity.TABLE_NAME+" SET name = ?, updated_at = ?, updated_by = ? WHERE id = ?", merchant.Name, merchant.UpdatedAt, merchant.UpdatedBy, merchant.ID)
 	if result.Error != nil {
@@ -38,7 +38,7 @@ func (r *MerchantRepo) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Mer
 	return true, nil
 }
 
-func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet) (merchant []merchantEntity.Merchant, status *resPkg.Status) {
+func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet) (merchant []merchantEntity.Merchant, err *resPkg.Status) {
 	query := r.MerchantListBaseQuery(param)
 
 	query = query.Select("*").
@@ -61,23 +61,23 @@ func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet)
 		query = query.Order(order)
 	}
 
-	err := query.Find(&merchant).Error
-	if err != nil {
+	errQuery := query.Find(&merchant).Error
+	if errQuery != nil {
 		return nil, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
-			CauseError: err,
+			CauseError: errQuery,
 		}
 	}
 	return
 }
 
-func (r *MerchantRepo) MerchantListGetTotal(param *paramMerchant.MerchantListGet) (total int64, status *resPkg.Status) {
+func (r *MerchantRepo) MerchantListGetTotal(param *paramMerchant.MerchantListGet) (total int64, err *resPkg.Status) {
 	query := r.MerchantListBaseQuery(param).Select("COUNT(id) AS total")
-	err := query.Take(&total).Error
-	if err != nil {
+	errQuery := query.Take(&total).Error
+	if errQuery != nil {
 		return 0, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
-			CauseError: err,
+			CauseError: errQuery,
 		}
 	}
 	return
@@ -93,7 +93,7 @@ func (r *MerchantRepo) MerchantListBaseQuery(param *paramMerchant.MerchantListGe
 	return
 }
 
-func (r *MerchantRepo) MerchantDelete(c *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, status *resPkg.Status) {
+func (r *MerchantRepo) MerchantDelete(c *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status) {
 	if err := r.DB.WithContext(c.Context).Delete(merchant).Error; err != nil {
 		return false, &resPkg.Status{
 			Code:       http.StatusInternalServerError,
