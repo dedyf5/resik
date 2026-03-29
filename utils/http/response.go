@@ -46,14 +46,18 @@ func ResponseErrorAuto(status *resPkg.Status) resPkg.Response {
 
 func LoggerFromStatus(status *resPkg.Status) resPkg.Log {
 	return resPkg.Log{
-		Response: ResponseFromStatus(status),
-		Message:  status.CauseErrorMessageOrDefault(),
+		Response:   ResponseFromStatus(status),
+		Message:    status.CauseErrorMessageOrDefault(),
+		Caller:     status.Caller,
+		StackTrace: status.StackTrace,
 	}
 }
 
 func LoggerErrorAuto(status *resPkg.Status) resPkg.Log {
 	return resPkg.Log{
-		Response: ResponseErrorAuto(status),
-		Message:  status.CauseErrorMessageOrDefault(),
+		Response:   ResponseErrorAuto(status),
+		Message:    status.CauseErrorMessageOrDefault(),
+		Caller:     status.Caller,
+		StackTrace: status.StackTrace,
 	}
 }

@@ -19,18 +19,11 @@ func (s *Service) Auth(param paramUser.Auth) (token string, err *resPkg.Status) 
 		return "", err
 	}
 	if user == nil {
-		return "", &resPkg.Status{
-			Code:    http.StatusUnauthorized,
-			Message: param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"),
-		}
+		return "", resPkg.NewStatusMessage(http.StatusUnauthorized, param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"), nil)
 	}
 
 	if ok, err := s.hasher.Compare(param.Password, user.Password); !ok || err != nil {
-		return "", &resPkg.Status{
-			Code:       http.StatusUnauthorized,
-			Message:    param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"),
-			CauseError: err,
-		}
+		return "", resPkg.NewStatusMessage(http.StatusUnauthorized, param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"), err)
 	}
 
 	return s.AuthTokenGenerate(user.ID, user.Username)

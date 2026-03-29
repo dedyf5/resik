@@ -71,10 +71,10 @@ func FromContext(ctx context.Context) (*Lang, *resPkg.Status) {
 	if lang, ok := ctx.Value(ContextKey).(*Lang); ok {
 		return lang, nil
 	}
-	return nil, &resPkg.Status{
-		Code:       http.StatusInternalServerError,
-		CauseError: errors.New("failed to casting lang from context"),
-	}
+	return nil, resPkg.NewStatusError(
+		http.StatusInternalServerError,
+		errors.New("failed to casting lang from context"),
+	)
 }
 
 func (src *Lang) GetByMessageID(id string) string {
@@ -122,10 +122,7 @@ func GetLanguageAvailable(lang string) (*language.Tag, *resPkg.Status) {
 	}
 	res, err := language.Parse(lang)
 	if err != nil {
-		return nil, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: err,
-		}
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, err)
 	}
 	return &res, nil
 }
@@ -136,13 +133,13 @@ func GetLanguageAvailable(lang string) (*language.Tag, *resPkg.Status) {
 func LanguageIsAvailable(lang string) (bool, *resPkg.Status) {
 	if lang == "" {
 		msg := "lang is required"
-		return false, &resPkg.Status{
-			Code:    http.StatusBadRequest,
-			Message: msg,
-			Detail: map[string]string{
+		return false, resPkg.NewStatusDetail(
+			http.StatusBadRequest,
+			msg,
+			map[string]string{
 				ContextKey.String(): msg,
 			},
-		}
+		)
 	}
 	langCodes := make([]string, 0, cap(Available))
 	for _, v := range Available {
@@ -150,13 +147,13 @@ func LanguageIsAvailable(lang string) (bool, *resPkg.Status) {
 	}
 	if !slices.Contains(langCodes, lang) {
 		msg := fmt.Sprintf("lang must be one of [%s]", strings.Join(langCodes, ", "))
-		return false, &resPkg.Status{
-			Code:    http.StatusBadRequest,
-			Message: msg,
-			Detail: map[string]string{
+		return false, resPkg.NewStatusDetail(
+			http.StatusBadRequest,
+			msg,
+			map[string]string{
 				ContextKey.String(): msg,
 			},
-		}
+		)
 	}
 	return true, nil
 }

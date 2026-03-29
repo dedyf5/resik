@@ -17,6 +17,8 @@ type ResponseStatus struct {
 }
 
 type Log struct {
-	Response Response `json:"response"`
-	Message  string   `json:"message"`
+	Response   Response `json:"response"`
+	Message    string   `json:"message"`
+	Caller     string   `json:"caller"`
+	StackTrace []string `json:"stack_trace"`
 }

@@ -34,20 +34,14 @@ func (r *TransactionRepo) MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet)
 		}
 		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
 		if err != nil {
-			return nil, &resPkg.Status{
-				Code:       http.StatusInternalServerError,
-				CauseError: err,
-			}
+			return nil, resPkg.NewStatusError(http.StatusInternalServerError, err)
 		}
 		query = query.Order(order)
 	}
 
 	errQuery := query.Find(&res).Error
 	if errQuery != nil {
-		return res, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errQuery,
-		}
+		return res, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
 	return
 }
@@ -63,10 +57,7 @@ func (r *TransactionRepo) MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet
 		Table("(?) AS x", query)
 	errQuery := query.Take(&total).Error
 	if errQuery != nil {
-		return 0, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errQuery,
-		}
+		return 0, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
 	return
 }
@@ -110,20 +101,14 @@ func (r *TransactionRepo) OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (re
 		}
 		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
 		if err != nil {
-			return nil, &resPkg.Status{
-				Code:       http.StatusInternalServerError,
-				CauseError: err,
-			}
+			return nil, resPkg.NewStatusError(http.StatusInternalServerError, err)
 		}
 		query = query.Order(order)
 	}
 
 	errQuery := query.Find(&res).Error
 	if errQuery != nil {
-		return res, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errQuery,
-		}
+		return res, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
 	return
 }
@@ -139,10 +124,7 @@ func (r *TransactionRepo) OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (t
 		Table("(?) AS x", query)
 	errQuery := query.Take(&total).Error
 	if errQuery != nil {
-		return 0, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errQuery,
-		}
+		return 0, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
 	return
 }

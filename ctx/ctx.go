@@ -6,17 +6,13 @@ package ctx
 
 import (
 	"context"
+	"fmt"
+	"runtime"
 
 	jwt "github.com/dedyf5/resik/ctx/jwt"
 	lang "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-)
-
-type Key string
-
-const (
-	KeyFullMethod Key = "FullMethod"
 )
 
 type Ctx struct {
@@ -30,10 +26,18 @@ type Ctx struct {
 //
 // error status code: 500
 func NewCtx(c context.Context, log *logCtx.Log) (*Ctx, *resPkg.Status) {
+	_, file, line, _ := runtime.Caller(1)
+	caller := fmt.Sprintf("%s:%d", file, line)
+
+	if holder, ok := c.Value(logCtx.KeyCallerHolderContext).(*logCtx.CallerHolder); ok {
+		holder.Caller = &caller
+	}
+
 	langRes, err := lang.FromContext(c)
 	if err != nil {
 		return nil, err
 	}
+
 	return &Ctx{
 		Context:    c,
 		lang:       langRes,

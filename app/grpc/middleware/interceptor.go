@@ -67,8 +67,8 @@ func (i *Interceptor) logCtx(c context.Context, path string) (*context.Context, 
 
 	correlationID := xid.New().String()
 	newMeta := meta.Copy()
-	newMeta.Append(logCtx.CorrelationIDKeyContext.String(), correlationID)
-	newMeta.Append(logCtx.CorrelationIDKeyXHeader.String(), correlationID)
+	newMeta.Append(logCtx.KeyCorrelationIDContext.String(), correlationID)
+	newMeta.Append(logCtx.KeyXCorrelationIDHeader.String(), correlationID)
 
 	i.log.CorrelationID = correlationID
 	i.log.Path = path
@@ -78,8 +78,8 @@ func (i *Interceptor) logCtx(c context.Context, path string) (*context.Context, 
 	return &newCtx, nil
 }
 
-func (i *Interceptor) writeLogger(start time.Time, fullMethod string, req any, res any, err error) (any, error) {
-	logger := logCtx.NewGRPC(i.app.Module, i.log, start, fullMethod, req, res, err)
+func (i *Interceptor) writeLogger(c context.Context, start time.Time, fullMethod string, req any, res any, err error) (any, error) {
+	logger := logCtx.NewGRPC(i.app.Module, c, i.log, start, fullMethod, req, res, err)
 	logger.Write()
 	return res, err
 }
@@ -87,10 +87,7 @@ func (i *Interceptor) writeLogger(start time.Time, fullMethod string, req any, r
 func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*context.Context, *langCtx.Lang, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
-		return nil, nil, &resPkg.Status{
-			Code:    http.StatusInternalServerError,
-			Message: "Unable to read metadata",
-		}
+		return nil, nil, resPkg.NewStatusMessage(http.StatusInternalServerError, "unable to read metadata", nil)
 	}
 	var langReq *language.Tag = nil
 	langKey := langCtx.ContextKey.String()
@@ -121,9 +118,7 @@ func (i *Interceptor) validateJWT(c context.Context, lang *langCtx.Lang, signatu
 		return &c, nil
 	}
 	if len(meta["authorization"]) != 1 {
-		return nil, &resPkg.Status{
-			Code: http.StatusUnauthorized,
-		}
+		return nil, resPkg.NewStatusCode(http.StatusUnauthorized)
 	}
 	bearer := meta["authorization"][0]
 	token := strings.ReplaceAll(bearer, "Bearer ", "")
@@ -137,14 +132,15 @@ func (i *Interceptor) validateJWT(c context.Context, lang *langCtx.Lang, signatu
 }
 
 func (i *Interceptor) errorMetadata() (*context.Context, error) {
-	return nil, &resPkg.Status{
-		Code:    http.StatusInternalServerError,
-		Message: "Unable to read metadata",
-	}
+	return nil, resPkg.NewStatusMessage(http.StatusInternalServerError, "unable to read metadata", nil)
 }
 
 func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	start := time.Now()
+
+	callerHolder := &logCtx.CallerHolder{}
+
+	c = context.WithValue(c, logCtx.KeyCallerHolderContext, callerHolder)
 
 	logC, err := i.logCtx(c, info.FullMethod)
 	if err != nil {
@@ -153,15 +149,15 @@ func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerIn
 
 	langC, langRes, err := i.langCtx(*logC, i.app.LangDefault)
 	if err != nil {
-		return i.writeLogger(start, info.FullMethod, req, nil, err)
+		return i.writeLogger(c, start, info.FullMethod, req, nil, err)
 	}
 
 	tokenC, err := i.validateJWT(*langC, langRes, i.auth.SignatureKey, info.FullMethod)
 	if err != nil {
-		return i.writeLogger(start, info.FullMethod, req, nil, err)
+		return i.writeLogger(c, start, info.FullMethod, req, nil, err)
 	}
 
 	res, err := handler(*tokenC, req)
 
-	return i.writeLogger(start, info.FullMethod, req, res, err)
+	return i.writeLogger(c, start, info.FullMethod, req, res, err)
 }

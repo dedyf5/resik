@@ -23,10 +23,7 @@ func (r *UserRepo) UserByUsername(ctx *ctx.Ctx, username string) (user *userEnti
 		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
-		return nil, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errQuery,
-		}
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
 	return &res, nil
 }
@@ -38,10 +35,7 @@ func (r *UserRepo) MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint
 		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
 			return
 		}
-		return nil, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errQuery,
-		}
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
 	return
 }
@@ -56,10 +50,7 @@ func (r *UserRepo) OutletMerchantByUserIDGetData(userID uint64) (outlets []outle
 		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
 			return
 		}
-		return nil, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errQuery,
-		}
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
 	return
 }

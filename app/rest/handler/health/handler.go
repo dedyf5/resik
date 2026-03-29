@@ -55,13 +55,13 @@ func (h *HealthHandler) HealthHealthzGet(echoCtx echo.Context) error {
 		code = http.StatusServiceUnavailable
 	}
 
-	return &resPkg.Status{
-		Code:    code,
-		Message: statusMsg,
-		Data: &response.HealthHealthz{
+	return resPkg.NewStatusSuccess(
+		code,
+		statusMsg,
+		&response.HealthHealthz{
 			AccessedAt: time.Now().UTC().Format(time.RFC3339),
 		},
-	}
+	)
 }
 
 // @Summary Readiness check
@@ -87,13 +87,13 @@ func (h *HealthHandler) HealthReadyzGet(echoCtx echo.Context) error {
 		httpStatus = http.StatusServiceUnavailable
 	}
 
-	return &resPkg.Status{
-		Code:    httpStatus,
-		Message: string(status.OverallStatus),
-		Data: &response.HealthReadyz{
+	return resPkg.NewStatusSuccess(
+		httpStatus,
+		string(status.OverallStatus),
+		&response.HealthReadyz{
 			OverallStatus: string(status.OverallStatus),
 			AccessedAt:    status.Timestamp.UTC().Format(time.RFC3339),
 			Checks:        response.HealthReadyzCheckFromCheckDetail(status.Checks),
 		},
-	}
+	)
 }

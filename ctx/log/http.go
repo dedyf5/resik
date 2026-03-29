@@ -6,6 +6,7 @@ package log
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/url"
@@ -21,6 +22,7 @@ import (
 type HTTP struct {
 	http.ResponseWriter
 	appModule    configEntity.Module
+	context      context.Context
 	log          *Log
 	start        time.Time
 	statusCode   int
@@ -32,9 +34,9 @@ type HTTP struct {
 	responseBody *bytes.Buffer
 }
 
-func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, log *Log, start time.Time, method string, url *url.URL, contentType, userAgent string, requestBody []byte) *HTTP {
+func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, c context.Context, log *Log, start time.Time, method string, url *url.URL, contentType, userAgent string, requestBody []byte) *HTTP {
 	var buf bytes.Buffer
-	return &HTTP{w, appModule, log, start, http.StatusOK, method, url, contentType, userAgent, requestBody, &buf}
+	return &HTTP{w, appModule, c, log, start, http.StatusOK, method, url, contentType, userAgent, requestBody, &buf}
 }
 
 func (h *HTTP) WriteHeader(code int) {
@@ -59,19 +61,40 @@ func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 		msg = loggerRes.Message
 	}
 
+	logger := h.log.logger
+
+	fields := []zap.Field{zap.Inline(h)}
+
+	caller := ""
+	if holder, ok := h.context.Value(KeyCallerHolderContext).(*CallerHolder); ok {
+		caller = *holder.Caller
+	}
+
+	if loggerRes.Caller != "" {
+		caller = loggerRes.Caller
+	}
+
+	if caller != "" {
+		fields = append(fields, zap.String("line", caller))
+		logger = logger.WithOptions(zap.WithCaller(false))
+	}
+
 	switch {
 	case h.statusCode >= http.StatusOK && h.statusCode <= http.StatusIMUsed:
-		h.log.logger.Info(msg, zap.Inline(h))
+		logger.Info(msg, fields...)
 	case h.statusCode >= http.StatusInternalServerError && h.statusCode <= http.StatusNetworkAuthenticationRequired:
-		h.log.logger.Error(msg, zap.Inline(h))
+		if loggerRes.StackTrace != nil {
+			fields = append(fields, zap.Strings("stack_trace", loggerRes.StackTrace))
+		}
+		logger.Error(msg, fields...)
 	default:
-		h.log.logger.Warn(msg, zap.Inline(h))
+		logger.Warn(msg, fields...)
 	}
 }
 
 func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString("module", h.appModule.DirectoryName())
-	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
+	enc.AddString(KeyCorrelationIDContext.String(), h.log.CorrelationID)
 	enc.AddString("method", h.method)
 	enc.AddString("path", h.url.Path)
 	enc.AddString("query_string", h.url.RawQuery)

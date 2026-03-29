@@ -62,9 +62,7 @@ func (a *AuthClaims) checkAccess(ids []uint64, id uint64) (ok bool, err *resPkg.
 }
 
 func (a *AuthClaims) statusUnauthorized() (bool, *resPkg.Status) {
-	return false, &resPkg.Status{
-		Code: http.StatusUnauthorized,
-	}
+	return false, resPkg.NewStatusCode(http.StatusUnauthorized)
 }
 
 func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64, outletIDs []uint64) (token string, err *resPkg.Status) {
@@ -81,40 +79,37 @@ func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint
 	tokenGen := jwt.NewWithClaims(AUTH_SIGNING_METHOD, claims)
 	token, errToken := tokenGen.SignedString([]byte(authConfig.SignatureKey))
 	if errToken != nil {
-		return "", &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errToken,
-		}
+		return "", resPkg.NewStatusError(http.StatusInternalServerError, errToken)
 	}
 	return
 }
 
 func AuthClaimsFromString(tokenString string, signatureKey string, lang *lang.Lang) (claim *AuthClaims, err *resPkg.Status) {
 	if tokenString == "" {
-		return nil, &resPkg.Status{
-			Code:       http.StatusUnauthorized,
-			Message:    lang.GetByMessageID("unauthorized"),
-			CauseError: errors.New("missing value in request header"),
-		}
+		return nil, resPkg.NewStatusMessage(
+			http.StatusUnauthorized,
+			lang.GetByMessageID("unauthorized"),
+			errors.New("missing value in request header"),
+		)
 	}
 	token, errParse := jwt.ParseWithClaims(tokenString, &AuthClaims{}, func(t *jwt.Token) (any, error) {
 		return []byte(signatureKey), nil
 	})
 	if errParse != nil {
-		return nil, &resPkg.Status{
-			Code:       http.StatusUnauthorized,
-			Message:    lang.GetByMessageID("invalid_or_expired_session_login_again"),
-			CauseError: errParse,
-		}
+		return nil, resPkg.NewStatusMessage(
+			http.StatusUnauthorized,
+			lang.GetByMessageID("invalid_or_expired_session_login_again"),
+			errParse,
+		)
 	}
 	if claims, ok := token.Claims.(*AuthClaims); ok {
 		return claims, nil
 	}
-	return nil, &resPkg.Status{
-		Code:       http.StatusUnauthorized,
-		Message:    lang.GetByMessageID("invalid_or_expired_session_login_again"),
-		CauseError: errors.New("error while casting AuthClaims"),
-	}
+	return nil, resPkg.NewStatusMessage(
+		http.StatusUnauthorized,
+		lang.GetByMessageID("invalid_or_expired_session_login_again"),
+		errors.New("error while casting AuthClaims"),
+	)
 }
 
 func AuthClaimsFromContext(ctx context.Context) *AuthClaims {
@@ -130,15 +125,15 @@ func AuthClaimsFromContext(ctx context.Context) *AuthClaims {
 
 func HTTPStatusError(err error, lang *lang.Lang) *resPkg.Status {
 	if strings.Contains(err.Error(), "invalid") {
-		return &resPkg.Status{
-			Code:       http.StatusUnauthorized,
-			Message:    lang.GetByMessageID("invalid_or_expired_session_login_again"),
-			CauseError: err,
-		}
+		return resPkg.NewStatusMessage(
+			http.StatusUnauthorized,
+			lang.GetByMessageID("invalid_or_expired_session_login_again"),
+			err,
+		)
 	}
-	return &resPkg.Status{
-		Code:       http.StatusUnauthorized,
-		Message:    lang.GetByMessageID("unauthorized"),
-		CauseError: err,
-	}
+	return resPkg.NewStatusMessage(
+		http.StatusUnauthorized,
+		lang.GetByMessageID("unauthorized"),
+		err,
+	)
 }

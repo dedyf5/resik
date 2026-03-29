@@ -64,13 +64,11 @@ func TestAuth(t *testing.T) {
 		gomock.InOrder(
 			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(nil, nil),
 		)
-		statusErr := &resPkg.Status{
-			Code:    http.StatusUnauthorized,
-			Message: param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"),
-		}
+		statusErr := resPkg.NewStatusMessage(http.StatusUnauthorized, param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"), nil)
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
-		assert.Equal(t, statusErr, err)
+		assert.Equal(t, statusErr.Code, err.Code)
+		assert.Equal(t, statusErr.Message, err.Message)
 		assert.Empty(t, token)
 	})
 
@@ -79,13 +77,11 @@ func TestAuth(t *testing.T) {
 			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(userExpected, nil),
 			hasher.EXPECT().Compare(param.Password, userExpected.Password).Return(false, nil),
 		)
-		statusErr := &resPkg.Status{
-			Code:    http.StatusUnauthorized,
-			Message: param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"),
-		}
+		statusErr := resPkg.NewStatusMessage(http.StatusUnauthorized, param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"), nil)
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
-		assert.Equal(t, statusErr, err)
+		assert.Equal(t, statusErr.Code, err.Code)
+		assert.Equal(t, statusErr.Message, err.Message)
 		assert.Empty(t, token)
 	})
 

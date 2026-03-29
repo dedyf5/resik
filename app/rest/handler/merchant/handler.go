@@ -67,15 +67,15 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 		return err
 	}
 
-	return &resPkg.Status{
-		Code: http.StatusCreated,
-		Message: ctx.Lang().GetByTemplateData("successfully_created_val", commonEntity.Map{
-			"val": "merchant",
-		}),
-		Data: &resMerchantCore.MerchantUpsert{
+	msg := ctx.Lang().GetByTemplateData("successfully_created_val", commonEntity.Map{"val": "merchant"})
+
+	return resPkg.NewStatusSuccess(
+		http.StatusCreated,
+		msg,
+		&resMerchantCore.MerchantUpsert{
 			Id: entity.ID,
 		},
-	}
+	)
 }
 
 // @Summary Update Merchant
@@ -119,15 +119,15 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 		return err
 	}
 
-	return &resPkg.Status{
-		Code: http.StatusOK,
-		Message: ctx.Lang().GetByTemplateData("successfully_updated_val", commonEntity.Map{
-			"val": "merchant",
-		}),
-		Data: &resMerchantCore.MerchantUpsert{
+	msg := ctx.Lang().GetByTemplateData("successfully_updated_val", commonEntity.Map{"val": "merchant"})
+
+	return resPkg.NewStatusSuccess(
+		http.StatusOK,
+		msg,
+		&resMerchantCore.MerchantUpsert{
 			Id: entity.ID,
 		},
-	}
+	)
 }
 
 // @Summary Merchant List
@@ -168,15 +168,15 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 		code = http.StatusNotFound
 	}
 
-	return &resPkg.Status{
-		Code: code,
-		Data: resMerchantCore.MerchantListFromEntity(res.Data),
-		Meta: &resPkg.Meta{
+	return resPkg.NewStatusDataMeta(
+		code,
+		resMerchantCore.MerchantListFromEntity(res.Data),
+		&resPkg.Meta{
 			PageCurrent: param.Filter.Raw().PageOrDefault(),
 			Limit:       param.Filter.Raw().LimitOrDefault(),
 			Total:       res.Total,
 		},
-	}
+	)
 }
 
 // @Summary Update Merchant
@@ -214,7 +214,5 @@ func (h *Handler) MerchantDelete(echoCtx echo.Context) error {
 		return err
 	}
 
-	return &resPkg.Status{
-		Code: http.StatusNoContent,
-	}
+	return resPkg.NewStatusCode(http.StatusNoContent)
 }

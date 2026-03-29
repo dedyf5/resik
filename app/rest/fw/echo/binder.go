@@ -155,13 +155,13 @@ func (b *bind) ParamValidator(c echo.Context, i any) error {
 				"expected": ft,
 				"actual":   "string",
 			})
-			return &resPkg.Status{
-				Code:    http.StatusBadRequest,
-				Message: msg,
-				Detail: map[string]string{
+			return resPkg.NewStatusDetail(
+				http.StatusBadRequest,
+				msg,
+				map[string]string{
 					fn: msg,
 				},
-			}
+			)
 		}
 
 		return nil
@@ -201,11 +201,7 @@ func (b *bind) JSONErrorFormatter(c echo.Context, err error) error {
 			"expected": expecteds[1],
 			"actual":   gots[1],
 		})
-		return &resPkg.Status{
-			Code:    http.StatusBadRequest,
-			Message: errMap[field],
-			Detail:  errMap,
-		}
+		return resPkg.NewStatusDetail(http.StatusBadRequest, errMap[field], errMap)
 	}
 
 	return nil
