@@ -79,15 +79,15 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	return &resPkg.Status{
-		Code: http.StatusOK,
-		Data: resTrxCore.MerchantOmzetFromEntity(res.Data),
-		Meta: &resPkg.Meta{
+	return resPkg.NewStatusDataMeta(
+		http.StatusOK,
+		resTrxCore.MerchantOmzetFromEntity(res.Data),
+		&resPkg.Meta{
 			PageCurrent: param.Filter.Raw().PageOrDefault(),
 			Limit:       param.Filter.Raw().LimitOrDefault(),
 			Total:       res.Total,
 		},
-	}
+	)
 }
 
 // @Summary Get Outlet Omzet
@@ -129,13 +129,13 @@ func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	return &resPkg.Status{
-		Code: http.StatusOK,
-		Data: resTrxCore.OutletOmzetFromEntity(res.Data),
-		Meta: &resPkg.Meta{
+	return resPkg.NewStatusDataMeta(
+		http.StatusOK,
+		resTrxCore.OutletOmzetFromEntity(res.Data),
+		&resPkg.Meta{
 			PageCurrent: param.Filter.Raw().PageOrDefault(),
 			Limit:       param.Filter.Raw().LimitOrDefault(),
 			Total:       res.Total,
 		},
-	}
+	)
 }

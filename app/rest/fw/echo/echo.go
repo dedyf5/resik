@@ -57,15 +57,16 @@ func HTTPErrorHandler(err error, ctx echo.Context) {
 	}
 
 	if res, ok := errors.AsType[*echo.HTTPError](err); ok {
-		_ = ctx.JSON(res.Code, httpUtil.LoggerFromStatus(&resPkg.Status{
-			Code:    res.Code,
-			Message: fmt.Sprintf("%s", res.Message),
-		}))
+		msg := fmt.Sprintf("%s", res.Message)
+		statusRes := resPkg.NewStatusMessage(res.Code, msg, nil)
+		_ = ctx.JSON(
+			res.Code,
+			httpUtil.LoggerFromStatus(statusRes),
+		)
 		return
 	}
 
-	_ = ctx.JSON(http.StatusInternalServerError, httpUtil.LoggerErrorAuto(&resPkg.Status{
-		Code:       http.StatusInternalServerError,
-		CauseError: err,
-	}))
+	statusRes := resPkg.NewStatusError(http.StatusInternalServerError, err)
+
+	_ = ctx.JSON(http.StatusInternalServerError, httpUtil.LoggerErrorAuto(statusRes))
 }

@@ -72,21 +72,25 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Modu
 			}
 
 			correlationID := xid.New().String()
-			ctx := context.WithValue(
+			c := context.WithValue(
 				r.Context(),
-				logCtx.CorrelationIDKeyContext,
+				logCtx.KeyCorrelationIDContext,
 				correlationID,
 			)
 
-			r = r.WithContext(ctx)
+			callerHolder := &logCtx.CallerHolder{}
+
+			c = context.WithValue(c, logCtx.KeyCallerHolderContext, callerHolder)
+
+			r = r.WithContext(c)
 
 			log.CorrelationID = correlationID
 			log.Path = r.URL.Path
 			log.QueryString = &r.URL.RawQuery
 
-			w.Header().Add(logCtx.CorrelationIDKeyXHeader.String(), correlationID)
+			w.Header().Add(logCtx.KeyXCorrelationIDHeader.String(), correlationID)
 
-			lrw := logCtx.NewHTTP(w, appModule, log, time.Now(), r.Method, r.URL, contentType, r.UserAgent(), requestBody)
+			lrw := logCtx.NewHTTP(w, appModule, c, log, time.Now(), r.Method, r.URL, contentType, r.UserAgent(), requestBody)
 
 			h.ServeHTTP(lrw, r)
 		})
@@ -103,10 +107,7 @@ func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 			ctx := c.Request().Context()
 			langRes, langErr := langCtx.FromContext(ctx)
 			if langErr != nil {
-				return &resPkg.Status{
-					Code:       http.StatusInternalServerError,
-					CauseError: langErr,
-				}
+				return resPkg.NewStatusError(http.StatusInternalServerError, langErr)
 			}
 			return jwtCtx.HTTPStatusError(err, langRes)
 		},

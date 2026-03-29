@@ -5,6 +5,7 @@
 package log
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -20,6 +21,7 @@ import (
 
 type GRPC struct {
 	appModule    configEntity.Module
+	context      context.Context
 	log          *Log
 	start        time.Time
 	status       *resPkg.Status
@@ -47,10 +49,8 @@ var sensitiveFields = map[string]struct{}{
 	"token":    {},
 }
 
-func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, path string, requestBody any, responseBody any, err error) *GRPC {
-	status := &resPkg.Status{
-		Code: http.StatusOK,
-	}
+func NewGRPC(appModule configEntity.Module, c context.Context, log *Log, start time.Time, path string, requestBody any, responseBody any, err error) *GRPC {
+	status := resPkg.NewStatusCode(http.StatusOK)
 
 	if s := statusProto.Extract(responseBody); s != nil {
 		status.Message = s.GetMessage()
@@ -64,6 +64,7 @@ func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, path stri
 
 	return &GRPC{
 		appModule:    appModule,
+		context:      c,
 		log:          log,
 		start:        start,
 		status:       status,
@@ -74,13 +75,34 @@ func NewGRPC(appModule configEntity.Module, log *Log, start time.Time, path stri
 }
 
 func (h *GRPC) Write() {
+	logger := h.log.logger
+
+	fields := []zap.Field{zap.Inline(h)}
+
+	caller := ""
+	if holder, ok := h.context.Value(KeyCallerHolderContext).(*CallerHolder); ok {
+		caller = *holder.Caller
+	}
+
+	if h.status.Caller != "" {
+		caller = h.status.Caller
+	}
+
+	if caller != "" {
+		fields = append(fields, zap.String("line", caller))
+		logger = logger.WithOptions(zap.WithCaller(false))
+	}
+
 	switch {
 	case h.status.Code >= http.StatusOK && h.status.Code <= http.StatusIMUsed:
-		h.log.logger.Info(h.status.MessageOrDefault(), zap.Inline(h))
+		logger.Info(h.status.MessageOrDefault(), fields...)
 	case h.status.Code >= http.StatusInternalServerError && h.status.Code <= http.StatusNetworkAuthenticationRequired:
-		h.log.logger.Error(h.status.CauseErrorMessageOrDefault(), zap.Inline(h))
+		if h.status.StackTrace != nil {
+			fields = append(fields, zap.Strings("stack_trace", h.status.StackTrace))
+		}
+		logger.Error(h.status.CauseErrorMessageOrDefault(), fields...)
 	default:
-		h.log.logger.Warn(h.status.CauseErrorMessageOrDefault(), zap.Inline(h))
+		logger.Warn(h.status.CauseErrorMessageOrDefault(), fields...)
 	}
 }
 
@@ -88,7 +110,7 @@ func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	grpc := h.status.GRPCStatus()
 
 	enc.AddString("module", h.appModule.DirectoryName())
-	enc.AddString(CorrelationIDKeyContext.String(), h.log.CorrelationID)
+	enc.AddString(KeyCorrelationIDContext.String(), h.log.CorrelationID)
 	enc.AddString("path", h.path)
 	enc.AddUint32("status_code", uint32(grpc.Code()))
 	enc.AddInt64("elapsed_micro", time.Since(h.start).Microseconds())

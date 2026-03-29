@@ -155,18 +155,16 @@ func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) 
 
 func (v *Validate) Struct(payloadStruct any, lang *langCtx.Lang) *resPkg.Status {
 	if payloadStruct == nil {
-		return &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errors.New("payloadStruct can't be nil"),
-		}
+		return resPkg.NewStatusError(
+			http.StatusInternalServerError,
+			errors.New("payloadStruct can't be nil"),
+		)
 	}
 
 	err := v.instance.Struct(payloadStruct)
 	if err != nil {
 		if _, ok := errors.AsType[*validator.InvalidValidationError](err); ok {
-			return &resPkg.Status{
-				Code: http.StatusInternalServerError,
-			}
+			return resPkg.NewStatusCode(http.StatusInternalServerError)
 		}
 		return v.ErrorFormatter(err, lang)
 	}
@@ -177,9 +175,7 @@ func (v *Validate) Struct(payloadStruct any, lang *langCtx.Lang) *resPkg.Status 
 func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status {
 	errs, ok := errors.AsType[validator.ValidationErrors](err)
 	if !ok {
-		return &resPkg.Status{
-			Code: http.StatusBadRequest,
-		}
+		return resPkg.NewStatusCode(http.StatusBadRequest)
 	}
 
 	errMap := map[string]string{}
@@ -209,11 +205,7 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 		}
 	}
 
-	return &resPkg.Status{
-		Code:    http.StatusBadRequest,
-		Message: first,
-		Detail:  errMap,
-	}
+	return resPkg.NewStatusDetail(http.StatusBadRequest, first, errMap)
 }
 
 func (v *Validate) Translator(lang language.Tag) ut.Translator {

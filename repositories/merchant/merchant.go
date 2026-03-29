@@ -18,10 +18,7 @@ import (
 func (r *MerchantRepo) MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status) {
 	result := r.DB.WithContext(ctx.Context).Create(merchant)
 	if result.Error != nil {
-		return false, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: result.Error,
-		}
+		return false, resPkg.NewStatusError(http.StatusInternalServerError, result.Error)
 	}
 	return true, nil
 }
@@ -30,10 +27,7 @@ func (r *MerchantRepo) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Mer
 	result := r.DB.WithContext(ctx.Context).
 		Exec("UPDATE "+merchantEntity.TABLE_NAME+" SET name = ?, updated_at = ?, updated_by = ? WHERE id = ?", merchant.Name, merchant.UpdatedAt, merchant.UpdatedBy, merchant.ID)
 	if result.Error != nil {
-		return false, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: result.Error,
-		}
+		return false, resPkg.NewStatusError(http.StatusInternalServerError, result.Error)
 	}
 	return true, nil
 }
@@ -53,20 +47,14 @@ func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet)
 		}
 		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
 		if err != nil {
-			return nil, &resPkg.Status{
-				Code:       http.StatusInternalServerError,
-				CauseError: err,
-			}
+			return nil, resPkg.NewStatusError(http.StatusInternalServerError, err)
 		}
 		query = query.Order(order)
 	}
 
 	errQuery := query.Find(&merchant).Error
 	if errQuery != nil {
-		return nil, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errQuery,
-		}
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
 	return
 }
@@ -75,10 +63,7 @@ func (r *MerchantRepo) MerchantListGetTotal(param *paramMerchant.MerchantListGet
 	query := r.MerchantListBaseQuery(param).Select("COUNT(id) AS total")
 	errQuery := query.Take(&total).Error
 	if errQuery != nil {
-		return 0, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: errQuery,
-		}
+		return 0, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
 	return
 }
@@ -95,10 +80,7 @@ func (r *MerchantRepo) MerchantListBaseQuery(param *paramMerchant.MerchantListGe
 
 func (r *MerchantRepo) MerchantDelete(c *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status) {
 	if err := r.DB.WithContext(c.Context).Delete(merchant).Error; err != nil {
-		return false, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: err,
-		}
+		return false, resPkg.NewStatusError(http.StatusInternalServerError, err)
 	}
 	return true, nil
 }

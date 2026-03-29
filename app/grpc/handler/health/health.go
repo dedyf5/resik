@@ -31,10 +31,7 @@ func New(hs coreHealth.IService) *HealthHandler {
 func (h *HealthHandler) HealthzGet(c context.Context, _ *emptypb.Empty) (*HealthHealthzGetRes, error) {
 	isLive, statusMsg := h.healthService.LivenessCheck(c)
 	if !isLive {
-		return nil, &resPkg.Status{
-			Code:    http.StatusServiceUnavailable,
-			Message: "NOT_SERVING",
-		}
+		return nil, resPkg.NewStatusMessage(http.StatusServiceUnavailable, "NOT_SERVING", nil)
 	}
 
 	return &HealthHealthzGetRes{

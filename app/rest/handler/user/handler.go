@@ -63,13 +63,13 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 		return err
 	}
 
-	return &resPkg.Status{
-		Code: http.StatusOK,
-		Data: resUserCore.UserCredential{
+	return resPkg.NewStatusData(
+		http.StatusOK,
+		resUserCore.UserCredential{
 			Username: payload.GetUsername(),
 			Token:    token,
 		},
-	}
+	)
 }
 
 // @Summary Token Refresh
@@ -100,11 +100,11 @@ func (h *Handler) TokenRefreshGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	return &resPkg.Status{
-		Code: http.StatusOK,
-		Data: resUserCore.UserCredential{
+	return resPkg.NewStatusData(
+		http.StatusOK,
+		resUserCore.UserCredential{
 			Username: ctx.UserClaims().Username,
 			Token:    token,
 		},
-	}
+	)
 }

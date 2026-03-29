@@ -54,9 +54,12 @@ func (h *Handler) Home(echoCtx echo.Context) error {
 	}
 
 	lang := ctx.Lang()
-	return &resPkg.Status{
-		Code:    http.StatusOK,
-		Message: lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version}),
-		Data:    resAppCore.AppMap(ctx, h.config, &payload),
-	}
+
+	msg := lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version})
+
+	return resPkg.NewStatusSuccess(
+		http.StatusOK,
+		msg,
+		resAppCore.AppMap(ctx, h.config, &payload),
+	)
 }

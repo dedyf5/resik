@@ -14,10 +14,7 @@ import (
 func SafeConvert[T numbers.Target, S numbers.Source](val S) (result T, err *resPkg.Status) {
 	res, tmpErr := numbers.SafeConvert[T](val)
 	if tmpErr != nil {
-		return 0, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			CauseError: tmpErr,
-		}
+		return 0, resPkg.NewStatusError(http.StatusInternalServerError, tmpErr)
 	}
 	return res, nil
 }

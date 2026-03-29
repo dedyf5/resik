@@ -5,8 +5,13 @@
 package response
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+	"runtime"
+	"strings"
 
+	"github.com/pkg/errors"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -20,11 +25,14 @@ type Status struct {
 	Message string `json:"message"`
 
 	// message for engineer
-	CauseError error `json:"cause_error"`
+	CauseError error    `json:"cause_error"`
+	StackTrace []string `json:"stack_trace"`
 
 	Data   any               `json:"data"`
 	Meta   *Meta             `json:"meta"`
 	Detail map[string]string `json:"detail"`
+
+	Caller string `json:"caller"`
 }
 
 type Meta struct {
@@ -37,6 +45,111 @@ type IStatus interface {
 	IsError() bool
 	Error() string
 	MessageOrDefault() string
+}
+
+type StatusHolder struct {
+	Status *Status
+}
+
+type stackTracer interface {
+	StackTrace() errors.StackTrace
+}
+
+func getProjectDir() string {
+	if wd, err := os.Getwd(); err == nil {
+		return wd
+	}
+	return ""
+}
+
+func getErrorFiles(err error) []string {
+	dir := getProjectDir()
+
+	var files []string
+	if st, ok := err.(stackTracer); ok {
+		for _, frame := range st.StackTrace() {
+			path := fmt.Sprintf("%+s:%d", frame, frame)
+			if strings.Contains(path, dir) {
+				files = append(files, path)
+			}
+		}
+	}
+
+	return files
+}
+
+func NewStatusCode(code int) *Status {
+	_, file, line, _ := runtime.Caller(1)
+	return &Status{
+		Code:   code,
+		Caller: fmt.Sprintf("%s:%d", file, line),
+	}
+}
+
+func NewStatusMessage(code int, message string, err error) *Status {
+	_, file, line, _ := runtime.Caller(1)
+
+	errStack := errors.WithStack(err)
+
+	return &Status{
+		Code:       code,
+		Message:    message,
+		CauseError: errStack,
+		StackTrace: getErrorFiles(errStack),
+		Caller:     fmt.Sprintf("%s:%d", file, line),
+	}
+}
+
+func NewStatusData(code int, data any) *Status {
+	_, file, line, _ := runtime.Caller(1)
+	return &Status{
+		Code:   code,
+		Data:   data,
+		Caller: fmt.Sprintf("%s:%d", file, line),
+	}
+}
+
+func NewStatusDataMeta(code int, data any, meta *Meta) *Status {
+	_, file, line, _ := runtime.Caller(1)
+	return &Status{
+		Code:   code,
+		Data:   data,
+		Meta:   meta,
+		Caller: fmt.Sprintf("%s:%d", file, line),
+	}
+}
+
+func NewStatusSuccess(code int, message string, data any) *Status {
+	_, file, line, _ := runtime.Caller(1)
+	return &Status{
+		Code:    code,
+		Message: message,
+		Data:    data,
+		Caller:  fmt.Sprintf("%s:%d", file, line),
+	}
+}
+
+func NewStatusError(code int, err error) *Status {
+	_, file, line, _ := runtime.Caller(1)
+
+	errStack := errors.WithStack(err)
+
+	return &Status{
+		Code:       code,
+		CauseError: errStack,
+		StackTrace: getErrorFiles(errStack),
+		Caller:     fmt.Sprintf("%s:%d", file, line),
+	}
+}
+
+func NewStatusDetail(code int, message string, detail map[string]string) *Status {
+	_, file, line, _ := runtime.Caller(1)
+	return &Status{
+		Code:    code,
+		Message: message,
+		Detail:  detail,
+		Caller:  fmt.Sprintf("%s:%d", file, line),
+	}
 }
 
 func (s *Status) IsError() bool {

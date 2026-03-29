@@ -11,11 +11,11 @@ import (
 func FromString(val string, format string, c *ctx.Ctx) (res *time.Time, err *resPkg.Status) {
 	datetime, errParse := time.Parse(format, val)
 	if errParse != nil {
-		return nil, &resPkg.Status{
-			Code:       http.StatusInternalServerError,
-			Message:    c.Lang().GetByMessageID("invalid_time_format"),
-			CauseError: errParse,
-		}
+		return nil, resPkg.NewStatusMessage(
+			http.StatusInternalServerError,
+			c.Lang().GetByMessageID("invalid_time_format"),
+			errParse,
+		)
 	}
 
 	return &datetime, nil
