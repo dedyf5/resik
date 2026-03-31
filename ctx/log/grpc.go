@@ -81,7 +81,9 @@ func (h *GRPC) Write() {
 
 	caller := ""
 	if holder, ok := h.context.Value(KeyCallerHolderContext).(*CallerHolder); ok {
-		caller = *holder.Caller
+		if holder != nil {
+			caller = holder.Caller
+		}
 	}
 
 	if h.status.Caller != "" {

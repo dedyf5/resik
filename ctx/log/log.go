@@ -37,7 +37,7 @@ const (
 )
 
 type CallerHolder struct {
-	Caller *string
+	Caller string
 }
 
 var once sync.Once
