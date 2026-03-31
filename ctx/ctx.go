@@ -30,7 +30,7 @@ func NewCtx(c context.Context, log *logCtx.Log) (*Ctx, *resPkg.Status) {
 	caller := fmt.Sprintf("%s:%d", file, line)
 
 	if holder, ok := c.Value(logCtx.KeyCallerHolderContext).(*logCtx.CallerHolder); ok {
-		holder.Caller = &caller
+		holder.Caller = caller
 	}
 
 	langRes, err := lang.FromContext(c)

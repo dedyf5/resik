@@ -67,7 +67,9 @@ func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 
 	caller := ""
 	if holder, ok := h.context.Value(KeyCallerHolderContext).(*CallerHolder); ok {
-		caller = *holder.Caller
+		if holder != nil {
+			caller = holder.Caller
+		}
 	}
 
 	if loggerRes.Caller != "" {
