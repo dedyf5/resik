@@ -30,11 +30,13 @@ const AppLogoASCII string = `
 
 type (
 	Config struct {
-		App      configEntity.App
-		HTTP     configEntity.HTTP
-		Database drivers.SQLConfig
-		Auth     configEntity.Auth
-		Log      configEntity.Log
+		App       configEntity.App
+		HTTP      configEntity.HTTP
+		Database  drivers.SQLConfig
+		Redis     *drivers.RedisConfig
+		RateLimit configEntity.RateLimit
+		Auth      configEntity.Auth
+		Log       configEntity.Log
 	}
 )
 
@@ -55,6 +57,8 @@ func Load(module configEntity.Module) *Config {
 	conf.loadApp(module)
 	conf.loadHTTP(module)
 	conf.loadDatabase(module)
+	conf.loadRedis()
+	conf.loadRateLimit()
 	conf.loadAuth(module)
 	conf.loadLog(module)
 
@@ -151,6 +155,35 @@ func (conf *Config) loadDatabase(module configEntity.Module) {
 	db.HealthCheckTimeout = getDuration("DATABASE_HEALTHCHECK_TIMEOUT")
 	db.IsDebug = viper.GetBool(module.Key("DATABASE_IS_DEBUG"))
 	conf.Database = db
+}
+
+func (conf *Config) loadRedis() {
+	host := viper.GetString("REDIS_HOST")
+	if host == "" {
+		return
+	}
+
+	redis := drivers.RedisConfig{}
+
+	redis.Host = host
+	redis.Port = viper.GetInt("REDIS_PORT")
+	redis.Username = getSecretFromFileOrEnv("REDIS_USERNAME_PATH_FILE", "REDIS_USERNAME")
+	redis.Password = getSecretFromFileOrEnv("REDIS_PASSWORD_PATH_FILE", "REDIS_PASSWORD")
+	redis.Database = viper.GetInt("REDIS_DATABASE")
+	redis.PoolSize = viper.GetInt("REDIS_POOL_SIZE")
+
+	conf.Redis = &redis
+}
+
+func (conf *Config) loadRateLimit() {
+	rl := configEntity.RateLimit{}
+
+	rl.Driver = configEntity.RateLimitDriver(viper.GetString("RATE_LIMIT_DRIVER"))
+	rl.Period = getDuration("RATE_LIMIT_PERIOD")
+	rl.Limit = viper.GetInt64("RATE_LIMIT_LIMIT")
+	rl.Prefix = viper.GetString("RATE_LIMIT_PREFIX")
+
+	conf.RateLimit = rl
 }
 
 func (conf *Config) loadAuth(module configEntity.Module) {

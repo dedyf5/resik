@@ -9,6 +9,7 @@ import (
 	"context"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -17,6 +18,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	"github.com/dedyf5/resik/utils/ratelimit"
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
@@ -136,4 +138,39 @@ func JWTMiddleware(signatureKey string, langDef language.Tag) echo.MiddlewareFun
 			h.ServeHTTP(w, r)
 		})
 	})
+}
+
+func RateLimitMiddleware(limiter ratelimit.Limiter) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			key := limiter.GetKeyREST(c.Request().Context(), c.RealIP())
+
+			res, err := limiter.Take(c.Request().Context(), key)
+			if err != nil {
+				return err
+			}
+
+			w := c.Response().Header()
+			w.Set("X-RateLimit-Limit", strconv.FormatInt(res.Limit, 10))
+			w.Set("X-RateLimit-Remaining", strconv.FormatInt(res.Remaining, 10))
+			w.Set("X-RateLimit-Reset", strconv.FormatInt(res.Reset, 10))
+
+			if res.Reached {
+				w.Set("Retry-After", strconv.FormatInt(res.RetryAfter, 10))
+
+				lang, err := langCtx.FromContext(c.Request().Context())
+				if err != nil {
+					return err
+				}
+
+				return resPkg.NewStatusMessage(
+					http.StatusTooManyRequests,
+					lang.GetByMessageID("too_many_requests"),
+					nil,
+				)
+			}
+
+			return next(c)
+		}
+	}
 }

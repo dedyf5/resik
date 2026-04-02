@@ -176,6 +176,8 @@ func (s *Status) GRPCStatus() *status.Status {
 		return status.New(codes.Unauthenticated, s.MessageOrDefault())
 	case http.StatusNotFound:
 		return status.New(codes.NotFound, s.MessageOrDefault())
+	case http.StatusTooManyRequests:
+		return status.New(codes.ResourceExhausted, s.MessageOrDefault())
 	case http.StatusInternalServerError:
 		return status.New(codes.Internal, s.MessageOrDefault())
 	case http.StatusServiceUnavailable:

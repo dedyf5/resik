@@ -32,6 +32,7 @@ import (
 	"github.com/dedyf5/resik/repositories/merchant"
 	"github.com/dedyf5/resik/repositories/transaction"
 	"github.com/dedyf5/resik/repositories/user"
+	"github.com/dedyf5/resik/utils/ratelimit"
 	"github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
@@ -76,15 +77,32 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	iService := service4.New(v)
 	healthHandler := health.New(iService)
 	router := newRouter(config, generalHandler, merchantHandler, transactionHandler, userHandler, healthHandler)
-	interceptor := middleware.NewInterceptor(app, auth, logLog)
-	serverHTTP := newServerHTTP(c, config, router, interceptor)
-	bootstrapApp, cleanup3, err := newApp(serverHTTP)
+	rateLimit := config.RateLimit
+	redisConfig := config.Redis
+	client, cleanup3, err := drivers.NewRedisConnection(redisConfig)
 	if err != nil {
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
+	limiter, err := ratelimit.NewRateLimiter(rateLimit, client)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	interceptor := middleware.NewInterceptor(app, auth, limiter, logLog)
+	serverHTTP := newServerHTTP(c, config, router, interceptor)
+	bootstrapApp, cleanup4, err := newApp(serverHTTP)
+	if err != nil {
+		cleanup3()
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
 	return bootstrapApp, func() {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -100,15 +118,17 @@ var (
 
 var configGeneral = config.Load(config2.ModuleGRPC)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault", "Module"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault", "Module"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
-var utilSet = wire.NewSet(validator.New, log.Get)
+var utilSet = wire.NewSet(validator.New, ratelimit.NewRateLimiter, log.Get)
 
 var interceptorSet = wire.NewSet(middleware.NewInterceptor)
 
 var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm)
 
 var gormRepoSet = wire.NewSet(merchant.New, transaction.New, user.New, wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)))
+
+var redisSet = wire.NewSet(drivers.NewRedisConnection)
 
 var serviceSet = wire.NewSet(
 	provideHasherConfig, hash.NewArgon2Hasher, service.New, service2.New, service3.New, service4.New, wire.Bind(new(merchant3.IService), new(*service.Service)), wire.Bind(new(transaction3.IService), new(*service2.Service)), wire.Bind(new(user3.IService), new(*service3.Service)),

@@ -33,7 +33,7 @@ func newServerHTTP(c context.Context, config config.Config, router *Router, inte
 		return nil
 	}
 	server := grpc.NewServer(
-		grpc.UnaryInterceptor(interceptor.Unary),
+		grpc.ChainUnaryInterceptor(interceptor.Unary, interceptor.RateLimit),
 	)
 	return &ServerHTTP{
 		config:      config,

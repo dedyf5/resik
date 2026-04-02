@@ -32,6 +32,7 @@ import (
 	"github.com/dedyf5/resik/repositories/merchant"
 	"github.com/dedyf5/resik/repositories/transaction"
 	"github.com/dedyf5/resik/repositories/user"
+	"github.com/dedyf5/resik/utils/ratelimit"
 	"github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
@@ -45,6 +46,17 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	module := app.Module
 	logLog := log.Get(configLog, module)
 	serverHTTP := newServerHTTP(config, logLog)
+	rateLimit := config.RateLimit
+	redisConfig := config.Redis
+	client, cleanup, err := drivers.NewRedisConnection(redisConfig)
+	if err != nil {
+		return nil, nil, err
+	}
+	limiter, err := ratelimit.NewRateLimiter(rateLimit, client)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
 	tag := app.LangDefault
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
@@ -52,12 +64,14 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
 	bool2 := _wireBoolValue
-	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig, bool2)
+	db, cleanup2, err := drivers.NewMySQLConnection(sqlConfig, bool2)
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
-	gormDB, cleanup2, err := drivers.NewGorm(sqlEngine, db, sqlConfig)
+	gormDB, cleanup3, err := drivers.NewGorm(sqlEngine, db, sqlConfig)
 	if err != nil {
+		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
@@ -77,14 +91,16 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	v := provideCheckerSlice(checker)
 	iService := service4.New(v)
 	healthHandler := health.New(logLog, echoEcho, iService)
-	router := newRouter(config, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
-	bootstrapApp, cleanup3, err := newApp(serverHTTP, router)
+	router := newRouter(config, limiter, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
+	bootstrapApp, cleanup4, err := newApp(serverHTTP, router)
 	if err != nil {
+		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
 	return bootstrapApp, func() {
+		cleanup4()
 		cleanup3()
 		cleanup2()
 		cleanup()
@@ -100,15 +116,17 @@ var (
 
 var configGeneral = config.Load(config2.ModuleREST)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault", "Module"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault", "Module"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
-var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)), log.Get)
+var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)), ratelimit.NewRateLimiter, log.Get)
 
 var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 
 var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm)
 
 var gormRepoSet = wire.NewSet(user.New, merchant.New, transaction.New, wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
+
+var redisSet = wire.NewSet(drivers.NewRedisConnection)
 
 var serviceSet = wire.NewSet(
 	provideHasherConfig, hash.NewArgon2Hasher, service.New, service2.New, service3.New, service4.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)),

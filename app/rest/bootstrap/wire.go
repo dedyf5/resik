@@ -34,6 +34,7 @@ import (
 	merchantRepo "github.com/dedyf5/resik/repositories/merchant"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
 	userRepo "github.com/dedyf5/resik/repositories/user"
+	ratelimitUtil "github.com/dedyf5/resik/utils/ratelimit"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
 	"github.com/google/wire"
 )
@@ -42,7 +43,7 @@ var configGeneral = config.Load(configEntity.ModuleREST)
 
 var configGeneralSet = wire.NewSet(
 	wire.Value(*configGeneral),
-	wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Auth", "Log"),
+	wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"),
 	wire.FieldsOf(new(configEntity.App), "Env", "LangDefault", "Module"),
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
 )
@@ -50,6 +51,7 @@ var configGeneralSet = wire.NewSet(
 var utilSet = wire.NewSet(
 	validatorUtil.New,
 	wire.Bind(new(validatorUtil.IValidate), new(*validatorUtil.Validate)),
+	ratelimitUtil.NewRateLimiter,
 	logCtx.Get,
 )
 
@@ -71,6 +73,10 @@ var gormRepoSet = wire.NewSet(
 	wire.Bind(new(repo.IUser), new(*userRepo.UserRepo)),
 	wire.Bind(new(repo.IMerchant), new(*merchantRepo.MerchantRepo)),
 	wire.Bind(new(repo.ITransaction), new(*trxRepo.TransactionRepo)),
+)
+
+var redisSet = wire.NewSet(
+	drivers.NewRedisConnection,
 )
 
 var serviceSet = wire.NewSet(
@@ -116,6 +122,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		fwSet,
 		connSet,
 		gormRepoSet,
+		redisSet,
 		serviceSet,
 		handlerSet,
 		healthCheckSet,

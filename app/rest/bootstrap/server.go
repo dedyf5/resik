@@ -32,6 +32,12 @@ func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 	e.HidePort = true
 	e.Binder = echoFW.NewBinder()
 	e.HTTPErrorHandler = echoFW.HTTPErrorHandler
+	e.IPExtractor = func(r *http.Request) string {
+		if ip := r.Header.Get("CF-Connecting-IP"); ip != "" {
+			return ip
+		}
+		return echo.ExtractIPDirect()(r)
+	}
 	e.Use(echoFW.LoggerAndResponseFormatterMiddleware(log, config.App.Module))
 	e.Use(echoFW.LangMiddleware(config.App.LangDefault))
 	e.Use(echoMiddle.CORSWithConfig(

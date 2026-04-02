@@ -8,6 +8,7 @@ import (
 	"context"
 	"net/http"
 	"slices"
+	"strconv"
 	"strings"
 	"time"
 
@@ -16,6 +17,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	"github.com/dedyf5/resik/utils/ratelimit"
 	"github.com/rs/xid"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
@@ -26,19 +28,24 @@ type Role string
 
 const (
 	RoleValidToken Role = "ValidToken"
+
+	healthService  string = "/health.HealthService"
+	HealthzGetPath string = healthService + "/HealthzGet"
 )
 
 type Interceptor struct {
 	app         config.App
 	auth        config.Auth
+	limiter     ratelimit.Limiter
 	log         *logCtx.Log
 	methodRoles map[string][]Role
 }
 
-func NewInterceptor(app config.App, auth config.Auth, log *logCtx.Log) *Interceptor {
+func NewInterceptor(app config.App, auth config.Auth, limiter ratelimit.Limiter, log *logCtx.Log) *Interceptor {
 	return &Interceptor{
 		app:         app,
 		auth:        auth,
+		limiter:     limiter,
 		log:         log,
 		methodRoles: methodRoles(),
 	}
@@ -160,4 +167,50 @@ func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerIn
 	res, err := handler(*tokenC, req)
 
 	return i.writeLogger(c, start, info.FullMethod, req, res, err)
+}
+
+func (i *Interceptor) RateLimit(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+	if info.FullMethod == HealthzGetPath {
+		return handler(c, req)
+	}
+
+	key, err := i.limiter.GetKeyGRPC(c)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := i.limiter.Take(c, key)
+	if err != nil {
+		return nil, err
+	}
+
+	md := metadata.Pairs(
+		"x-ratelimit-limit", strconv.FormatInt(res.Limit, 10),
+		"x-ratelimit-remaining", strconv.FormatInt(res.Remaining, 10),
+		"x-ratelimit-reset", strconv.FormatInt(res.Reset, 10),
+	)
+
+	lang, err := langCtx.FromContext(c)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.Reached {
+		md.Append("retry-after", strconv.FormatInt(res.RetryAfter, 10))
+		if err := grpc.SetHeader(c, md); err != nil {
+			return nil, resPkg.NewStatusError(http.StatusInternalServerError, err)
+		}
+
+		return nil, resPkg.NewStatusMessage(
+			http.StatusTooManyRequests,
+			lang.GetByMessageID("too_many_requests"),
+			nil,
+		)
+	}
+
+	if err := grpc.SetHeader(c, md); err != nil {
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, err)
+	}
+
+	return handler(c, req)
 }
