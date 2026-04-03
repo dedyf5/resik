@@ -7,6 +7,7 @@
     "unauthorized": "Unauthorized",
     "invalid_or_expired_session_login_again": "Invalid or expired session, please login again",
     "invalid_time_format": "invalid time format",
+    "too_many_requests": "Too many requests",
     "successfully_created_val": "Successfully created {{.val}}",
     "successfully_updated_val": "Successfully updated {{.val}}"
 }

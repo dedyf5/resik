@@ -13,11 +13,13 @@ import (
 	trxHandler "github.com/dedyf5/resik/app/rest/handler/transaction"
 	userHandler "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
+	"github.com/dedyf5/resik/utils/ratelimit"
 	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 type Router struct {
 	config          config.Config
+	limiter         ratelimit.Limiter
 	generalHandler  *generalHandler.Handler
 	merchantHandler *merchantHandler.Handler
 	userHandler     *userHandler.Handler
@@ -25,9 +27,10 @@ type Router struct {
 	healthHandler   *healthHandler.HealthHandler
 }
 
-func newRouter(config config.Config, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, merchantHandler *merchantHandler.Handler, trxHandler *trxHandler.Handler, healthHandler *healthHandler.HealthHandler) *Router {
+func newRouter(config config.Config, limiter ratelimit.Limiter, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, merchantHandler *merchantHandler.Handler, trxHandler *trxHandler.Handler, healthHandler *healthHandler.HealthHandler) *Router {
 	return &Router{
 		config:          config,
+		limiter:         limiter,
 		generalHandler:  generalHandler,
 		userHandler:     userHandler,
 		merchantHandler: merchantHandler,
@@ -41,30 +44,32 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 
 	validateToken := echoFW.ValidateTokenMiddleware(r.config.Auth.SignatureKey)
 	jwtMiddleware := echoFW.JWTMiddleware(r.config.Auth.SignatureKey, r.config.App.LangDefault)
+	rateLimit := echoFW.RateLimitMiddleware(r.limiter)
 
 	generalHandler := r.generalHandler
-	e.GET("/", generalHandler.Home)
+	e.GET("/", generalHandler.Home, rateLimit)
 
 	userHandler := r.userHandler
-	e.POST("/login", userHandler.LoginPost)
-	e.GET("/token-refresh", userHandler.TokenRefreshGet, validateToken, jwtMiddleware)
+	e.POST("/login", userHandler.LoginPost, rateLimit)
+	e.GET("/token-refresh", userHandler.TokenRefreshGet, validateToken, jwtMiddleware, rateLimit)
 
 	merchantHandler := r.merchantHandler
-	e.GET("/merchant", merchantHandler.MerchantListGet, validateToken, jwtMiddleware)
-	e.POST("/merchant", merchantHandler.MerchantPost, validateToken, jwtMiddleware)
-	e.PUT("/merchant/:id", merchantHandler.MerchantPut, validateToken, jwtMiddleware)
-	e.DELETE("/merchant/:id", merchantHandler.MerchantDelete, validateToken, jwtMiddleware)
+	merchant := e.Group("/merchant", validateToken, jwtMiddleware, rateLimit)
+	merchant.GET("", merchantHandler.MerchantListGet)
+	merchant.POST("", merchantHandler.MerchantPost)
+	merchant.PUT("/:id", merchantHandler.MerchantPut)
+	merchant.DELETE("/:id", merchantHandler.MerchantDelete)
 
 	trxHandler := r.trxHandler
-	trx := e.Group("/transaction")
-	trxMerchant := trx.Group("/merchant/:merchant_id", validateToken, jwtMiddleware)
+	trx := e.Group("/transaction", validateToken, jwtMiddleware, rateLimit)
+	trxMerchant := trx.Group("/merchant/:merchant_id")
 	trxMerchant.GET("/omzet", trxHandler.MerchantOmzetGet)
-	trxOutlet := trx.Group("/outlet/:outlet_id", validateToken, jwtMiddleware)
+	trxOutlet := trx.Group("/outlet/:outlet_id")
 	trxOutlet.GET("/omzet", trxHandler.OutletOmzetGet)
 
 	healthH := r.healthHandler
 	e.GET("/healthz", healthH.HealthHealthzGet)
-	e.GET("/readyz", healthH.HealthReadyzGet)
+	e.GET("/readyz", healthH.HealthReadyzGet, rateLimit)
 
 	docs.SwaggerInforest.Title = r.config.App.Name
 	docs.SwaggerInforest.Version = r.config.App.Version

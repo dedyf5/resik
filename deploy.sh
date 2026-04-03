@@ -7,8 +7,8 @@ DEPLOY_COMPOSE_PATH_FILE="${1:-docker-compose.yml}"
 
 docker compose -f "${DEPLOY_COMPOSE_PATH_FILE}" down || true
 
-echo "--- Starting MariaDB ---"
-docker compose -f "${DEPLOY_COMPOSE_PATH_FILE}" up -d mariadb
+echo "--- Starting MariaDB & Redis ---"
+docker compose -f "${DEPLOY_COMPOSE_PATH_FILE}" up -d mariadb redis
 
 echo "--- Running database migrations ---"
 docker compose -f "${DEPLOY_COMPOSE_PATH_FILE}" run --build --rm resik-migrate migrate up
