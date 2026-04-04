@@ -2,9 +2,8 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package health
+package check
 
-//go:generate mockgen -source checker.go -package mock -destination ./mock/checker.go
 import "time"
 
 type CheckStatus string
@@ -15,14 +14,15 @@ const (
 	StatusDegraded CheckStatus = "DEGRADED"
 )
 
-type CheckDetail struct {
-	Name   string      `json:"name"`
-	Status CheckStatus `json:"status"`
-	Error  *string     `json:"error"`
+type CheckConfig struct {
+	Name    string
+	Timeout time.Duration
 }
 
-type Checker interface {
-	Check() CheckDetail
+type CheckDetail struct {
+	Name   string
+	Status CheckStatus
+	Error  error
 }
 
 type OverallHealthStatus struct {

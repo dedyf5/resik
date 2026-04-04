@@ -13,6 +13,7 @@ import (
 	reflect "reflect"
 
 	ctx "github.com/dedyf5/resik/ctx"
+	check "github.com/dedyf5/resik/entities/check"
 	merchant "github.com/dedyf5/resik/entities/merchant"
 	param "github.com/dedyf5/resik/entities/merchant/param"
 	outlet "github.com/dedyf5/resik/entities/outlet"
@@ -22,6 +23,44 @@ import (
 	response "github.com/dedyf5/resik/pkg/response"
 	gomock "go.uber.org/mock/gomock"
 )
+
+// MockICheck is a mock of ICheck interface.
+type MockICheck struct {
+	ctrl     *gomock.Controller
+	recorder *MockICheckMockRecorder
+	isgomock struct{}
+}
+
+// MockICheckMockRecorder is the mock recorder for MockICheck.
+type MockICheckMockRecorder struct {
+	mock *MockICheck
+}
+
+// NewMockICheck creates a new mock instance.
+func NewMockICheck(ctrl *gomock.Controller) *MockICheck {
+	mock := &MockICheck{ctrl: ctrl}
+	mock.recorder = &MockICheckMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockICheck) EXPECT() *MockICheckMockRecorder {
+	return m.recorder
+}
+
+// Check mocks base method.
+func (m *MockICheck) Check() check.CheckDetail {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Check")
+	ret0, _ := ret[0].(check.CheckDetail)
+	return ret0
+}
+
+// Check indicates an expected call of Check.
+func (mr *MockICheckMockRecorder) Check() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Check", reflect.TypeOf((*MockICheck)(nil).Check))
+}
 
 // MockITransaction is a mock of ITransaction interface.
 type MockITransaction struct {

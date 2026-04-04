@@ -10,8 +10,9 @@ import (
 	"time"
 
 	status "github.com/dedyf5/resik/app/grpc/proto/status"
-	coreHealth "github.com/dedyf5/resik/core/health"
+	healthCore "github.com/dedyf5/resik/core/health"
 	"github.com/dedyf5/resik/core/health/response"
+	checkEntity "github.com/dedyf5/resik/entities/check"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	codes "google.golang.org/grpc/codes"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -19,10 +20,10 @@ import (
 
 type HealthHandler struct {
 	UnimplementedHealthServiceServer
-	healthService coreHealth.IService
+	healthService healthCore.IService
 }
 
-func New(hs coreHealth.IService) *HealthHandler {
+func New(hs healthCore.IService) *HealthHandler {
 	return &HealthHandler{
 		healthService: hs,
 	}
@@ -47,20 +48,9 @@ func (h *HealthHandler) HealthzGet(c context.Context, _ *emptypb.Empty) (*Health
 
 func (h *HealthHandler) ReadyzGet(c context.Context, _ *emptypb.Empty) (*HealthReadyzGetRes, error) {
 	readinessStatus := h.healthService.ReadinessCheck(c)
-	protoChecks := make([]*response.HealthReadyzCheck, len(readinessStatus.Checks))
-	for i, chk := range readinessStatus.Checks {
-		protoChk := &response.HealthReadyzCheck{
-			Name:   chk.Name,
-			Status: string(chk.Status),
-		}
-		if chk.Error != nil {
-			protoChk.Error = chk.Error
-		}
-		protoChecks[i] = protoChk
-	}
 
 	code := codes.OK
-	if readinessStatus.OverallStatus != coreHealth.StatusUp {
+	if readinessStatus.OverallStatus != checkEntity.StatusUp {
 		code = codes.Unavailable
 	}
 
@@ -72,7 +62,7 @@ func (h *HealthHandler) ReadyzGet(c context.Context, _ *emptypb.Empty) (*HealthR
 		Data: &response.HealthReadyz{
 			OverallStatus: string(readinessStatus.OverallStatus),
 			AccessedAt:    readinessStatus.Timestamp.UTC().Format(time.RFC3339),
-			Checks:        protoChecks,
+			Checks:        response.HealthReadyzCheckFromCheckDetail(readinessStatus.Checks),
 		},
 	}, nil
 }

@@ -6,6 +6,7 @@ package repositories
 
 import (
 	"github.com/dedyf5/resik/ctx"
+	checkEntity "github.com/dedyf5/resik/entities/check"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	paramMerchant "github.com/dedyf5/resik/entities/merchant/param"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
@@ -16,6 +17,10 @@ import (
 )
 
 //go:generate mockgen -source repository.go -package mock -destination ./mock/repository.go
+type ICheck interface {
+	Check() checkEntity.CheckDetail
+}
+
 type ITransaction interface {
 	MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, err *resPkg.Status)
 	MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total int64, err *resPkg.Status)

@@ -16,7 +16,6 @@ import (
 	user2 "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
 	health2 "github.com/dedyf5/resik/core/health"
-	"github.com/dedyf5/resik/core/health/checkers"
 	service4 "github.com/dedyf5/resik/core/health/service"
 	merchant3 "github.com/dedyf5/resik/core/merchant"
 	service2 "github.com/dedyf5/resik/core/merchant/service"
@@ -29,6 +28,7 @@ import (
 	config2 "github.com/dedyf5/resik/entities/config"
 	"github.com/dedyf5/resik/pkg/hash"
 	"github.com/dedyf5/resik/repositories"
+	"github.com/dedyf5/resik/repositories/check"
 	"github.com/dedyf5/resik/repositories/merchant"
 	"github.com/dedyf5/resik/repositories/transaction"
 	"github.com/dedyf5/resik/repositories/user"
@@ -87,10 +87,10 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	transactionRepo := transaction.New(gormDB)
 	service6 := service3.New(transactionRepo, config)
 	transactionHandler := transaction2.New(echoEcho, logLog, service6, config)
-	checker := checkers.NewDatabaseChecker(db, config)
-	v := provideCheckerSlice(checker)
-	iService := service4.New(v)
-	healthHandler := health.New(logLog, echoEcho, iService)
+	checkDatabaseRepo := check.NewCheckDatabaseRepo(db, config)
+	v := provideCheckerSlice(checkDatabaseRepo)
+	service7 := service4.New(v)
+	healthHandler := health.New(logLog, echoEcho, service7)
 	router := newRouter(config, limiter, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
 	bootstrapApp, cleanup4, err := newApp(serverHTTP, router)
 	if err != nil {
@@ -124,21 +124,9 @@ var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 
 var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm)
 
-var gormRepoSet = wire.NewSet(user.New, merchant.New, transaction.New, wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
+var gormRepoSet = wire.NewSet(check.NewCheckDatabaseRepo, user.New, merchant.New, transaction.New, wire.Bind(new(repositories.ICheck), new(*check.CheckDatabaseRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
 
 var redisSet = wire.NewSet(drivers.NewRedisConnection)
-
-var serviceSet = wire.NewSet(
-	provideHasherConfig, hash.NewArgon2Hasher, service.New, service2.New, service3.New, service4.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)),
-)
-
-var handlerSet = wire.NewSet(general.New, user2.New, merchant2.New, transaction2.New, health.New)
-
-func provideCheckerSlice(dbChk health2.Checker) []health2.Checker {
-	return []health2.Checker{dbChk}
-}
-
-var healthCheckSet = wire.NewSet(checkers.NewDatabaseChecker, provideCheckerSlice)
 
 func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 	return &hash.Argon2Config{
@@ -146,3 +134,15 @@ func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 		Iterations: conf.HashIterations,
 	}
 }
+
+func provideCheckerSlice(db *check.CheckDatabaseRepo) []repositories.ICheck {
+	return []repositories.ICheck{db}
+}
+
+var providerSet = wire.NewSet(
+	provideHasherConfig, hash.NewArgon2Hasher, provideCheckerSlice,
+)
+
+var serviceSet = wire.NewSet(service.New, service2.New, service3.New, service4.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)), wire.Bind(new(health2.IService), new(*service4.Service)))
+
+var handlerSet = wire.NewSet(general.New, user2.New, merchant2.New, transaction2.New, health.New)
