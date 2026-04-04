@@ -30,22 +30,21 @@ services:
     #    These variables are only relevant inside containers using Docker Secrets.
     #    The variable names here MUST MATCH what the Golang code (config.go) looks for.
     environment:
+      # Database connection details passed directly as environment variables.
+      # The Go application should read these from the container's environment.
+      DATABASE_HOST: ${DATABASE_HOST:-mariadb}
+      DATABASE_PORT: ${DATABASE_PORT:-3306}
       # Secret path for Database (following REST consistent naming)
       DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username # /run/secrets/ + secret name
       DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password # /run/secrets/ + secret name
-      # Secret path for Auth Signature Key (following REST consistent naming)
-      AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
-      # ... other secret path variables for REST mode ...
 
-      # Database connection details passed directly as environment variables.
-      # The Go application should read these from the container's environment.
-      DATABASE_HOST: mariadb # Uses the MariaDB service name as the hostname within the Docker network.
-      DATABASE_PORT: 3306
-
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
       REDIS_USERNAME_PATH_FILE: /run/secrets/redis_username # /run/secrets/ + secret name
       REDIS_PASSWORD_PATH_FILE: /run/secrets/redis_password # /run/secrets/ + secret name
-      REDIS_HOST: redis # Uses the Redis service name as the hostname within the Docker network.
-      REDIS_PORT: 6379
+
+      # Secret path for Auth Signature Key (following REST consistent naming)
+      AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
 
     # 3. Grant This Container Access to the Required Secrets
     #    List of secret names defined in the global 'secrets' section below.
@@ -99,20 +98,21 @@ services:
     # 2. Set Environment Variables Pointing to Secret File Paths
     #    Use consistent naming for gRPC mode.
     environment:
+      # Database connection details passed directly as environment variables.
+      # The Go application should read these from the container's environment.
+      DATABASE_HOST: ${DATABASE_HOST:-mariadb}
+      DATABASE_PORT: ${DATABASE_PORT:-3306}
       # Secret path for Database (following GRPC consistent naming)
       DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username # /run/secrets/ + secret name
       DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password # /run/secrets/ + secret name
-      # Secret path for Auth Signature Key (following GRPC consistent naming)
-      AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
-      # ... other secret path variables for GRPC mode ...
 
-      DATABASE_HOST: mariadb
-      DATABASE_PORT: 3306
-
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
       REDIS_USERNAME_PATH_FILE: /run/secrets/redis_username # /run/secrets/ + secret name
       REDIS_PASSWORD_PATH_FILE: /run/secrets/redis_password # /run/secrets/ + secret name
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+
+      # Secret path for Auth Signature Key (following GRPC consistent naming)
+      AUTH_SIGNATURE_KEY_PATH_FILE: /run/secrets/auth_signature_key # /run/secrets/ + secret name
 
     # 3. Grant This Container Access to the Required Secrets
     #    List of secret names defined in the global 'secrets' section below.
@@ -160,10 +160,10 @@ services:
       - .env # This file must be in the project root
     environment:
       # Database connection details needed for the migration tool.
+      DATABASE_HOST: ${DATABASE_HOST:-mariadb}
+      DATABASE_PORT: ${DATABASE_PORT:-3306}
       DATABASE_USERNAME_PATH_FILE: /run/secrets/database_username
       DATABASE_PASSWORD_PATH_FILE: /run/secrets/database_password
-      DATABASE_HOST: mariadb
-      DATABASE_PORT: 3306
     secrets:
       - database_username
       - database_password
@@ -180,13 +180,13 @@ services:
     networks:
       - app-network
     ports:
-      - "3307:3306" # Optional: Publishes the DB port to the host for external access (e.g., MySQL Workbench).
+      - "3307:${DATABASE_PORT:-3306}" # Optional: Publishes the DB port to the host for external access (e.g., MySQL Workbench).
     environment:
       # Environment variables for MariaDB initialization.
-      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/database_root_password # Reads root password from Docker secret file.
       MYSQL_DATABASE: ${DATABASE_SCHEMA} # Database name to be created.
       MYSQL_USER_FILE: /run/secrets/database_username # Reads username from Docker secret file.
       MYSQL_PASSWORD_FILE: /run/secrets/database_password # Reads password from Docker secret file.
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/database_root_password # Reads root password from Docker secret file.
     volumes:
       # Mounts a named volume for persistent database data.
       # Data in this volume will persist even if the MariaDB container is removed.
@@ -195,7 +195,7 @@ services:
       # These scripts will be executed by MariaDB's entrypoint when the container starts for the first time.
       # - ./init-db:/docker-entrypoint-initdb.d
     healthcheck: # Healthcheck to ensure the database is ready to accept connections.
-      test: ["CMD-SHELL", "password=$$(cat /run/secrets/database_root_password) && mariadb-admin ping -h localhost -u root -p\"$$password\""]
+      test: ["CMD-SHELL", "DB_USER=$$(cat /run/secrets/database_username) && DB_PASS=$$(cat /run/secrets/database_password) && mariadb-admin ping -h localhost -u\"$$DB_USER\" -p\"$$DB_PASS\""]
       interval: 10s # Checks every 10 seconds.
       timeout: 5s # Times out after 5 seconds if no response.
       retries: 5 # Retries 5 times before declaring unhealthy.
