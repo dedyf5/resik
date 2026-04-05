@@ -17,8 +17,7 @@ import (
 	userHandler "github.com/dedyf5/resik/app/grpc/handler/user"
 	"github.com/dedyf5/resik/app/grpc/middleware"
 	"github.com/dedyf5/resik/config"
-	coreHealth "github.com/dedyf5/resik/core/health"
-	dbChecker "github.com/dedyf5/resik/core/health/checkers"
+	health "github.com/dedyf5/resik/core/health"
 	healthService "github.com/dedyf5/resik/core/health/service"
 	merchant "github.com/dedyf5/resik/core/merchant"
 	merchantService "github.com/dedyf5/resik/core/merchant/service"
@@ -31,6 +30,7 @@ import (
 	configEntity "github.com/dedyf5/resik/entities/config"
 	pkgHash "github.com/dedyf5/resik/pkg/hash"
 	repo "github.com/dedyf5/resik/repositories"
+	checkRepo "github.com/dedyf5/resik/repositories/check"
 	merchantRepo "github.com/dedyf5/resik/repositories/merchant"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
 	userRepo "github.com/dedyf5/resik/repositories/user"
@@ -62,28 +62,48 @@ var connSet = wire.NewSet(
 	wire.Value(false),
 	drivers.NewMySQLConnection,
 	drivers.NewGorm,
+	drivers.NewRedisConnection,
 )
 
-var gormRepoSet = wire.NewSet(
+var repoSet = wire.NewSet(
+	checkRepo.NewCheckDatabaseRepo,
+	checkRepo.NewCheckRedisRepo,
 	merchantRepo.New,
 	trxRepo.New,
 	userRepo.New,
+	wire.Bind(new(repo.ICheck), new(*checkRepo.CheckDatabaseRepo)),
 	wire.Bind(new(repo.IMerchant), new(*merchantRepo.MerchantRepo)),
 	wire.Bind(new(repo.ITransaction), new(*trxRepo.TransactionRepo)),
 	wire.Bind(new(repo.IUser), new(*userRepo.UserRepo)),
 )
 
-var redisSet = wire.NewSet(
-	drivers.NewRedisConnection,
+func provideHasherConfig(conf configEntity.Auth) *pkgHash.Argon2Config {
+	return &pkgHash.Argon2Config{
+		Memory:     conf.HashMemory,
+		Iterations: conf.HashIterations,
+	}
+}
+
+func provideCheckerSlice(db *checkRepo.CheckDatabaseRepo, redis *checkRepo.CheckRedisRepo) []repo.ICheck {
+	// res := []repo.ICheck{db}
+	// if redis != nil {
+	// 	res = append(res, redis)
+	// }
+	return []repo.ICheck{db, redis}
+}
+
+var providerSet = wire.NewSet(
+	provideHasherConfig,
+	pkgHash.NewArgon2Hasher,
+	provideCheckerSlice,
 )
 
 var serviceSet = wire.NewSet(
-	provideHasherConfig,
-	pkgHash.NewArgon2Hasher,
+	healthService.New,
 	merchantService.New,
 	trxService.New,
 	userService.New,
-	healthService.New,
+	wire.Bind(new(health.IService), new(*healthService.Service)),
 	wire.Bind(new(merchant.IService), new(*merchantService.Service)),
 	wire.Bind(new(trx.IService), new(*trxService.Service)),
 	wire.Bind(new(user.IService), new(*userService.Service)),
@@ -97,33 +117,16 @@ var handlerSet = wire.NewSet(
 	healthHandler.New,
 )
 
-func provideCheckerSlice(dbChk coreHealth.Checker) []coreHealth.Checker {
-	return []coreHealth.Checker{dbChk}
-}
-
-var healthCheckSet = wire.NewSet(
-	dbChecker.NewDatabaseChecker,
-	provideCheckerSlice,
-)
-
-func provideHasherConfig(conf configEntity.Auth) *pkgHash.Argon2Config {
-	return &pkgHash.Argon2Config{
-		Memory:     conf.HashMemory,
-		Iterations: conf.HashIterations,
-	}
-}
-
 func InitializeHTTP(c context.Context) (*App, func(), error) {
 	wire.Build(
 		configGeneralSet,
 		utilSet,
 		interceptorSet,
 		connSet,
-		gormRepoSet,
-		redisSet,
+		repoSet,
+		providerSet,
 		serviceSet,
 		handlerSet,
-		healthCheckSet,
 		newServerHTTP,
 		newRouter,
 		newApp,

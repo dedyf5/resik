@@ -9,22 +9,21 @@ import (
 	"sync"
 	"time"
 
-	"github.com/dedyf5/resik/core/health"
+	checkEntity "github.com/dedyf5/resik/entities/check"
+	repo "github.com/dedyf5/resik/repositories"
 )
 
 func (s *Service) LivenessCheck(c context.Context) (isLive bool, statusMessage string) {
 	return true, "SERVING"
 }
 
-func (s *Service) ReadinessCheck(c context.Context) health.OverallHealthStatus {
-	overallStatus := health.StatusUp
-	var checkDetails []health.CheckDetail
+func (s *Service) ReadinessCheck(c context.Context) *checkEntity.OverallHealthStatus {
 	var wg sync.WaitGroup
-	resultsChan := make(chan health.CheckDetail, len(s.checkers))
+	resultsChan := make(chan checkEntity.CheckDetail, len(s.checkers))
 
 	for _, checker := range s.checkers {
 		wg.Add(1)
-		go func(chk health.Checker) {
+		go func(chk repo.ICheck) {
 			defer wg.Done()
 			resultsChan <- chk.Check()
 		}(checker)
@@ -33,18 +32,10 @@ func (s *Service) ReadinessCheck(c context.Context) health.OverallHealthStatus {
 	wg.Wait()
 	close(resultsChan)
 
+	var checkDetails []checkEntity.CheckDetail
 	for detail := range resultsChan {
 		checkDetails = append(checkDetails, detail)
-		if detail.Status == health.StatusDown {
-			overallStatus = health.StatusDown
-		} else if detail.Status == health.StatusDegraded && overallStatus != health.StatusDown {
-			overallStatus = health.StatusDegraded
-		}
 	}
 
-	return health.OverallHealthStatus{
-		OverallStatus: overallStatus,
-		Timestamp:     time.Now(),
-		Checks:        checkDetails,
-	}
+	return checkEntity.NewOverallHealthStatus(time.Now(), checkDetails...)
 }

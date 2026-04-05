@@ -5,14 +5,14 @@
 package service
 
 import (
-	"github.com/dedyf5/resik/core/health"
+	repo "github.com/dedyf5/resik/repositories"
 )
 
 type Service struct {
-	checkers []health.Checker
+	checkers []repo.ICheck
 }
 
-func New(checkers []health.Checker) health.IService {
+func New(checkers []repo.ICheck) *Service {
 	return &Service{
 		checkers: checkers,
 	}

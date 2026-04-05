@@ -9,7 +9,7 @@ import (
 	"time"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
-	coreHealth "github.com/dedyf5/resik/core/health"
+	healthCore "github.com/dedyf5/resik/core/health"
 	"github.com/dedyf5/resik/core/health/response"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
@@ -20,10 +20,10 @@ import (
 type HealthHandler struct {
 	log           *logCtx.Log
 	fw            echoFW.IEcho
-	healthService coreHealth.IService
+	healthService healthCore.IService
 }
 
-func New(log *logCtx.Log, fw echoFW.IEcho, hs coreHealth.IService) *HealthHandler {
+func New(log *logCtx.Log, fw echoFW.IEcho, hs healthCore.IService) *HealthHandler {
 	return &HealthHandler{
 		log:           log,
 		fw:            fw,
@@ -82,18 +82,20 @@ func (h *HealthHandler) HealthReadyzGet(echoCtx echo.Context) error {
 	}
 
 	status := h.healthService.ReadinessCheck(echoCtx.Request().Context())
-	httpStatus := http.StatusOK
-	if status.OverallStatus != coreHealth.StatusUp {
-		httpStatus = http.StatusServiceUnavailable
+
+	message := string(status.OverallStatus)
+	if msg := status.NotHealthyMessage(); msg != nil {
+		message = *msg
 	}
 
-	return resPkg.NewStatusSuccess(
-		httpStatus,
-		string(status.OverallStatus),
+	return resPkg.NewStatusMessageData(
+		status.HTTPStatusCode(),
+		message,
 		&response.HealthReadyz{
 			OverallStatus: string(status.OverallStatus),
 			AccessedAt:    status.Timestamp.UTC().Format(time.RFC3339),
 			Checks:        response.HealthReadyzCheckFromCheckDetail(status.Checks),
 		},
+		status.Error(),
 	)
 }
