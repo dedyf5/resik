@@ -14,12 +14,13 @@ import (
 )
 
 type RedisConfig struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
-	Database int
-	PoolSize int
+	Host               string
+	Port               int
+	Username           string
+	Password           string
+	Database           int
+	PoolSize           int
+	HealthCheckTimeout time.Duration
 }
 
 func NewRedisConnection(config *RedisConfig) (*redis.Client, func(), error) {

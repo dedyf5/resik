@@ -109,6 +109,24 @@ func NewStatusData(code int, data any) *Status {
 	}
 }
 
+func NewStatusMessageData(code int, message string, data any, err error) *Status {
+	_, file, line, _ := runtime.Caller(1)
+	status := &Status{
+		Code:    code,
+		Message: message,
+		Data:    data,
+		Caller:  fmt.Sprintf("%s:%d", file, line),
+	}
+
+	if err != nil {
+		errStack := errors.WithStack(err)
+		status.CauseError = errStack
+		status.StackTrace = getErrorFiles(errStack)
+	}
+
+	return status
+}
+
 func NewStatusDataMeta(code int, data any, meta *Meta) *Status {
 	_, file, line, _ := runtime.Caller(1)
 	return &Status{
@@ -167,24 +185,8 @@ func (s *Status) Error() string {
 }
 
 func (s *Status) GRPCStatus() *status.Status {
-	switch s.Code {
-	case http.StatusOK, http.StatusCreated:
-		return status.New(codes.OK, s.MessageOrDefault())
-	case http.StatusBadRequest:
-		return status.New(codes.InvalidArgument, s.MessageOrDefault())
-	case http.StatusUnauthorized:
-		return status.New(codes.Unauthenticated, s.MessageOrDefault())
-	case http.StatusNotFound:
-		return status.New(codes.NotFound, s.MessageOrDefault())
-	case http.StatusTooManyRequests:
-		return status.New(codes.ResourceExhausted, s.MessageOrDefault())
-	case http.StatusInternalServerError:
-		return status.New(codes.Internal, s.MessageOrDefault())
-	case http.StatusServiceUnavailable:
-		return status.New(codes.Unavailable, s.MessageOrDefault())
-	default:
-		return status.New(codes.Unknown, s.MessageOrDefault())
-	}
+	code := HTTPStatusCodeToGRPCCode(s.Code)
+	return status.New(code, s.MessageOrDefault())
 }
 
 func (s *Status) MessageOrDefault() string {
@@ -199,4 +201,27 @@ func (s *Status) CauseErrorMessageOrDefault() string {
 		return s.CauseError.Error()
 	}
 	return s.MessageOrDefault()
+}
+
+func HTTPStatusCodeToGRPCCode(code int) codes.Code {
+	switch code {
+	case http.StatusOK, http.StatusCreated:
+		return codes.OK
+	case http.StatusBadRequest:
+		return codes.InvalidArgument
+	case http.StatusUnauthorized:
+		return codes.Unauthenticated
+	case http.StatusForbidden:
+		return codes.PermissionDenied
+	case http.StatusNotFound:
+		return codes.NotFound
+	case http.StatusTooManyRequests:
+		return codes.ResourceExhausted
+	case http.StatusInternalServerError:
+		return codes.Internal
+	case http.StatusServiceUnavailable:
+		return codes.Unavailable
+	default:
+		return codes.Unknown
+	}
 }

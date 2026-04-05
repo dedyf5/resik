@@ -88,7 +88,8 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	service6 := service3.New(transactionRepo, config)
 	transactionHandler := transaction2.New(echoEcho, logLog, service6, config)
 	checkDatabaseRepo := check.NewCheckDatabaseRepo(db, config)
-	v := provideCheckerSlice(checkDatabaseRepo)
+	checkRedisRepo := check.NewCheckRedisRepo(client, config)
+	v := provideCheckerSlice(checkDatabaseRepo, checkRedisRepo)
 	service7 := service4.New(v)
 	healthHandler := health.New(logLog, echoEcho, service7)
 	router := newRouter(config, limiter, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
@@ -122,11 +123,9 @@ var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new
 
 var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 
-var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm)
+var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm, drivers.NewRedisConnection)
 
-var gormRepoSet = wire.NewSet(check.NewCheckDatabaseRepo, user.New, merchant.New, transaction.New, wire.Bind(new(repositories.ICheck), new(*check.CheckDatabaseRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
-
-var redisSet = wire.NewSet(drivers.NewRedisConnection)
+var repoSet = wire.NewSet(check.NewCheckDatabaseRepo, check.NewCheckRedisRepo, user.New, merchant.New, transaction.New, wire.Bind(new(repositories.ICheck), new(*check.CheckDatabaseRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
 
 func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 	return &hash.Argon2Config{
@@ -135,8 +134,9 @@ func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 	}
 }
 
-func provideCheckerSlice(db *check.CheckDatabaseRepo) []repositories.ICheck {
-	return []repositories.ICheck{db}
+func provideCheckerSlice(db *check.CheckDatabaseRepo, redis *check.CheckRedisRepo) []repositories.ICheck {
+
+	return []repositories.ICheck{db, redis}
 }
 
 var providerSet = wire.NewSet(

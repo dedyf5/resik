@@ -57,10 +57,10 @@ func (mr *MockIServiceMockRecorder) LivenessCheck(c any) *gomock.Call {
 }
 
 // ReadinessCheck mocks base method.
-func (m *MockIService) ReadinessCheck(c context.Context) check.OverallHealthStatus {
+func (m *MockIService) ReadinessCheck(c context.Context) *check.OverallHealthStatus {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ReadinessCheck", c)
-	ret0, _ := ret[0].(check.OverallHealthStatus)
+	ret0, _ := ret[0].(*check.OverallHealthStatus)
 	return ret0
 }
 

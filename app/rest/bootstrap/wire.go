@@ -64,10 +64,12 @@ var connSet = wire.NewSet(
 	wire.Value(false),
 	drivers.NewMySQLConnection,
 	drivers.NewGorm,
+	drivers.NewRedisConnection,
 )
 
-var gormRepoSet = wire.NewSet(
+var repoSet = wire.NewSet(
 	checkRepo.NewCheckDatabaseRepo,
+	checkRepo.NewCheckRedisRepo,
 	userRepo.New,
 	merchantRepo.New,
 	trxRepo.New,
@@ -77,10 +79,6 @@ var gormRepoSet = wire.NewSet(
 	wire.Bind(new(repo.ITransaction), new(*trxRepo.TransactionRepo)),
 )
 
-var redisSet = wire.NewSet(
-	drivers.NewRedisConnection,
-)
-
 func provideHasherConfig(conf configEntity.Auth) *pkgHash.Argon2Config {
 	return &pkgHash.Argon2Config{
 		Memory:     conf.HashMemory,
@@ -88,8 +86,12 @@ func provideHasherConfig(conf configEntity.Auth) *pkgHash.Argon2Config {
 	}
 }
 
-func provideCheckerSlice(db *checkRepo.CheckDatabaseRepo) []repo.ICheck {
-	return []repo.ICheck{db}
+func provideCheckerSlice(db *checkRepo.CheckDatabaseRepo, redis *checkRepo.CheckRedisRepo) []repo.ICheck {
+	// res := []repo.ICheck{db}
+	// if redis != nil {
+	// 	res = append(res, redis)
+	// }
+	return []repo.ICheck{db, redis}
 }
 
 var providerSet = wire.NewSet(
@@ -123,8 +125,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		utilSet,
 		fwSet,
 		connSet,
-		gormRepoSet,
-		redisSet,
+		repoSet,
 		providerSet,
 		serviceSet,
 		handlerSet,

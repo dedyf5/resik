@@ -12,7 +12,6 @@ import (
 	status "github.com/dedyf5/resik/app/grpc/proto/status"
 	healthCore "github.com/dedyf5/resik/core/health"
 	"github.com/dedyf5/resik/core/health/response"
-	checkEntity "github.com/dedyf5/resik/entities/check"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	codes "google.golang.org/grpc/codes"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -49,14 +48,17 @@ func (h *HealthHandler) HealthzGet(c context.Context, _ *emptypb.Empty) (*Health
 func (h *HealthHandler) ReadyzGet(c context.Context, _ *emptypb.Empty) (*HealthReadyzGetRes, error) {
 	readinessStatus := h.healthService.ReadinessCheck(c)
 
-	code := codes.OK
-	if readinessStatus.OverallStatus != checkEntity.StatusUp {
-		code = codes.Unavailable
+	if msg := readinessStatus.NotHealthyMessage(); msg != nil {
+		return nil, resPkg.NewStatusMessage(
+			readinessStatus.HTTPStatusCode(),
+			*msg,
+			readinessStatus.Error(),
+		)
 	}
 
 	return &HealthReadyzGetRes{
 		Status: &status.Status{
-			Code:    status.CodePlus(code),
+			Code:    status.CodePlus(readinessStatus.GRPCStatusCode()),
 			Message: string(readinessStatus.OverallStatus),
 		},
 		Data: &response.HealthReadyz{

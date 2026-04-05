@@ -171,6 +171,7 @@ func (conf *Config) loadRedis() {
 	redis.Password = getSecretFromFileOrEnv("REDIS_PASSWORD_PATH_FILE", "REDIS_PASSWORD")
 	redis.Database = viper.GetInt("REDIS_DATABASE")
 	redis.PoolSize = viper.GetInt("REDIS_POOL_SIZE")
+	redis.HealthCheckTimeout = getDuration("REDIS_HEALTHCHECK_TIMEOUT")
 
 	conf.Redis = &redis
 }

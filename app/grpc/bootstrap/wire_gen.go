@@ -73,11 +73,6 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	service6 := service3.New(userRepo, iHash, config)
 	userHandler := user2.New(logLog, validate, service6)
 	checkDatabaseRepo := check.NewCheckDatabaseRepo(db, config)
-	v := provideCheckerSlice(checkDatabaseRepo)
-	service7 := service4.New(v)
-	healthHandler := health.New(service7)
-	router := newRouter(config, generalHandler, merchantHandler, transactionHandler, userHandler, healthHandler)
-	rateLimit := config.RateLimit
 	redisConfig := config.Redis
 	client, cleanup3, err := drivers.NewRedisConnection(redisConfig)
 	if err != nil {
@@ -85,6 +80,12 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
+	checkRedisRepo := check.NewCheckRedisRepo(client, config)
+	v := provideCheckerSlice(checkDatabaseRepo, checkRedisRepo)
+	service7 := service4.New(v)
+	healthHandler := health.New(service7)
+	router := newRouter(config, generalHandler, merchantHandler, transactionHandler, userHandler, healthHandler)
+	rateLimit := config.RateLimit
 	limiter, err := ratelimit.NewRateLimiter(rateLimit, client)
 	if err != nil {
 		cleanup3()
@@ -124,11 +125,9 @@ var utilSet = wire.NewSet(validator.New, ratelimit.NewRateLimiter, log.Get)
 
 var interceptorSet = wire.NewSet(middleware.NewInterceptor)
 
-var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm)
+var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm, drivers.NewRedisConnection)
 
-var gormRepoSet = wire.NewSet(check.NewCheckDatabaseRepo, merchant.New, transaction.New, user.New, wire.Bind(new(repositories.ICheck), new(*check.CheckDatabaseRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)))
-
-var redisSet = wire.NewSet(drivers.NewRedisConnection)
+var repoSet = wire.NewSet(check.NewCheckDatabaseRepo, check.NewCheckRedisRepo, merchant.New, transaction.New, user.New, wire.Bind(new(repositories.ICheck), new(*check.CheckDatabaseRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)))
 
 func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 	return &hash.Argon2Config{
@@ -137,8 +136,9 @@ func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 	}
 }
 
-func provideCheckerSlice(db *check.CheckDatabaseRepo) []repositories.ICheck {
-	return []repositories.ICheck{db}
+func provideCheckerSlice(db *check.CheckDatabaseRepo, redis *check.CheckRedisRepo) []repositories.ICheck {
+
+	return []repositories.ICheck{db, redis}
 }
 
 var providerSet = wire.NewSet(

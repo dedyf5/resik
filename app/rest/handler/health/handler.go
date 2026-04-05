@@ -12,7 +12,6 @@ import (
 	healthCore "github.com/dedyf5/resik/core/health"
 	"github.com/dedyf5/resik/core/health/response"
 	logCtx "github.com/dedyf5/resik/ctx/log"
-	checkEntity "github.com/dedyf5/resik/entities/check"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v4"
@@ -83,18 +82,20 @@ func (h *HealthHandler) HealthReadyzGet(echoCtx echo.Context) error {
 	}
 
 	status := h.healthService.ReadinessCheck(echoCtx.Request().Context())
-	httpStatus := http.StatusOK
-	if status.OverallStatus != checkEntity.StatusUp {
-		httpStatus = http.StatusServiceUnavailable
+
+	message := string(status.OverallStatus)
+	if msg := status.NotHealthyMessage(); msg != nil {
+		message = *msg
 	}
 
-	return resPkg.NewStatusSuccess(
-		httpStatus,
-		string(status.OverallStatus),
+	return resPkg.NewStatusMessageData(
+		status.HTTPStatusCode(),
+		message,
 		&response.HealthReadyz{
 			OverallStatus: string(status.OverallStatus),
 			AccessedAt:    status.Timestamp.UTC().Format(time.RFC3339),
 			Checks:        response.HealthReadyzCheckFromCheckDetail(status.Checks),
 		},
+		status.Error(),
 	)
 }

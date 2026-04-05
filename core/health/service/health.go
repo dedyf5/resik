@@ -17,9 +17,7 @@ func (s *Service) LivenessCheck(c context.Context) (isLive bool, statusMessage s
 	return true, "SERVING"
 }
 
-func (s *Service) ReadinessCheck(c context.Context) checkEntity.OverallHealthStatus {
-	overallStatus := checkEntity.StatusUp
-	var checkDetails []checkEntity.CheckDetail
+func (s *Service) ReadinessCheck(c context.Context) *checkEntity.OverallHealthStatus {
 	var wg sync.WaitGroup
 	resultsChan := make(chan checkEntity.CheckDetail, len(s.checkers))
 
@@ -34,18 +32,10 @@ func (s *Service) ReadinessCheck(c context.Context) checkEntity.OverallHealthSta
 	wg.Wait()
 	close(resultsChan)
 
+	var checkDetails []checkEntity.CheckDetail
 	for detail := range resultsChan {
 		checkDetails = append(checkDetails, detail)
-		if detail.Status == checkEntity.StatusDown {
-			overallStatus = checkEntity.StatusDown
-		} else if detail.Status == checkEntity.StatusDegraded && overallStatus != checkEntity.StatusDown {
-			overallStatus = checkEntity.StatusDegraded
-		}
 	}
 
-	return checkEntity.OverallHealthStatus{
-		OverallStatus: overallStatus,
-		Timestamp:     time.Now(),
-		Checks:        checkDetails,
-	}
+	return checkEntity.NewOverallHealthStatus(time.Now(), checkDetails...)
 }

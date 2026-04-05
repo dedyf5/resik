@@ -35,13 +35,19 @@ func ResponseSuccessAuto(status *resPkg.Status) resPkg.Response {
 }
 
 func ResponseErrorAuto(status *resPkg.Status) resPkg.Response {
-	return resPkg.Response{
+	res := resPkg.Response{
 		Status: resPkg.ResponseStatus{
 			Code:    fmt.Sprintf("%d.1", status.Code),
 			Message: status.MessageOrDefault(),
 			Detail:  status.Detail,
 		},
 	}
+
+	if status.Data != nil {
+		res.Data = status.Data
+	}
+
+	return res
 }
 
 func LoggerFromStatus(status *resPkg.Status) resPkg.Log {
