@@ -6,6 +6,7 @@ package log
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -15,6 +16,7 @@ import (
 	"time"
 
 	configEntity "github.com/dedyf5/resik/entities/config"
+	"github.com/rs/xid"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -32,7 +34,6 @@ type Key string
 
 const (
 	KeyCorrelationIDContext Key = "correlation_id"
-	KeyXCorrelationIDHeader Key = "X-Correlation-ID"
 	KeyCallerHolderContext  Key = "caller"
 )
 
@@ -52,6 +53,16 @@ var logLevelSeverity = map[zapcore.Level]string{
 	zapcore.DPanicLevel: "critical",
 	zapcore.PanicLevel:  "alert",
 	zapcore.FatalLevel:  "emergency",
+}
+
+func EnsureCorrelationID(ctx context.Context) (string, context.Context) {
+	if correlationID, ok := ctx.Value(KeyCorrelationIDContext).(string); ok && correlationID != "" {
+		return correlationID, ctx
+	}
+
+	correlationID := xid.New().String()
+	newCtx := context.WithValue(ctx, KeyCorrelationIDContext, correlationID)
+	return correlationID, newCtx
 }
 
 func Get(logEntity configEntity.Log, appModule configEntity.Module) *Log {

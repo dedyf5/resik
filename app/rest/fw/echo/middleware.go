@@ -22,7 +22,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
-	"github.com/rs/xid"
 
 	"golang.org/x/text/language"
 )
@@ -73,12 +72,7 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Modu
 				}
 			}
 
-			correlationID := xid.New().String()
-			c := context.WithValue(
-				r.Context(),
-				logCtx.KeyCorrelationIDContext,
-				correlationID,
-			)
+			correlationID, c := logCtx.EnsureCorrelationID(r.Context())
 
 			callerHolder := &logCtx.CallerHolder{}
 
@@ -89,8 +83,6 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Modu
 			log.CorrelationID = correlationID
 			log.Path = r.URL.Path
 			log.QueryString = &r.URL.RawQuery
-
-			w.Header().Add(logCtx.KeyXCorrelationIDHeader.String(), correlationID)
 
 			lrw := logCtx.NewHTTP(w, appModule, c, log, time.Now(), r.Method, r.URL, contentType, r.UserAgent(), requestBody)
 
