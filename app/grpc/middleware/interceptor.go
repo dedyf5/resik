@@ -18,7 +18,6 @@ import (
 	"github.com/dedyf5/resik/entities/config"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/dedyf5/resik/utils/ratelimit"
-	"github.com/rs/xid"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -67,20 +66,10 @@ func methodRoles() map[string][]Role {
 }
 
 func (i *Interceptor) logCtx(c context.Context, path string) (*context.Context, error) {
-	meta, ok := metadata.FromIncomingContext(c)
-	if !ok {
-		return i.errorMetadata()
-	}
-
-	correlationID := xid.New().String()
-	newMeta := meta.Copy()
-	newMeta.Append(logCtx.KeyCorrelationIDContext.String(), correlationID)
-	newMeta.Append(logCtx.KeyXCorrelationIDHeader.String(), correlationID)
+	correlationID, newCtx := logCtx.EnsureCorrelationID(c)
 
 	i.log.CorrelationID = correlationID
 	i.log.Path = path
-
-	newCtx := metadata.NewIncomingContext(c, newMeta)
 
 	return &newCtx, nil
 }
