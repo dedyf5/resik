@@ -1,7 +1,5 @@
 {
-    "app_name": "Resik",
-    "version_name": "バージョン {{.code}}",
-    "home_message": "{{.app_name}} バージョン {{.code}}",
+    "home_message": "{{.app_name}} バージョン {{.app_version}} :: モジュール {{.module_name}} バージョン {{.module_version}}",
     "validation_type_message": "{{.field}タイプは{{.expected}}である必要がありますが、{{.actual}}を取得しました",
     "incorrect_username_or_password": "ユーザーネームまたはパスワードが間違っています",
     "unauthorized": "無許可",

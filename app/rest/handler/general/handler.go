@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
+	"github.com/dedyf5/resik/build"
 	"github.com/dedyf5/resik/config"
 	resAppCore "github.com/dedyf5/resik/core/app/response"
 	"github.com/dedyf5/resik/ctx"
@@ -55,7 +56,15 @@ func (h *Handler) Home(echoCtx echo.Context) error {
 
 	lang := ctx.Lang()
 
-	msg := lang.GetByTemplateData("home_message", commonEntity.Map{"app_name": h.config.App.Name, "code": h.config.App.Version})
+	msg := lang.GetByTemplateData(
+		"home_message",
+		commonEntity.Map{
+			"app_name":       build.AppName,
+			"app_version":    build.AppVersion,
+			"module_name":    h.config.Module.Name,
+			"module_version": h.config.Module.Version,
+		},
+	)
 
 	return resPkg.NewStatusSuccess(
 		http.StatusOK,

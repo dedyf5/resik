@@ -19,18 +19,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-const AppLogoASCII string = `
- ____           _ _    
-|  _ \ ___  ___(_) | __
-| |_) / _ \/ __| | |/ /
-|  _ <  __/\__ \ |   < 
-|_| \_\___||___/_|_|\_\
-
-`
-
 type (
 	Config struct {
-		App       configEntity.App
+		Module    configEntity.Module
 		HTTP      configEntity.HTTP
 		Database  drivers.SQLConfig
 		Redis     *drivers.RedisConfig
@@ -40,7 +31,7 @@ type (
 	}
 )
 
-func Load(module configEntity.Module) *Config {
+func Load(module configEntity.ModuleType) *Config {
 	if _, err := os.Stat(".env"); err == nil {
 		viper.SetConfigType("env")
 		viper.SetConfigFile(".env")
@@ -95,8 +86,8 @@ func readSecretFile(path string) (string, error) {
 	return strings.TrimSpace(string(content)), nil
 }
 
-func (conf *Config) loadApp(module configEntity.Module) {
-	envStr := viper.GetString(module.Key("APP_ENV"))
+func (conf *Config) loadApp(module configEntity.ModuleType) {
+	envStr := viper.GetString(module.Key("MODULE_ENV"))
 	env := configEntity.EnvDevelopment
 	switch envStr {
 	case "staging":
@@ -104,25 +95,25 @@ func (conf *Config) loadApp(module configEntity.Module) {
 	case "production":
 		env = configEntity.EnvProduction
 	}
-	conf.App = configEntity.App{
-		Name:        viper.GetString(module.Key("APP_NAME")),
-		Version:     viper.GetString(module.Key("APP_VERSION")),
-		Module:      module,
+	conf.Module = configEntity.Module{
+		Name:        viper.GetString(module.Key("MODULE_NAME")),
+		Version:     viper.GetString(module.Key("MODULE_VERSION")),
+		Type:        module,
 		Env:         env,
-		LangDefault: langCtx.GetLanguageOrDefault(viper.GetString(module.Key("APP_LANG_DEFAULT"))),
-		Host:        viper.GetString(module.Key("APP_HOST")),
-		Port:        viper.GetUint(module.Key("APP_PORT")),
-		Public: configEntity.AppPublic{
-			Host:     viper.GetString(module.Key("APP_PUBLIC_HOST")),
-			Port:     viper.GetUint(module.Key("APP_PUBLIC_PORT")),
-			Schema:   viper.GetString(module.Key("APP_PUBLIC_SCHEMA")),
-			BasePath: viper.GetString(module.Key("APP_PUBLIC_BASE_PATH")),
+		LangDefault: langCtx.GetLanguageOrDefault(viper.GetString(module.Key("MODULE_LANG_DEFAULT"))),
+		Host:        viper.GetString(module.Key("MODULE_HOST")),
+		Port:        viper.GetUint(module.Key("MODULE_PORT")),
+		Public: configEntity.Public{
+			Host:     viper.GetString(module.Key("MODULE_PUBLIC_HOST")),
+			Port:     viper.GetUint(module.Key("MODULE_PUBLIC_PORT")),
+			Schema:   viper.GetString(module.Key("MODULE_PUBLIC_SCHEMA")),
+			BasePath: viper.GetString(module.Key("MODULE_PUBLIC_BASE_PATH")),
 		},
 	}
 }
 
-func (conf *Config) loadHTTP(module configEntity.Module) {
-	if conf.App.Module != configEntity.ModuleREST {
+func (conf *Config) loadHTTP(module configEntity.ModuleType) {
+	if conf.Module.Type != configEntity.ModuleTypeREST {
 		return
 	}
 
@@ -134,7 +125,7 @@ func (conf *Config) loadHTTP(module configEntity.Module) {
 	}
 }
 
-func (conf *Config) loadDatabase(module configEntity.Module) {
+func (conf *Config) loadDatabase(module configEntity.ModuleType) {
 	db := drivers.SQLConfig{}
 	switch viper.GetString("DATABASE_ENGINE") {
 	case "mysql":
@@ -187,7 +178,7 @@ func (conf *Config) loadRateLimit() {
 	conf.RateLimit = rl
 }
 
-func (conf *Config) loadAuth(module configEntity.Module) {
+func (conf *Config) loadAuth(module configEntity.ModuleType) {
 	conf.Auth = configEntity.Auth{
 		Expires:        getDuration(module.Key("AUTH_EXPIRES")),
 		SignatureKey:   getSecretFromFileOrEnv("AUTH_SIGNATURE_KEY_PATH_FILE", "AUTH_SIGNATURE_KEY"),
@@ -196,7 +187,7 @@ func (conf *Config) loadAuth(module configEntity.Module) {
 	}
 }
 
-func (conf *Config) loadLog(module configEntity.Module) {
+func (conf *Config) loadLog(module configEntity.ModuleType) {
 	conf.Log = configEntity.Log{
 		File: viper.GetString(module.Key("LOG_FILE")),
 	}

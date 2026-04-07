@@ -21,7 +21,7 @@ import (
 
 type HTTP struct {
 	http.ResponseWriter
-	appModule    configEntity.Module
+	moduleType   configEntity.ModuleType
 	context      context.Context
 	log          *Log
 	start        time.Time
@@ -34,9 +34,9 @@ type HTTP struct {
 	responseBody *bytes.Buffer
 }
 
-func NewHTTP(w http.ResponseWriter, appModule configEntity.Module, c context.Context, log *Log, start time.Time, method string, url *url.URL, contentType, userAgent string, requestBody []byte) *HTTP {
+func NewHTTP(w http.ResponseWriter, moduleType configEntity.ModuleType, c context.Context, log *Log, start time.Time, method string, url *url.URL, contentType, userAgent string, requestBody []byte) *HTTP {
 	var buf bytes.Buffer
-	return &HTTP{w, appModule, c, log, start, http.StatusOK, method, url, contentType, userAgent, requestBody, &buf}
+	return &HTTP{w, moduleType, c, log, start, http.StatusOK, method, url, contentType, userAgent, requestBody, &buf}
 }
 
 func (h *HTTP) WriteHeader(code int) {
@@ -95,7 +95,7 @@ func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 }
 
 func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
-	enc.AddString("module", h.appModule.DirectoryName())
+	enc.AddString("module", h.moduleType.String())
 	enc.AddString(KeyCorrelationIDContext.String(), h.log.CorrelationID)
 	enc.AddString("method", h.method)
 	enc.AddString("path", h.url.Path)

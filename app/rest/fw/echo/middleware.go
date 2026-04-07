@@ -52,7 +52,7 @@ func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 	})
 }
 
-func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Module) echo.MiddlewareFunc {
+func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, moduleType config.ModuleType) echo.MiddlewareFunc {
 	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -84,7 +84,7 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log, appModule config.Modu
 			log.Path = r.URL.Path
 			log.QueryString = &r.URL.RawQuery
 
-			lrw := logCtx.NewHTTP(w, appModule, c, log, time.Now(), r.Method, r.URL, contentType, r.UserAgent(), requestBody)
+			lrw := logCtx.NewHTTP(w, moduleType, c, log, time.Now(), r.Method, r.URL, contentType, r.UserAgent(), requestBody)
 
 			h.ServeHTTP(lrw, r)
 		})

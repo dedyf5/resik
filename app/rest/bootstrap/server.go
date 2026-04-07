@@ -14,6 +14,7 @@ import (
 	"time"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
+	"github.com/dedyf5/resik/build"
 	"github.com/dedyf5/resik/config"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/pkg/color"
@@ -38,8 +39,8 @@ func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 		}
 		return echo.ExtractIPDirect()(r)
 	}
-	e.Use(echoFW.LoggerAndResponseFormatterMiddleware(log, config.App.Module))
-	e.Use(echoFW.LangMiddleware(config.App.LangDefault))
+	e.Use(echoFW.LoggerAndResponseFormatterMiddleware(log, config.Module.Type))
+	e.Use(echoFW.LangMiddleware(config.Module.LangDefault))
 	e.Use(echoMiddle.CORSWithConfig(
 		echoMiddle.CORSConfig{
 			AllowOrigins: []string{"*"},
@@ -54,10 +55,10 @@ func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 }
 
 func (s *ServerHTTP) Start(c context.Context) {
-	addr := s.config.App.HostPort()
-	appName := color.Format(color.GREEN, s.config.App.Name)
-	version := color.Format(color.YELLOW, s.config.App.Version)
-	fmt.Printf("%s%s version %s\n\n", config.AppLogoASCII, appName, version)
+	addr := s.config.Module.HostPort()
+	appName := color.Format(color.GREEN, s.config.Module.Name)
+	version := color.Format(color.YELLOW, s.config.Module.Version)
+	fmt.Printf("%s%s version %s\n\n", build.AppLogoASCII, appName, version)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
 
 	go func() {

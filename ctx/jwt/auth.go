@@ -65,10 +65,10 @@ func (a *AuthClaims) statusUnauthorized() (bool, *resPkg.Status) {
 	return false, resPkg.NewStatusCode(http.StatusUnauthorized)
 }
 
-func AuthTokenGenerate(appConfig config.App, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64, outletIDs []uint64) (token string, err *resPkg.Status) {
+func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, userID uint64, username string, merchantIDs []uint64, outletIDs []uint64) (token string, err *resPkg.Status) {
 	claims := AuthClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    appConfig.Name,
+			Issuer:    moduleConfig.Name,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(authConfig.Expires)),
 		},
 		UserID:      userID,

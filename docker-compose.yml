@@ -18,7 +18,7 @@ services:
       - app-network
     # Publishes the REST port from the container to the host.
     ports:
-      - "${REST_APP_PORT}:${REST_APP_PORT}" # HOST_PORT:CONTAINER_PORT
+      - "${REST_MODULE_PORT}:${REST_MODULE_PORT}" # HOST_PORT:CONTAINER_PORT
 
     # --- Application Configuration (Hybrid: Env Var + Secrets) ---
 
@@ -71,7 +71,7 @@ services:
     healthcheck:
       # Command to test the health. Uses curl to hit the /healthz endpoint.
       # Exits with 0 if healthy (HTTP 2xx), non-zero otherwise.
-      test: ["CMD-SHELL", "curl -f http://localhost:${REST_APP_PORT}/healthz || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:${REST_MODULE_PORT}/healthz || exit 1"]
       interval: 15s # How often to run the check.
       timeout: 5s # How long to wait for a response.
       retries: 3 # How many consecutive failures before marking as unhealthy.
@@ -87,7 +87,7 @@ services:
       - app-network
     # Publishes the gRPC port from the container to the host.
     ports:
-      - "${GRPC_APP_PORT}:${GRPC_APP_PORT}" # HOST_PORT:CONTAINER_PORT
+      - "${GRPC_MODULE_PORT}:${GRPC_MODULE_PORT}" # HOST_PORT:CONTAINER_PORT
 
     # --- Application Configuration (Hybrid: Env Var + Secrets) ---
 
@@ -139,7 +139,7 @@ services:
     healthcheck:
       # Command to test the health. Uses grpcurl to call the HealthzGet method.
       # Exits with 0 if healthy, non-zero otherwise.
-      test: ["CMD-SHELL", "grpcurl -plaintext -import-path ./ -proto app/grpc/handler/health/health.proto localhost:${GRPC_APP_PORT} health.HealthService/HealthzGet || exit 1"]
+      test: ["CMD-SHELL", "grpcurl -plaintext -import-path ./ -proto app/grpc/handler/health/health.proto localhost:${GRPC_MODULE_PORT} health.HealthService/HealthzGet || exit 1"]
       interval: 15s
       timeout: 5s
       retries: 3

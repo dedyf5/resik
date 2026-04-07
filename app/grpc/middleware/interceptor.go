@@ -33,16 +33,16 @@ const (
 )
 
 type Interceptor struct {
-	app         config.App
+	module      config.Module
 	auth        config.Auth
 	limiter     ratelimit.Limiter
 	log         *logCtx.Log
 	methodRoles map[string][]Role
 }
 
-func NewInterceptor(app config.App, auth config.Auth, limiter ratelimit.Limiter, log *logCtx.Log) *Interceptor {
+func NewInterceptor(module config.Module, auth config.Auth, limiter ratelimit.Limiter, log *logCtx.Log) *Interceptor {
 	return &Interceptor{
-		app:         app,
+		module:      module,
 		auth:        auth,
 		limiter:     limiter,
 		log:         log,
@@ -75,7 +75,7 @@ func (i *Interceptor) logCtx(c context.Context, path string) (*context.Context, 
 }
 
 func (i *Interceptor) writeLogger(c context.Context, start time.Time, fullMethod string, req any, res any, err error) (any, error) {
-	logger := logCtx.NewGRPC(i.app.Module, c, i.log, start, fullMethod, req, res, err)
+	logger := logCtx.NewGRPC(i.module.Type, c, i.log, start, fullMethod, req, res, err)
 	logger.Write()
 	return res, err
 }
@@ -143,7 +143,7 @@ func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerIn
 		return handler, err
 	}
 
-	langC, langRes, err := i.langCtx(*logC, i.app.LangDefault)
+	langC, langRes, err := i.langCtx(*logC, i.module.LangDefault)
 	if err != nil {
 		return i.writeLogger(c, start, info.FullMethod, req, nil, err)
 	}

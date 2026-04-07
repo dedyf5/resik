@@ -42,11 +42,11 @@ import (
 func InitializeHTTP(c context.Context) (*App, func(), error) {
 	config := _wireConfigValue
 	configLog := config.Log
-	app := config.App
-	module := app.Module
-	logLog := log.Get(configLog, module)
+	module := config.Module
+	moduleType := module.Type
+	logLog := log.Get(configLog, moduleType)
 	generalHandler := general.New(config, logLog)
-	tag := app.LangDefault
+	tag := module.LangDefault
 	validate := validator.New(tag)
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
@@ -93,16 +93,16 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
-	interceptor := middleware.NewInterceptor(app, auth, limiter, logLog)
+	interceptor := middleware.NewInterceptor(module, auth, limiter, logLog)
 	serverHTTP := newServerHTTP(c, config, router, interceptor)
-	bootstrapApp, cleanup4, err := newApp(serverHTTP)
+	app, cleanup4, err := newApp(serverHTTP)
 	if err != nil {
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	return bootstrapApp, func() {
+	return app, func() {
 		cleanup4()
 		cleanup3()
 		cleanup2()
@@ -117,9 +117,9 @@ var (
 
 // wire.go:
 
-var configGeneral = config.Load(config2.ModuleGRPC)
+var configGeneral = config.Load(config2.ModuleTypeGRPC)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault", "Module"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.Module), "Env", "LangDefault", "Type"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
 var utilSet = wire.NewSet(validator.New, ratelimit.NewRateLimiter, log.Get)
 
@@ -137,7 +137,6 @@ func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 }
 
 func provideCheckerSlice(db *check.CheckDatabaseRepo, redis *check.CheckRedisRepo) []repositories.ICheck {
-
 	return []repositories.ICheck{db, redis}
 }
 

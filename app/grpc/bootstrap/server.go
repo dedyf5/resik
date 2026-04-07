@@ -12,6 +12,7 @@ import (
 	"net"
 
 	"github.com/dedyf5/resik/app/grpc/middleware"
+	"github.com/dedyf5/resik/build"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/pkg/color"
 	"google.golang.org/grpc"
@@ -27,7 +28,7 @@ type ServerHTTP struct {
 
 func newServerHTTP(c context.Context, config config.Config, router *Router, interceptor *middleware.Interceptor) *ServerHTTP {
 	lc := net.ListenConfig{}
-	listener, err := lc.Listen(c, "tcp", fmt.Sprintf(":%d", config.App.Port))
+	listener, err := lc.Listen(c, "tcp", fmt.Sprintf(":%d", config.Module.Port))
 	if err != nil {
 		log.Fatalf("HTTP SERVER LISTEN ERROR: %s", err.Error())
 		return nil
@@ -45,10 +46,10 @@ func newServerHTTP(c context.Context, config config.Config, router *Router, inte
 }
 
 func (s *ServerHTTP) Start() {
-	addr := s.config.App.HostPort()
-	appName := color.Format(color.GREEN, s.config.App.Name)
-	version := color.Format(color.YELLOW, s.config.App.Version)
-	fmt.Printf("%s%s version %s\n\n", config.AppLogoASCII, appName, version)
+	addr := s.config.Module.HostPort()
+	appName := color.Format(color.GREEN, s.config.Module.Name)
+	version := color.Format(color.YELLOW, s.config.Module.Version)
+	fmt.Printf("%s%s version %s\n\n", build.AppLogoASCII, appName, version)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
 	s.router.routerSetup(s.grpcServer)
 	go func() {

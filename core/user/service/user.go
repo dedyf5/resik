@@ -37,6 +37,6 @@ func (s *Service) AuthTokenGenerate(userID uint64, username string) (token strin
 
 	merchantIDs, outletIDs := outlet.GetUniqueMerchantIDsAndOutletIDs(outlets)
 
-	token, err = jwtCtx.AuthTokenGenerate(s.config.App, s.config.Auth, userID, username, merchantIDs, outletIDs)
+	token, err = jwtCtx.AuthTokenGenerate(s.config.Module, s.config.Auth, userID, username, merchantIDs, outletIDs)
 	return
 }

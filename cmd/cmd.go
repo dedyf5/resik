@@ -7,12 +7,12 @@ package cmd
 import (
 	"os"
 
-	"github.com/dedyf5/resik/config"
+	"github.com/dedyf5/resik/build"
 	"github.com/spf13/cobra"
 )
 
 var mainCMD = &cobra.Command{
-	Short: config.AppLogoASCII,
+	Short: build.AppLogoASCII,
 }
 
 func Execute() {

@@ -43,7 +43,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	e := server.echo
 
 	validateToken := echoFW.ValidateTokenMiddleware(r.config.Auth.SignatureKey)
-	jwtMiddleware := echoFW.JWTMiddleware(r.config.Auth.SignatureKey, r.config.App.LangDefault)
+	jwtMiddleware := echoFW.JWTMiddleware(r.config.Auth.SignatureKey, r.config.Module.LangDefault)
 	rateLimit := echoFW.RateLimitMiddleware(r.limiter)
 
 	generalHandler := r.generalHandler
@@ -71,12 +71,12 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	e.GET("/healthz", healthH.HealthHealthzGet)
 	e.GET("/readyz", healthH.HealthReadyzGet, rateLimit)
 
-	docs.SwaggerInforest.Title = r.config.App.Name
-	docs.SwaggerInforest.Version = r.config.App.Version
-	docs.SwaggerInforest.Host = r.config.App.Public.HostPort()
-	docs.SwaggerInforest.Schemes = []string{r.config.App.Public.Schema}
-	docs.SwaggerInforest.BasePath = r.config.App.Public.BasePath
-	docs.SwaggerInforest.Description = r.config.App.APIDocDescription()
+	docs.SwaggerInforest.Title = r.config.Module.Name
+	docs.SwaggerInforest.Version = r.config.Module.Version
+	docs.SwaggerInforest.Host = r.config.Module.Public.HostPort()
+	docs.SwaggerInforest.Schemes = []string{r.config.Module.Public.Schema}
+	docs.SwaggerInforest.BasePath = r.config.Module.Public.BasePath
+	docs.SwaggerInforest.Description = r.config.Module.APIDocDescription()
 	docHandler := echoSwagger.EchoWrapHandler(
 		echoSwagger.InstanceName(docs.SwaggerInforest.InfoInstanceName),
 	)

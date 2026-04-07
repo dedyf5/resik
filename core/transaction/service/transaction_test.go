@@ -168,7 +168,7 @@ func setup(ctrl *gomock.Controller) (trxRepo *trxRepoMock.MockITransaction, ctx 
 
 func env() (conf config.Config, c *ctx.Ctx) {
 	conf = config.Config{
-		App: configEntity.App{
+		Module: configEntity.Module{
 			Name:        "Resik",
 			Version:     "0.1",
 			LangDefault: language.English,

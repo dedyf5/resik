@@ -20,7 +20,7 @@ import (
 )
 
 type GRPC struct {
-	appModule    configEntity.Module
+	moduleType   configEntity.ModuleType
 	context      context.Context
 	log          *Log
 	start        time.Time
@@ -49,7 +49,7 @@ var sensitiveFields = map[string]struct{}{
 	"token":    {},
 }
 
-func NewGRPC(appModule configEntity.Module, c context.Context, log *Log, start time.Time, path string, requestBody any, responseBody any, err error) *GRPC {
+func NewGRPC(moduleType configEntity.ModuleType, c context.Context, log *Log, start time.Time, path string, requestBody any, responseBody any, err error) *GRPC {
 	status := resPkg.NewStatusCode(http.StatusOK)
 
 	if s := statusProto.Extract(responseBody); s != nil {
@@ -63,7 +63,7 @@ func NewGRPC(appModule configEntity.Module, c context.Context, log *Log, start t
 	}
 
 	return &GRPC{
-		appModule:    appModule,
+		moduleType:   moduleType,
 		context:      c,
 		log:          log,
 		start:        start,
@@ -111,7 +111,7 @@ func (h *GRPC) Write() {
 func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	grpc := h.status.GRPCStatus()
 
-	enc.AddString("module", h.appModule.DirectoryName())
+	enc.AddString("module", h.moduleType.String())
 	enc.AddString(KeyCorrelationIDContext.String(), h.log.CorrelationID)
 	enc.AddString("path", h.path)
 	enc.AddUint32("status_code", uint32(grpc.Code()))
