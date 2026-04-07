@@ -44,6 +44,8 @@ definitions:
         type: string
       lang:
         $ref: '#/definitions/response.AppLang'
+      module:
+        $ref: '#/definitions/response.Module'
       version:
         example: Version 0.1
         type: string
@@ -125,6 +127,18 @@ definitions:
       id:
         example: 123
         type: integer
+    type: object
+  response.Module:
+    properties:
+      name:
+        example: REST Service
+        type: string
+      type:
+        example: REST
+        type: string
+      version:
+        example: "0.1"
+        type: string
     type: object
   response.OutletOmzet:
     properties:

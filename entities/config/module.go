@@ -19,48 +19,52 @@ const (
 	EnvProduction  Env = "production"
 )
 
-type Module string
+type ModuleType string
 
 const (
-	ModuleREST Module = "REST"
-	ModuleGRPC Module = "GRPC"
+	ModuleTypeREST ModuleType = "REST"
+	ModuleTypeGRPC ModuleType = "gRPC"
 )
 
-type App struct {
+type Module struct {
 	Name        string
 	Version     string
-	Module      Module
+	Type        ModuleType
 	Env         Env
 	LangDefault language.Tag
 	Host        string
 	Port        uint
-	Public      AppPublic
+	Public      Public
 }
 
-type AppPublic struct {
+type Public struct {
 	Host     string
 	Port     uint
 	Schema   string
 	BasePath string
 }
 
-func (a *App) HostPort() string {
+func (a *Module) HostPort() string {
 	return fmt.Sprintf("%v:%v", a.Host, a.Port)
 }
 
-func (a *App) APIDocDescription() string {
+func (a *Module) APIDocDescription() string {
 	return fmt.Sprintf("%v API Documentation", a.Name)
 }
 
-func (t Module) DirectoryName() string {
-	return strings.ToLower(string(t))
+func (t ModuleType) String() string {
+	return string(t)
 }
 
-func (t Module) Key(k string) string {
-	return fmt.Sprintf("%v_%v", t, k)
+func (t ModuleType) BaseKey() string {
+	return strings.ToUpper(string(t))
 }
 
-func (p *AppPublic) HostPort() string {
+func (t ModuleType) Key(k string) string {
+	return fmt.Sprintf("%v_%v", t.BaseKey(), k)
+}
+
+func (p *Public) HostPort() string {
 	if p.Port == 0 {
 		return p.Host
 	}

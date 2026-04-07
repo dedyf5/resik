@@ -110,16 +110,16 @@ go run main.go --help
 
 - **Server Address**:
   - Default: `http://localhost:8081`
-  - Configurable in `.env` using: `REST_APP_HOST`, `REST_APP_PORT`.
+  - Configurable in `.env` using: `REST_MODULE_HOST`, `REST_MODULE_PORT`.
 - **Swagger UI**:
   - Accessible at the server address (e.g., http://localhost:8081/docs/swagger/index.html) after running the app.
-  - Configurable in `.env` using: `REST_APP_PUBLIC_SCHEMA`, `REST_APP_PUBLIC_HOST`, `REST_APP_PUBLIC_PORT`.
+  - Configurable in `.env` using: `REST_MODULE_PUBLIC_SCHEMA`, `REST_MODULE_PUBLIC_HOST`, `REST_MODULE_PUBLIC_PORT`.
 
 ### gRPC API
 
 - **Server Address**:
   - Default: `grpc://localhost:7071`
-  - Configurable in `.env` using: `GRPC_APP_HOST`, `GRPC_APP_PORT`.
+  - Configurable in `.env` using: `GRPC_MODULE_HOST`, `GRPC_MODULE_PORT`.
 - **API Definitions (Proto Files)**:
   - Located under the [app/grpc/](/app/grpc/) and [core/](/core/) directories.
 

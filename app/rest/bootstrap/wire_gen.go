@@ -42,9 +42,9 @@ import (
 func InitializeHTTP(c context.Context) (*App, func(), error) {
 	config := _wireConfigValue
 	configLog := config.Log
-	app := config.App
-	module := app.Module
-	logLog := log.Get(configLog, module)
+	module := config.Module
+	moduleType := module.Type
+	logLog := log.Get(configLog, moduleType)
 	serverHTTP := newServerHTTP(config, logLog)
 	rateLimit := config.RateLimit
 	redisConfig := config.Redis
@@ -57,7 +57,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
-	tag := app.LangDefault
+	tag := module.LangDefault
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
 	handler := general.New(config, logLog, echoEcho)
@@ -93,14 +93,14 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	service7 := service4.New(v)
 	healthHandler := health.New(logLog, echoEcho, service7)
 	router := newRouter(config, limiter, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
-	bootstrapApp, cleanup4, err := newApp(serverHTTP, router)
+	app, cleanup4, err := newApp(serverHTTP, router)
 	if err != nil {
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	return bootstrapApp, func() {
+	return app, func() {
 		cleanup4()
 		cleanup3()
 		cleanup2()
@@ -115,9 +115,9 @@ var (
 
 // wire.go:
 
-var configGeneral = config.Load(config2.ModuleREST)
+var configGeneral = config.Load(config2.ModuleTypeREST)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.App), "Env", "LangDefault", "Module"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.Module), "Env", "LangDefault", "Type"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
 var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)), ratelimit.NewRateLimiter, log.Get)
 
@@ -135,7 +135,6 @@ func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 }
 
 func provideCheckerSlice(db *check.CheckDatabaseRepo, redis *check.CheckRedisRepo) []repositories.ICheck {
-
 	return []repositories.ICheck{db, redis}
 }
 

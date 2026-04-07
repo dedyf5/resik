@@ -39,12 +39,12 @@ import (
 	"github.com/google/wire"
 )
 
-var configGeneral = config.Load(configEntity.ModuleREST)
+var configGeneral = config.Load(configEntity.ModuleTypeREST)
 
 var configGeneralSet = wire.NewSet(
 	wire.Value(*configGeneral),
-	wire.FieldsOf(new(config.Config), "App", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"),
-	wire.FieldsOf(new(configEntity.App), "Env", "LangDefault", "Module"),
+	wire.FieldsOf(new(config.Config), "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"),
+	wire.FieldsOf(new(configEntity.Module), "Env", "LangDefault", "Type"),
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
 )
 
@@ -87,10 +87,6 @@ func provideHasherConfig(conf configEntity.Auth) *pkgHash.Argon2Config {
 }
 
 func provideCheckerSlice(db *checkRepo.CheckDatabaseRepo, redis *checkRepo.CheckRedisRepo) []repo.ICheck {
-	// res := []repo.ICheck{db}
-	// if redis != nil {
-	// 	res = append(res, redis)
-	// }
 	return []repo.ICheck{db, redis}
 }
 

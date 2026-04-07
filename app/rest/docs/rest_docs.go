@@ -1292,6 +1292,9 @@ const docTemplaterest = `{
                 "lang": {
                     "$ref": "#/definitions/response.AppLang"
                 },
+                "module": {
+                    "$ref": "#/definitions/response.Module"
+                },
                 "version": {
                     "type": "string",
                     "example": "Version 0.1"
@@ -1408,6 +1411,23 @@ const docTemplaterest = `{
                 "id": {
                     "type": "integer",
                     "example": 123
+                }
+            }
+        },
+        "response.Module": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "REST Service"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "REST"
+                },
+                "version": {
+                    "type": "string",
+                    "example": "0.1"
                 }
             }
         },

@@ -24,7 +24,7 @@ import (
 var embeddedMigrations embed.FS
 
 func initMigrateInstance() (*migrate.Migrate, error) {
-	configREST := config.Load(configEntity.ModuleREST)
+	configREST := config.Load(configEntity.ModuleTypeREST)
 	dbConfig := configREST.Database
 
 	if dbConfig.Host == "" || dbConfig.Port == 0 || dbConfig.Schema == "" || dbConfig.Username == "" || dbConfig.Password == "" {
