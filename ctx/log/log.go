@@ -24,7 +24,7 @@ import (
 
 type Log struct {
 	logger        *zap.Logger
-	moduleType    configEntity.ModuleType
+	module        configEntity.Module
 	CorrelationID string
 	Path          string
 	QueryString   *string
@@ -65,7 +65,7 @@ func EnsureCorrelationID(ctx context.Context) (string, context.Context) {
 	return correlationID, newCtx
 }
 
-func Get(logEntity configEntity.Log, moduleType configEntity.ModuleType) *Log {
+func Get(logEntity configEntity.Log, module configEntity.Module) *Log {
 	once.Do(func() {
 		stdout := zapcore.AddSync(os.Stdout)
 
@@ -100,8 +100,8 @@ func Get(logEntity configEntity.Log, moduleType configEntity.ModuleType) *Log {
 		core := zapcore.NewTee(coreConfig...)
 
 		log = &Log{
-			logger:     zap.New(core, zap.AddCaller()),
-			moduleType: moduleType,
+			logger: zap.New(core, zap.AddCaller()),
+			module: module,
 		}
 	})
 	return log
@@ -128,7 +128,12 @@ func (l *Log) Debug(msg string) {
 }
 
 func (l *Log) ZapFields() (fields []zap.Field) {
-	fields = append(fields, zap.String("module", l.moduleType.String()), zap.String(KeyCorrelationIDContext.String(), l.CorrelationID), zap.String("path", l.Path))
+	fields = append(
+		fields,
+		zap.String("module", l.module.NameKey),
+		zap.String(KeyCorrelationIDContext.String(), l.CorrelationID),
+		zap.String("path", l.Path),
+	)
 	if l.QueryString != nil {
 		fields = append(fields, zap.String("query_string", *l.QueryString))
 	}

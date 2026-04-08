@@ -8,7 +8,6 @@ import (
 	"context"
 
 	"github.com/dedyf5/resik/app/grpc/proto/status"
-	"github.com/dedyf5/resik/build"
 	resAppCore "github.com/dedyf5/resik/core/app/response"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/entities/common"
@@ -30,8 +29,8 @@ func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, er
 			Message: ctx.Lang().GetByTemplateData(
 				"home_message",
 				common.Map{
-					"app_name":       build.AppName,
-					"app_version":    build.AppVersion,
+					"app_name":       h.config.App.Name(),
+					"app_version":    h.config.App.Version(),
 					"module_name":    h.config.Module.Name,
 					"module_version": h.config.Module.Version,
 				},

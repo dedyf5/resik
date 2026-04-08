@@ -13,14 +13,12 @@ import (
 	"time"
 
 	statusProto "github.com/dedyf5/resik/app/grpc/proto/status"
-	configEntity "github.com/dedyf5/resik/entities/config"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
 type GRPC struct {
-	moduleType   configEntity.ModuleType
 	context      context.Context
 	log          *Log
 	start        time.Time
@@ -49,7 +47,7 @@ var sensitiveFields = map[string]struct{}{
 	"token":    {},
 }
 
-func NewGRPC(moduleType configEntity.ModuleType, c context.Context, log *Log, start time.Time, path string, requestBody any, responseBody any, err error) *GRPC {
+func NewGRPC(c context.Context, log *Log, start time.Time, path string, requestBody any, responseBody any, err error) *GRPC {
 	status := resPkg.NewStatusCode(http.StatusOK)
 
 	if s := statusProto.Extract(responseBody); s != nil {
@@ -63,7 +61,6 @@ func NewGRPC(moduleType configEntity.ModuleType, c context.Context, log *Log, st
 	}
 
 	return &GRPC{
-		moduleType:   moduleType,
 		context:      c,
 		log:          log,
 		start:        start,
@@ -111,7 +108,7 @@ func (h *GRPC) Write() {
 func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	grpc := h.status.GRPCStatus()
 
-	enc.AddString("module", h.moduleType.String())
+	enc.AddString("module", h.log.module.NameKey)
 	enc.AddString(KeyCorrelationIDContext.String(), h.log.CorrelationID)
 	enc.AddString("path", h.path)
 	enc.AddUint32("status_code", uint32(grpc.Code()))

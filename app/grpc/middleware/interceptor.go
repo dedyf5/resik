@@ -75,7 +75,7 @@ func (i *Interceptor) logCtx(c context.Context, path string) (*context.Context, 
 }
 
 func (i *Interceptor) writeLogger(c context.Context, start time.Time, fullMethod string, req any, res any, err error) (any, error) {
-	logger := logCtx.NewGRPC(i.module.Type, c, i.log, start, fullMethod, req, res, err)
+	logger := logCtx.NewGRPC(c, i.log, start, fullMethod, req, res, err)
 	logger.Write()
 	return res, err
 }

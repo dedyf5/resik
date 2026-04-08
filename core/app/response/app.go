@@ -5,7 +5,6 @@
 package response
 
 import (
-	"github.com/dedyf5/resik/build"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/entities/common"
@@ -18,8 +17,8 @@ func AppMap(ctx *ctx.Ctx, config config.Config, req *common.Request) *App {
 		langReqCode = lang.LangReq.String()
 	}
 	return &App{
-		App:     build.AppName,
-		Version: build.AppVersion,
+		App:     config.App.Name(),
+		Version: config.App.Version(),
 		Module: &Module{
 			Name:    config.Module.Name,
 			Type:    config.Module.Type.String(),

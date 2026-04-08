@@ -28,6 +28,7 @@ const (
 
 type Module struct {
 	Name        string
+	NameKey     string
 	Version     string
 	Type        ModuleType
 	Env         Env

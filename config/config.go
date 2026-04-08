@@ -21,6 +21,7 @@ import (
 
 type (
 	Config struct {
+		App       configEntity.App
 		Module    configEntity.Module
 		HTTP      configEntity.HTTP
 		Database  drivers.SQLConfig
@@ -45,7 +46,8 @@ func Load(module configEntity.ModuleType) *Config {
 	viper.AutomaticEnv()
 
 	conf := Config{}
-	conf.loadApp(module)
+	conf.loadApp()
+	conf.loadModule(module)
 	conf.loadHTTP(module)
 	conf.loadDatabase(module)
 	conf.loadRedis()
@@ -86,7 +88,15 @@ func readSecretFile(path string) (string, error) {
 	return strings.TrimSpace(string(content)), nil
 }
 
-func (conf *Config) loadApp(module configEntity.ModuleType) {
+func (conf *Config) loadApp() {
+	conf.App = *configEntity.NewApp(
+		viper.GetString("APP_NAME"),
+		viper.GetString("APP_NAME_KEY"),
+		viper.GetString("APP_VERSION"),
+	)
+}
+
+func (conf *Config) loadModule(module configEntity.ModuleType) {
 	envStr := viper.GetString(module.Key("MODULE_ENV"))
 	env := configEntity.EnvDevelopment
 	switch envStr {
@@ -97,6 +107,7 @@ func (conf *Config) loadApp(module configEntity.ModuleType) {
 	}
 	conf.Module = configEntity.Module{
 		Name:        viper.GetString(module.Key("MODULE_NAME")),
+		NameKey:     viper.GetString(module.Key("MODULE_NAME_KEY")),
 		Version:     viper.GetString(module.Key("MODULE_VERSION")),
 		Type:        module,
 		Env:         env,
