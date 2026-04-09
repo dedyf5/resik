@@ -26,8 +26,12 @@ RUN go mod download
 # Copy source code and build
 COPY . .
 
+ARG APP_VERSION=
+ARG APP_GIT_COMMIT=
+ARG APP_BUILD_TIME=
+
 RUN make generate
-RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o resik .
+RUN make build-docker-with-tag APP_VERSION=${APP_VERSION} APP_GIT_COMMIT=${APP_GIT_COMMIT} APP_BUILD_TIME=${APP_BUILD_TIME}
 
 # ----------------------------------------
 # Stage 2: Runtime Image

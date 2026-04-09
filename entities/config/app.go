@@ -4,7 +4,7 @@
 
 package config
 
-import "github.com/dedyf5/resik/build"
+import "github.com/dedyf5/resik/buildinfo"
 
 type App struct {
 	name    string
@@ -14,13 +14,17 @@ type App struct {
 
 func NewApp(name, nameKey, version string) *App {
 	if name == "" {
-		name = build.AppName
+		name = buildinfo.FrameworkName
 	}
 	if nameKey == "" {
-		nameKey = build.AppNameKey
+		nameKey = buildinfo.FrameworkNameKey
 	}
 	if version == "" {
-		version = build.AppVersion
+		version = buildinfo.FrameworkVersion
+	}
+
+	if buildinfo.GetAppVersionGenerator() == buildinfo.VersionGeneratorTag {
+		version = buildinfo.AppVersion
 	}
 
 	return &App{

@@ -8,7 +8,12 @@ services:
   resik-rest:
     # Instructions to build the Docker Image from the Dockerfile in the current directory (.).
     # Use 'image: your_registry/resik:latest' if you push the Image to a registry.
-    build: .
+    build:
+      context: .
+      args:
+        APP_VERSION: ${APP_VERSION}
+        APP_GIT_COMMIT: ${APP_GIT_COMMIT}
+        APP_BUILD_TIME: ${APP_BUILD_TIME}
     # Tags the built Image.
     image: resik:latest
     # Assigns a specific name to the container (makes identification easier).

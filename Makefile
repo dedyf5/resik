@@ -1,5 +1,5 @@
-GOCMD=go
-GOGENERATE=$(GOCMD) generate
+GOCMD = go
+GOGENERATE = $(GOCMD) generate
 
 ## generate: Generate files
 generate: generate-proto generate-doc generate-go
@@ -39,3 +39,37 @@ generate-doc:
 ## test: Test all files
 test:
 	$(GOCMD) test -v -cover ./...
+
+APP_VERSION ?= $(shell git describe --tags --always)
+APP_GIT_COMMIT ?= $(shell git rev-parse --short HEAD)
+APP_BUILD_TIME ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")
+LDFLAGS_DEF = -X github.com/dedyf5/resik/buildinfo.AppGitCommit=$(APP_GIT_COMMIT) \
+			-X github.com/dedyf5/resik/buildinfo.AppBuildTime=$(APP_BUILD_TIME)
+LDFLAGS_TAG = -X github.com/dedyf5/resik/buildinfo.AppVersion=$(APP_VERSION) \
+			-X github.com/dedyf5/resik/buildinfo.AppVersionGenerator=tag \
+			-X github.com/dedyf5/resik/buildinfo.AppGitCommit=$(APP_GIT_COMMIT) \
+			-X github.com/dedyf5/resik/buildinfo.AppBuildTime=$(APP_BUILD_TIME)
+
+run-rest:
+	$(GOCMD) run -ldflags "$(LDFLAGS_DEF)" main.go rest
+
+run-rest-with-tag:
+	$(GOCMD) run -ldflags "$(LDFLAGS_TAG)" main.go rest
+
+run-grpc:
+	$(GOCMD) run -ldflags "$(LDFLAGS_DEF)" main.go grpc
+
+run-grpc-with-tag:
+	$(GOCMD) run -ldflags "$(LDFLAGS_TAG)" main.go grpc
+
+build:
+	$(GOCMD) build -ldflags "$(LDFLAGS_DEF)" -o resik
+
+build-with-tag:
+	$(GOCMD) build -ldflags "$(LDFLAGS_TAG)" -o resik
+
+build-docker:
+	CGO_ENABLED=0 GOOS=linux $(GOCMD) build -ldflags "-w -s $(LDFLAGS_DEF)" -o resik
+
+build-docker-with-tag:
+	CGO_ENABLED=0 GOOS=linux $(GOCMD) build -ldflags "-w -s $(LDFLAGS_TAG)" -o resik

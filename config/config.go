@@ -89,7 +89,11 @@ func readSecretFile(path string) (string, error) {
 }
 
 func (conf *Config) loadApp() {
-	conf.App = *configEntity.NewApp(
+	conf.App = *GetApp()
+}
+
+func GetApp() *configEntity.App {
+	return configEntity.NewApp(
 		viper.GetString("APP_NAME"),
 		viper.GetString("APP_NAME_KEY"),
 		viper.GetString("APP_VERSION"),
