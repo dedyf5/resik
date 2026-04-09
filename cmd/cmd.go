@@ -12,7 +12,7 @@ import (
 )
 
 var mainCMD = &cobra.Command{
-	Short: build.AppLogoASCII,
+	Short: build.AppLogoASCIIVersion,
 }
 
 func Execute() {

@@ -47,29 +47,29 @@ type RateLimit struct {
 	instance *limiter.Limiter
 }
 
-func NewRateLimiter(conf config.RateLimit, redisClient *goredis.Client) (Limiter, error) {
+func NewRateLimiter(appConf config.App, rateLimitConf config.RateLimit, redisClient *goredis.Client) (Limiter, error) {
 	rate := limiter.Rate{
-		Period: conf.Period,
-		Limit:  conf.Limit,
+		Period: rateLimitConf.Period,
+		Limit:  rateLimitConf.Limit,
 	}
 
 	var store limiter.Store
 	var err error
 
-	if conf.Driver == config.RateLimitDriverRedis {
+	if rateLimitConf.Driver == config.RateLimitDriverRedis {
 		if redisClient == nil {
 			return nil, fmt.Errorf("rate limit driver is set to 'redis' but Redis connection is not initialized; please check your REDIS_* configuration or switch RATE_LIMIT_DRIVER to '%s'", config.RateLimitDriverMemory)
 		}
 
 		store, err = redis.NewStoreWithOptions(redisClient, limiter.StoreOptions{
-			Prefix: conf.FullPrefix(),
+			Prefix: rateLimitConf.FullPrefix(appConf.NameKey()),
 		})
 		if err != nil {
 			return nil, fmt.Errorf("failed to create redis store: %w", err)
 		}
 	} else {
 		store = memory.NewStoreWithOptions(limiter.StoreOptions{
-			Prefix: conf.FullPrefix(),
+			Prefix: rateLimitConf.FullPrefix(appConf.NameKey()),
 		})
 	}
 

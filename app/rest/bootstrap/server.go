@@ -39,7 +39,7 @@ func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 		}
 		return echo.ExtractIPDirect()(r)
 	}
-	e.Use(echoFW.LoggerAndResponseFormatterMiddleware(log, config.Module.Type))
+	e.Use(echoFW.LoggerAndResponseFormatterMiddleware(log))
 	e.Use(echoFW.LangMiddleware(config.Module.LangDefault))
 	e.Use(echoMiddle.CORSWithConfig(
 		echoMiddle.CORSConfig{
@@ -55,10 +55,17 @@ func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 }
 
 func (s *ServerHTTP) Start(c context.Context) {
+	appName := color.Format(color.GREEN, s.config.App.Name())
+	appVersion := color.Format(color.YELLOW, s.config.App.Version())
+
+	moduleName := color.Format(color.GREEN, s.config.Module.Name)
+	moduleVersion := color.Format(color.YELLOW, s.config.Module.Version)
+
 	addr := s.config.Module.HostPort()
-	appName := color.Format(color.GREEN, s.config.Module.Name)
-	version := color.Format(color.YELLOW, s.config.Module.Version)
-	fmt.Printf("%s%s version %s\n\n", build.AppLogoASCII, appName, version)
+
+	fmt.Printf("%s\n\n", build.AppLogoASCIIVersion)
+	fmt.Printf("%s version %s\n", appName, appVersion)
+	fmt.Printf("%s version %s\n\n", moduleName, moduleVersion)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
 
 	go func() {

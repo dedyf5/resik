@@ -46,12 +46,21 @@ func newServerHTTP(c context.Context, config config.Config, router *Router, inte
 }
 
 func (s *ServerHTTP) Start() {
+	appName := color.Format(color.GREEN, s.config.App.Name())
+	appVersion := color.Format(color.YELLOW, s.config.App.Version())
+
+	moduleName := color.Format(color.GREEN, s.config.Module.Name)
+	moduleVersion := color.Format(color.YELLOW, s.config.Module.Version)
+
 	addr := s.config.Module.HostPort()
-	appName := color.Format(color.GREEN, s.config.Module.Name)
-	version := color.Format(color.YELLOW, s.config.Module.Version)
-	fmt.Printf("%s%s version %s\n\n", build.AppLogoASCII, appName, version)
+
+	fmt.Printf("%s\n\n", build.AppLogoASCIIVersion)
+	fmt.Printf("%s version %s\n", appName, appVersion)
+	fmt.Printf("%s version %s\n\n", moduleName, moduleVersion)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
+
 	s.router.routerSetup(s.grpcServer)
+
 	go func() {
 		if err := s.grpcServer.Serve(s.listener); err != nil {
 			if errors.Is(err, grpc.ErrServerStopped) {

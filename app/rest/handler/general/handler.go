@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
-	"github.com/dedyf5/resik/build"
 	"github.com/dedyf5/resik/config"
 	resAppCore "github.com/dedyf5/resik/core/app/response"
 	"github.com/dedyf5/resik/ctx"
@@ -59,8 +58,8 @@ func (h *Handler) Home(echoCtx echo.Context) error {
 	msg := lang.GetByTemplateData(
 		"home_message",
 		commonEntity.Map{
-			"app_name":       build.AppName,
-			"app_version":    build.AppVersion,
+			"app_name":       h.config.App.Name(),
+			"app_version":    h.config.App.Version(),
 			"module_name":    h.config.Module.Name,
 			"module_version": h.config.Module.Version,
 		},

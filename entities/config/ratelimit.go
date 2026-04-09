@@ -6,8 +6,6 @@ package config
 
 import (
 	"time"
-
-	"github.com/dedyf5/resik/build"
 )
 
 type RateLimitDriver string
@@ -28,6 +26,6 @@ type RateLimit struct {
 	Prefix string
 }
 
-func (rl *RateLimit) FullPrefix() string {
-	return build.AppNameKey + ":" + rl.Prefix
+func (rl *RateLimit) FullPrefix(nameKey string) string {
+	return nameKey + ":" + rl.Prefix
 }

@@ -43,16 +43,16 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	config := _wireConfigValue
 	configLog := config.Log
 	module := config.Module
-	moduleType := module.Type
-	logLog := log.Get(configLog, moduleType)
+	logLog := log.Get(configLog, module)
 	serverHTTP := newServerHTTP(config, logLog)
+	app := config.App
 	rateLimit := config.RateLimit
 	redisConfig := config.Redis
 	client, cleanup, err := drivers.NewRedisConnection(redisConfig)
 	if err != nil {
 		return nil, nil, err
 	}
-	limiter, err := ratelimit.NewRateLimiter(rateLimit, client)
+	limiter, err := ratelimit.NewRateLimiter(app, rateLimit, client)
 	if err != nil {
 		cleanup()
 		return nil, nil, err
@@ -93,14 +93,14 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	service7 := service4.New(v)
 	healthHandler := health.New(logLog, echoEcho, service7)
 	router := newRouter(config, limiter, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
-	app, cleanup4, err := newApp(serverHTTP, router)
+	bootstrapApp, cleanup4, err := newApp(serverHTTP, router)
 	if err != nil {
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	return app, func() {
+	return bootstrapApp, func() {
 		cleanup4()
 		cleanup3()
 		cleanup2()
@@ -117,7 +117,7 @@ var (
 
 var configGeneral = config.Load(config2.ModuleTypeREST)
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.Module), "Env", "LangDefault", "Type"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.Module), "Env", "LangDefault", "Type"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
 
 var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)), ratelimit.NewRateLimiter, log.Get)
 

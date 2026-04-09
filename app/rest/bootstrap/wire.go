@@ -43,7 +43,7 @@ var configGeneral = config.Load(configEntity.ModuleTypeREST)
 
 var configGeneralSet = wire.NewSet(
 	wire.Value(*configGeneral),
-	wire.FieldsOf(new(config.Config), "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"),
+	wire.FieldsOf(new(config.Config), "App", "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"),
 	wire.FieldsOf(new(configEntity.Module), "Env", "LangDefault", "Type"),
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
 )
