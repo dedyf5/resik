@@ -14,7 +14,7 @@ import (
 	"time"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
-	"github.com/dedyf5/resik/build"
+	"github.com/dedyf5/resik/buildinfo"
 	"github.com/dedyf5/resik/config"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/pkg/color"
@@ -63,7 +63,7 @@ func (s *ServerHTTP) Start(c context.Context) {
 
 	addr := s.config.Module.HostPort()
 
-	fmt.Printf("%s\n\n", build.AppLogoASCIIVersion)
+	fmt.Printf("%s\n\n", buildinfo.FrameworkLogoASCIIVersion)
 	fmt.Printf("%s version %s\n", appName, appVersion)
 	fmt.Printf("%s version %s\n\n", moduleName, moduleVersion)
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
