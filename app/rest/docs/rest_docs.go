@@ -1424,10 +1424,6 @@ const docTemplaterest = `{
                 "type": {
                     "type": "string",
                     "example": "REST"
-                },
-                "version": {
-                    "type": "string",
-                    "example": "0.1"
                 }
             }
         },

@@ -112,7 +112,6 @@ func (conf *Config) loadModule(module configEntity.ModuleType) {
 	conf.Module = configEntity.Module{
 		Name:        viper.GetString(module.Key("MODULE_NAME")),
 		NameKey:     viper.GetString(module.Key("MODULE_NAME_KEY")),
-		Version:     viper.GetString(module.Key("MODULE_VERSION")),
 		Type:        module,
 		Env:         env,
 		LangDefault: langCtx.GetLanguageOrDefault(viper.GetString(module.Key("MODULE_LANG_DEFAULT"))),
@@ -206,6 +205,10 @@ func (conf *Config) loadLog(module configEntity.ModuleType) {
 	conf.Log = configEntity.Log{
 		File: viper.GetString(module.Key("LOG_FILE")),
 	}
+}
+
+func (conf *Config) AppModuleName() string {
+	return conf.App.Name() + " (" + conf.Module.Name + ")"
 }
 
 // getDuration retrieves a string value from the configuration using the provided key

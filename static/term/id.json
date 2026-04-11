@@ -1,5 +1,5 @@
 {
-    "home_message": "{{.app_name}} Versi {{.app_version}} :: Module {{.module_name}} Versi {{.module_version}}",
+    "home_message": "{{.app_name}} Versi {{.app_version}} :: Modul {{.module_name}} Tipe {{.module_type}}",
     "validation_type_message": "tipe {{.field}} harus {{.expected}}, bukan {{.actual}}",
     "incorrect_username_or_password": "Username atau Password salah",
     "unauthorized": "Akses tidak diizinkan",

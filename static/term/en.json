@@ -1,5 +1,5 @@
 {
-    "home_message": "{{.app_name}} Version {{.app_version}} :: Module {{.module_name}} Version {{.module_version}}",
+    "home_message": "{{.app_name}} Version {{.app_version}} :: Module {{.module_name}} Type {{.module_type}}",
     "validation_type_message": "{{.field}} type must be {{.expected}}, got {{.actual}}",
     "incorrect_username_or_password": "Incorrect username or password",
     "unauthorized": "Unauthorized",

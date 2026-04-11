@@ -10,5 +10,4 @@ option go_package = "github.com/dedyf5/resik/core/app/response";
 message Module {
     string name = 1; // @gotags: json:"name" example:"REST Service"
     string type = 2; // @gotags: json:"type" example:"REST"
-    string version = 3; // @gotags: json:"version" example:"0.1"
 }

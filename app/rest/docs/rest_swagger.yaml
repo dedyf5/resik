@@ -136,9 +136,6 @@ definitions:
       type:
         example: REST
         type: string
-      version:
-        example: "0.1"
-        type: string
     type: object
   response.OutletOmzet:
     properties:

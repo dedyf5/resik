@@ -49,14 +49,11 @@ func (s *ServerHTTP) Start() {
 	appName := color.Format(color.GREEN, s.config.App.Name())
 	appVersion := color.Format(color.YELLOW, s.config.App.Version())
 
-	moduleName := color.Format(color.GREEN, s.config.Module.Name)
-	moduleVersion := color.Format(color.YELLOW, s.config.Module.Version)
-
 	addr := s.config.Module.HostPort()
 
 	fmt.Printf("%s\n\n", buildinfo.FrameworkLogoASCIIVersion)
 	fmt.Printf("%s version %s\n", appName, appVersion)
-	fmt.Printf("%s version %s\n\n", moduleName, moduleVersion)
+	fmt.Printf("Module %s type %s\n\n", s.config.Module.Name, s.config.Module.Type.String())
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
 
 	s.router.routerSetup(s.grpcServer)
