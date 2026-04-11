@@ -187,8 +187,8 @@ func setup(ctrl *gomock.Controller) (merchantRepo *merchantMock.MockIMerchant, c
 func env() (conf config.Config, c *ctx.Ctx) {
 	conf = config.Config{
 		Module: configEntity.Module{
-			Name:        "Resik",
-			Version:     "0.1",
+			Name:        "REST",
+			NameKey:     "rest",
 			LangDefault: language.English,
 			Host:        "0.0.0.0",
 			Port:        8081,

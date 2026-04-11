@@ -29,10 +29,10 @@ func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, er
 			Message: ctx.Lang().GetByTemplateData(
 				"home_message",
 				common.Map{
-					"app_name":       h.config.App.Name(),
-					"app_version":    h.config.App.Version(),
-					"module_name":    h.config.Module.Name,
-					"module_version": h.config.Module.Version,
+					"app_name":    h.config.App.Name(),
+					"app_version": h.config.App.Version(),
+					"module_name": h.config.Module.Name,
+					"module_type": h.config.Module.Type.String(),
 				},
 			),
 		},

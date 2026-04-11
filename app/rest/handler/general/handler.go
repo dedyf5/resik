@@ -58,10 +58,10 @@ func (h *Handler) Home(echoCtx echo.Context) error {
 	msg := lang.GetByTemplateData(
 		"home_message",
 		commonEntity.Map{
-			"app_name":       h.config.App.Name(),
-			"app_version":    h.config.App.Version(),
-			"module_name":    h.config.Module.Name,
-			"module_version": h.config.Module.Version,
+			"app_name":    h.config.App.Name(),
+			"app_version": h.config.App.Version(),
+			"module_name": h.config.Module.Name,
+			"module_type": h.config.Module.Type.String(),
 		},
 	)
 

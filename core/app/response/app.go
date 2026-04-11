@@ -20,9 +20,8 @@ func AppMap(ctx *ctx.Ctx, config config.Config, req *common.Request) *App {
 		App:     config.App.Name(),
 		Version: config.App.Version(),
 		Module: &Module{
-			Name:    config.Module.Name,
-			Type:    config.Module.Type.String(),
-			Version: config.Module.Version,
+			Name: config.Module.Name,
+			Type: config.Module.Type.String(),
 		},
 		Lang: &AppLang{
 			Current:   lang.LanguageReqOrDefault().String(),

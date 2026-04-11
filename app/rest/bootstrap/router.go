@@ -71,12 +71,14 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	e.GET("/healthz", healthH.HealthHealthzGet)
 	e.GET("/readyz", healthH.HealthReadyzGet, rateLimit)
 
-	docs.SwaggerInforest.Title = r.config.Module.Name
-	docs.SwaggerInforest.Version = r.config.Module.Version
+	appModuleName := r.config.AppModuleName()
+
+	docs.SwaggerInforest.Title = appModuleName
+	docs.SwaggerInforest.Version = r.config.App.Version()
 	docs.SwaggerInforest.Host = r.config.Module.Public.HostPort()
 	docs.SwaggerInforest.Schemes = []string{r.config.Module.Public.Schema}
 	docs.SwaggerInforest.BasePath = r.config.Module.Public.BasePath
-	docs.SwaggerInforest.Description = r.config.Module.APIDocDescription()
+	docs.SwaggerInforest.Description = appModuleName + " API Documentation"
 	docHandler := echoSwagger.EchoWrapHandler(
 		echoSwagger.InstanceName(docs.SwaggerInforest.InfoInstanceName),
 	)

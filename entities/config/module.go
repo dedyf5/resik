@@ -29,7 +29,6 @@ const (
 type Module struct {
 	Name        string
 	NameKey     string
-	Version     string
 	Type        ModuleType
 	Env         Env
 	LangDefault language.Tag
@@ -45,12 +44,8 @@ type Public struct {
 	BasePath string
 }
 
-func (a *Module) HostPort() string {
-	return fmt.Sprintf("%v:%v", a.Host, a.Port)
-}
-
-func (a *Module) APIDocDescription() string {
-	return fmt.Sprintf("%v API Documentation", a.Name)
+func (m *Module) HostPort() string {
+	return fmt.Sprintf("%v:%v", m.Host, m.Port)
 }
 
 func (t ModuleType) String() string {
