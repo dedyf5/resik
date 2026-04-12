@@ -72,6 +72,8 @@ func (h *HealthHandler) HealthHealthzGet(echoCtx echo.Context) error {
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=response.HealthReadyz}
 // @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     429 {object}	resPkg.Response{data=nil}
+// @Failure     500 {object}	resPkg.Response{data=nil}
 // @Failure     503 {object}	resPkg.Response{data=nil}
 // @Router		/readyz [get]
 func (h *HealthHandler) HealthReadyzGet(echoCtx echo.Context) error {

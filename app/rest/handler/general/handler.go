@@ -39,6 +39,7 @@ func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho) *Handler {
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=resAppCore.App}
 // @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/ [get]
 func (h *Handler) Home(echoCtx echo.Context) error {
