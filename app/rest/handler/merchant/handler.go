@@ -42,6 +42,8 @@ func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService
 // @Param       payload body reqMerchantCore.MerchantPost true "Payload"
 // @Success		201	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
 // @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     401 {object}	resPkg.Response{data=nil}
+// @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant [post]
 func (h *Handler) MerchantPost(echoCtx echo.Context) error {
@@ -90,6 +92,7 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 // @Success		200	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     401 {object}	resPkg.Response{data=nil}
+// @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant/{id} [put]
 func (h *Handler) MerchantPut(echoCtx echo.Context) error {
@@ -140,7 +143,9 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 // @Param       parameter query reqMerchantCore.MerchantListGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=[]resMerchantCore.MerchantList}
 // @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     404 {object}	resPkg.Response{data=nil}
+// @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant [get]
 func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
@@ -191,6 +196,7 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 // @Success		204	{object}	nil
 // @Failure     400 {object}	resPkg.Response{data=nil}
 // @Failure     401 {object}	resPkg.Response{data=nil}
+// @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Router		/merchant/{id} [delete]
 func (h *Handler) MerchantDelete(echoCtx echo.Context) error {
