@@ -134,5 +134,12 @@ func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 			}
 		}
 	}
+
+	if len(h.status.Detail) > 0 {
+		if err := enc.AddReflected("detail", h.status.Detail); err != nil {
+			enc.AddString("detail_error", err.Error())
+		}
+	}
+
 	return nil
 }

@@ -18,6 +18,7 @@ import (
 	"github.com/dedyf5/resik/entities/config"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/dedyf5/resik/utils/ratelimit"
+	statusUtil "github.com/dedyf5/resik/utils/status"
 	"golang.org/x/text/language"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -155,7 +156,13 @@ func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerIn
 
 	res, err := handler(*tokenC, req)
 
-	return i.writeLogger(c, start, info.FullMethod, req, res, err)
+	res, err = i.writeLogger(c, start, info.FullMethod, req, res, err)
+
+	if err != nil {
+		return res, statusUtil.GRPCErrorWithDetails(err, i.log)
+	}
+
+	return res, err
 }
 
 func (i *Interceptor) RateLimit(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
