@@ -39,7 +39,7 @@ func ResponseErrorAuto(status *resPkg.Status) resPkg.Response {
 		Status: resPkg.ResponseStatus{
 			Code:    fmt.Sprintf("%d.1", status.Code),
 			Message: status.MessageOrDefault(),
-			Detail:  status.Detail,
+			Details: status.BadRequests(),
 		},
 	}
 

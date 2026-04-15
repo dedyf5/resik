@@ -4,6 +4,10 @@
 
 package response
 
+import (
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
+)
+
 type Response struct {
 	Status ResponseStatus `json:"status"`
 	Data   any            `json:"data,omitempty"`
@@ -11,9 +15,15 @@ type Response struct {
 }
 
 type ResponseStatus struct {
-	Code    string            `json:"code" example:"200.1"`
-	Message string            `json:"message" example:"OK"`
-	Detail  map[string]string `json:"detail,omitempty"`
+	Code    string `json:"code" example:"200.1"`
+	Message string `json:"message" example:"OK"`
+	Details any    `json:"details,omitempty"`
+}
+
+type ResponseStatusBadRequest struct {
+	Code    string                   `json:"code" example:"400.1"`
+	Message string                   `json:"message" example:"Bad Request"`
+	Details []*errdetails.BadRequest `json:"details,omitempty"`
 }
 
 type Log struct {

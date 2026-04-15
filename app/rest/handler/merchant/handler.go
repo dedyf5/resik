@@ -41,7 +41,7 @@ func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       payload body reqMerchantCore.MerchantPost true "Payload"
 // @Success		201	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
-// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
 // @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
@@ -90,7 +90,7 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       payload body reqMerchantCore.MerchantPut true "Payload"
 // @Success		200	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
-// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
 // @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
@@ -142,7 +142,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqMerchantCore.MerchantListGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=[]resMerchantCore.MerchantList}
-// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
 // @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     404 {object}	resPkg.Response{data=nil}
 // @Failure     429 {object}	resPkg.Response{data=nil}
@@ -194,7 +194,7 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqMerchantCore.MerchantDelete true "Query Param"
 // @Success		204	{object}	nil
-// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
 // @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}

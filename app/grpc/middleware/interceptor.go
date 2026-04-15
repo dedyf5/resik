@@ -78,7 +78,7 @@ func (i *Interceptor) logCtx(c context.Context, path string) (*context.Context, 
 func (i *Interceptor) writeLogger(c context.Context, start time.Time, fullMethod string, req any, res any, err error) (any, error) {
 	logger := logCtx.NewGRPC(c, i.log, start, fullMethod, req, res, err)
 	logger.Write()
-	return res, err
+	return res, statusUtil.GRPCErrorWithDetails(err, i.log)
 }
 
 func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*context.Context, *langCtx.Lang, error) {
@@ -156,13 +156,7 @@ func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerIn
 
 	res, err := handler(*tokenC, req)
 
-	res, err = i.writeLogger(c, start, info.FullMethod, req, res, err)
-
-	if err != nil {
-		return res, statusUtil.GRPCErrorWithDetails(err, i.log)
-	}
-
-	return res, err
+	return i.writeLogger(*tokenC, start, info.FullMethod, req, res, err)
 }
 
 func (i *Interceptor) RateLimit(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {

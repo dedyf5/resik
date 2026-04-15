@@ -71,6 +71,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -172,6 +175,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -264,6 +270,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -400,6 +409,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -549,6 +561,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -689,6 +704,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -803,6 +821,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -922,6 +943,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -1046,6 +1070,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -1204,6 +1231,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -1398,6 +1428,9 @@ const docTemplaterest = `{
                                     "properties": {
                                         "data": {
                                             "type": "object"
+                                        },
+                                        "status": {
+                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
                                         }
                                     }
                                 }
@@ -1463,6 +1496,56 @@ const docTemplaterest = `{
         }
     },
     "definitions": {
+        "errdetails.BadRequest": {
+            "type": "object",
+            "properties": {
+                "field_violations": {
+                    "description": "Describes all violations in a client request.",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/errdetails.BadRequest_FieldViolation"
+                    }
+                }
+            }
+        },
+        "errdetails.BadRequest_FieldViolation": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "description": "A description of why the request element is bad.",
+                    "type": "string"
+                },
+                "field": {
+                    "description": "A path that leads to a field in the request body. The value will be a\nsequence of dot-separated identifiers that identify a protocol buffer\nfield.\n\nConsider the following:\n\n\tmessage CreateContactRequest {\n\t  message EmailAddress {\n\t    enum Type {\n\t      TYPE_UNSPECIFIED = 0;\n\t      HOME = 1;\n\t      WORK = 2;\n\t    }\n\n\t    optional string email = 1;\n\t    repeated EmailType type = 2;\n\t  }\n\n\t  string full_name = 1;\n\t  repeated EmailAddress email_addresses = 2;\n\t}\n\nIn this example, in proto ` + "`" + `field` + "`" + ` could take one of the following values:\n\n  - ` + "`" + `full_name` + "`" + ` for a violation in the ` + "`" + `full_name` + "`" + ` value\n  - ` + "`" + `email_addresses[0].email` + "`" + ` for a violation in the ` + "`" + `email` + "`" + ` field of the\n    first ` + "`" + `email_addresses` + "`" + ` message\n  - ` + "`" + `email_addresses[2].type[1]` + "`" + ` for a violation in the second ` + "`" + `type` + "`" + `\n    value in the third ` + "`" + `email_addresses` + "`" + ` message.\n\nIn JSON, the same values are represented as:\n\n  - ` + "`" + `fullName` + "`" + ` for a violation in the ` + "`" + `fullName` + "`" + ` value\n  - ` + "`" + `emailAddresses[0].email` + "`" + ` for a violation in the ` + "`" + `email` + "`" + ` field of the\n    first ` + "`" + `emailAddresses` + "`" + ` message\n  - ` + "`" + `emailAddresses[2].type[1]` + "`" + ` for a violation in the second ` + "`" + `type` + "`" + `\n    value in the third ` + "`" + `emailAddresses` + "`" + ` message.",
+                    "type": "string"
+                },
+                "localized_message": {
+                    "description": "Provides a localized error message for field-level errors that is safe to\nreturn to the API consumer.",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/errdetails.LocalizedMessage"
+                        }
+                    ]
+                },
+                "reason": {
+                    "description": "The reason of the field-level error. This is a constant value that\nidentifies the proximate cause of the field-level error. It should\nuniquely identify the type of the FieldViolation within the scope of the\ngoogle.rpc.ErrorInfo.domain. This should be at most 63\ncharacters and match a regular expression of ` + "`" + `[A-Z][A-Z0-9_]+[A-Z0-9]` + "`" + `,\nwhich represents UPPER_SNAKE_CASE.",
+                    "type": "string"
+                }
+            }
+        },
+        "errdetails.LocalizedMessage": {
+            "type": "object",
+            "properties": {
+                "locale": {
+                    "description": "The locale used following the specification defined at\nhttps://www.rfc-editor.org/rfc/bcp/bcp47.txt.\nExamples are: \"en-US\", \"fr-CH\", \"es-MX\"",
+                    "type": "string"
+                },
+                "message": {
+                    "description": "The localized error message in the above locale.",
+                    "type": "string"
+                }
+            }
+        },
         "request.LoginPost": {
             "type": "object",
             "required": [
@@ -1742,15 +1825,29 @@ const docTemplaterest = `{
                     "type": "string",
                     "example": "200.1"
                 },
-                "detail": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
+                "details": {},
+                "message": {
+                    "type": "string",
+                    "example": "OK"
+                }
+            }
+        },
+        "response.ResponseStatusBadRequest": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "example": "400.1"
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/errdetails.BadRequest"
                     }
                 },
                 "message": {
                     "type": "string",
-                    "example": "OK"
+                    "example": "Bad Request"
                 }
             }
         },

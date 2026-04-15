@@ -133,13 +133,7 @@ func GetLanguageAvailable(lang string) (*language.Tag, *resPkg.Status) {
 func LanguageIsAvailable(lang string) (bool, *resPkg.Status) {
 	if lang == "" {
 		msg := "lang is required"
-		return false, resPkg.NewStatusDetail(
-			http.StatusBadRequest,
-			msg,
-			map[string]string{
-				ContextKey.String(): msg,
-			},
-		)
+		return false, resPkg.NewStatusBadRequest(ContextKey.String(), msg)
 	}
 	langCodes := make([]string, 0, cap(Available))
 	for _, v := range Available {
@@ -147,13 +141,7 @@ func LanguageIsAvailable(lang string) (bool, *resPkg.Status) {
 	}
 	if !slices.Contains(langCodes, lang) {
 		msg := fmt.Sprintf("lang must be one of [%s]", strings.Join(langCodes, ", "))
-		return false, resPkg.NewStatusDetail(
-			http.StatusBadRequest,
-			msg,
-			map[string]string{
-				ContextKey.String(): msg,
-			},
-		)
+		return false, resPkg.NewStatusBadRequest(ContextKey.String(), msg)
 	}
 	return true, nil
 }

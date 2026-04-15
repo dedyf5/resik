@@ -12,8 +12,10 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/protoadapt"
 )
 
 // use this Status to wrap error across all apps including non http app
@@ -28,9 +30,9 @@ type Status struct {
 	CauseError error    `json:"cause_error"`
 	StackTrace []string `json:"stack_trace"`
 
-	Data   any               `json:"data"`
-	Meta   *Meta             `json:"meta"`
-	Detail map[string]string `json:"detail"`
+	Data    any                    `json:"data"`
+	Meta    *Meta                  `json:"meta"`
+	Details []protoadapt.MessageV1 `json:"details"`
 
 	Caller string `json:"caller"`
 }
@@ -160,14 +162,39 @@ func NewStatusError(code int, err error) *Status {
 	}
 }
 
-func NewStatusDetail(code int, message string, detail map[string]string) *Status {
+func NewStatusDetails(code int, message string, details ...protoadapt.MessageV1) *Status {
 	_, file, line, _ := runtime.Caller(1)
 	return &Status{
 		Code:    code,
 		Message: message,
-		Detail:  detail,
+		Details: details,
 		Caller:  fmt.Sprintf("%s:%d", file, line),
 	}
+}
+
+func NewStatusBadRequest(field, message string) *Status {
+	return NewStatusDetails(
+		http.StatusBadRequest,
+		message,
+		&errdetails.BadRequest{
+			FieldViolations: []*errdetails.BadRequest_FieldViolation{
+				{
+					Field:       field,
+					Description: message,
+				},
+			},
+		},
+	)
+}
+
+func (s *Status) BadRequests() []*errdetails.BadRequest {
+	badReqs := make([]*errdetails.BadRequest, 0, len(s.Details))
+	for _, detail := range s.Details {
+		if badReq, ok := detail.(*errdetails.BadRequest); ok {
+			badReqs = append(badReqs, badReq)
+		}
+	}
+	return badReqs
 }
 
 func (s *Status) IsError() bool {

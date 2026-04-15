@@ -49,7 +49,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, confi
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqTrxCore.MerchantOmzetGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=[]resTrxCore.MerchantOmzet}
-// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
 // @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
@@ -102,7 +102,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqTrxCore.OutletOmzetGet true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=[]resTrxCore.OutletOmzet}
-// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
 // @Failure     401 {object}	resPkg.Response{data=nil}
 // @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
