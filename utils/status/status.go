@@ -9,7 +9,6 @@ import (
 
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-	"google.golang.org/genproto/googleapis/rpc/errdetails"
 )
 
 func GRPCErrorWithDetails(err error, logCtx *logCtx.Log) error {
@@ -22,23 +21,11 @@ func GRPCErrorWithDetails(err error, logCtx *logCtx.Log) error {
 		return err
 	}
 
-	if !statusPkg.IsError() || len(statusPkg.Detail) == 0 {
+	if !statusPkg.IsError() || len(statusPkg.Details) == 0 {
 		return err
 	}
 
-	fieldViolations := make([]*errdetails.BadRequest_FieldViolation, 0, len(statusPkg.Detail))
-	for field, description := range statusPkg.Detail {
-		fieldViolations = append(fieldViolations, &errdetails.BadRequest_FieldViolation{
-			Field:       field,
-			Description: description,
-		})
-	}
-
-	badRequest := errdetails.BadRequest{
-		FieldViolations: fieldViolations,
-	}
-
-	statusErr, unexpectedErr := statusPkg.GRPCStatus().WithDetails(&badRequest)
+	statusErr, unexpectedErr := statusPkg.GRPCStatus().WithDetails(statusPkg.Details...)
 	if unexpectedErr != nil {
 		logCtx.Error("failed to add details to status: " + unexpectedErr.Error())
 		return err

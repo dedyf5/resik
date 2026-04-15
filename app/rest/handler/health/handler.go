@@ -38,7 +38,7 @@ func New(log *logCtx.Log, fw echoFW.IEcho, hs healthCore.IService) *HealthHandle
 // @Produce json
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=response.HealthHealthz}
-// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
 // @Failure     503 {object}	resPkg.Response{data=nil}
 // @Router		/healthz [get]
 func (h *HealthHandler) HealthHealthzGet(echoCtx echo.Context) error {
@@ -71,7 +71,7 @@ func (h *HealthHandler) HealthHealthzGet(echoCtx echo.Context) error {
 // @Produce json
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Success		200	{object}	resPkg.Response{data=response.HealthReadyz}
-// @Failure     400 {object}	resPkg.Response{data=nil}
+// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
 // @Failure     429 {object}	resPkg.Response{data=nil}
 // @Failure     500 {object}	resPkg.Response{data=nil}
 // @Failure     503 {object}	resPkg.Response{data=nil}

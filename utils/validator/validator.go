@@ -25,6 +25,7 @@ import (
 	idTrans "github.com/go-playground/validator/v10/translations/id"
 	jaTrans "github.com/go-playground/validator/v10/translations/ja"
 	"golang.org/x/text/language"
+	"google.golang.org/genproto/googleapis/rpc/errdetails"
 )
 
 //go:generate mockgen -source validator.go -package mock -destination ./mock/validator.go
@@ -178,7 +179,7 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 		return resPkg.NewStatusCode(http.StatusBadRequest)
 	}
 
-	errMap := map[string]string{}
+	volations := []*errdetails.BadRequest_FieldViolation{}
 
 	regexKey := regexp.MustCompile(`^[^.]*.`)
 	regexDate := regexp.MustCompile("2006-01-02")
@@ -199,13 +200,21 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 			value = regexZone.ReplaceAllString(value, ".SSSZZ")
 		}
 
-		errMap[field] = value
+		volations = append(volations, &errdetails.BadRequest_FieldViolation{
+			Field:       field,
+			Description: value,
+		})
+
 		if k == 0 {
 			first = value
 		}
 	}
 
-	return resPkg.NewStatusDetail(http.StatusBadRequest, first, errMap)
+	badRequest := &errdetails.BadRequest{
+		FieldViolations: volations,
+	}
+
+	return resPkg.NewStatusDetails(http.StatusBadRequest, first, badRequest)
 }
 
 func (v *Validate) Translator(lang language.Tag) ut.Translator {

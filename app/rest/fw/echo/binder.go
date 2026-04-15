@@ -5,7 +5,6 @@
 package echo
 
 import (
-	"net/http"
 	"reflect"
 	"regexp"
 	"strings"
@@ -150,18 +149,16 @@ func (b *bind) ParamValidator(c echo.Context, i any) error {
 				continue
 			}
 
-			msg := lang.GetByTemplateData("validation_type_message", common.Map{
-				"field":    fn,
-				"expected": ft,
-				"actual":   "string",
-			})
-			return resPkg.NewStatusDetail(
-				http.StatusBadRequest,
-				msg,
-				map[string]string{
-					fn: msg,
+			msg := lang.GetByTemplateData(
+				"validation_type_message",
+				common.Map{
+					"field":    fn,
+					"expected": ft,
+					"actual":   "string",
 				},
 			)
+
+			return resPkg.NewStatusBadRequest(fn, msg)
 		}
 
 		return nil
@@ -194,14 +191,16 @@ func (b *bind) JSONErrorFormatter(c echo.Context, err error) error {
 	gotReg := regexp.MustCompile(`got\=(.*?),`)
 	gots := gotReg.FindStringSubmatch(err.Error())
 	if len(fields) > 1 && len(expecteds) > 1 && len(gots) > 1 {
-		errMap := map[string]string{}
 		field := fields[1]
-		errMap[field] = lang.GetByTemplateData("validation_type_message", common.Map{
-			"field":    field,
-			"expected": expecteds[1],
-			"actual":   gots[1],
-		})
-		return resPkg.NewStatusDetail(http.StatusBadRequest, errMap[field], errMap)
+		message := lang.GetByTemplateData(
+			"validation_type_message",
+			common.Map{
+				"field":    field,
+				"expected": expecteds[1],
+				"actual":   gots[1],
+			},
+		)
+		return resPkg.NewStatusBadRequest(field, message)
 	}
 
 	return nil
