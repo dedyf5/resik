@@ -35,11 +35,17 @@ func ResponseSuccessAuto(status *resPkg.Status) resPkg.Response {
 }
 
 func ResponseErrorAuto(status *resPkg.Status) resPkg.Response {
+	var details any = nil
+	badRequests := status.BadRequests()
+	if len(badRequests) > 0 {
+		details = badRequests
+	}
+
 	res := resPkg.Response{
 		Status: resPkg.ResponseStatus{
 			Code:    fmt.Sprintf("%d.1", status.Code),
 			Message: status.MessageOrDefault(),
-			Details: status.BadRequests(),
+			Details: details,
 		},
 	}
 

@@ -55,7 +55,7 @@ func New(langDefault language.Tag) *Validate {
 
 		if jsonTag != "" && jsonTag != "-" {
 			for name := range strings.SplitSeq(jsonTag, ",") {
-				return name
+				return fieldPlaceholder(name)
 			}
 		}
 
@@ -63,12 +63,12 @@ func New(langDefault language.Tag) *Validate {
 		if protoTag != "" {
 			for p := range strings.SplitSeq(protoTag, ",") {
 				if after, ok := strings.CutPrefix(p, "name="); ok {
-					return after
+					return fieldPlaceholder(after)
 				}
 			}
 		}
 
-		return fld.Name
+		return fieldPlaceholder(fld.Name)
 	})
 
 	registerAllTranslations(validate, uni)
@@ -185,14 +185,17 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 	regexDate := regexp.MustCompile("2006-01-02")
 	regexTime := regexp.MustCompile("T15:04:05")
 	regexZone := regexp.MustCompile("Z07:00")
-	first := ""
-	for k, e := range errs {
-		// replace nested field name
-		field := regexKey.ReplaceAllString(e.Namespace(), "")
 
-		// replace field name in error message
-		value := e.Translate(v.Translator(getLanguage(v.langDefault, lang)))
-		value = regexp.MustCompile(e.Field()).ReplaceAllString(value, field)
+	first := ""
+	currLang := getLangReqOrDefault(v.langDefault, lang)
+	locale := currLang.LanguageReqOrDefault()
+	translator := v.Translator(locale)
+
+	for k, e := range errs {
+		rawFieldPath := removeFieldPlaceholder(regexKey.ReplaceAllString(e.Namespace(), ""))
+		translatedFieldName := currLang.GetValidationFieldNameWithQuote(rawFieldPath)
+		value := e.Translate(translator)
+		value = strings.ReplaceAll(value, e.Field(), translatedFieldName)
 
 		if e.Tag() == "datetime" {
 			value = regexDate.ReplaceAllString(value, "yyyy-MM-dd")
@@ -201,8 +204,13 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 		}
 
 		volations = append(volations, &errdetails.BadRequest_FieldViolation{
-			Field:       field,
-			Description: value,
+			Field:       rawFieldPath,
+			Description: e.Error(),
+			Reason:      errorReason(e),
+			LocalizedMessage: &errdetails.LocalizedMessage{
+				Locale:  currLang.LanguageReqOrDefault().String(),
+				Message: value,
+			},
 		})
 
 		if k == 0 {
@@ -245,11 +253,59 @@ func isOneOfOrder(fl validator.FieldLevel) bool {
 	return true
 }
 
-func getLanguage(langDef language.Tag, lang *langCtx.Lang) language.Tag {
-	if lang == nil {
-		return langDef
+func errorReason(err validator.FieldError) string {
+	switch err.Tag() {
+	case "required", "required_if", "required_unless", "required_with", "required_with_all", "required_without", "required_without_all":
+		return "REQUIRED"
+
+	case "oneof", "oneof_order":
+		return "OUT_OF_RANGE"
+
+	case "datetime", "email", "url", "uuid", "hostname", "ip", "latitude", "longitude":
+		return "INVALID_FORMAT"
+
+	case "min", "gt", "gte":
+		if err.Kind() == reflect.String || err.Kind() == reflect.Slice || err.Kind() == reflect.Map {
+			return "TOO_SHORT"
+		}
+		return "TOO_SMALL"
+
+	case "max", "lt", "lte":
+		if err.Kind() == reflect.String || err.Kind() == reflect.Slice || err.Kind() == reflect.Map {
+			return "TOO_LONG"
+		}
+		return "TOO_LARGE"
+
+	case "len":
+		return "INVALID_LENGTH"
+
+	case "numeric", "number":
+		return "TYPE_MISMATCH"
+	case "alpha", "alphanum", "ascii":
+		return "INVALID_FORMAT"
+	case "eq", "ne":
+		return "INVALID"
+	case "eqfield", "nefield":
+		return "FIELD_CONFLICT"
+
+	default:
+		return "INVALID"
 	}
-	return lang.LanguageReqOrDefault()
+}
+
+func fieldPlaceholder(field string) string {
+	return "{" + field + "}"
+}
+
+func removeFieldPlaceholder(field string) string {
+	return strings.TrimPrefix(strings.TrimSuffix(field, "}"), "{")
+}
+
+func getLangReqOrDefault(languageDefault language.Tag, lang *langCtx.Lang) *langCtx.Lang {
+	if lang == nil {
+		return langCtx.NewLang(languageDefault, nil, "")
+	}
+	return lang
 }
 
 func Translators() (res []locales.Translator) {

@@ -26,8 +26,10 @@ var Available []language.Tag = []language.Tag{Default, language.Indonesian, lang
 type langKey string
 
 const (
-	ContextKey langKey = "lang"
-	TermDir    string  = "static/term"
+	ContextKey            langKey = "lang"
+	TermDir               string  = "static/term"
+	ValidationPrefix      string  = "validation."
+	ValidationFieldPrefix string  = ValidationPrefix + "field."
 )
 
 type Lang struct {
@@ -78,16 +80,43 @@ func FromContext(ctx context.Context) (*Lang, *resPkg.Status) {
 }
 
 func (src *Lang) GetByMessageID(id string) string {
-	return src.Localizer.MustLocalize(&i18n.LocalizeConfig{
+	val, err := src.Localizer.Localize(&i18n.LocalizeConfig{
 		MessageID: id,
 	})
+	if err != nil {
+		log.Printf("[lang] failed to localize message id %s: %v", id, err)
+		return id
+	}
+	return val
 }
 
 func (src *Lang) GetByTemplateData(id string, templateData commonEntity.Map) string {
-	return src.Localizer.MustLocalize(&i18n.LocalizeConfig{
+	val, err := src.Localizer.Localize(&i18n.LocalizeConfig{
 		MessageID:    id,
 		TemplateData: templateData,
 	})
+	if err != nil {
+		log.Printf("[lang] failed to localize message id %s: %v", id, err)
+		return id
+	}
+	return val
+}
+
+func (src *Lang) ValidationField(field string) string {
+	return ValidationFieldPrefix + field
+}
+
+func (src *Lang) GetValidationFieldName(field string) string {
+	return src.GetByMessageID(src.ValidationField(field))
+}
+
+func (src *Lang) GetValidationFieldNameWithQuote(field string) string {
+	return src.GetByTemplateData(
+		src.ValidationField("quote_val"),
+		map[string]any{
+			"val": src.GetValidationFieldName(field),
+		},
+	)
 }
 
 func (src *Lang) LanguageReqOrDefault() language.Tag {
@@ -132,16 +161,30 @@ func GetLanguageAvailable(lang string) (*language.Tag, *resPkg.Status) {
 // error status code: 400
 func LanguageIsAvailable(lang string) (bool, *resPkg.Status) {
 	if lang == "" {
-		msg := "lang is required"
-		return false, resPkg.NewStatusBadRequest(ContextKey.String(), msg)
+		msg := "\"Language\" is required"
+		technicalErr := errors.New(msg)
+		return false, resPkg.NewStatusBadRequest(
+			Default.String(),
+			ContextKey.String(),
+			msg,
+			"REQUIRED",
+			technicalErr,
+		)
 	}
 	langCodes := make([]string, 0, cap(Available))
 	for _, v := range Available {
 		langCodes = append(langCodes, v.String())
 	}
 	if !slices.Contains(langCodes, lang) {
-		msg := fmt.Sprintf("lang must be one of [%s]", strings.Join(langCodes, ", "))
-		return false, resPkg.NewStatusBadRequest(ContextKey.String(), msg)
+		msg := fmt.Sprintf("\"Language\" must be one of [%s]", strings.Join(langCodes, ", "))
+		technicalErr := errors.New(msg)
+		return false, resPkg.NewStatusBadRequest(
+			Default.String(),
+			ContextKey.String(),
+			msg,
+			"OUT_OF_RANGE",
+			technicalErr,
+		)
 	}
 	return true, nil
 }
