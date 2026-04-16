@@ -172,7 +172,7 @@ func NewStatusDetails(code int, message string, details ...protoadapt.MessageV1)
 	}
 }
 
-func NewStatusBadRequest(field, message string) *Status {
+func NewStatusBadRequest(langCode, field, message, reason string, err error) *Status {
 	return NewStatusDetails(
 		http.StatusBadRequest,
 		message,
@@ -180,7 +180,12 @@ func NewStatusBadRequest(field, message string) *Status {
 			FieldViolations: []*errdetails.BadRequest_FieldViolation{
 				{
 					Field:       field,
-					Description: message,
+					Description: err.Error(),
+					Reason:      reason,
+					LocalizedMessage: &errdetails.LocalizedMessage{
+						Locale:  langCode,
+						Message: message,
+					},
 				},
 			},
 		},

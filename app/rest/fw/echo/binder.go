@@ -5,6 +5,7 @@
 package echo
 
 import (
+	"fmt"
 	"reflect"
 	"regexp"
 	"strings"
@@ -149,16 +150,15 @@ func (b *bind) ParamValidator(c echo.Context, i any) error {
 				continue
 			}
 
-			msg := lang.GetByTemplateData(
-				"validation_type_message",
-				common.Map{
-					"field":    fn,
-					"expected": ft,
-					"actual":   "string",
-				},
-			)
+			message, technicalErr := errorTypeMessage(lang, fn, ft.String(), "string")
 
-			return resPkg.NewStatusBadRequest(fn, msg)
+			return resPkg.NewStatusBadRequest(
+				lang.LanguageReqOrDefault().String(),
+				fn,
+				message,
+				"INVALID_TYPE",
+				technicalErr,
+			)
 		}
 
 		return nil
@@ -192,16 +192,28 @@ func (b *bind) JSONErrorFormatter(c echo.Context, err error) error {
 	gots := gotReg.FindStringSubmatch(err.Error())
 	if len(fields) > 1 && len(expecteds) > 1 && len(gots) > 1 {
 		field := fields[1]
-		message := lang.GetByTemplateData(
-			"validation_type_message",
-			common.Map{
-				"field":    field,
-				"expected": expecteds[1],
-				"actual":   gots[1],
-			},
+		message, technicalErr := errorTypeMessage(lang, field, expecteds[1], gots[1])
+		return resPkg.NewStatusBadRequest(
+			lang.LanguageReqOrDefault().String(),
+			field,
+			message,
+			"INVALID_TYPE",
+			technicalErr,
 		)
-		return resPkg.NewStatusBadRequest(field, message)
 	}
 
 	return nil
+}
+
+func errorTypeMessage(lang *langCtx.Lang, field, expected, actual string) (message string, technicalErr error) {
+	technicalErr = fmt.Errorf("field=%s,expected=%s,got=%s", field, expected, actual)
+	message = lang.GetByTemplateData(
+		langCtx.ValidationPrefix+"type_message",
+		common.Map{
+			"field":    lang.GetValidationFieldNameWithQuote(field),
+			"expected": expected,
+			"actual":   actual,
+		},
+	)
+	return
 }
