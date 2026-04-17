@@ -48,11 +48,11 @@ func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, confi
 // @Param       merchant_id path int true "Merchant ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqTrxCore.MerchantOmzetGet true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=[]resTrxCore.MerchantOmzet}
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     401 {object}	resPkg.Response{data=nil}
-// @Failure     429 {object}	resPkg.Response{data=nil}
-// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{data=[]resTrxCore.MerchantOmzet}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/transaction/merchant/{merchant_id}/omzet [get]
 func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
@@ -101,11 +101,11 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 // @Param       outlet_id path int true "Outlet ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqTrxCore.OutletOmzetGet true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=[]resTrxCore.OutletOmzet}
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     401 {object}	resPkg.Response{data=nil}
-// @Failure     429 {object}	resPkg.Response{data=nil}
-// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{data=[]resTrxCore.OutletOmzet}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/transaction/outlet/{outlet_id}/omzet [get]
 func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
