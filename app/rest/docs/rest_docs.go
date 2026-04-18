@@ -1412,6 +1412,7 @@ const docTemplaterest = `{
     },
     "securityDefinitions": {
         "BearerAuth": {
+            "description": "Type \"Bearer \" followed by a space and then your API token.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

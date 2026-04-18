@@ -933,6 +933,7 @@ paths:
       - transaction
 securityDefinitions:
   BearerAuth:
+    description: Type "Bearer " followed by a space and then your API token.
     in: header
     name: Authorization
     type: apiKey
