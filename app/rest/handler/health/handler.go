@@ -37,9 +37,10 @@ func New(log *logCtx.Log, fw echoFW.IEcho, hs healthCore.IService) *HealthHandle
 // @Accept json
 // @Produce json
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=response.HealthHealthz}
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     503 {object}	resPkg.Response{data=nil}
+// @Success		200	{object}	resPkg.ResponseSuccess{data=response.HealthHealthz}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     503 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/healthz [get]
 func (h *HealthHandler) HealthHealthzGet(echoCtx echo.Context) error {
 	var payload commonEntity.Request
@@ -70,11 +71,11 @@ func (h *HealthHandler) HealthHealthzGet(echoCtx echo.Context) error {
 // @Accept json
 // @Produce json
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=response.HealthReadyz}
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     429 {object}	resPkg.Response{data=nil}
-// @Failure     500 {object}	resPkg.Response{data=nil}
-// @Failure     503 {object}	resPkg.Response{data=nil}
+// @Success		200	{object}	resPkg.ResponseSuccess{data=response.HealthReadyz}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     503 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/readyz [get]
 func (h *HealthHandler) HealthReadyzGet(echoCtx echo.Context) error {
 	var payload commonEntity.Request

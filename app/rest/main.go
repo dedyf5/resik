@@ -17,9 +17,10 @@ var app *bootstrap.App
 var cleanup func()
 var err error
 
-// @securityDefinitions.apikey BearerAuth
-// @in header
-// @name Authorization
+// @securityDefinitions.apikey	BearerAuth
+// @in 							header
+// @name 						Authorization
+// @description					Type "Bearer " followed by a space and then your API token.
 func Run() {
 	c, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()

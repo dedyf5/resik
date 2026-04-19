@@ -46,7 +46,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccess"
                                 },
                                 {
                                     "type": "object",
@@ -62,58 +62,19 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -150,7 +111,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccess"
                                 },
                                 {
                                     "type": "object",
@@ -166,40 +127,19 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -245,7 +185,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccess"
                                 },
                                 {
                                     "type": "object",
@@ -261,58 +201,25 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -381,7 +288,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccessWithMeta"
                                 },
                                 {
                                     "type": "object",
@@ -400,94 +307,31 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -536,7 +380,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccess"
                                 },
                                 {
                                     "type": "object",
@@ -552,76 +396,25 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -679,7 +472,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccess"
                                 },
                                 {
                                     "type": "object",
@@ -695,76 +488,25 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -812,76 +554,25 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -918,7 +609,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccess"
                                 },
                                 {
                                     "type": "object",
@@ -934,76 +625,25 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -1045,7 +685,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccess"
                                 },
                                 {
                                     "type": "object",
@@ -1061,40 +701,25 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -1203,7 +828,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccessWithMeta"
                                 },
                                 {
                                     "type": "object",
@@ -1222,76 +847,25 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -1400,7 +974,7 @@ const docTemplaterest = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/response.Response"
+                                    "$ref": "#/definitions/response.ResponseSuccessWithMeta"
                                 },
                                 {
                                     "type": "object",
@@ -1419,76 +993,25 @@ const docTemplaterest = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "status": {
-                                            "$ref": "#/definitions/response.ResponseStatusBadRequest"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseBadRequest"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     }
                 }
@@ -1646,7 +1169,7 @@ const docTemplaterest = `{
             "properties": {
                 "accessed_at": {
                     "type": "string",
-                    "example": "2025-06-14 16:42:00"
+                    "example": "2026-04-17T01:30:08Z"
                 }
             }
         },
@@ -1655,7 +1178,7 @@ const docTemplaterest = `{
             "properties": {
                 "accessed_at": {
                     "type": "string",
-                    "example": "2025-06-14 16:42:00"
+                    "example": "2026-04-17T01:30:08Z"
                 },
                 "checks": {
                     "type": "array",
@@ -1765,15 +1288,19 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.Response": {
+        "response.ResponseBadRequest": {
             "type": "object",
             "properties": {
-                "data": {},
-                "meta": {
-                    "$ref": "#/definitions/response.ResponseMeta"
-                },
                 "status": {
-                    "$ref": "#/definitions/response.ResponseStatus"
+                    "$ref": "#/definitions/response.ResponseStatusBadRequest"
+                }
+            }
+        },
+        "response.ResponseErrorWithoutDetails": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "$ref": "#/definitions/response.ResponseStatusWithoutDetails"
                 }
             }
         },
@@ -1818,20 +1345,6 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.ResponseStatus": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string",
-                    "example": "200.1"
-                },
-                "details": {},
-                "message": {
-                    "type": "string",
-                    "example": "OK"
-                }
-            }
-        },
         "response.ResponseStatusBadRequest": {
             "type": "object",
             "properties": {
@@ -1851,6 +1364,38 @@ const docTemplaterest = `{
                 }
             }
         },
+        "response.ResponseStatusWithoutDetails": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ResponseSuccess": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "status": {
+                    "$ref": "#/definitions/response.ResponseStatusWithoutDetails"
+                }
+            }
+        },
+        "response.ResponseSuccessWithMeta": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "meta": {
+                    "$ref": "#/definitions/response.ResponseMeta"
+                },
+                "status": {
+                    "$ref": "#/definitions/response.ResponseStatusWithoutDetails"
+                }
+            }
+        },
         "response.UserCredential": {
             "type": "object",
             "properties": {
@@ -1867,6 +1412,7 @@ const docTemplaterest = `{
     },
     "securityDefinitions": {
         "BearerAuth": {
+            "description": "Type \"Bearer \" followed by a space and then your API token.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

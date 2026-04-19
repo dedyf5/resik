@@ -10,7 +10,7 @@ option go_package = "github.com/dedyf5/resik/core/health/response";
 message HealthReadyz {
     string overall_status = 1; // @gotags: json:"overall_status" example:"UP"
     repeated HealthReadyzCheck checks = 2; // @gotags: json:"checks"
-    string accessed_at = 3; // @gotags: json:"accessed_at" example:"2025-06-14 16:42:00"
+    string accessed_at = 3; // @gotags: json:"accessed_at" example:"2026-04-17T01:30:08Z"
 }
 
 message HealthReadyzCheck {

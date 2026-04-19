@@ -40,10 +40,11 @@ func New(fw echoFW.IEcho, log *logCtx.Log, userService userService.IService) *Ha
 // @Produce json
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       payload body reqUserCore.LoginPost true "Payload"
-// @Success		200	{object}	resPkg.Response{data=resUserCore.UserCredential}
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     401 {object}	resPkg.Response{data=nil}
-// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Success		200	{object}	resPkg.ResponseSuccess{data=resUserCore.UserCredential}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/login [post]
 func (h *Handler) LoginPost(echoCtx echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
@@ -79,9 +80,11 @@ func (h *Handler) LoginPost(echoCtx echo.Context) error {
 // @Produce json
 // @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=resUserCore.UserCredential}
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Success		200	{object}	resPkg.ResponseSuccess{data=resUserCore.UserCredential}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/token-refresh [get]
 func (h *Handler) TokenRefreshGet(echoCtx echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)

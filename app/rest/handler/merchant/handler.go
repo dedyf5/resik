@@ -40,11 +40,11 @@ func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService
 // @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       payload body reqMerchantCore.MerchantPost true "Payload"
-// @Success		201	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     401 {object}	resPkg.Response{data=nil}
-// @Failure     429 {object}	resPkg.Response{data=nil}
-// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Success		201	{object}	resPkg.ResponseSuccess{data=resMerchantCore.MerchantUpsert}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant [post]
 func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
@@ -89,11 +89,11 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 // @Param       id path int true "Merchant ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       payload body reqMerchantCore.MerchantPut true "Payload"
-// @Success		200	{object}	resPkg.Response{data=resMerchantCore.MerchantUpsert}
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     401 {object}	resPkg.Response{data=nil}
-// @Failure     429 {object}	resPkg.Response{data=nil}
-// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Success		200	{object}	resPkg.ResponseSuccess{data=resMerchantCore.MerchantUpsert}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant/{id} [put]
 func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
@@ -141,12 +141,12 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 // @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqMerchantCore.MerchantListGet true "Query Param"
-// @Success		200	{object}	resPkg.Response{data=[]resMerchantCore.MerchantList}
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     401 {object}	resPkg.Response{data=nil}
-// @Failure     404 {object}	resPkg.Response{data=nil}
-// @Failure     429 {object}	resPkg.Response{data=nil}
-// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{data=[]resMerchantCore.MerchantList}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     404 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant [get]
 func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
@@ -194,10 +194,10 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqMerchantCore.MerchantDelete true "Query Param"
 // @Success		204	{object}	nil
-// @Failure     400 {object}	resPkg.Response{data=nil,status=resPkg.ResponseStatusBadRequest}
-// @Failure     401 {object}	resPkg.Response{data=nil}
-// @Failure     429 {object}	resPkg.Response{data=nil}
-// @Failure     500 {object}	resPkg.Response{data=nil}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant/{id} [delete]
 func (h *Handler) MerchantDelete(echoCtx echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)

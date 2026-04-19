@@ -129,13 +129,13 @@ definitions:
   response.HealthHealthz:
     properties:
       accessed_at:
-        example: "2025-06-14 16:42:00"
+        example: "2026-04-17T01:30:08Z"
         type: string
     type: object
   response.HealthReadyz:
     properties:
       accessed_at:
-        example: "2025-06-14 16:42:00"
+        example: "2026-04-17T01:30:08Z"
         type: string
       checks:
         items:
@@ -212,13 +212,15 @@ definitions:
         example: "2023-11-22"
         type: string
     type: object
-  response.Response:
+  response.ResponseBadRequest:
     properties:
-      data: {}
-      meta:
-        $ref: '#/definitions/response.ResponseMeta'
       status:
-        $ref: '#/definitions/response.ResponseStatus'
+        $ref: '#/definitions/response.ResponseStatusBadRequest'
+    type: object
+  response.ResponseErrorWithoutDetails:
+    properties:
+      status:
+        $ref: '#/definitions/response.ResponseStatusWithoutDetails'
     type: object
   response.ResponseMeta:
     properties:
@@ -249,16 +251,6 @@ definitions:
         example: 2
         type: integer
     type: object
-  response.ResponseStatus:
-    properties:
-      code:
-        example: "200.1"
-        type: string
-      details: {}
-      message:
-        example: OK
-        type: string
-    type: object
   response.ResponseStatusBadRequest:
     properties:
       code:
@@ -271,6 +263,27 @@ definitions:
       message:
         example: Bad Request
         type: string
+    type: object
+  response.ResponseStatusWithoutDetails:
+    properties:
+      code:
+        type: string
+      message:
+        type: string
+    type: object
+  response.ResponseSuccess:
+    properties:
+      data: {}
+      status:
+        $ref: '#/definitions/response.ResponseStatusWithoutDetails'
+    type: object
+  response.ResponseSuccessWithMeta:
+    properties:
+      data: {}
+      meta:
+        $ref: '#/definitions/response.ResponseMeta'
+      status:
+        $ref: '#/definitions/response.ResponseStatusWithoutDetails'
     type: object
   response.UserCredential:
     properties:
@@ -304,7 +317,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
                   $ref: '#/definitions/response.App'
@@ -312,32 +325,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
         "429":
           description: Too Many Requests
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       summary: Get Home
       tags:
       - home
@@ -361,7 +357,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
                   $ref: '#/definitions/response.HealthHealthz'
@@ -369,23 +365,15 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "503":
           description: Service Unavailable
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       summary: Liveness check
       tags:
       - health
@@ -415,7 +403,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
                   $ref: '#/definitions/response.UserCredential'
@@ -423,32 +411,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
         "401":
           description: Unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       summary: Login
       tags:
       - user
@@ -491,7 +466,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccessWithMeta'
             - properties:
                 data:
                   items:
@@ -501,50 +476,23 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
         "401":
           description: Unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "404":
           description: Not Found
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "429":
           description: Too Many Requests
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
       summary: Merchant List
@@ -575,7 +523,7 @@ paths:
           description: Created
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
                   $ref: '#/definitions/response.MerchantUpsert'
@@ -583,41 +531,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
         "401":
           description: Unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "429":
           description: Too Many Requests
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
       summary: Create Merchant
@@ -649,41 +575,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
         "401":
           description: Unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "429":
           description: Too Many Requests
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
       summary: Update Merchant
@@ -719,7 +623,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
                   $ref: '#/definitions/response.MerchantUpsert'
@@ -727,41 +631,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
         "401":
           description: Unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "429":
           description: Too Many Requests
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
       summary: Update Merchant
@@ -787,7 +669,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
                   $ref: '#/definitions/response.HealthReadyz'
@@ -795,41 +677,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
         "429":
           description: Too Many Requests
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "503":
           description: Service Unavailable
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       summary: Readiness check
       tags:
       - health
@@ -853,7 +713,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
                   $ref: '#/definitions/response.UserCredential'
@@ -861,23 +721,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
       summary: Token Refresh
@@ -951,7 +807,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccessWithMeta'
             - properties:
                 data:
                   items:
@@ -961,41 +817,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
         "401":
           description: Unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "429":
           description: Too Many Requests
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
       summary: Get Merchant Omzet
@@ -1069,7 +903,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/response.Response'
+            - $ref: '#/definitions/response.ResponseSuccessWithMeta'
             - properties:
                 data:
                   items:
@@ -1079,41 +913,19 @@ paths:
         "400":
           description: Bad Request
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-                status:
-                  $ref: '#/definitions/response.ResponseStatusBadRequest'
-              type: object
+            $ref: '#/definitions/response.ResponseBadRequest'
         "401":
           description: Unauthorized
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "429":
           description: Too Many Requests
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
         "500":
           description: Internal Server Error
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  type: object
-              type: object
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
       summary: Get Outlet Omzet
@@ -1121,6 +933,7 @@ paths:
       - transaction
 securityDefinitions:
   BearerAuth:
+    description: Type "Bearer " followed by a space and then your API token.
     in: header
     name: Authorization
     type: apiKey

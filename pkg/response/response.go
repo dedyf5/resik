@@ -20,6 +20,30 @@ type ResponseStatus struct {
 	Details any    `json:"details,omitempty"`
 }
 
+type ResponseSuccess struct {
+	Status ResponseStatusWithoutDetails `json:"status"`
+	Data   any                          `json:"data,omitempty"`
+}
+
+type ResponseSuccessWithMeta struct {
+	Status ResponseStatusWithoutDetails `json:"status"`
+	Data   any                          `json:"data,omitempty"`
+	Meta   *ResponseMeta                `json:"meta,omitempty"`
+}
+
+type ResponseErrorWithoutDetails struct {
+	Status ResponseStatusWithoutDetails `json:"status"`
+}
+
+type ResponseStatusWithoutDetails struct {
+	Code    string `json:"code"`
+	Message string `json:"message"`
+}
+
+type ResponseBadRequest struct {
+	Status ResponseStatusBadRequest `json:"status"`
+}
+
 type ResponseStatusBadRequest struct {
 	Code    string                   `json:"code" example:"400.1"`
 	Message string                   `json:"message" example:"Bad Request"`

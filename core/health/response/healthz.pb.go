@@ -29,7 +29,7 @@ type HealthHealthz struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AccessedAt string `protobuf:"bytes,1,opt,name=accessed_at,json=accessedAt,proto3" json:"accessed_at" example:"2025-06-14 16:42:00"`  
+	AccessedAt string `protobuf:"bytes,1,opt,name=accessed_at,json=accessedAt,proto3" json:"accessed_at" example:"2026-04-17T01:30:08Z"`  
 }
 
 func (x *HealthHealthz) Reset() {
