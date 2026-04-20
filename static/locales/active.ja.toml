@@ -1,0 +1,103 @@
+[home_message]
+hash = "sha1-1d8a054d68ff1e1e4468c63d3a12bb88949a19d0"
+other = "{{.AppName}} バージョン {{.AppVersion}} :: モジュール {{.ModuleName}} タイプ {{.ModuleType}}"
+
+[incorrect_username_or_password]
+hash = "sha1-acb352f79e0b1c410bfa4354162face6f12edffa"
+other = "ユーザーネームまたはパスワードが間違っています"
+
+[invalid_or_expired_session_login_again]
+hash = "sha1-ce6d50af993e79b61fa22c3f4c1b56c56f0abaf8"
+other = "セッションの期限が切れました、再度ログインしてください"
+
+[invalid_time_format]
+hash = "sha1-4dd10a96f5f476a38f798bdb9f09ad77afb90041"
+other = "時刻形式が正しくありません"
+
+[merchant]
+hash = "sha1-0ed527aeba162b5abf0c30b481099d29ca00fed2"
+other = "マーチャント"
+
+[successfully_created_val]
+hash = "sha1-99059eeb725f4134e7ca43740027343904210c12"
+other = "{{.Val}}の作成に成功しました"
+
+[successfully_updated_val]
+hash = "sha1-951626265b9b58bd175241635cedc61aed809ca0"
+other = "{{.Val}}の更新に成功しました"
+
+[too_many_requests]
+hash = "sha1-1f55c90d5ce61c6447e923443d496b137be35c63"
+other = "レート制限超過"
+
+[unauthorized]
+hash = "sha1-740b83150add8d2de17b3ab10d33605bb00e9589"
+other = "無許可"
+
+["validation.field.created_at"]
+hash = "sha1-f1c69716be47f3a1cb7d0bfc922d70909efbe2b6"
+other = "作成日時"
+
+["validation.field.datetime_end"]
+hash = "sha1-25c141a5f09a969d4d58757e452500a3866f4948"
+other = "終了日時"
+
+["validation.field.datetime_start"]
+hash = "sha1-240e1ac68abaebaf3674af958401eed26e776d84"
+other = "開始日時"
+
+["validation.field.id"]
+hash = "sha1-89f89c02cf47e091e726a4e07b88af0966806897"
+other = "ID"
+
+["validation.field.limit"]
+hash = "sha1-24d948e4bdbe5b8224bbc0dfbab1923fab00b98e"
+other = "リミット"
+
+["validation.field.merchant_id"]
+hash = "sha1-9da47f7202153329aed43eae30cb988faab428de"
+other = "マーチャントID"
+
+["validation.field.mode"]
+hash = "sha1-a7b93d2128e820f861fc8dfccd9f5521e89ad21f"
+other = "モード"
+
+["validation.field.name"]
+hash = "sha1-709a23220f2c3d64d1e1d6d18c4d5280f8d82fca"
+other = "名前"
+
+["validation.field.order"]
+hash = "sha1-1d75774c0f96b6ee44eb6643c9fea71b50b90ea8"
+other = "順序"
+
+["validation.field.outlet_id"]
+hash = "sha1-81ba5a91241cb775b86d658fbf2d1ab4ca2320fa"
+other = "アウトレットID"
+
+["validation.field.page"]
+hash = "sha1-fb06270f7c212baabc8749ffc36e49dc8f321548"
+other = "ページ"
+
+["validation.field.password"]
+hash = "sha1-8be3c943b1609fffbfc51aad666d0a04adf83c9d"
+other = "パスワード"
+
+["validation.field.timezone"]
+hash = "sha1-d1f7dc891b5e5d1797163b556e805123c9369e4f"
+other = "タイムゾーン"
+
+["validation.field.updated_at"]
+hash = "sha1-307fd06961c6145ce10557e9b092f2365e480405"
+other = "更新日時"
+
+["validation.field.username"]
+hash = "sha1-84c29015de33e5d22422382a372caba5c58f8c01"
+other = "ユーザーネーム"
+
+["validation.quote_val"]
+hash = "sha1-dbb032a10cbbb69a66644923826b0aff454ba79d"
+other = "「{{.Val}}」"
+
+["validation.type_message"]
+hash = "sha1-fef63240f6e36110312c2a4c193f75bd51c697eb"
+other = "{{.Field}}のタイプは{{.Expected}}である必要がありますが、{{.Actual}}を取得しました"

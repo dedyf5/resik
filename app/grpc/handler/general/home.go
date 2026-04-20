@@ -10,6 +10,7 @@ import (
 	"github.com/dedyf5/resik/app/grpc/proto/status"
 	resAppCore "github.com/dedyf5/resik/core/app/response"
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	"github.com/dedyf5/resik/entities/common"
 	"google.golang.org/grpc/codes"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
@@ -26,14 +27,12 @@ func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, er
 	return &HomeRes{
 		Status: &status.Status{
 			Code: status.CodePlus(codes.OK),
-			Message: ctx.Lang().GetByTemplateData(
-				"home_message",
-				common.Map{
-					"app_name":    h.config.App.Name(),
-					"app_version": h.config.App.Version(),
-					"module_name": h.config.Module.Name,
-					"module_type": h.config.Module.Type.String(),
-				},
+			Message: term.HomeMessage.Localize(
+				ctx.Lang().Localizer,
+				h.config.App.Name(),
+				h.config.App.Version(),
+				h.config.Module.Name,
+				h.config.Module.Type.String(),
 			),
 		},
 		Data: resAppCore.AppMap(ctx, h.config, &req),

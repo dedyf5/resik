@@ -194,7 +194,7 @@ func env() (conf config.Config, c *ctx.Ctx) {
 			Port:        8081,
 		},
 	}
-	context := context.WithValue(context.Background(), langCtx.ContextKey, langCtx.NewLangTermDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.TermDir)))
+	context := context.WithValue(context.Background(), langCtx.ContextKey, langCtx.NewLangLocaleDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.LocaleDir)))
 	c, _ = ctx.NewCtx(context, &log.Log{})
 	return
 }

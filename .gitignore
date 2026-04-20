@@ -1,5 +1,6 @@
 .secrets
 logs/
+static/locales/translate.*.toml
 .vscode/
 .DS_Store
 .env

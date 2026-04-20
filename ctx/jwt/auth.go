@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	"github.com/dedyf5/resik/entities/config"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/golang-jwt/jwt/v5"
@@ -88,7 +89,7 @@ func AuthClaimsFromString(tokenString string, signatureKey string, lang *lang.La
 	if tokenString == "" {
 		return nil, resPkg.NewStatusMessage(
 			http.StatusUnauthorized,
-			lang.GetByMessageID("unauthorized"),
+			term.Unauthorized.Localize(lang.Localizer),
 			errors.New("missing value in request header"),
 		)
 	}
@@ -98,7 +99,7 @@ func AuthClaimsFromString(tokenString string, signatureKey string, lang *lang.La
 	if errParse != nil {
 		return nil, resPkg.NewStatusMessage(
 			http.StatusUnauthorized,
-			lang.GetByMessageID("invalid_or_expired_session_login_again"),
+			term.InvalidOrExpiredSessionLoginAgain.Localize(lang.Localizer),
 			errParse,
 		)
 	}
@@ -107,7 +108,7 @@ func AuthClaimsFromString(tokenString string, signatureKey string, lang *lang.La
 	}
 	return nil, resPkg.NewStatusMessage(
 		http.StatusUnauthorized,
-		lang.GetByMessageID("invalid_or_expired_session_login_again"),
+		term.InvalidOrExpiredSessionLoginAgain.Localize(lang.Localizer),
 		errors.New("error while casting AuthClaims"),
 	)
 }
@@ -127,13 +128,13 @@ func HTTPStatusError(err error, lang *lang.Lang) *resPkg.Status {
 	if strings.Contains(err.Error(), "invalid") {
 		return resPkg.NewStatusMessage(
 			http.StatusUnauthorized,
-			lang.GetByMessageID("invalid_or_expired_session_login_again"),
+			term.InvalidOrExpiredSessionLoginAgain.Localize(lang.Localizer),
 			err,
 		)
 	}
 	return resPkg.NewStatusMessage(
 		http.StatusUnauthorized,
-		lang.GetByMessageID("unauthorized"),
+		term.Unauthorized.Localize(lang.Localizer),
 		err,
 	)
 }

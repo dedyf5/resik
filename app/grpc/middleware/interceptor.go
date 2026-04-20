@@ -14,6 +14,7 @@ import (
 
 	jwtCxt "github.com/dedyf5/resik/ctx/jwt"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -193,7 +194,7 @@ func (i *Interceptor) RateLimit(c context.Context, req any, info *grpc.UnaryServ
 
 		return nil, resPkg.NewStatusMessage(
 			http.StatusTooManyRequests,
-			lang.GetByMessageID("too_many_requests"),
+			term.TooManyRequests.Localize(lang.Localizer),
 			nil,
 		)
 	}
