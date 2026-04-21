@@ -13,6 +13,7 @@ import (
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/ctx"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	"github.com/dedyf5/resik/ctx/log"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
@@ -64,7 +65,11 @@ func TestAuth(t *testing.T) {
 		gomock.InOrder(
 			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(nil, nil),
 		)
-		statusErr := resPkg.NewStatusMessage(http.StatusUnauthorized, param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"), nil)
+		statusErr := resPkg.NewStatusMessage(
+			http.StatusUnauthorized,
+			term.IncorrectUsernameOrPassword.Localize(param.Ctx.Lang().Localizer),
+			nil,
+		)
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.Code, err.Code)
@@ -77,7 +82,11 @@ func TestAuth(t *testing.T) {
 			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(userExpected, nil),
 			hasher.EXPECT().Compare(param.Password, userExpected.Password).Return(false, nil),
 		)
-		statusErr := resPkg.NewStatusMessage(http.StatusUnauthorized, param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"), nil)
+		statusErr := resPkg.NewStatusMessage(
+			http.StatusUnauthorized,
+			term.IncorrectUsernameOrPassword.Localize(param.Ctx.Lang().Localizer),
+			nil,
+		)
 		token, err := userService.Auth(param)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.Code, err.Code)
@@ -164,7 +173,7 @@ func env() (conf config.Config, c *ctx.Ctx) {
 			Port:        8081,
 		},
 	}
-	context := context.WithValue(context.Background(), langCtx.ContextKey, langCtx.NewLangTermDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.TermDir)))
+	context := context.WithValue(context.Background(), langCtx.ContextKey, langCtx.NewLangLocaleDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.LocaleDir)))
 	c, _ = ctx.NewCtx(context, &log.Log{})
 	return
 }

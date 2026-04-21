@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	jwtCtx "github.com/dedyf5/resik/ctx/jwt"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	"github.com/dedyf5/resik/entities/outlet"
 	paramUser "github.com/dedyf5/resik/entities/user/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -19,11 +20,19 @@ func (s *Service) Auth(param paramUser.Auth) (token string, err *resPkg.Status) 
 		return "", err
 	}
 	if user == nil {
-		return "", resPkg.NewStatusMessage(http.StatusUnauthorized, param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"), nil)
+		return "", resPkg.NewStatusMessage(
+			http.StatusUnauthorized,
+			term.IncorrectUsernameOrPassword.Localize(param.Ctx.Lang().Localizer),
+			nil,
+		)
 	}
 
 	if ok, err := s.hasher.Compare(param.Password, user.Password); !ok || err != nil {
-		return "", resPkg.NewStatusMessage(http.StatusUnauthorized, param.Ctx.Lang().GetByMessageID("incorrect_username_or_password"), err)
+		return "", resPkg.NewStatusMessage(
+			http.StatusUnauthorized,
+			term.IncorrectUsernameOrPassword.Localize(param.Ctx.Lang().Localizer),
+			err,
+		)
 	}
 
 	return s.AuthTokenGenerate(user.ID, user.Username)

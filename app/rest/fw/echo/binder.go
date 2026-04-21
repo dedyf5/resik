@@ -12,7 +12,7 @@ import (
 	"sync"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
-	"github.com/dedyf5/resik/entities/common"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v4"
 )
@@ -207,13 +207,11 @@ func (b *bind) JSONErrorFormatter(c echo.Context, err error) error {
 
 func errorTypeMessage(lang *langCtx.Lang, field, expected, actual string) (message string, technicalErr error) {
 	technicalErr = fmt.Errorf("field=%s,expected=%s,got=%s", field, expected, actual)
-	message = lang.GetByTemplateData(
-		langCtx.ValidationPrefix+"type_message",
-		common.Map{
-			"field":    lang.GetValidationFieldNameWithQuote(field),
-			"expected": expected,
-			"actual":   actual,
-		},
+	message = term.ValidationTypeMessage.Localize(
+		lang.Localizer,
+		lang.GetValidationFieldNameWithQuote(field),
+		expected,
+		actual,
 	)
 	return
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/dedyf5/resik/config"
 	resAppCore "github.com/dedyf5/resik/core/app/response"
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -54,16 +55,12 @@ func (h *Handler) Home(echoCtx echo.Context) error {
 		return err
 	}
 
-	lang := ctx.Lang()
-
-	msg := lang.GetByTemplateData(
-		"home_message",
-		commonEntity.Map{
-			"app_name":    h.config.App.Name(),
-			"app_version": h.config.App.Version(),
-			"module_name": h.config.Module.Name,
-			"module_type": h.config.Module.Type.String(),
-		},
+	msg := term.HomeMessage.Localize(
+		ctx.Lang().Localizer,
+		h.config.App.Name(),
+		h.config.App.Version(),
+		h.config.Module.Name,
+		h.config.Module.Type.String(),
 	)
 
 	return resPkg.NewStatusSuccess(

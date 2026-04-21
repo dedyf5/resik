@@ -12,6 +12,7 @@ import (
 	reqMerchantCore "github.com/dedyf5/resik/core/merchant/request"
 	resMerchantCore "github.com/dedyf5/resik/core/merchant/response"
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -23,6 +24,10 @@ type Handler struct {
 	fw              echoFW.IEcho
 	merchantService merchantCore.IService
 }
+
+// TODO: Remove this dummy assignment once commonEntity is used explicitly elsewhere in this file.
+// Currently kept to ensure Swagger can discover types from this package.
+var _ = commonEntity.Request{}
 
 func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService) *Handler {
 	return &Handler{
@@ -69,11 +74,12 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 		return err
 	}
 
-	msg := ctx.Lang().GetByTemplateData("successfully_created_val", commonEntity.Map{"val": "merchant"})
-
 	return resPkg.NewStatusSuccess(
 		http.StatusCreated,
-		msg,
+		term.SuccessfullyCreatedVal.Localize(
+			ctx.Lang().Localizer,
+			term.Merchant.Localize(ctx.Lang().Localizer),
+		),
 		&resMerchantCore.MerchantUpsert{
 			Id: entity.ID,
 		},
@@ -122,11 +128,12 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 		return err
 	}
 
-	msg := ctx.Lang().GetByTemplateData("successfully_updated_val", commonEntity.Map{"val": "merchant"})
-
 	return resPkg.NewStatusSuccess(
 		http.StatusOK,
-		msg,
+		term.SuccessfullyUpdatedVal.Localize(
+			ctx.Lang().Localizer,
+			term.Merchant.Localize(ctx.Lang().Localizer),
+		),
 		&resMerchantCore.MerchantUpsert{
 			Id: entity.ID,
 		},

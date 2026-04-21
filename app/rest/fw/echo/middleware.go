@@ -15,6 +15,7 @@ import (
 
 	jwtCtx "github.com/dedyf5/resik/ctx/jwt"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/dedyf5/resik/utils/ratelimit"
@@ -156,7 +157,7 @@ func RateLimitMiddleware(limiter ratelimit.Limiter) echo.MiddlewareFunc {
 
 				return resPkg.NewStatusMessage(
 					http.StatusTooManyRequests,
-					lang.GetByMessageID("too_many_requests"),
+					term.TooManyRequests.Localize(lang.Localizer),
 					nil,
 				)
 			}

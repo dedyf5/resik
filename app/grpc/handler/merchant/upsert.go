@@ -11,6 +11,7 @@ import (
 	reqMerchantCore "github.com/dedyf5/resik/core/merchant/request"
 	resMerchantCore "github.com/dedyf5/resik/core/merchant/response"
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	"google.golang.org/grpc/codes"
 )
 
@@ -36,8 +37,11 @@ func (h *MerchantHandler) MerchantPost(c context.Context, req *reqMerchantCore.M
 
 	return &MerchantUpsertRes{
 		Status: &status.Status{
-			Code:    status.CodePlus(codes.OK),
-			Message: codes.OK.String(),
+			Code: status.CodePlus(codes.OK),
+			Message: term.SuccessfullyCreatedVal.Localize(
+				ctx.Lang().Localizer,
+				term.Merchant.Localize(ctx.Lang().Localizer),
+			),
 		},
 		Data: &resMerchantCore.MerchantUpsert{
 			Id: entity.ID,
@@ -71,8 +75,11 @@ func (h *MerchantHandler) MerchantPut(c context.Context, req *reqMerchantCore.Me
 
 	return &MerchantUpsertRes{
 		Status: &status.Status{
-			Code:    status.CodePlus(codes.OK),
-			Message: codes.OK.String(),
+			Code: status.CodePlus(codes.OK),
+			Message: term.SuccessfullyUpdatedVal.Localize(
+				ctx.Lang().Localizer,
+				term.Merchant.Localize(ctx.Lang().Localizer),
+			),
 		},
 		Data: &resMerchantCore.MerchantUpsert{
 			Id: entity.ID,

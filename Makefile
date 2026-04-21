@@ -36,6 +36,13 @@ generate-go:
 generate-doc:
 	swag init -g ../../app/rest/main.go -d ./pkg/response,./app/rest -o ./app/rest/docs --instanceName rest --parseDependency true
 
+generate-locales:
+	goi18n extract -outdir static/locales -format toml
+	goi18n merge -outdir static/locales static/locales/active.*.toml
+
+sync-locales:
+	goi18n merge -outdir static/locales static/locales/active.*.toml static/locales/translate.*.toml
+
 ## test: Test all files
 test:
 	$(GOCMD) test -v -cover ./...

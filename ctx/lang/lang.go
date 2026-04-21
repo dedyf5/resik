@@ -6,7 +6,6 @@ package lang
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -14,7 +13,8 @@ import (
 	"slices"
 	"strings"
 
-	commonEntity "github.com/dedyf5/resik/entities/common"
+	"github.com/BurntSushi/toml"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
@@ -27,7 +27,7 @@ type langKey string
 
 const (
 	ContextKey            langKey = "lang"
-	TermDir               string  = "static/term"
+	LocaleDir             string  = "static/locales"
 	ValidationPrefix      string  = "validation."
 	ValidationFieldPrefix string  = ValidationPrefix + "field."
 )
@@ -41,24 +41,24 @@ type Lang struct {
 }
 
 func NewLang(langDefault language.Tag, langReq *language.Tag, langAccept string) *Lang {
-	return NewLangTermDir(langDefault, langReq, langAccept, TermDir)
+	return NewLangLocaleDir(langDefault, langReq, langAccept, LocaleDir)
 }
 
-func NewLangTermDir(langDefault language.Tag, langReq *language.Tag, langAccept string, termDir string) *Lang {
+func NewLangLocaleDir(langDefault language.Tag, langReq *language.Tag, langAccept string, localeDir string) *Lang {
 	bundle := i18n.NewBundle(langDefault)
 	return &Lang{
 		Bundle:      bundle,
-		Localizer:   NewLocalizer(bundle, langDefault, langReq, langAccept, termDir),
+		Localizer:   NewLocalizer(bundle, langDefault, langReq, langAccept, localeDir),
 		LangDefault: langDefault,
 		LangReq:     langReq,
 		LangAccept:  langAccept,
 	}
 }
 
-func NewLocalizer(bundle *i18n.Bundle, langDefault language.Tag, langReq *language.Tag, langAccept string, termDir string) *i18n.Localizer {
-	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
+func NewLocalizer(bundle *i18n.Bundle, langDefault language.Tag, langReq *language.Tag, langAccept string, localeDir string) *i18n.Localizer {
+	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	for _, v := range Available {
-		sourcePath := fmt.Sprintf("%s/%s.json", termDir, v.String())
+		sourcePath := fmt.Sprintf("%s/active.%s.toml", localeDir, v.String())
 		if _, err := bundle.LoadMessageFile(sourcePath); err != nil {
 			log.Printf("[lang] failed to load message file %s: %v", sourcePath, err)
 		}
@@ -80,26 +80,11 @@ func FromContext(ctx context.Context) (*Lang, *resPkg.Status) {
 }
 
 func (src *Lang) GetByMessageID(id string) string {
-	val, err := src.Localizer.Localize(&i18n.LocalizeConfig{
-		MessageID: id,
-	})
-	if err != nil {
-		log.Printf("[lang] failed to localize message id %s: %v", id, err)
-		return id
-	}
-	return val
+	return term.GetByMessageID(src.Localizer, id)
 }
 
-func (src *Lang) GetByTemplateData(id string, templateData commonEntity.Map) string {
-	val, err := src.Localizer.Localize(&i18n.LocalizeConfig{
-		MessageID:    id,
-		TemplateData: templateData,
-	})
-	if err != nil {
-		log.Printf("[lang] failed to localize message id %s: %v", id, err)
-		return id
-	}
-	return val
+func (src *Lang) GetByTemplateData(id string, templateData any) string {
+	return term.GetByTemplateData(src.Localizer, id, templateData)
 }
 
 func (src *Lang) ValidationField(field string) string {
@@ -111,12 +96,7 @@ func (src *Lang) GetValidationFieldName(field string) string {
 }
 
 func (src *Lang) GetValidationFieldNameWithQuote(field string) string {
-	return src.GetByTemplateData(
-		src.ValidationField("quote_val"),
-		map[string]any{
-			"val": src.GetValidationFieldName(field),
-		},
-	)
+	return term.ValidationQuoteVal.Localize(src.Localizer, src.GetValidationFieldName(field))
 }
 
 func (src *Lang) LanguageReqOrDefault() language.Tag {

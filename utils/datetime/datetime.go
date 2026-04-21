@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
@@ -13,7 +14,7 @@ func FromString(val string, format string, c *ctx.Ctx) (res *time.Time, err *res
 	if errParse != nil {
 		return nil, resPkg.NewStatusMessage(
 			http.StatusInternalServerError,
-			c.Lang().GetByMessageID("invalid_time_format"),
+			term.InvalidTimeFormat.Localize(c.Lang().Localizer),
 			errParse,
 		)
 	}
