@@ -140,6 +140,56 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 	)
 }
 
+// @Summary Get Merchant by ID
+// @Description Get merchant by ID
+// @Tags merchant
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param       id path int true "Merchant ID"
+// @Param       parameter query commonEntity.Request true "Query Param"
+// @Success		200	{object}	resPkg.ResponseSuccess{data=resMerchantCore.MerchantDetail}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
+// @Router		/merchant/{id} [get]
+func (h *Handler) MerchantDetailGet(echoCtx echo.Context) error {
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
+	if err != nil {
+		return err
+	}
+	h.log.Debug("MerchantDetailGet")
+
+	var param reqMerchantCore.MerchantDetailGet
+	if err := h.fw.StructValidator(echoCtx, &param); err != nil {
+		return err
+	}
+
+	if _, err = ctx.UserClaims().MerchantIDIsAccessible(param.GetId()); err != nil {
+		return err
+	}
+
+	merchant, err := h.merchantService.MerchantGetByIDAndUserID(ctx, param.GetId(), ctx.UserClaims().UserID)
+	if err != nil {
+		return err
+	}
+
+	if merchant == nil {
+		localizer := ctx.Lang().Localizer
+		return resPkg.NewStatusMessage(
+			http.StatusNotFound,
+			term.NotFoundVal.Localize(localizer, term.Merchant.Localize(localizer)),
+			nil,
+		)
+	}
+
+	return resPkg.NewStatusData(
+		http.StatusOK,
+		resMerchantCore.MerchantDetailFromEntity(merchant),
+	)
+}
+
 // @Summary Merchant List
 // @Description Merchant list
 // @Tags merchant

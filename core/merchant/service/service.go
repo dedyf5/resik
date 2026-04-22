@@ -11,12 +11,14 @@ import (
 
 type Service struct {
 	merchantRepo repositories.IMerchant
+	userRepo     repositories.IUser
 	config       config.Config
 }
 
-func New(merchantRepo repositories.IMerchant, config config.Config) *Service {
+func New(merchantRepo repositories.IMerchant, userRepo repositories.IUser, config config.Config) *Service {
 	return &Service{
 		merchantRepo: merchantRepo,
+		userRepo:     userRepo,
 		config:       config,
 	}
 }

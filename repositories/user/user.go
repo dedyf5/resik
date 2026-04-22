@@ -16,6 +16,17 @@ import (
 	"gorm.io/gorm"
 )
 
+func (r *UserRepo) UserByID(ctx *ctx.Ctx, userID uint64) (user *userEntity.User, err *resPkg.Status) {
+	errQuery := r.DB.WithContext(ctx.Context).First(&user, "id = ?", userID).Error
+	if errQuery != nil {
+		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
+	}
+	return
+}
+
 func (r *UserRepo) UserByUsername(ctx *ctx.Ctx, username string) (user *userEntity.User, err *resPkg.Status) {
 	var res userEntity.User
 	errQuery := r.DB.WithContext(ctx.Context).First(&res, "username = ?", username).Error

@@ -21,6 +21,7 @@ import (
 	"github.com/go-playground/locales/ja"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	"github.com/go-playground/validator/v10/non-standard/validators"
 	enTrans "github.com/go-playground/validator/v10/translations/en"
 	idTrans "github.com/go-playground/validator/v10/translations/id"
 	jaTrans "github.com/go-playground/validator/v10/translations/ja"
@@ -43,6 +44,10 @@ type Validate struct {
 
 func New(langDefault language.Tag) *Validate {
 	validate := validator.New()
+
+	if err := validate.RegisterValidation("notblank", validators.NotBlank); err != nil {
+		log.Panic("error register validation tag notblank")
+	}
 
 	if err := validate.RegisterValidation("oneof_order", isOneOfOrder); err != nil {
 		log.Panic("error register validation tag oneof_order")
@@ -89,6 +94,9 @@ func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator)
 		if err := idTrans.RegisterDefaultTranslations(v, t); err != nil {
 			log.Printf("[validator] failed to register ID translation: %v", err)
 		}
+		if err := registerNotBlank(v, t, "{0} tidak boleh kosong"); err != nil {
+			log.Printf("[validator] failed to register notblank for ID: %v", err)
+		}
 		if err := registerOneOfOrder(v, t, "{0} harus berupa salah satu dari [{1}]"); err != nil {
 			log.Printf("[validator] failed to register oneof_order for ID: %v", err)
 		}
@@ -98,6 +106,9 @@ func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator)
 	if t, found := uni.GetTranslator(language.English.String()); found {
 		if err := enTrans.RegisterDefaultTranslations(v, t); err != nil {
 			log.Printf("[validator] failed to register EN translation: %v", err)
+		}
+		if err := registerNotBlank(v, t, "{0} must not be blank"); err != nil {
+			log.Printf("[validator] failed to register notblank for EN: %v", err)
 		}
 		if err := registerOneOfOrder(v, t, "{0} must be one of [{1}]"); err != nil {
 			log.Printf("[validator] failed to register oneof_order for EN: %v", err)
@@ -119,6 +130,9 @@ func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator)
 		if err := jaTrans.RegisterDefaultTranslations(v, t); err != nil {
 			log.Printf("[validator] failed to register JA translation: %v", err)
 		}
+		if err := registerNotBlank(v, t, "{0}は空であってはなりません"); err != nil {
+			log.Printf("[validator] failed to register notblank for JA: %v", err)
+		}
 		if err := registerOneOfOrder(v, t, "{0}は[{1}]のうちのいずれかでなければなりません"); err != nil {
 			log.Printf("[validator] failed to register oneof_order for JA: %v", err)
 		}
@@ -133,6 +147,15 @@ func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator)
 			log.Printf("[validator] failed to register timezone translation for JA: %v", err)
 		}
 	}
+}
+
+func registerNotBlank(v *validator.Validate, trans ut.Translator, msg string) error {
+	return v.RegisterTranslation("notblank", trans, func(ut ut.Translator) error {
+		return ut.Add("notblank", msg, true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("notblank", fe.Field())
+		return t
+	})
 }
 
 func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) error {

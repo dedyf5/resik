@@ -16,6 +16,7 @@ import (
 type IService interface {
 	MerchantInsert(ctx *ctx.Ctx, merchant *merchant.Merchant) (ok bool, err *response.Status)
 	MerchantUpdate(ctx *ctx.Ctx, merchant *merchant.Merchant) (ok bool, err *response.Status)
+	MerchantGetByIDAndUserID(ctx *ctx.Ctx, merchantID, userID uint64) (merchant *merchant.Merchant, err *response.Status)
 	MerchantListGet(param *param.MerchantListGet) (res *dto.MerchantList, err *response.Status)
 	MerchantDelete(ctx *ctx.Ctx, param *merchant.Merchant) (ok bool, err *response.Status)
 }

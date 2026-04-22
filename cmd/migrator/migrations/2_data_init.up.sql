@@ -12,11 +12,11 @@ UNLOCK TABLES;
 /*!40000 ALTER TABLE `merchant` DISABLE KEYS */;
 LOCK TABLES `merchant` WRITE;
 INSERT INTO `merchant` VALUES 
-(1,1,'Merchant 1','2024-02-02 19:52:41',1,'2024-04-06 00:08:00',1),
-(2,2,'Merchant 1','2024-02-02 19:52:41',2,'2024-02-02 19:52:41',2),
-(3,1,'Merchant 2','2024-04-06 22:56:00',1,'2024-04-06 22:56:00',1),
-(4,1,'Merchant 3','2024-04-06 22:56:00',1,'2024-04-06 23:00:00',1),
-(5,1,'Merchant 4','2024-04-06 22:56:00',1,'2024-04-07 01:14:00',1);
+(1,1,'Merchant 1','merchant description 1','2024-02-02 19:52:41',1,'2024-04-06 00:08:00',1),
+(2,2,'Merchant 1','merchant description 1','2024-02-02 19:52:41',2,'2024-02-02 19:52:41',2),
+(3,1,'Merchant 2','merchant description 2','2024-04-06 22:56:00',1,'2024-04-06 22:56:00',1),
+(4,1,'Merchant 3','merchant description 3','2024-04-06 22:56:00',1,'2024-04-06 23:00:00',1),
+(5,1,'Merchant 4','merchant description 4','2024-04-06 22:56:00',1,'2024-04-07 01:14:00',1);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `merchant` ENABLE KEYS */;
 

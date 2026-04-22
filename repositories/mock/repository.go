@@ -86,66 +86,6 @@ func (m *MockITransaction) EXPECT() *MockITransactionMockRecorder {
 	return m.recorder
 }
 
-// GetMerchantByID mocks base method.
-func (m *MockITransaction) GetMerchantByID(merchantID uint64) (*merchant.Merchant, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMerchantByID", merchantID)
-	ret0, _ := ret[0].(*merchant.Merchant)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetMerchantByID indicates an expected call of GetMerchantByID.
-func (mr *MockITransactionMockRecorder) GetMerchantByID(merchantID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMerchantByID", reflect.TypeOf((*MockITransaction)(nil).GetMerchantByID), merchantID)
-}
-
-// GetMerchantByIDAndUserID mocks base method.
-func (m *MockITransaction) GetMerchantByIDAndUserID(merchantID, userID uint64) (*merchant.Merchant, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMerchantByIDAndUserID", merchantID, userID)
-	ret0, _ := ret[0].(*merchant.Merchant)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetMerchantByIDAndUserID indicates an expected call of GetMerchantByIDAndUserID.
-func (mr *MockITransactionMockRecorder) GetMerchantByIDAndUserID(merchantID, userID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMerchantByIDAndUserID", reflect.TypeOf((*MockITransaction)(nil).GetMerchantByIDAndUserID), merchantID, userID)
-}
-
-// GetOutletByID mocks base method.
-func (m *MockITransaction) GetOutletByID(outletID uint64) (*outlet.Outlet, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOutletByID", outletID)
-	ret0, _ := ret[0].(*outlet.Outlet)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetOutletByID indicates an expected call of GetOutletByID.
-func (mr *MockITransactionMockRecorder) GetOutletByID(outletID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOutletByID", reflect.TypeOf((*MockITransaction)(nil).GetOutletByID), outletID)
-}
-
-// GetOutletByIDAndCreatedBy mocks base method.
-func (m *MockITransaction) GetOutletByIDAndCreatedBy(outletID, createdBy uint64) (*outlet.Outlet, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOutletByIDAndCreatedBy", outletID, createdBy)
-	ret0, _ := ret[0].(*outlet.Outlet)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetOutletByIDAndCreatedBy indicates an expected call of GetOutletByIDAndCreatedBy.
-func (mr *MockITransactionMockRecorder) GetOutletByIDAndCreatedBy(outletID, createdBy any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOutletByIDAndCreatedBy", reflect.TypeOf((*MockITransaction)(nil).GetOutletByIDAndCreatedBy), outletID, createdBy)
-}
-
 // MerchantOmzetGetData mocks base method.
 func (m *MockITransaction) MerchantOmzetGetData(arg0 *param0.MerchantOmzetGet) ([]transaction.MerchantOmzet, *response.Status) {
 	m.ctrl.T.Helper()
@@ -260,6 +200,21 @@ func (mr *MockIUserMockRecorder) OutletMerchantByUserIDGetData(userID any) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletMerchantByUserIDGetData", reflect.TypeOf((*MockIUser)(nil).OutletMerchantByUserIDGetData), userID)
 }
 
+// UserByID mocks base method.
+func (m *MockIUser) UserByID(arg0 *ctx.Ctx, userID uint64) (*user.User, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UserByID", arg0, userID)
+	ret0, _ := ret[0].(*user.User)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// UserByID indicates an expected call of UserByID.
+func (mr *MockIUserMockRecorder) UserByID(arg0, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserByID", reflect.TypeOf((*MockIUser)(nil).UserByID), arg0, userID)
+}
+
 // UserByUsername mocks base method.
 func (m *MockIUser) UserByUsername(arg0 *ctx.Ctx, username string) (*user.User, *response.Status) {
 	m.ctrl.T.Helper()
@@ -312,6 +267,21 @@ func (m *MockIMerchant) MerchantDelete(c *ctx.Ctx, arg1 *merchant.Merchant) (boo
 func (mr *MockIMerchantMockRecorder) MerchantDelete(c, arg1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantDelete", reflect.TypeOf((*MockIMerchant)(nil).MerchantDelete), c, arg1)
+}
+
+// MerchantGetByIDAndUserID mocks base method.
+func (m *MockIMerchant) MerchantGetByIDAndUserID(arg0 *ctx.Ctx, merchantID, userID uint64) (*merchant.Merchant, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "MerchantGetByIDAndUserID", arg0, merchantID, userID)
+	ret0, _ := ret[0].(*merchant.Merchant)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// MerchantGetByIDAndUserID indicates an expected call of MerchantGetByIDAndUserID.
+func (mr *MockIMerchantMockRecorder) MerchantGetByIDAndUserID(arg0, merchantID, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantGetByIDAndUserID", reflect.TypeOf((*MockIMerchant)(nil).MerchantGetByIDAndUserID), arg0, merchantID, userID)
 }
 
 // MerchantInsert mocks base method.

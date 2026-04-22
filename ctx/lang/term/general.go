@@ -76,6 +76,29 @@ var (
 		},
 	}
 
+	User = &Term{
+		Message: &i18n.Message{
+			ID:    "user",
+			Other: "User",
+		},
+	}
+
+	notFoundValID = "not_found_val"
+	NotFoundVal   = &struct {
+		Message  func() *i18n.Message
+		Localize func(localizer *i18n.Localizer, val string) string
+	}{
+		Message: func() *i18n.Message {
+			return &i18n.Message{
+				ID:    notFoundValID,
+				Other: "{{.Val}} not found",
+			}
+		},
+		Localize: func(localizer *i18n.Localizer, val string) string {
+			return GetByTemplateData(localizer, notFoundValID, common.Map{"Val": val})
+		},
+	}
+
 	successfullyCreatedValID = "successfully_created_val"
 	SuccessfullyCreatedVal   = &struct {
 		Message  func() *i18n.Message

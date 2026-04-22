@@ -5,6 +5,7 @@
 package merchant
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/dedyf5/resik/ctx"
@@ -25,11 +26,22 @@ func (r *MerchantRepo) MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Mer
 
 func (r *MerchantRepo) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status) {
 	result := r.DB.WithContext(ctx.Context).
-		Exec("UPDATE "+merchantEntity.TABLE_NAME+" SET name = ?, updated_at = ?, updated_by = ? WHERE id = ?", merchant.Name, merchant.UpdatedAt, merchant.UpdatedBy, merchant.ID)
+		Exec("UPDATE "+merchantEntity.TABLE_NAME+" SET name = ?, description = ?, updated_at = ?, updated_by = ? WHERE id = ?", merchant.Name, merchant.Description, merchant.UpdatedAt, merchant.UpdatedBy, merchant.ID)
 	if result.Error != nil {
 		return false, resPkg.NewStatusError(http.StatusInternalServerError, result.Error)
 	}
 	return true, nil
+}
+
+func (r *MerchantRepo) MerchantGetByIDAndUserID(ctx *ctx.Ctx, merchantID, userID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status) {
+	errDB := r.DB.WithContext(ctx.Context).Where("id = ? AND user_id = ?", merchantID, userID).First(&merchant).Error
+	if errDB != nil {
+		if errors.Is(errDB, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errDB)
+	}
+	return
 }
 
 func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet) (merchant []merchantEntity.Merchant, err *resPkg.Status) {

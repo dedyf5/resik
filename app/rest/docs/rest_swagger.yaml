@@ -76,6 +76,11 @@ definitions:
       created_at:
         example: "2024-04-14T14:18:00Z"
         type: string
+      description:
+        description: nullable
+        example: Merchant description 1
+        maxLength: 5000
+        type: string
       name:
         example: Resik Merchant
         maxLength: 40
@@ -86,6 +91,11 @@ definitions:
     type: object
   request.MerchantPut:
     properties:
+      description:
+        description: nullable
+        example: Merchant description 1
+        maxLength: 5000
+        type: string
       name:
         example: Resik Merchant
         maxLength: 40
@@ -154,6 +164,36 @@ definitions:
       status:
         example: UP
         type: string
+    type: object
+  response.MerchantDetail:
+    properties:
+      created_at:
+        example: "2026-01-02T15:04:05+07:00"
+        type: string
+      created_by:
+        example: 1
+        type: integer
+      description:
+        description: nullable
+        example: Merchant description 1
+        type: string
+      id:
+        example: 1
+        type: integer
+      name:
+        example: Merchant 1
+        type: string
+      updated_at:
+        example: "2026-01-02T15:04:05+07:00"
+        type: string
+      updated_by:
+        example: 1
+        type: integer
+      user:
+        $ref: '#/definitions/response.User'
+      user_id:
+        example: 1
+        type: integer
     type: object
   response.MerchantList:
     properties:
@@ -284,6 +324,18 @@ definitions:
         $ref: '#/definitions/response.ResponseMeta'
       status:
         $ref: '#/definitions/response.ResponseStatusWithoutDetails'
+    type: object
+  response.User:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: User 1
+        type: string
+      username:
+        example: user1
+        type: string
     type: object
   response.UserCredential:
     properties:
@@ -591,6 +643,56 @@ paths:
       security:
       - BearerAuth: []
       summary: Update Merchant
+      tags:
+      - merchant
+    get:
+      consumes:
+      - application/json
+      description: Get merchant by ID
+      parameters:
+      - description: Merchant ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - enum:
+        - en
+        - id
+        - ja
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.MerchantDetail'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ResponseBadRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+      security:
+      - BearerAuth: []
+      summary: Get Merchant by ID
       tags:
       - merchant
     put:

@@ -82,7 +82,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	serviceService := service.New(userRepo, iHash, config)
 	userHandler := user2.New(echoEcho, logLog, serviceService)
 	merchantRepo := merchant.New(gormDB)
-	service5 := service2.New(merchantRepo, config)
+	service5 := service2.New(merchantRepo, userRepo, config)
 	merchantHandler := merchant2.New(logLog, echoEcho, service5)
 	transactionRepo := transaction.New(gormDB)
 	service6 := service3.New(transactionRepo, config)

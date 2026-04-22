@@ -20,12 +20,13 @@ func (m *MerchantPost) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, err
 	}
 	userID := ctx.UserClaims().UserID
 	return &merchantEntity.Merchant{
-		UserID:    userID,
-		Name:      m.GetName(),
-		CreatedBy: userID,
-		CreatedAt: *datetime,
-		UpdatedBy: userID,
-		UpdatedAt: *datetime,
+		UserID:      userID,
+		Name:        m.GetName(),
+		Description: m.Description,
+		CreatedBy:   userID,
+		CreatedAt:   *datetime,
+		UpdatedBy:   userID,
+		UpdatedAt:   *datetime,
 	}, nil
 }
 
@@ -35,9 +36,10 @@ func (m *MerchantPut) ToEntity(ctx *ctx.Ctx) (res *merchantEntity.Merchant, err 
 		return nil, err
 	}
 	return &merchantEntity.Merchant{
-		ID:        m.GetId(),
-		Name:      m.GetName(),
-		UpdatedBy: ctx.UserClaims().UserID,
-		UpdatedAt: *datetime,
+		ID:          m.GetId(),
+		Name:        m.GetName(),
+		Description: m.Description,
+		UpdatedBy:   ctx.UserClaims().UserID,
+		UpdatedAt:   *datetime,
 	}, nil
 }

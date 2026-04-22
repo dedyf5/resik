@@ -45,6 +45,13 @@ var (
 		},
 	}
 
+	ValidationFieldDescription = &Term{
+		Message: &i18n.Message{
+			ID:    "validation.field.description",
+			Other: "Description",
+		},
+	}
+
 	ValidationFieldCreatedAt = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.created_at",
