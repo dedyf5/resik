@@ -421,6 +421,87 @@ const docTemplaterest = `{
             }
         },
         "/merchant/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get merchant by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "merchant"
+                ],
+                "summary": "Get Merchant by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Merchant ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "en",
+                            "id",
+                            "ja"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.MerchantDetail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -1097,6 +1178,12 @@ const docTemplaterest = `{
                     "type": "string",
                     "example": "2024-04-14T14:18:00Z"
                 },
+                "description": {
+                    "description": "nullable",
+                    "type": "string",
+                    "maxLength": 5000,
+                    "example": "Merchant description 1"
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 40,
@@ -1111,6 +1198,12 @@ const docTemplaterest = `{
                 "updated_at"
             ],
             "properties": {
+                "description": {
+                    "description": "nullable",
+                    "type": "string",
+                    "maxLength": 5000,
+                    "example": "Merchant description 1"
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 40,
@@ -1204,6 +1297,47 @@ const docTemplaterest = `{
                 "status": {
                     "type": "string",
                     "example": "UP"
+                }
+            }
+        },
+        "response.MerchantDetail": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-02T15:04:05+07:00"
+                },
+                "created_by": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "description": {
+                    "description": "nullable",
+                    "type": "string",
+                    "example": "Merchant description 1"
+                },
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Merchant 1"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2026-01-02T15:04:05+07:00"
+                },
+                "updated_by": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "user": {
+                    "$ref": "#/definitions/response.User"
+                },
+                "user_id": {
+                    "type": "integer",
+                    "example": 1
                 }
             }
         },
@@ -1393,6 +1527,23 @@ const docTemplaterest = `{
                 },
                 "status": {
                     "$ref": "#/definitions/response.ResponseStatusWithoutDetails"
+                }
+            }
+        },
+        "response.User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "User 1"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "user1"
                 }
             }
         },

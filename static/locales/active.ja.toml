@@ -18,6 +18,10 @@ other = "時刻形式が正しくありません"
 hash = "sha1-0ed527aeba162b5abf0c30b481099d29ca00fed2"
 other = "マーチャント"
 
+[not_found_val]
+hash = "sha1-52a066873d56a106cd5302d7aede09fb9e10f526"
+other = "{{.Val}}が見つかりません"
+
 [successfully_created_val]
 hash = "sha1-99059eeb725f4134e7ca43740027343904210c12"
 other = "{{.Val}}の作成に成功しました"
@@ -34,6 +38,10 @@ other = "レート制限超過"
 hash = "sha1-740b83150add8d2de17b3ab10d33605bb00e9589"
 other = "無許可"
 
+[user]
+hash = "sha1-9f8a2389a20ca0752aa9e95093515517e90e194c"
+other = "ユーザー"
+
 ["validation.field.created_at"]
 hash = "sha1-f1c69716be47f3a1cb7d0bfc922d70909efbe2b6"
 other = "作成日時"
@@ -45,6 +53,10 @@ other = "終了日時"
 ["validation.field.datetime_start"]
 hash = "sha1-240e1ac68abaebaf3674af958401eed26e776d84"
 other = "開始日時"
+
+["validation.field.description"]
+hash = "sha1-55f8ebc805e65b5b71ddafdae390e3be2bcd69af"
+other = "説明"
 
 ["validation.field.id"]
 hash = "sha1-89f89c02cf47e091e726a4e07b88af0966806897"

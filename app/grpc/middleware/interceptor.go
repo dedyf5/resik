@@ -60,6 +60,7 @@ func methodRoles() map[string][]Role {
 		merchantService + "MerchantPost":        {RoleValidToken},
 		merchantService + "MerchantPut":         {RoleValidToken},
 		merchantService + "MerchantDelete":      {RoleValidToken},
+		merchantService + "MerchantDetailGet":   {RoleValidToken},
 		merchantService + "MerchantListGet":     {RoleValidToken},
 		transactionService + "MerchantOmzetGet": {RoleValidToken},
 		transactionService + "OutletOmzetGet":   {RoleValidToken},

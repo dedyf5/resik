@@ -21,15 +21,16 @@ import (
 	configEntity "github.com/dedyf5/resik/entities/config"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	"github.com/dedyf5/resik/entities/merchant/param"
+	userEntity "github.com/dedyf5/resik/entities/user"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-	merchantMock "github.com/dedyf5/resik/repositories/mock"
+	repoMock "github.com/dedyf5/resik/repositories/mock"
 )
 
 func TestMerchantInsert(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, ctx, merchantService := setup(ctrl)
+	merchantRepo, _, ctx, merchantService := setup(ctrl)
 
 	merchant := &merchantEntity.Merchant{}
 
@@ -61,7 +62,7 @@ func TestMerchantUpdate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, ctx, merchantService := setup(ctrl)
+	merchantRepo, _, ctx, merchantService := setup(ctrl)
 
 	merchant := &merchantEntity.Merchant{}
 
@@ -93,7 +94,7 @@ func TestMerchantDelete(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, ctx, merchantService := setup(ctrl)
+	merchantRepo, _, ctx, merchantService := setup(ctrl)
 
 	merchant := &merchantEntity.Merchant{}
 
@@ -121,11 +122,67 @@ func TestMerchantDelete(t *testing.T) {
 	})
 }
 
+func TestMerchantGetByIDAndUserID(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	merchantRepo, userRepo, ctx, merchantService := setup(ctrl)
+
+	merchant := &merchantEntity.Merchant{}
+	user := &userEntity.User{}
+
+	t.Run("MerchantGetByIDAndUserID-ERROR MerchantGetByIDAndUserID", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID).Return(merchant, statusErr),
+		)
+		_, err := merchantService.MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID)
+		assert.Equal(t, statusErr, err)
+	})
+
+	t.Run("MerchantGetByIDAndUserID-ERROR UserByID ERROR", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID).Return(merchant, nil),
+			userRepo.EXPECT().UserByID(ctx, user.ID).Return(user, statusErr),
+		)
+		_, err := merchantService.MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID)
+		assert.Equal(t, statusErr, err)
+	})
+
+	t.Run("MerchantGetByIDAndUserID-ERROR UserByID Not Found", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusNotFound,
+		}
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID).Return(merchant, nil),
+			userRepo.EXPECT().UserByID(ctx, user.ID).Return(nil, nil),
+		)
+		_, err := merchantService.MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID)
+		assert.Equal(t, statusErr.Code, err.Code)
+	})
+
+	t.Run("ALL-SUCCESS", func(t *testing.T) {
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID).Return(merchant, nil),
+			userRepo.EXPECT().UserByID(ctx, user.ID).Return(user, nil),
+		)
+		res, err := merchantService.MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID)
+		assert.Nil(t, err)
+		assert.Equal(t, merchant, res)
+		assert.Equal(t, user, &res.User)
+	})
+}
+
 func TestMerchantListGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, ctx, merchantService := setup(ctrl)
+	merchantRepo, _, ctx, merchantService := setup(ctrl)
 
 	param := &param.MerchantListGet{
 		Ctx: ctx,
@@ -177,10 +234,11 @@ func TestMerchantListGet(t *testing.T) {
 	})
 }
 
-func setup(ctrl *gomock.Controller) (merchantRepo *merchantMock.MockIMerchant, ctx *ctx.Ctx, merchantService *Service) {
-	merchantRepo = merchantMock.NewMockIMerchant(ctrl)
+func setup(ctrl *gomock.Controller) (merchantRepo *repoMock.MockIMerchant, userRepo *repoMock.MockIUser, ctx *ctx.Ctx, merchantService *Service) {
+	merchantRepo = repoMock.NewMockIMerchant(ctrl)
+	userRepo = repoMock.NewMockIUser(ctrl)
 	config, ctx := env()
-	merchantService = New(merchantRepo, config)
+	merchantService = New(merchantRepo, userRepo, config)
 	return
 }
 

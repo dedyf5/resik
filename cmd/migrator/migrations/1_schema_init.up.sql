@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `merchant` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) NOT NULL,
   `name` varchar(40) NOT NULL,
+  `description` text NULL DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `created_by` bigint(20) NOT NULL,
   `updated_at` datetime NOT NULL,

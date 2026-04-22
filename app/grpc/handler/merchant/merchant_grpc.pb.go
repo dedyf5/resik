@@ -26,6 +26,7 @@ const _ = grpc.SupportPackageIsVersion7
 type MerchantServiceClient interface {
 	MerchantPost(ctx context.Context, in *request.MerchantPost, opts ...grpc.CallOption) (*MerchantUpsertRes, error)
 	MerchantPut(ctx context.Context, in *request.MerchantPut, opts ...grpc.CallOption) (*MerchantUpsertRes, error)
+	MerchantDetailGet(ctx context.Context, in *request.MerchantDetailGet, opts ...grpc.CallOption) (*MerchantDetailGetRes, error)
 	MerchantListGet(ctx context.Context, in *request.MerchantListGet, opts ...grpc.CallOption) (*MerchantListGetRes, error)
 	MerchantDelete(ctx context.Context, in *request.MerchantDelete, opts ...grpc.CallOption) (*status.Empty, error)
 }
@@ -56,6 +57,15 @@ func (c *merchantServiceClient) MerchantPut(ctx context.Context, in *request.Mer
 	return out, nil
 }
 
+func (c *merchantServiceClient) MerchantDetailGet(ctx context.Context, in *request.MerchantDetailGet, opts ...grpc.CallOption) (*MerchantDetailGetRes, error) {
+	out := new(MerchantDetailGetRes)
+	err := c.cc.Invoke(ctx, "/merchant.MerchantService/MerchantDetailGet", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *merchantServiceClient) MerchantListGet(ctx context.Context, in *request.MerchantListGet, opts ...grpc.CallOption) (*MerchantListGetRes, error) {
 	out := new(MerchantListGetRes)
 	err := c.cc.Invoke(ctx, "/merchant.MerchantService/MerchantListGet", in, out, opts...)
@@ -80,6 +90,7 @@ func (c *merchantServiceClient) MerchantDelete(ctx context.Context, in *request.
 type MerchantServiceServer interface {
 	MerchantPost(context.Context, *request.MerchantPost) (*MerchantUpsertRes, error)
 	MerchantPut(context.Context, *request.MerchantPut) (*MerchantUpsertRes, error)
+	MerchantDetailGet(context.Context, *request.MerchantDetailGet) (*MerchantDetailGetRes, error)
 	MerchantListGet(context.Context, *request.MerchantListGet) (*MerchantListGetRes, error)
 	MerchantDelete(context.Context, *request.MerchantDelete) (*status.Empty, error)
 	mustEmbedUnimplementedMerchantServiceServer()
@@ -94,6 +105,9 @@ func (UnimplementedMerchantServiceServer) MerchantPost(context.Context, *request
 }
 func (UnimplementedMerchantServiceServer) MerchantPut(context.Context, *request.MerchantPut) (*MerchantUpsertRes, error) {
 	return nil, status1.Errorf(codes.Unimplemented, "method MerchantPut not implemented")
+}
+func (UnimplementedMerchantServiceServer) MerchantDetailGet(context.Context, *request.MerchantDetailGet) (*MerchantDetailGetRes, error) {
+	return nil, status1.Errorf(codes.Unimplemented, "method MerchantDetailGet not implemented")
 }
 func (UnimplementedMerchantServiceServer) MerchantListGet(context.Context, *request.MerchantListGet) (*MerchantListGetRes, error) {
 	return nil, status1.Errorf(codes.Unimplemented, "method MerchantListGet not implemented")
@@ -150,6 +164,24 @@ func _MerchantService_MerchantPut_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MerchantService_MerchantDetailGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(request.MerchantDetailGet)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MerchantServiceServer).MerchantDetailGet(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/merchant.MerchantService/MerchantDetailGet",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MerchantServiceServer).MerchantDetailGet(ctx, req.(*request.MerchantDetailGet))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MerchantService_MerchantListGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(request.MerchantListGet)
 	if err := dec(in); err != nil {
@@ -200,6 +232,10 @@ var MerchantService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "MerchantPut",
 			Handler:    _MerchantService_MerchantPut_Handler,
+		},
+		{
+			MethodName: "MerchantDetailGet",
+			Handler:    _MerchantService_MerchantDetailGet_Handler,
 		},
 		{
 			MethodName: "MerchantListGet",

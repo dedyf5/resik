@@ -60,12 +60,12 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		return nil, nil, err
 	}
 	merchantRepo := merchant.New(gormDB)
-	serviceService := service.New(merchantRepo, config)
+	userRepo := user.New(gormDB)
+	serviceService := service.New(merchantRepo, userRepo, config)
 	merchantHandler := merchant2.New(logLog, validate, serviceService)
 	transactionRepo := transaction.New(gormDB)
 	service5 := service2.New(transactionRepo, config)
 	transactionHandler := transaction2.New(config, logLog, validate, service5)
-	userRepo := user.New(gormDB)
 	auth := config.Auth
 	argon2Config := provideHasherConfig(auth)
 	iHash := hash.NewArgon2Hasher(argon2Config)
