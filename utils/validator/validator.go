@@ -162,15 +162,8 @@ func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) 
 	return v.RegisterTranslation("oneof_order", trans, func(ut ut.Translator) error {
 		return ut.Add("oneof_order", msg, true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		s := strings.ReplaceAll(fe.Param(), "'", "")
-		s = strings.ReplaceAll(s, `\"`, ``)
-		base := strings.Split(s, " ")
-		vals := make([]string, 0, len(base)*2)
-		for _, v := range base {
-			vals = append(vals, v)
-			vals = append(vals, "-"+v)
-		}
-		param := strings.Join(vals, " ")
+		options := getOneOfOrderOptions(fe.Param())
+		param := strings.Join(options, " ")
 
 		t, _ := ut.T("oneof_order", fe.Field(), param)
 		return t
@@ -257,23 +250,27 @@ func (v *Validate) Translator(lang language.Tag) ut.Translator {
 }
 
 func isOneOfOrder(fl validator.FieldLevel) bool {
-	s := strings.ReplaceAll(fl.Param(), "'", "")
-	s = strings.ReplaceAll(s, "\"", "")
+	options := getOneOfOrderOptions(fl.Param())
+	fields := strings.SplitSeq(fl.Field().String(), ",")
+	for field := range fields {
+		if !slices.Contains(options, field) {
+			return false
+		}
+	}
+
+	return true
+}
+
+func getOneOfOrderOptions(param string) []string {
+	s := strings.ReplaceAll(param, "'", "")
+	s = strings.ReplaceAll(s, `\"`, ``)
 	base := strings.Split(s, " ")
 	vals := make([]string, 0, len(base)*2)
 	for _, v := range base {
 		vals = append(vals, v)
 		vals = append(vals, "-"+v)
 	}
-
-	fields := strings.SplitSeq(fl.Field().String(), ",")
-	for field := range fields {
-		if !slices.Contains(vals, field) {
-			return false
-		}
-	}
-
-	return true
+	return vals
 }
 
 func errorReason(err validator.FieldError) string {
