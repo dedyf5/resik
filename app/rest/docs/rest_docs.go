@@ -316,12 +316,6 @@ const docTemplaterest = `{
                             "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    },
                     "429": {
                         "description": "Too Many Requests",
                         "schema": {

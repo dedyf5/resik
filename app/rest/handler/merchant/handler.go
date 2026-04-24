@@ -201,7 +201,6 @@ func (h *Handler) MerchantDetailGet(echoCtx echo.Context) error {
 // @Success		200	{object}	resPkg.ResponseSuccessWithMeta{data=[]resMerchantCore.MerchantList}
 // @Failure     400 {object}	resPkg.ResponseBadRequest
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
-// @Failure     404 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant [get]
@@ -225,13 +224,8 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 		return err
 	}
 
-	code := http.StatusOK
-	if len(res.Data) == 0 {
-		code = http.StatusNotFound
-	}
-
 	return resPkg.NewStatusDataMeta(
-		code,
+		http.StatusOK,
 		resMerchantCore.MerchantListFromEntity(res.Data),
 		&resPkg.Meta{
 			PageCurrent: param.Filter.Raw().PageOrDefault(),

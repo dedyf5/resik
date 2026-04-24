@@ -34,9 +34,6 @@ func (h *MerchantHandler) MerchantListGet(c context.Context, req *reqMerchantCor
 	}
 
 	code := codes.OK
-	if len(res.Data) == 0 {
-		code = codes.NotFound
-	}
 
 	return &MerchantListGetRes{
 		Status: &status.Status{
