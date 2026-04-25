@@ -10,8 +10,7 @@ type Request struct {
 }
 
 func (r *Request) LangAvailable() []string {
-	typ := reflect.TypeOf(*r)
-	fld := typ.Field(0)
+	fld := reflect.TypeFor[Request]().Field(0)
 	validate := fld.Tag.Get("validate")
 	validateList := strings.Split(validate, ",")
 	str := ""
