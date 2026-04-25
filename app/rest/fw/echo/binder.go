@@ -84,7 +84,7 @@ func (b *bind) ParamValidator(c echo.Context, i any) error {
 	}
 
 	df := reflect.TypeOf(i)
-	if df.Kind() == reflect.Ptr {
+	if df.Kind() == reflect.Pointer {
 		df = df.Elem()
 	}
 
@@ -93,8 +93,7 @@ func (b *bind) ParamValidator(c echo.Context, i any) error {
 	}
 
 	validate := func(tn string, getter func(string) string) error {
-		for i := 0; i < df.NumField(); i++ {
-			f := df.Field(i)
+		for f := range df.Fields() {
 			ftq := f.Tag.Get(tn)
 			if ftq == "" {
 				continue
@@ -111,9 +110,9 @@ func (b *bind) ParamValidator(c echo.Context, i any) error {
 				continue
 			}
 
-			ft := df.Field(i).Type.Kind()
-			if ft == reflect.Ptr {
-				ft = df.Field(i).Type.Elem().Kind()
+			ft := f.Type.Kind()
+			if ft == reflect.Pointer {
+				ft = f.Type.Elem().Kind()
 			}
 
 			if ft == reflect.String {
