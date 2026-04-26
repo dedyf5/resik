@@ -26,26 +26,26 @@ type ServerHTTP struct {
 	interceptor *middleware.Interceptor
 }
 
-func newServerHTTP(c context.Context, config config.Config, router *Router, interceptor *middleware.Interceptor) *ServerHTTP {
-	lc := net.ListenConfig{}
-	listener, err := lc.Listen(c, "tcp", fmt.Sprintf(":%d", config.Module.Port))
-	if err != nil {
-		log.Fatalf("HTTP SERVER LISTEN ERROR: %s", err.Error())
-		return nil
-	}
-	server := grpc.NewServer(
-		grpc.ChainUnaryInterceptor(interceptor.Unary, interceptor.RateLimit),
-	)
+func newServerHTTP(config config.Config, router *Router, interceptor *middleware.Interceptor) *ServerHTTP {
 	return &ServerHTTP{
 		config:      config,
-		listener:    listener,
-		grpcServer:  server,
 		router:      router,
 		interceptor: interceptor,
 	}
 }
 
-func (s *ServerHTTP) Start() {
+func (s *ServerHTTP) Start(c context.Context) error {
+	lc := net.ListenConfig{}
+	listener, err := lc.Listen(c, "tcp", fmt.Sprintf(":%d", s.config.Module.Port))
+	if err != nil {
+		return fmt.Errorf("HTTP SERVER LISTEN ERROR: %w", err)
+	}
+	s.listener = listener
+
+	s.grpcServer = grpc.NewServer(
+		grpc.ChainUnaryInterceptor(s.interceptor.Unary, s.interceptor.RateLimit),
+	)
+
 	appName := color.Format(color.GREEN, s.config.App.Name())
 	appVersion := color.Format(color.YELLOW, s.config.App.Version())
 
@@ -67,6 +67,8 @@ func (s *ServerHTTP) Start() {
 			}
 		}
 	}()
+
+	return nil
 }
 
 func (s *ServerHTTP) Close() {

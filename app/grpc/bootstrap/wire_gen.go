@@ -94,7 +94,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		return nil, nil, err
 	}
 	interceptor := middleware.NewInterceptor(module, auth, limiter, logLog)
-	serverHTTP := newServerHTTP(c, config, router, interceptor)
+	serverHTTP := newServerHTTP(config, router, interceptor)
 	bootstrapApp, cleanup4, err := newApp(serverHTTP)
 	if err != nil {
 		cleanup3()

@@ -26,7 +26,9 @@ func newApp(serverHTTP *ServerHTTP) (*App, func(), error) {
 func (app *App) Start(c context.Context) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	app.serverHTTP.Start()
+	if err := app.serverHTTP.Start(c); err != nil {
+		log.Fatalf("FAILED TO START HTTP SERVER: %v", err)
+	}
 
 	<-c.Done()
 
