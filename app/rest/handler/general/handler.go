@@ -15,7 +15,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 type Handler struct {
@@ -43,7 +43,7 @@ func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho) *Handler {
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/ [get]
-func (h *Handler) Home(echoCtx echo.Context) error {
+func (h *Handler) Home(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err

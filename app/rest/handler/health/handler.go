@@ -14,7 +14,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 type HealthHandler struct {
@@ -42,7 +42,7 @@ func New(log *logCtx.Log, fw echoFW.IEcho, hs healthCore.IService) *HealthHandle
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     503 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/healthz [get]
-func (h *HealthHandler) HealthHealthzGet(echoCtx echo.Context) error {
+func (h *HealthHandler) HealthHealthzGet(echoCtx *echo.Context) error {
 	var payload commonEntity.Request
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
@@ -77,7 +77,7 @@ func (h *HealthHandler) HealthHealthzGet(echoCtx echo.Context) error {
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     503 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/readyz [get]
-func (h *HealthHandler) HealthReadyzGet(echoCtx echo.Context) error {
+func (h *HealthHandler) HealthReadyzGet(echoCtx *echo.Context) error {
 	var payload commonEntity.Request
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {

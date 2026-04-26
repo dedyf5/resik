@@ -14,17 +14,17 @@ import (
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/ctx/lang/term"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 type Binder interface {
-	Bind(i any, c echo.Context) error
-	BindHeaders(c echo.Context, i any) error
-	BindBody(c echo.Context, i any) error
-	BindQueryParams(c echo.Context, i any) error
-	BindPathParams(c echo.Context, i any) error
-	ParamValidator(c echo.Context, i any) error
-	JSONErrorFormatter(c echo.Context, err error) error
+	Bind(c *echo.Context, i any) error
+	BindHeaders(c *echo.Context, i any) error
+	BindBody(c *echo.Context, i any) error
+	BindQueryParams(c *echo.Context, i any) error
+	BindPathParams(c *echo.Context, i any) error
+	ParamValidator(c *echo.Context, i any) error
+	JSONErrorFormatter(c *echo.Context, err error) error
 }
 
 var binder *bind
@@ -41,33 +41,33 @@ func NewBinder() Binder {
 	return binder
 }
 
-func (b *bind) BindHeaders(c echo.Context, i any) error {
-	return b.def.BindHeaders(c, i)
+func (b *bind) BindHeaders(c *echo.Context, i any) error {
+	return echo.BindHeaders(c, i)
 }
 
-func (b *bind) BindBody(c echo.Context, i any) error {
-	return b.def.BindBody(c, i)
+func (b *bind) BindBody(c *echo.Context, i any) error {
+	return echo.BindBody(c, i)
 }
 
-func (b *bind) BindQueryParams(c echo.Context, i any) error {
-	return b.def.BindQueryParams(c, i)
+func (b *bind) BindQueryParams(c *echo.Context, i any) error {
+	return echo.BindQueryParams(c, i)
 }
 
-func (b *bind) BindPathParams(c echo.Context, i any) error {
-	return b.def.BindPathParams(c, i)
+func (b *bind) BindPathParams(c *echo.Context, i any) error {
+	return echo.BindPathValues(c, i)
 }
 
-func (b *bind) Bind(i any, c echo.Context) error {
+func (b *bind) Bind(c *echo.Context, i any) error {
 	if err := b.ParamValidator(c, i); err != nil {
 		return err
 	}
-	if err := b.def.Bind(i, c); err != nil {
+	if err := b.def.Bind(c, i); err != nil {
 		return b.JSONErrorFormatter(c, err)
 	}
 	return nil
 }
 
-func (b *bind) ParamValidator(c echo.Context, i any) error {
+func (b *bind) ParamValidator(c *echo.Context, i any) error {
 	if i == nil {
 		return nil
 	}
@@ -178,7 +178,7 @@ func (b *bind) ParamValidator(c echo.Context, i any) error {
 	return nil
 }
 
-func (b *bind) JSONErrorFormatter(c echo.Context, err error) error {
+func (b *bind) JSONErrorFormatter(c *echo.Context, err error) error {
 	lang, errLang := langCtx.FromContext(c.Request().Context())
 	if errLang != nil {
 		return errLang

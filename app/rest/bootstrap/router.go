@@ -14,7 +14,8 @@ import (
 	userHandler "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/utils/ratelimit"
-	echoSwagger "github.com/swaggo/echo-swagger"
+	"github.com/labstack/echo/v5"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 type Router struct {
@@ -80,8 +81,8 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	docs.SwaggerInforest.Schemes = []string{r.config.Module.Public.Schema}
 	docs.SwaggerInforest.BasePath = r.config.Module.Public.BasePath
 	docs.SwaggerInforest.Description = appModuleName + " API Documentation"
-	docHandler := echoSwagger.EchoWrapHandler(
-		echoSwagger.InstanceName(docs.SwaggerInforest.InfoInstanceName),
-	)
+	docHandler := echo.WrapHandler(httpSwagger.Handler(
+		httpSwagger.InstanceName(docs.SwaggerInforest.InfoInstanceName),
+	))
 	e.GET(echoFW.DocPrefix+"*", docHandler)
 }
