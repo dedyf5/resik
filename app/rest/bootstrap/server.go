@@ -18,19 +18,18 @@ import (
 	"github.com/dedyf5/resik/config"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/pkg/color"
-	"github.com/labstack/echo/v4"
-	echoMiddle "github.com/labstack/echo/v4/middleware"
+	"github.com/labstack/echo/v5"
+	echoMiddle "github.com/labstack/echo/v5/middleware"
 )
 
 type ServerHTTP struct {
-	config config.Config
-	echo   *echo.Echo
+	config     config.Config
+	echo       *echo.Echo
+	httpServer *http.Server
 }
 
 func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 	e := echo.New()
-	e.HideBanner = true
-	e.HidePort = true
 	e.Binder = echoFW.NewBinder()
 	e.HTTPErrorHandler = echoFW.HTTPErrorHandler
 	e.IPExtractor = func(r *http.Request) string {
@@ -66,7 +65,7 @@ func (s *ServerHTTP) Start(c context.Context) {
 	log.Printf("STARTED HTTP SERVER AT %v\n", addr)
 
 	go func() {
-		server := &http.Server{
+		s.httpServer = &http.Server{
 			Addr:              addr,
 			ReadHeaderTimeout: s.config.HTTP.ReadHeaderTimeout,
 			ReadTimeout:       s.config.HTTP.ReadTimeout,
@@ -75,9 +74,10 @@ func (s *ServerHTTP) Start(c context.Context) {
 			BaseContext: func(_ net.Listener) context.Context {
 				return c
 			},
+			Handler: s.echo,
 		}
 
-		err := s.echo.StartServer(server)
+		err := s.httpServer.ListenAndServe()
 		if err != nil {
 			if errors.Is(err, http.ErrServerClosed) {
 				log.Println("HTTP SERVER CLOSED")
@@ -93,7 +93,7 @@ func (s *ServerHTTP) Close() error {
 	defer cancel()
 
 	log.Println("SHUTTING DOWN HTTP SERVER")
-	err := s.echo.Shutdown(ctxShutdown)
+	err := s.httpServer.Shutdown(ctxShutdown)
 	if err != nil {
 		log.Printf("HTTP SERVER ERROR: %s", err.Error())
 	}

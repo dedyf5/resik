@@ -16,7 +16,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 // necessary to avoid unused package errors
@@ -54,7 +54,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, confi
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/transaction/merchant/{merchant_id}/omzet [get]
-func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
+func (h *Handler) MerchantOmzetGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
@@ -107,7 +107,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx echo.Context) error {
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/transaction/outlet/{outlet_id}/omzet [get]
-func (h *Handler) OutletOmzetGet(echoCtx echo.Context) error {
+func (h *Handler) OutletOmzetGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err

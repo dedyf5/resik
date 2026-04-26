@@ -6,20 +6,20 @@ package echo
 
 import (
 	"errors"
-	"fmt"
+	"log"
 	"net/http"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	httpUtil "github.com/dedyf5/resik/utils/http"
 	validatorUtil "github.com/dedyf5/resik/utils/validator"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 const DocPrefix string = "/docs/swagger"
 
 type IEcho interface {
-	StructValidator(ctx echo.Context, payload any) error
+	StructValidator(ctx *echo.Context, payload any) error
 }
 
 type Echo struct {
@@ -32,7 +32,7 @@ func New(validator validatorUtil.IValidate) *Echo {
 	}
 }
 
-func (e *Echo) StructValidator(ctx echo.Context, payload any) error {
+func (e *Echo) StructValidator(ctx *echo.Context, payload any) error {
 	if err := ctx.Bind(payload); err != nil {
 		return err
 	}
@@ -46,8 +46,13 @@ func (e *Echo) StructValidator(ctx echo.Context, payload any) error {
 	return nil
 }
 
-func HTTPErrorHandler(err error, ctx echo.Context) {
-	if ctx.Response().Committed {
+func HTTPErrorHandler(ctx *echo.Context, err error) {
+	resp, errUnwrap := echo.UnwrapResponse(ctx.Response())
+	if errUnwrap != nil {
+		log.Printf("[error echo.UnwrapResponse] %s %s: %s\n", ctx.Request().Method, ctx.Request().URL.Path, errUnwrap.Error())
+	}
+
+	if resp != nil && resp.Committed {
 		return
 	}
 
@@ -57,8 +62,7 @@ func HTTPErrorHandler(err error, ctx echo.Context) {
 	}
 
 	if res, ok := errors.AsType[*echo.HTTPError](err); ok {
-		msg := fmt.Sprintf("%s", res.Message)
-		statusRes := resPkg.NewStatusMessage(res.Code, msg, nil)
+		statusRes := resPkg.NewStatusMessage(res.Code, res.Message, nil)
 		_ = ctx.JSON(
 			res.Code,
 			httpUtil.LoggerFromStatus(statusRes),

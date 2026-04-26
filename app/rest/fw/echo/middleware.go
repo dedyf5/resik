@@ -20,8 +20,8 @@ import (
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/dedyf5/resik/utils/ratelimit"
 	"github.com/golang-jwt/jwt/v5"
-	echojwt "github.com/labstack/echo-jwt/v4"
-	"github.com/labstack/echo/v4"
+	echojwt "github.com/labstack/echo-jwt/v5"
+	"github.com/labstack/echo/v5"
 
 	"golang.org/x/text/language"
 )
@@ -93,11 +93,11 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
 
 func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 	jwtConfig := echojwt.Config{
-		NewClaimsFunc: func(c echo.Context) jwt.Claims {
+		NewClaimsFunc: func(c *echo.Context) jwt.Claims {
 			return new(jwtCtx.AuthClaims)
 		},
 		SigningKey: []byte(signatureKey),
-		ErrorHandler: func(c echo.Context, err error) error {
+		ErrorHandler: func(c *echo.Context, err error) error {
 			ctx := c.Request().Context()
 			langRes, langErr := langCtx.FromContext(ctx)
 			if langErr != nil {
@@ -134,7 +134,7 @@ func JWTMiddleware(signatureKey string, langDef language.Tag) echo.MiddlewareFun
 
 func RateLimitMiddleware(limiter ratelimit.Limiter) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
+		return func(c *echo.Context) error {
 			key := limiter.GetKeyREST(c.Request().Context(), c.RealIP())
 
 			res, err := limiter.Take(c.Request().Context(), key)

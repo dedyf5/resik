@@ -16,7 +16,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v5"
 )
 
 type Handler struct {
@@ -51,7 +51,7 @@ func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant [post]
-func (h *Handler) MerchantPost(echoCtx echo.Context) error {
+func (h *Handler) MerchantPost(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
@@ -101,7 +101,7 @@ func (h *Handler) MerchantPost(echoCtx echo.Context) error {
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant/{id} [put]
-func (h *Handler) MerchantPut(echoCtx echo.Context) error {
+func (h *Handler) MerchantPut(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
@@ -154,7 +154,7 @@ func (h *Handler) MerchantPut(echoCtx echo.Context) error {
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant/{id} [get]
-func (h *Handler) MerchantDetailGet(echoCtx echo.Context) error {
+func (h *Handler) MerchantDetailGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
@@ -204,7 +204,7 @@ func (h *Handler) MerchantDetailGet(echoCtx echo.Context) error {
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant [get]
-func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
+func (h *Handler) MerchantListGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
@@ -250,7 +250,7 @@ func (h *Handler) MerchantListGet(echoCtx echo.Context) error {
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
 // @Router		/merchant/{id} [delete]
-func (h *Handler) MerchantDelete(echoCtx echo.Context) error {
+func (h *Handler) MerchantDelete(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
