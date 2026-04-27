@@ -1,37 +1,37 @@
 -- +migrate Up
 -- Insert sample data for demo/development environment, ordered by dependencies
 
-/*!40000 ALTER TABLE `user` DISABLE KEYS */;
-LOCK TABLES `user` WRITE;
-INSERT INTO `user` VALUES 
+/*!40000 ALTER TABLE `users` DISABLE KEYS */;
+LOCK TABLES `users` WRITE;
+INSERT INTO `users` VALUES 
 (1,'Admin 1','admin1','$argon2id$v=19$m=65536,t=3,p=2$OAmGvbP+rbmKepq51oWFKw$cXJzz+55af5TwFklHehVyILj7SKa6JKAGF8yWY3MDfQ','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
 (2,'Admin 2','admin2','$argon2id$v=19$m=65536,t=3,p=2$1Ta5iXZpKFDlZlVTyRi5Hg$P09bIUKOIbUdqKy4UqjmP2HuA/2OylS6TnxZhDDKF0I','2024-02-02 19:52:41',2,'2024-02-02 19:52:41',2);
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+/*!40000 ALTER TABLE `users` ENABLE KEYS */;
 
-/*!40000 ALTER TABLE `merchant` DISABLE KEYS */;
-LOCK TABLES `merchant` WRITE;
-INSERT INTO `merchant` VALUES 
+/*!40000 ALTER TABLE `merchants` DISABLE KEYS */;
+LOCK TABLES `merchants` WRITE;
+INSERT INTO `merchants` VALUES 
 (1,1,'Merchant 1','merchant description 1','2024-02-02 19:52:41',1,'2024-04-06 00:08:00',1),
 (2,2,'Merchant 1','merchant description 1','2024-02-02 19:52:41',2,'2024-02-02 19:52:41',2),
 (3,1,'Merchant 2','merchant description 2','2024-04-06 22:56:00',1,'2024-04-06 22:56:00',1),
 (4,1,'Merchant 3','merchant description 3','2024-04-06 22:56:00',1,'2024-04-06 23:00:00',1),
 (5,1,'Merchant 4','merchant description 4','2024-04-06 22:56:00',1,'2024-04-07 01:14:00',1);
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `merchant` ENABLE KEYS */;
+/*!40000 ALTER TABLE `merchants` ENABLE KEYS */;
 
-/*!40000 ALTER TABLE `outlet` DISABLE KEYS */;
-LOCK TABLES `outlet` WRITE;
-INSERT INTO `outlet` VALUES 
+/*!40000 ALTER TABLE `outlets` DISABLE KEYS */;
+LOCK TABLES `outlets` WRITE;
+INSERT INTO `outlets` VALUES 
 (1,1,'Outlet 1','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
 (2,2,'Outlet 1','2024-02-02 19:52:41',2,'2024-02-02 19:52:41',2),
 (3,1,'Outlet 2','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1);
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `outlet` ENABLE KEYS */;
+/*!40000 ALTER TABLE `outlets` ENABLE KEYS */;
 
-/*!40000 ALTER TABLE `transaction` DISABLE KEYS */;
-LOCK TABLES `transaction` WRITE;
-INSERT INTO `transaction` VALUES 
+/*!40000 ALTER TABLE `transactions` DISABLE KEYS */;
+LOCK TABLES `transactions` WRITE;
+INSERT INTO `transactions` VALUES 
 (1,1,1,2000,'2021-10-31 22:30:04',1,'2021-10-31 22:30:04',1),
 (2,1,1,2500,'2021-11-01 03:20:14',1,'2021-11-01 03:20:14',1),
 (3,1,1,4000,'2021-11-01 22:30:04',1,'2021-11-01 22:30:04',1),
@@ -55,4 +55,4 @@ INSERT INTO `transaction` VALUES
 (21,2,2,1000,'2021-11-09 22:31:04',2,'2021-11-09 22:31:04',2),
 (22,2,2,7000,'2021-11-11 02:59:30',2,'2021-11-11 02:59:30',2);
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `transaction` ENABLE KEYS */;
+/*!40000 ALTER TABLE `transactions` ENABLE KEYS */;

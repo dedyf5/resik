@@ -55,7 +55,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	e.GET("/token-refresh", userHandler.TokenRefreshGet, validateToken, jwtMiddleware, rateLimit)
 
 	merchantHandler := r.merchantHandler
-	merchant := e.Group("/merchant", validateToken, jwtMiddleware, rateLimit)
+	merchant := e.Group("/merchants", validateToken, jwtMiddleware, rateLimit)
 	merchant.GET("", merchantHandler.MerchantListGet)
 	merchant.POST("", merchantHandler.MerchantPost)
 	merchant.GET("/:id", merchantHandler.MerchantDetailGet)
@@ -63,7 +63,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	merchant.DELETE("/:id", merchantHandler.MerchantDelete)
 
 	trxHandler := r.trxHandler
-	trx := e.Group("/transaction", validateToken, jwtMiddleware, rateLimit)
+	trx := e.Group("/transactions", validateToken, jwtMiddleware, rateLimit)
 	trxMerchant := trx.Group("/merchant/:merchant_id")
 	trxMerchant.GET("/omzet", trxHandler.MerchantOmzetGet)
 	trxOutlet := trx.Group("/outlet/:outlet_id")

@@ -10,7 +10,7 @@ import (
 	"github.com/dedyf5/resik/entities/user"
 )
 
-const TABLE_NAME = "merchant"
+const TABLE_NAME = "merchants"
 
 type Merchant struct {
 	ID          uint64    `json:"id" gorm:"parimaryKey;autoIncrement;"`

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-const TABLE_NAME = "user"
+const TABLE_NAME = "users"
 
 type User struct {
 	ID        uint64    `json:"id"`

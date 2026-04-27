@@ -44,7 +44,7 @@ func (r *MerchantRepo) MerchantGetByIDAndUserID(ctx *ctx.Ctx, merchantID, userID
 	return
 }
 
-func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet) (merchant []merchantEntity.Merchant, err *resPkg.Status) {
+func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet) (merchants []merchantEntity.Merchant, err *resPkg.Status) {
 	query := r.MerchantListBaseQuery(param)
 
 	query = query.Select("*").
@@ -64,7 +64,7 @@ func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet)
 		query = query.Order(order)
 	}
 
-	errQuery := query.Find(&merchant).Error
+	errQuery := query.Find(&merchants).Error
 	if errQuery != nil {
 		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
 	}
