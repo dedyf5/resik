@@ -41,7 +41,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, confi
 
 // @Summary Get Merchant Omzet
 // @Description Get merchant omzet by merchant id
-// @Tags transaction
+// @Tags transactions
 // @Accept json
 // @Produce json
 // @Security BearerAuth
@@ -53,7 +53,7 @@ func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, confi
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
-// @Router		/transaction/merchant/{merchant_id}/omzet [get]
+// @Router		/transactions/merchant/{merchant_id}/omzet [get]
 func (h *Handler) MerchantOmzetGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
@@ -94,7 +94,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx *echo.Context) error {
 
 // @Summary Get Outlet Omzet
 // @Description Get outlet omzet by outlet id
-// @Tags transaction
+// @Tags transactions
 // @Accept json
 // @Produce json
 // @Security BearerAuth
@@ -106,7 +106,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx *echo.Context) error {
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
-// @Router		/transaction/outlet/{outlet_id}/omzet [get]
+// @Router		/transactions/outlet/{outlet_id}/omzet [get]
 func (h *Handler) OutletOmzetGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {

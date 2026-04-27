@@ -11,7 +11,7 @@ import (
 	"github.com/dedyf5/resik/entities/outlet"
 )
 
-const TABLE_NAME = "transaction"
+const TABLE_NAME = "transactions"
 
 type Transaction struct {
 	ID         uint64            `json:"id"`

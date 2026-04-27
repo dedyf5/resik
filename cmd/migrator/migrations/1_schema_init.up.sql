@@ -1,8 +1,8 @@
 -- +migrate Up
 -- SQL to create the initial database schema
 
--- Table structure for table `user`
-CREATE TABLE IF NOT EXISTS `user` (
+-- Table structure for table `users`
+CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
   `username` varchar(45) DEFAULT NULL,
@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Table structure for table `merchant`
-CREATE TABLE IF NOT EXISTS `merchant` (
+-- Table structure for table `merchants`
+CREATE TABLE IF NOT EXISTS `merchants` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) NOT NULL,
   `name` varchar(40) NOT NULL,
@@ -25,12 +25,12 @@ CREATE TABLE IF NOT EXISTS `merchant` (
   `updated_at` datetime NOT NULL,
   `updated_by` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_merchant_user` (`user_id`),
-  CONSTRAINT `fk_merchant_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+  KEY `fk_merchants_users` (`user_id`),
+  CONSTRAINT `fk_merchants_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Table structure for table `outlet`
-CREATE TABLE IF NOT EXISTS `outlet` (
+-- Table structure for table `outlets`
+CREATE TABLE IF NOT EXISTS `outlets` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `merchant_id` bigint(20) NOT NULL,
   `name` varchar(40) NOT NULL,
@@ -39,12 +39,12 @@ CREATE TABLE IF NOT EXISTS `outlet` (
   `updated_at` datetime NOT NULL,
   `updated_by` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_outlet_merchant` (`merchant_id`),
-  CONSTRAINT `fk_outlet_merchant` FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+  KEY `fk_outlets_merchants` (`merchant_id`),
+  CONSTRAINT `fk_outlets_merchants` FOREIGN KEY (`merchant_id`) REFERENCES `merchants` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Table structure for table `transaction`
-CREATE TABLE IF NOT EXISTS `transaction` (
+-- Table structure for table `transactions`
+CREATE TABLE IF NOT EXISTS `transactions` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `merchant_id` bigint(20) NOT NULL,
   `outlet_id` bigint(20) NOT NULL,
@@ -54,8 +54,8 @@ CREATE TABLE IF NOT EXISTS `transaction` (
   `updated_at` datetime NOT NULL,
   `updated_by` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_transaction_merchant` (`merchant_id`),
-  KEY `fk_transaction_outlet` (`outlet_id`),
-  CONSTRAINT `fk_transaction_merchant` FOREIGN KEY (`merchant_id`) REFERENCES `merchant` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_transaction_outlet` FOREIGN KEY (`outlet_id`) REFERENCES `outlet` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+  KEY `fk_transactions_merchants` (`merchant_id`),
+  KEY `fk_transactions_outlets` (`outlet_id`),
+  CONSTRAINT `fk_transactions_merchants` FOREIGN KEY (`merchant_id`) REFERENCES `merchants` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `fk_transactions_outlets` FOREIGN KEY (`outlet_id`) REFERENCES `outlets` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

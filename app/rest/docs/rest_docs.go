@@ -225,7 +225,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/merchant": {
+        "/merchants": {
             "get": {
                 "security": [
                     {
@@ -240,7 +240,7 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
                 "summary": "Merchant List",
                 "parameters": [
@@ -344,7 +344,7 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
                 "summary": "Create Merchant",
                 "parameters": [
@@ -414,7 +414,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/merchant/{id}": {
+        "/merchants/{id}": {
             "get": {
                 "security": [
                     {
@@ -429,7 +429,7 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
                 "summary": "Get Merchant by ID",
                 "parameters": [
@@ -510,7 +510,7 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
                 "summary": "Update Merchant",
                 "parameters": [
@@ -592,7 +592,7 @@ const docTemplaterest = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Update merchant",
+                "description": "Delete merchant",
                 "consumes": [
                     "application/json"
                 ],
@@ -600,9 +600,9 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
-                "summary": "Update Merchant",
+                "summary": "Delete Merchant",
                 "parameters": [
                     {
                         "type": "integer",
@@ -800,7 +800,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/transaction/merchant/{merchant_id}/omzet": {
+        "/transactions/merchant/{merchant_id}/omzet": {
             "get": {
                 "security": [
                     {
@@ -815,7 +815,7 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "transaction"
+                    "transactions"
                 ],
                 "summary": "Get Merchant Omzet",
                 "parameters": [
@@ -946,7 +946,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/transaction/outlet/{outlet_id}/omzet": {
+        "/transactions/outlet/{outlet_id}/omzet": {
             "get": {
                 "security": [
                     {
@@ -961,7 +961,7 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "transaction"
+                    "transactions"
                 ],
                 "summary": "Get Outlet Omzet",
                 "parameters": [

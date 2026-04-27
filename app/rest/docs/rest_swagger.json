@@ -214,7 +214,7 @@
                 }
             }
         },
-        "/merchant": {
+        "/merchants": {
             "get": {
                 "security": [
                     {
@@ -229,7 +229,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
                 "summary": "Merchant List",
                 "parameters": [
@@ -333,7 +333,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
                 "summary": "Create Merchant",
                 "parameters": [
@@ -403,7 +403,7 @@
                 }
             }
         },
-        "/merchant/{id}": {
+        "/merchants/{id}": {
             "get": {
                 "security": [
                     {
@@ -418,7 +418,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
                 "summary": "Get Merchant by ID",
                 "parameters": [
@@ -499,7 +499,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
                 "summary": "Update Merchant",
                 "parameters": [
@@ -581,7 +581,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "Update merchant",
+                "description": "Delete merchant",
                 "consumes": [
                     "application/json"
                 ],
@@ -589,9 +589,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "merchant"
+                    "merchants"
                 ],
-                "summary": "Update Merchant",
+                "summary": "Delete Merchant",
                 "parameters": [
                     {
                         "type": "integer",
@@ -789,7 +789,7 @@
                 }
             }
         },
-        "/transaction/merchant/{merchant_id}/omzet": {
+        "/transactions/merchant/{merchant_id}/omzet": {
             "get": {
                 "security": [
                     {
@@ -804,7 +804,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "transaction"
+                    "transactions"
                 ],
                 "summary": "Get Merchant Omzet",
                 "parameters": [
@@ -935,7 +935,7 @@
                 }
             }
         },
-        "/transaction/outlet/{outlet_id}/omzet": {
+        "/transactions/outlet/{outlet_id}/omzet": {
             "get": {
                 "security": [
                     {
@@ -950,7 +950,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "transaction"
+                    "transactions"
                 ],
                 "summary": "Get Outlet Omzet",
                 "parameters": [

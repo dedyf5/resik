@@ -39,7 +39,7 @@ func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService
 
 // @Summary Create Merchant
 // @Description Create new merchant
-// @Tags merchant
+// @Tags merchants
 // @Accept json
 // @Produce json
 // @Security BearerAuth
@@ -50,7 +50,7 @@ func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
-// @Router		/merchant [post]
+// @Router		/merchants [post]
 func (h *Handler) MerchantPost(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
@@ -88,7 +88,7 @@ func (h *Handler) MerchantPost(echoCtx *echo.Context) error {
 
 // @Summary Update Merchant
 // @Description Update merchant
-// @Tags merchant
+// @Tags merchants
 // @Accept json
 // @Produce json
 // @Security BearerAuth
@@ -100,7 +100,7 @@ func (h *Handler) MerchantPost(echoCtx *echo.Context) error {
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
-// @Router		/merchant/{id} [put]
+// @Router		/merchants/{id} [put]
 func (h *Handler) MerchantPut(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
@@ -142,7 +142,7 @@ func (h *Handler) MerchantPut(echoCtx *echo.Context) error {
 
 // @Summary Get Merchant by ID
 // @Description Get merchant by ID
-// @Tags merchant
+// @Tags merchants
 // @Accept json
 // @Produce json
 // @Security BearerAuth
@@ -153,7 +153,7 @@ func (h *Handler) MerchantPut(echoCtx *echo.Context) error {
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
-// @Router		/merchant/{id} [get]
+// @Router		/merchants/{id} [get]
 func (h *Handler) MerchantDetailGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
@@ -192,7 +192,7 @@ func (h *Handler) MerchantDetailGet(echoCtx *echo.Context) error {
 
 // @Summary Merchant List
 // @Description Merchant list
-// @Tags merchant
+// @Tags merchants
 // @Accept json
 // @Produce json
 // @Security BearerAuth
@@ -203,7 +203,7 @@ func (h *Handler) MerchantDetailGet(echoCtx *echo.Context) error {
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
-// @Router		/merchant [get]
+// @Router		/merchants [get]
 func (h *Handler) MerchantListGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
@@ -235,9 +235,9 @@ func (h *Handler) MerchantListGet(echoCtx *echo.Context) error {
 	)
 }
 
-// @Summary Update Merchant
-// @Description Update merchant
-// @Tags merchant
+// @Summary Delete Merchant
+// @Description Delete merchant
+// @Tags merchants
 // @Accept json
 // @Produce json
 // @Security BearerAuth
@@ -249,7 +249,7 @@ func (h *Handler) MerchantListGet(echoCtx *echo.Context) error {
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
-// @Router		/merchant/{id} [delete]
+// @Router		/merchants/{id} [delete]
 func (h *Handler) MerchantDelete(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {

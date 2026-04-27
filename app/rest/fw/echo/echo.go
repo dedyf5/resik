@@ -61,12 +61,10 @@ func HTTPErrorHandler(ctx *echo.Context, err error) {
 		return
 	}
 
-	if res, ok := errors.AsType[*echo.HTTPError](err); ok {
-		statusRes := resPkg.NewStatusMessage(res.Code, res.Message, nil)
-		_ = ctx.JSON(
-			res.Code,
-			httpUtil.LoggerFromStatus(statusRes),
-		)
+	var sc echo.HTTPStatusCoder
+	if errors.As(err, &sc) {
+		statusRes := resPkg.NewStatusCode(sc.StatusCode())
+		_ = ctx.JSON(sc.StatusCode(), httpUtil.LoggerFromStatus(statusRes))
 		return
 	}
 
