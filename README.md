@@ -28,6 +28,7 @@ Clean Architecture implementation in Golang for building REST and gRPC applicati
   - Multi-language Support (English, Bahasa Indonesia, 日本語)
   - Form Validation
   - JWT Authentication & Authorization
+  - Rate Limiting
   - Dependency Injection
   - Database Migration Support
   - Structured Logging
