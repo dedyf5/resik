@@ -180,7 +180,7 @@ services:
 
   # --- MariaDB Database Service ---
   mariadb:
-    image: mariadb:11.4 # Uses MariaDB version 11.4 LTS as requested.
+    image: mariadb:11.8 # Uses MariaDB version 11.8 LTS as requested.
     container_name: mariadb_container
     networks:
       - app-network

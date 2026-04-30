@@ -4,9 +4,9 @@
 -- Table structure for table `users`
 CREATE TABLE IF NOT EXISTS `users` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) DEFAULT NULL,
-  `username` varchar(45) DEFAULT NULL,
-  `password` varchar(225) DEFAULT NULL,
+  `name` varchar(45) NOT NULL,
+  `username` varchar(45) NOT NULL UNIQUE,
+  `password` varchar(225) NOT NULL,
   `created_at` datetime NOT NULL,
   `created_by` bigint(20) NOT NULL,
   `updated_at` datetime NOT NULL,
