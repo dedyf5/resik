@@ -3,9 +3,9 @@
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-TRUNCATE TABLE `transaction`;
-TRUNCATE TABLE `outlet`;
-TRUNCATE TABLE `merchant`;
-TRUNCATE TABLE `user`;
+TRUNCATE TABLE `transactions`;
+TRUNCATE TABLE `outlets`;
+TRUNCATE TABLE `merchants`;
+TRUNCATE TABLE `users`;
 
 SET FOREIGN_KEY_CHECKS = 1;
