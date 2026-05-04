@@ -50,7 +50,7 @@ func (h *UserHandler) TokenRefreshGet(c context.Context, _ *emptypb.Empty) (*Use
 	}
 	ctx.Log().Debug("TokenRefreshGet")
 
-	token, err := h.userService.AuthTokenGenerate(ctx.UserClaims().UserID, ctx.UserClaims().Username)
+	token, err := h.userService.AuthTokenGenerate(ctx, ctx.UserClaims().UserID(), ctx.UserClaims().UserPublicID(), ctx.UserClaims().Username())
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,7 @@ func (h *UserHandler) TokenRefreshGet(c context.Context, _ *emptypb.Empty) (*Use
 			Message: codes.OK.String(),
 		},
 		Data: &resUserCore.UserCredential{
-			Username: ctx.UserClaims().Username,
+			Username: ctx.UserClaims().Username(),
 			Token:    token,
 		},
 	}, nil

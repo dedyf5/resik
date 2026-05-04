@@ -23,18 +23,22 @@ func (s *Service) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant
 	return s.merchantRepo.MerchantUpdate(ctx, merchant)
 }
 
-func (s *Service) MerchantGetByIDAndUserID(ctx *ctx.Ctx, merchantID, userID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status) {
-	merchant, err = s.merchantRepo.MerchantGetByIDAndUserID(ctx, merchantID, userID)
-	if merchant == nil || err != nil {
-		return merchant, err
-	}
-
-	user, err := s.userRepo.UserByID(ctx, userID)
+func (s *Service) MerchantGetByIDAndOwnerID(ctx *ctx.Ctx, merchantID, ownerID uint64) (*dtoMerchant.Merchant, *resPkg.Status) {
+	merchant, err := s.merchantRepo.MerchantGetByIDAndOwnerID(ctx, merchantID, ownerID)
 	if err != nil {
 		return nil, err
 	}
 
-	if user == nil {
+	if merchant == nil {
+		return nil, nil
+	}
+
+	users, err := s.userRepo.UsersGetByIDs(ctx, merchant.UniqueAllUserIDs())
+	if err != nil {
+		return nil, err
+	}
+
+	if len(users) == 0 {
 		localizer := ctx.Lang().Localizer
 		return nil, resPkg.NewStatusMessage(
 			http.StatusNotFound,
@@ -43,22 +47,36 @@ func (s *Service) MerchantGetByIDAndUserID(ctx *ctx.Ctx, merchantID, userID uint
 		)
 	}
 
-	merchant.User = *user
-
-	return merchant, nil
+	res := dtoMerchant.MerchantFromEntity(*merchant, users.UniqueMap())
+	return &res, nil
 }
 
-func (s *Service) MerchantListGet(param *paramMerchant.MerchantListGet) (res *dtoMerchant.MerchantList, err *resPkg.Status) {
-	total, err := s.merchantRepo.MerchantListGetTotal(param)
+func (s *Service) MerchantsGet(param *paramMerchant.MerchantsGet) (res *dtoMerchant.MerchantsResult, err *resPkg.Status) {
+	total, err := s.merchantRepo.MerchantsGetTotal(param)
 	if err != nil {
 		return nil, err
 	}
-	data, err := s.merchantRepo.MerchantListGetData(param)
+
+	if total == 0 {
+		return &dtoMerchant.MerchatsResultEmpty, nil
+	}
+
+	merchants, err := s.merchantRepo.MerchantsGetData(param)
 	if err != nil {
 		return nil, err
 	}
-	return &dtoMerchant.MerchantList{
-		Data:  data,
+
+	if len(merchants) == 0 {
+		return &dtoMerchant.MerchatsResultEmpty, nil
+	}
+
+	users, err := s.userRepo.UsersGetByIDs(param.Ctx, merchants.UniqueAllUserIDs())
+	if err != nil {
+		return nil, err
+	}
+
+	return &dtoMerchant.MerchantsResult{
+		Data:  dtoMerchant.MerchantsFromEntity(merchants, users.UniqueMap()),
 		Total: total,
 	}, nil
 }

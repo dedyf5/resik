@@ -26,6 +26,7 @@ import (
 	"github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	config2 "github.com/dedyf5/resik/entities/config"
+	"github.com/dedyf5/resik/internal/identity"
 	"github.com/dedyf5/resik/pkg/hash"
 	"github.com/dedyf5/resik/repositories"
 	"github.com/dedyf5/resik/repositories/check"
@@ -85,6 +86,8 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	healthHandler := health.New(service7)
 	router := newRouter(config, generalHandler, merchantHandler, transactionHandler, userHandler, healthHandler)
 	app := config.App
+	string2 := provideAppKey(app)
+	identityResolver := identity.NewResolver(string2, gormDB, client)
 	rateLimit := config.RateLimit
 	limiter, err := ratelimit.NewRateLimiter(app, rateLimit, client)
 	if err != nil {
@@ -93,7 +96,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
-	interceptor := middleware.NewInterceptor(module, auth, limiter, logLog)
+	interceptor := middleware.NewInterceptor(module, auth, identityResolver, limiter, logLog)
 	serverHTTP := newServerHTTP(config, router, interceptor)
 	bootstrapApp, cleanup4, err := newApp(serverHTTP)
 	if err != nil {
@@ -140,8 +143,13 @@ func provideCheckerSlice(db *check.CheckDatabaseRepo, redis *check.CheckRedisRep
 	return []repositories.ICheck{db, redis}
 }
 
+func provideAppKey(conf config2.App) string {
+	return conf.NameKey()
+}
+
 var providerSet = wire.NewSet(
 	provideHasherConfig, hash.NewArgon2Hasher, provideCheckerSlice,
+	provideAppKey, identity.NewResolver,
 )
 
 var serviceSet = wire.NewSet(service4.New, service.New, service2.New, service3.New, wire.Bind(new(health2.IService), new(*service4.Service)), wire.Bind(new(merchant3.IService), new(*service.Service)), wire.Bind(new(transaction3.IService), new(*service2.Service)), wire.Bind(new(user3.IService), new(*service3.Service)))

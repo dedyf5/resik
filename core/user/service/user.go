@@ -7,11 +7,12 @@ package service
 import (
 	"net/http"
 
+	"github.com/dedyf5/resik/ctx"
 	jwtCtx "github.com/dedyf5/resik/ctx/jwt"
 	"github.com/dedyf5/resik/ctx/lang/term"
-	"github.com/dedyf5/resik/entities/outlet"
 	paramUser "github.com/dedyf5/resik/entities/user/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
 func (s *Service) Auth(param paramUser.Auth) (token string, err *resPkg.Status) {
@@ -35,17 +36,50 @@ func (s *Service) Auth(param paramUser.Auth) (token string, err *resPkg.Status) 
 		)
 	}
 
-	return s.AuthTokenGenerate(user.ID, user.Username)
+	return s.AuthTokenGenerate(param.Ctx, user.ID, user.PublicID, user.Username)
 }
 
-func (s *Service) AuthTokenGenerate(userID uint64, username string) (token string, err *resPkg.Status) {
-	outlets, err := s.userRepo.OutletMerchantByUserIDGetData(userID)
+func (s *Service) AuthTokenGenerate(ctx *ctx.Ctx, userID uint64, userPublicID uuidPkg.UUIDV7, username string) (token string, err *resPkg.Status) {
+	merchantOutletIDs, err := s.userRepo.OutletMerchantByUserIDGetData(ctx, userID)
 	if err != nil {
 		return "", err
 	}
 
-	merchantIDs, outletIDs := outlet.GetUniqueMerchantIDsAndOutletIDs(outlets)
+	user := jwtCtx.User{
+		Base: jwtCtx.Base{
+			ID:       userID,
+			PublicID: userPublicID,
+		},
+		Username: username,
+	}
 
-	token, err = jwtCtx.AuthTokenGenerate(s.config.Module, s.config.Auth, userID, username, merchantIDs, outletIDs)
+	merchantIDs, merchantPublicIDs, outletIDs, outletPublicIDs, err := merchantOutletIDs.UniqueIDs()
+	if err != nil {
+		return "", err
+	}
+
+	var merchants []jwtCtx.Base
+	for i, v := range merchantIDs {
+		merchants = append(merchants, jwtCtx.Base{
+			ID:       v,
+			PublicID: merchantPublicIDs[i],
+		})
+	}
+
+	var outlets []jwtCtx.Base
+	for i, v := range outletIDs {
+		outlets = append(outlets, jwtCtx.Base{
+			ID:       v,
+			PublicID: outletPublicIDs[i],
+		})
+	}
+
+	token, err = jwtCtx.AuthTokenGenerate(
+		s.config.Module,
+		s.config.Auth,
+		user,
+		merchants,
+		outlets,
+	)
 	return
 }

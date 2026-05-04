@@ -16,11 +16,11 @@ import (
 	"github.com/dedyf5/resik/ctx/lang/term"
 	"github.com/dedyf5/resik/ctx/log"
 	configEntity "github.com/dedyf5/resik/entities/config"
-	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	paramUser "github.com/dedyf5/resik/entities/user/param"
 	hashMock "github.com/dedyf5/resik/pkg/hash/mock"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	userMock "github.com/dedyf5/resik/repositories/mock"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -102,7 +102,7 @@ func TestAuth(t *testing.T) {
 		gomock.InOrder(
 			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(userExpected, nil),
 			hasher.EXPECT().Compare(param.Password, userExpected.Password).Return(true, nil),
-			userRepo.EXPECT().OutletMerchantByUserIDGetData(userID).Return(outletsExpected(), nil),
+			userRepo.EXPECT().OutletMerchantByUserIDGetData(param.Ctx, userID).Return(outletsExpected(), nil),
 		)
 		token, err := userService.Auth(param)
 		assert.Nil(t, err)
@@ -114,45 +114,61 @@ func TestAuthTokenGenerate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo, _, _, userService := setup(ctrl)
+	userRepo, _, ctx, userService := setup(ctrl)
+
+	userPublicID, _ := uuidPkg.NewUUIDV7()
+
+	statusErr := &resPkg.Status{
+		Code: http.StatusInternalServerError,
+	}
 
 	t.Run("OutletMerchantByUserIDGetData-ERROR", func(t *testing.T) {
-		statusErr := &resPkg.Status{
-			Code: http.StatusInternalServerError,
-		}
 		gomock.InOrder(
-			userRepo.EXPECT().OutletMerchantByUserIDGetData(userID).Return(nil, statusErr),
+			userRepo.EXPECT().OutletMerchantByUserIDGetData(ctx, userID).Return(nil, statusErr),
 		)
-		res, err := userService.AuthTokenGenerate(userID, username)
+		res, err := userService.AuthTokenGenerate(ctx, userID, userPublicID, username)
 		assert.Empty(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr, err)
 	})
 
+	t.Run("ALL-OutletMerchantByUserIDGetData-ERROR2", func(t *testing.T) {
+		merchantOutletIDs := outletsExpected()
+		merchantOutletIDs[0].MerchantPublicID = uuidPkg.Nil
+		gomock.InOrder(
+			userRepo.EXPECT().OutletMerchantByUserIDGetData(ctx, userID).Return(merchantOutletIDs, nil),
+		)
+		_, _, _, _, errIDs := merchantOutletIDs.UniqueIDs()
+		res, _ := userService.AuthTokenGenerate(ctx, userID, userPublicID, username)
+		assert.Empty(t, res)
+		assert.NotNil(t, errIDs)
+		assert.Equal(t, errIDs.Code, errIDs.Code)
+	})
+
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
 		gomock.InOrder(
-			userRepo.EXPECT().OutletMerchantByUserIDGetData(userID).Return(outletsExpected(), nil),
+			userRepo.EXPECT().OutletMerchantByUserIDGetData(ctx, userID).Return(outletsExpected(), nil),
 		)
-		res, err := userService.AuthTokenGenerate(userID, username)
+		res, err := userService.AuthTokenGenerate(ctx, userID, userPublicID, username)
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)
 	})
 }
 
-func outletsExpected() []outletEntity.Outlet {
-	return []outletEntity.Outlet{
-		{
-			ID:         1,
-			MerchantID: 1,
-		},
-		{
-			ID:         3,
-			MerchantID: 1,
-		},
-		{
-			MerchantID: 3,
-		},
+func outletsExpected() userEntity.MerchantOutletIDs {
+	res := userEntity.MerchantOutletIDs{}
+	for n := 1; n <= 3; n++ {
+		merchantPublicID, _ := uuidPkg.NewUUIDV7()
+		outletPublicID, _ := uuidPkg.NewUUIDV7()
+		res = append(res, userEntity.MerchantOutletID{
+			MerchantID:       uint64(n),
+			MerchantPublicID: merchantPublicID,
+			OutletID:         uint64(n),
+			OutletPublicID:   outletPublicID,
+		})
 	}
+
+	return res
 }
 
 func setup(ctrl *gomock.Controller) (userRepo *userMock.MockIUser, hasher *hashMock.MockIHash, ctx *ctx.Ctx, userService *Service) {

@@ -15,7 +15,7 @@ import (
 	"github.com/dedyf5/resik/utils/datetime"
 )
 
-func (o *OutletOmzetGet) ToParam(c *ctx.Ctx) (result *trxParam.OutletOmzetGet, err *resPkg.Status) {
+func (o *OutletOmzetGet) ToParam(c *ctx.Ctx, outletID uint64) (result *trxParam.OutletOmzetGet, err *resPkg.Status) {
 	orderStr := "period"
 	if o.Order != nil {
 		orderStr = o.GetOrder()
@@ -33,7 +33,7 @@ func (o *OutletOmzetGet) ToParam(c *ctx.Ctx) (result *trxParam.OutletOmzetGet, e
 
 	return &trxParam.OutletOmzetGet{
 		Ctx:      c,
-		OutletID: o.GetOutletId(),
+		OutletID: outletID,
 		GroupPeriod: groupperiod.GroupPeriod{
 			Mode:          groupperiod.Mode(o.GetMode()),
 			DatetimeStart: datetimeStart,

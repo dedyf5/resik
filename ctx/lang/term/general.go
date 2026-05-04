@@ -48,6 +48,13 @@ var (
 		},
 	}
 
+	InvalidID = &Term{
+		Message: &i18n.Message{
+			ID:    "invalid_id",
+			Other: "Invalid ID",
+		},
+	}
+
 	InvalidOrExpiredSessionLoginAgain = &Term{
 		Message: &i18n.Message{
 			ID:    "invalid_or_expired_session_login_again",

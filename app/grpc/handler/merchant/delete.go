@@ -24,11 +24,12 @@ func (h *MerchantHandler) MerchantDelete(c context.Context, req *reqMerchantCore
 		return nil, err
 	}
 
-	if _, err = ctx.UserClaims().MerchantIDIsAccessible(req.GetId()); err != nil {
+	merchantID, err := ctx.UserClaims().GetMerchantID(req.GetId())
+	if err != nil {
 		return nil, err
 	}
 
-	if _, err = h.merchantService.MerchantDelete(ctx, req.ToMerchant()); err != nil {
+	if _, err = h.merchantService.MerchantDelete(ctx, req.ToMerchant(merchantID)); err != nil {
 		return nil, err
 	}
 

@@ -39,8 +39,33 @@ func (r *UserRepo) UserByUsername(ctx *ctx.Ctx, username string) (user *userEnti
 	return &res, nil
 }
 
+func (r *UserRepo) UsersGetByIDs(ctx *ctx.Ctx, userIDs []uint64) (users userEntity.Users, err *resPkg.Status) {
+	n := len(userIDs)
+	if n == 0 {
+		return userEntity.Users{}, nil
+	}
+
+	query := r.DB.WithContext(ctx.Context).
+		Table(userEntity.TABLE_NAME)
+
+	if len(userIDs) == 1 {
+		query = query.Where("id = ?", userIDs[0])
+	} else {
+		query = query.Where("id IN ?", userIDs)
+	}
+
+	errQuery := query.Find(&users).Error
+	if errQuery != nil {
+		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
+			return
+		}
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
+	}
+	return
+}
+
 func (r *UserRepo) MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, err *resPkg.Status) {
-	query := r.DB.Select("id").Table(merchantEntity.TABLE_NAME).Where("user_id = ?", userID)
+	query := r.DB.Select("id").Table(merchantEntity.TABLE_NAME).Where("owner_id = ?", userID)
 	errQuery := query.Find(&merchantIDs).Error
 	if errQuery != nil {
 		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
@@ -51,12 +76,13 @@ func (r *UserRepo) MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint
 	return
 }
 
-func (r *UserRepo) OutletMerchantByUserIDGetData(userID uint64) (outlets []outletEntity.Outlet, err *resPkg.Status) {
-	query := r.DB.Select("o1.id, m1.id AS merchant_id").
+func (r *UserRepo) OutletMerchantByUserIDGetData(ctx *ctx.Ctx, userID uint64) (merchantOutletIDs userEntity.MerchantOutletIDs, err *resPkg.Status) {
+	query := r.DB.WithContext(ctx.Context).
+		Select("o1.id AS outlet_id, o1.public_id AS outlet_public_id, m1.id AS merchant_id, m1.public_id AS merchant_public_id").
 		Table(outletEntity.TABLE_NAME+" AS o1").
 		Joins("RIGHT JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = o1.merchant_id").
-		Where("m1.user_id = ?", userID)
-	errQuery := query.Find(&outlets).Error
+		Where("m1.owner_id = ?", userID)
+	errQuery := query.Find(&merchantOutletIDs).Error
 	if errQuery != nil {
 		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
 			return

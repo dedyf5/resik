@@ -1301,9 +1301,8 @@ const docTemplaterest = `{
                     "type": "string",
                     "example": "2026-01-02T15:04:05+07:00"
                 },
-                "created_by": {
-                    "type": "integer",
-                    "example": 1
+                "creator": {
+                    "$ref": "#/definitions/response.User"
                 },
                 "description": {
                     "description": "nullable",
@@ -1311,27 +1310,22 @@ const docTemplaterest = `{
                     "example": "Merchant description 1"
                 },
                 "id": {
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "019defa1ccd0794c9459795fc65d38b6"
                 },
                 "name": {
                     "type": "string",
                     "example": "Merchant 1"
                 },
+                "owner": {
+                    "$ref": "#/definitions/response.User"
+                },
                 "updated_at": {
                     "type": "string",
                     "example": "2026-01-02T15:04:05+07:00"
                 },
-                "updated_by": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "user": {
+                "updater": {
                     "$ref": "#/definitions/response.User"
-                },
-                "user_id": {
-                    "type": "integer",
-                    "example": 1
                 }
             }
         },
@@ -1343,8 +1337,8 @@ const docTemplaterest = `{
                     "example": "2024-01-14T11:40:00Z"
                 },
                 "id": {
-                    "type": "integer",
-                    "example": 123
+                    "type": "string",
+                    "example": "019def99a9267f64b75a97b4b19a2c4b"
                 },
                 "name": {
                     "type": "string",
@@ -1377,8 +1371,8 @@ const docTemplaterest = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "integer",
-                    "example": 123
+                    "type": "string",
+                    "example": "019df0d3d46f71d0863084d474748c3a"
                 }
             }
         },

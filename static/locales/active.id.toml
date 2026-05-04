@@ -6,6 +6,10 @@ other = "{{.AppName}} versi {{.AppVersion}} :: Modul {{.ModuleName}} Tipe {{.Mod
 hash = "sha1-acb352f79e0b1c410bfa4354162face6f12edffa"
 other = "Username atau password salah"
 
+[invalid_id]
+hash = "sha1-e686e39644ef066af3f381928c78ae710a83735e"
+other = "ID tidak valid"
+
 [invalid_or_expired_session_login_again]
 hash = "sha1-ce6d50af993e79b61fa22c3f4c1b56c56f0abaf8"
 other = "Sesi login tidak sesuai atau sudah kedaluwarsa, silakan login kembali"

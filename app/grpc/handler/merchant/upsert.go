@@ -44,7 +44,7 @@ func (h *MerchantHandler) MerchantPost(c context.Context, req *reqMerchantCore.M
 			),
 		},
 		Data: &resMerchantCore.MerchantUpsert{
-			Id: entity.ID,
+			Id: entity.PublicID.String32(),
 		},
 	}, nil
 }
@@ -60,12 +60,13 @@ func (h *MerchantHandler) MerchantPut(c context.Context, req *reqMerchantCore.Me
 		return nil, err
 	}
 
-	entity, err := req.ToEntity(ctx)
+	merchantID, err := ctx.UserClaims().GetMerchantID(req.GetId())
 	if err != nil {
 		return nil, err
 	}
 
-	if _, err = ctx.UserClaims().MerchantIDIsAccessible(entity.ID); err != nil {
+	entity, err := req.ToEntity(ctx, merchantID)
+	if err != nil {
 		return nil, err
 	}
 
@@ -82,7 +83,7 @@ func (h *MerchantHandler) MerchantPut(c context.Context, req *reqMerchantCore.Me
 			),
 		},
 		Data: &resMerchantCore.MerchantUpsert{
-			Id: entity.ID,
+			Id: req.GetId(),
 		},
 	}, nil
 }

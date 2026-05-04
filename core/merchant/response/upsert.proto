@@ -8,5 +8,5 @@ package response;
 option go_package = "github.com/dedyf5/resik/core/merchant/response";
 
 message MerchantUpsert {
-    uint64 id = 1; // @gotags: json:"id" example:"123"
+    string id = 1; // @gotags: json:"id" example:"019df0d3d46f71d0863084d474748c3a"
 }

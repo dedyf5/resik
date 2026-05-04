@@ -7,27 +7,34 @@ package response
 import (
 	"time"
 
-	merchantEntity "github.com/dedyf5/resik/entities/merchant"
+	dtoMerchant "github.com/dedyf5/resik/core/merchant/dto"
 )
 
-func MerchantDetailFromEntity(src *merchantEntity.Merchant) (res *MerchantDetail) {
+func MerchantDetailFromDTO(src *dtoMerchant.Merchant) *MerchantDetail {
 	if src == nil {
 		return nil
 	}
 
 	return &MerchantDetail{
-		Id:     src.ID,
-		UserId: src.UserID,
-		User: &User{
-			Id:       src.User.ID,
-			Name:     src.User.Name,
-			Username: src.User.Username,
+		Id: src.PublicID.String32(),
+		Owner: &User{
+			Id:       src.Owner.ID,
+			Name:     src.Owner.Name,
+			Username: src.Owner.Username,
 		},
 		Name:        src.Name,
 		Description: src.Description,
 		CreatedAt:   src.CreatedAt.Format(time.RFC3339),
-		CreatedBy:   src.CreatedBy,
-		UpdatedAt:   src.UpdatedAt.Format(time.RFC3339),
-		UpdatedBy:   src.UpdatedBy,
+		Creator: &User{
+			Id:       src.Creator.ID,
+			Name:     src.Creator.Name,
+			Username: src.Creator.Username,
+		},
+		UpdatedAt: src.UpdatedAt.Format(time.RFC3339),
+		Updater: &User{
+			Id:       src.Updater.ID,
+			Name:     src.Updater.Name,
+			Username: src.Updater.Username,
+		},
 	}
 }

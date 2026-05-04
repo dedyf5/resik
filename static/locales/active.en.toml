@@ -1,5 +1,6 @@
 home_message = "{{.AppName}} Version {{.AppVersion}} :: Module {{.ModuleName}} Type {{.ModuleType}}"
 incorrect_username_or_password = "Incorrect username or password"
+invalid_id = "Invalid ID"
 invalid_or_expired_session_login_again = "Invalid or expired session, please login again"
 invalid_time_format = "Invalid time format"
 merchant = "Merchant"

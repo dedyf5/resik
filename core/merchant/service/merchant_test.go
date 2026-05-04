@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/dedyf5/resik/config"
+	dtoMerchant "github.com/dedyf5/resik/core/merchant/dto"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -122,7 +123,7 @@ func TestMerchantDelete(t *testing.T) {
 	})
 }
 
-func TestMerchantGetByIDAndUserID(t *testing.T) {
+func TestMerchantGetByIDAndOwnerID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -130,63 +131,88 @@ func TestMerchantGetByIDAndUserID(t *testing.T) {
 
 	merchant := &merchantEntity.Merchant{}
 	user := &userEntity.User{}
+	users := userEntity.Users{
+		*user,
+	}
+	userIDs := []uint64{user.ID}
 
-	t.Run("MerchantGetByIDAndUserID-ERROR MerchantGetByIDAndUserID", func(t *testing.T) {
+	t.Run("MerchantGetByIDAndOwnerID-ERROR MerchantGetByIDAndOwnerID", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
 		gomock.InOrder(
-			merchantRepo.EXPECT().MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID).Return(merchant, statusErr),
+			merchantRepo.EXPECT().MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID).Return(merchant, statusErr),
 		)
-		_, err := merchantService.MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID)
+		_, err := merchantService.MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID)
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("MerchantGetByIDAndUserID-ERROR UserByID ERROR", func(t *testing.T) {
+	t.Run("MerchantGetByIDAndOwnerID-ERROR UsersGetByIDs ERROR", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
 		gomock.InOrder(
-			merchantRepo.EXPECT().MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID).Return(merchant, nil),
-			userRepo.EXPECT().UserByID(ctx, user.ID).Return(user, statusErr),
+			merchantRepo.EXPECT().MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID).Return(merchant, nil),
+			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(users, statusErr),
 		)
-		_, err := merchantService.MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID)
+		_, err := merchantService.MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID)
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("MerchantGetByIDAndUserID-ERROR UserByID Not Found", func(t *testing.T) {
+	t.Run("MerchantGetByIDAndOwnerID-ERROR UsersGetByIDs Not Found", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusNotFound,
 		}
 		gomock.InOrder(
-			merchantRepo.EXPECT().MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID).Return(merchant, nil),
-			userRepo.EXPECT().UserByID(ctx, user.ID).Return(nil, nil),
+			merchantRepo.EXPECT().MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID).Return(merchant, nil),
+			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(nil, nil),
 		)
-		_, err := merchantService.MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID)
+		_, err := merchantService.MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID)
 		assert.Equal(t, statusErr.Code, err.Code)
+	})
+
+	t.Run("ALL-EMPTY", func(t *testing.T) {
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID).Return(nil, nil),
+		)
+		res, err := merchantService.MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID)
+		assert.Nil(t, err)
+		assert.Nil(t, res)
 	})
 
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
 		gomock.InOrder(
-			merchantRepo.EXPECT().MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID).Return(merchant, nil),
-			userRepo.EXPECT().UserByID(ctx, user.ID).Return(user, nil),
+			merchantRepo.EXPECT().MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID).Return(merchant, nil),
+			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(users, nil),
 		)
-		res, err := merchantService.MerchantGetByIDAndUserID(ctx, merchant.ID, user.ID)
+		res, err := merchantService.MerchantGetByIDAndOwnerID(ctx, merchant.ID, user.ID)
 		assert.Nil(t, err)
-		assert.Equal(t, merchant, res)
-		assert.Equal(t, user, &res.User)
+		assert.Equal(t, merchant.PublicID, res.PublicID)
 	})
 }
 
-func TestMerchantListGet(t *testing.T) {
+func TestMerchantsGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, _, ctx, merchantService := setup(ctrl)
+	merchantRepo, userRepo, ctx, merchantService := setup(ctrl)
 
-	param := &param.MerchantListGet{
+	param := &param.MerchantsGet{
 		Ctx: ctx,
 	}
+
+	merchants := merchantEntity.Merchants{
+		{
+			ID:   1,
+			Name: "merchant1",
+		},
+	}
+
+	user := &userEntity.User{}
+	users := userEntity.Users{
+		*user,
+	}
+	userIDs := []uint64{user.ID}
 
 	t.Run("MerchantListGetTotal-ERROR", func(t *testing.T) {
 		var totalExpected int64 = 0
@@ -194,11 +220,21 @@ func TestMerchantListGet(t *testing.T) {
 			Code: http.StatusInternalServerError,
 		}
 		gomock.InOrder(
-			merchantRepo.EXPECT().MerchantListGetTotal(param).Return(totalExpected, statusErr),
+			merchantRepo.EXPECT().MerchantsGetTotal(param).Return(totalExpected, statusErr),
 		)
-		res, err := merchantService.MerchantListGet(param)
+		res, err := merchantService.MerchantsGet(param)
 		assert.Nil(t, res)
 		assert.Equal(t, statusErr, err)
+	})
+
+	t.Run("MerchantListGetTotal-0", func(t *testing.T) {
+		var totalExpected int64 = 0
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantsGetTotal(param).Return(totalExpected, nil),
+		)
+		res, err := merchantService.MerchantsGet(param)
+		assert.Nil(t, err)
+		assert.Equal(t, dtoMerchant.MerchatsResultEmpty, *res)
 	})
 
 	var totalExpected int64 = 1
@@ -207,26 +243,47 @@ func TestMerchantListGet(t *testing.T) {
 			Code: http.StatusInternalServerError,
 		}
 		gomock.InOrder(
-			merchantRepo.EXPECT().MerchantListGetTotal(param).Return(totalExpected, nil),
-			merchantRepo.EXPECT().MerchantListGetData(param).Return(nil, statusErr),
+			merchantRepo.EXPECT().MerchantsGetTotal(param).Return(totalExpected, nil),
+			merchantRepo.EXPECT().MerchantsGetData(param).Return(nil, statusErr),
 		)
-		res, err := merchantService.MerchantListGet(param)
+		res, err := merchantService.MerchantsGet(param)
 		assert.Nil(t, res)
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
-		merchants := []merchantEntity.Merchant{
-			{
-				ID:   1,
-				Name: "merchant1",
-			},
+	t.Run("MerchantListGetData-0", func(t *testing.T) {
+		merchantsEmpty := merchantEntity.Merchants{}
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantsGetTotal(param).Return(totalExpected, nil),
+			merchantRepo.EXPECT().MerchantsGetData(param).Return(merchantsEmpty, nil),
+		)
+		res, err := merchantService.MerchantsGet(param)
+		assert.Nil(t, err)
+		assert.Equal(t, dtoMerchant.MerchatsResultEmpty, *res)
+	})
+
+	t.Run("UsersGetByIDs-ERROR", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
 		}
 		gomock.InOrder(
-			merchantRepo.EXPECT().MerchantListGetTotal(param).Return(totalExpected, nil),
-			merchantRepo.EXPECT().MerchantListGetData(param).Return(merchants, nil),
+			merchantRepo.EXPECT().MerchantsGetTotal(param).Return(totalExpected, nil),
+			merchantRepo.EXPECT().MerchantsGetData(param).Return(merchants, nil),
+			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(nil, statusErr),
 		)
-		res, err := merchantService.MerchantListGet(param)
+		res, err := merchantService.MerchantsGet(param)
+		assert.Nil(t, res)
+		assert.NotNil(t, err)
+		assert.Equal(t, statusErr.Code, err.Code)
+	})
+
+	t.Run("ALL-SUCCESS", func(t *testing.T) {
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantsGetTotal(param).Return(totalExpected, nil),
+			merchantRepo.EXPECT().MerchantsGetData(param).Return(merchants, nil),
+			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(users, nil),
+		)
+		res, err := merchantService.MerchantsGet(param)
 		assert.Nil(t, err)
 		assert.Len(t, res.Data, len(merchants))
 		assert.Equal(t, merchants[0].ID, res.Data[0].ID)

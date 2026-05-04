@@ -6,6 +6,10 @@ other = "{{.AppName}} バージョン {{.AppVersion}} :: モジュール {{.Modu
 hash = "sha1-acb352f79e0b1c410bfa4354162face6f12edffa"
 other = "ユーザーネームまたはパスワードが間違っています"
 
+[invalid_id]
+hash = "sha1-e686e39644ef066af3f381928c78ae710a83735e"
+other = "IDが無効です"
+
 [invalid_or_expired_session_login_again]
 hash = "sha1-ce6d50af993e79b61fa22c3f4c1b56c56f0abaf8"
 other = "セッションの期限が切れました、再度ログインしてください"

@@ -26,6 +26,7 @@ import (
 	"github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	config2 "github.com/dedyf5/resik/entities/config"
+	"github.com/dedyf5/resik/internal/identity"
 	"github.com/dedyf5/resik/pkg/hash"
 	"github.com/dedyf5/resik/repositories"
 	"github.com/dedyf5/resik/repositories/check"
@@ -46,14 +47,32 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	logLog := log.Get(configLog, module)
 	serverHTTP := newServerHTTP(config, logLog)
 	app := config.App
-	rateLimit := config.RateLimit
-	redisConfig := config.Redis
-	client, cleanup, err := drivers.NewRedisConnection(redisConfig)
+	string2 := provideAppKey(app)
+	sqlConfig := config.Database
+	sqlEngine := sqlConfig.Engine
+	bool2 := _wireBoolValue
+	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig, bool2)
 	if err != nil {
 		return nil, nil, err
 	}
+	gormDB, cleanup2, err := drivers.NewGorm(sqlEngine, db, sqlConfig)
+	if err != nil {
+		cleanup()
+		return nil, nil, err
+	}
+	redisConfig := config.Redis
+	client, cleanup3, err := drivers.NewRedisConnection(redisConfig)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	identityResolver := identity.NewResolver(string2, gormDB, client)
+	rateLimit := config.RateLimit
 	limiter, err := ratelimit.NewRateLimiter(app, rateLimit, client)
 	if err != nil {
+		cleanup3()
+		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
@@ -61,20 +80,6 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
 	handler := general.New(config, logLog, echoEcho)
-	sqlConfig := config.Database
-	sqlEngine := sqlConfig.Engine
-	bool2 := _wireBoolValue
-	db, cleanup2, err := drivers.NewMySQLConnection(sqlConfig, bool2)
-	if err != nil {
-		cleanup()
-		return nil, nil, err
-	}
-	gormDB, cleanup3, err := drivers.NewGorm(sqlEngine, db, sqlConfig)
-	if err != nil {
-		cleanup2()
-		cleanup()
-		return nil, nil, err
-	}
 	userRepo := user.New(gormDB)
 	auth := config.Auth
 	argon2Config := provideHasherConfig(auth)
@@ -92,7 +97,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	v := provideCheckerSlice(checkDatabaseRepo, checkRedisRepo)
 	service7 := service4.New(v)
 	healthHandler := health.New(logLog, echoEcho, service7)
-	router := newRouter(config, limiter, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
+	router := newRouter(config, identityResolver, limiter, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
 	bootstrapApp, cleanup4, err := newApp(serverHTTP, router)
 	if err != nil {
 		cleanup3()
@@ -138,8 +143,13 @@ func provideCheckerSlice(db *check.CheckDatabaseRepo, redis *check.CheckRedisRep
 	return []repositories.ICheck{db, redis}
 }
 
+func provideAppKey(conf config2.App) string {
+	return conf.NameKey()
+}
+
 var providerSet = wire.NewSet(
 	provideHasherConfig, hash.NewArgon2Hasher, provideCheckerSlice,
+	provideAppKey, identity.NewResolver,
 )
 
 var serviceSet = wire.NewSet(service.New, service2.New, service3.New, service4.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)), wire.Bind(new(health2.IService), new(*service4.Service)))

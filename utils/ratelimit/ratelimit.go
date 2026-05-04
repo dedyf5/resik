@@ -109,8 +109,8 @@ func (rl *RateLimit) KeyIP(ip string) string {
 
 func (rl *RateLimit) GetKeyUserID(c context.Context) string {
 	claim := jwtCtx.AuthClaimsFromContext(c)
-	if claim != nil && claim.UserID > 0 {
-		return rl.KeyUserID(claim.UserID)
+	if claim != nil && claim.UserID() > 0 {
+		return rl.KeyUserID(claim.UserID())
 	}
 	return ""
 }

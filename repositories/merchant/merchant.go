@@ -33,8 +33,8 @@ func (r *MerchantRepo) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Mer
 	return true, nil
 }
 
-func (r *MerchantRepo) MerchantGetByIDAndUserID(ctx *ctx.Ctx, merchantID, userID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status) {
-	errDB := r.DB.WithContext(ctx.Context).Where("id = ? AND user_id = ?", merchantID, userID).First(&merchant).Error
+func (r *MerchantRepo) MerchantGetByIDAndOwnerID(ctx *ctx.Ctx, merchantID, ownerID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status) {
+	errDB := r.DB.WithContext(ctx.Context).Where("id = ? AND owner_id = ?", merchantID, ownerID).First(&merchant).Error
 	if errDB != nil {
 		if errors.Is(errDB, gorm.ErrRecordNotFound) {
 			return nil, nil
@@ -44,8 +44,8 @@ func (r *MerchantRepo) MerchantGetByIDAndUserID(ctx *ctx.Ctx, merchantID, userID
 	return
 }
 
-func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet) (merchants []merchantEntity.Merchant, err *resPkg.Status) {
-	query := r.MerchantListBaseQuery(param)
+func (r *MerchantRepo) MerchantsGetData(param *paramMerchant.MerchantsGet) (merchants merchantEntity.Merchants, err *resPkg.Status) {
+	query := r.MerchantsBaseQuery(param)
 
 	query = query.Select("*").
 		Limit(param.Filter.LimitOrDefault()).
@@ -71,8 +71,8 @@ func (r *MerchantRepo) MerchantListGetData(param *paramMerchant.MerchantListGet)
 	return
 }
 
-func (r *MerchantRepo) MerchantListGetTotal(param *paramMerchant.MerchantListGet) (total int64, err *resPkg.Status) {
-	query := r.MerchantListBaseQuery(param).Select("COUNT(id) AS total")
+func (r *MerchantRepo) MerchantsGetTotal(param *paramMerchant.MerchantsGet) (total int64, err *resPkg.Status) {
+	query := r.MerchantsBaseQuery(param).Select("COUNT(id) AS total")
 	errQuery := query.Take(&total).Error
 	if errQuery != nil {
 		return 0, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
@@ -80,10 +80,16 @@ func (r *MerchantRepo) MerchantListGetTotal(param *paramMerchant.MerchantListGet
 	return
 }
 
-func (r *MerchantRepo) MerchantListBaseQuery(param *paramMerchant.MerchantListGet) (query *gorm.DB) {
+func (r *MerchantRepo) MerchantsBaseQuery(param *paramMerchant.MerchantsGet) (query *gorm.DB) {
 	query = r.DB.WithContext(param.Ctx.Context).
-		Table(merchantEntity.TABLE_NAME).
-		Where("id IN ?", param.MerchantIDs)
+		Table(merchantEntity.TABLE_NAME)
+
+	if len(param.MerchantIDs) == 1 {
+		query = query.Where("id = ?", param.MerchantIDs[0])
+	} else {
+		query = query.Where("id IN ?", param.MerchantIDs)
+	}
+
 	if param.Filter.Search != "" {
 		query = query.Where("name LIKE ?", "%"+param.Filter.Search+"%")
 	}

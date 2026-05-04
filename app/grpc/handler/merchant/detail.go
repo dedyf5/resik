@@ -28,11 +28,12 @@ func (h *MerchantHandler) MerchantDetailGet(c context.Context, req *reqMerchantC
 		return nil, err
 	}
 
-	if _, err := ctx.UserClaims().MerchantIDIsAccessible(req.GetId()); err != nil {
+	merchantID, err := ctx.UserClaims().GetMerchantID(req.GetId())
+	if err != nil {
 		return nil, err
 	}
 
-	merchant, err := h.merchantService.MerchantGetByIDAndUserID(ctx, req.GetId(), ctx.UserClaims().UserID)
+	merchant, err := h.merchantService.MerchantGetByIDAndOwnerID(ctx, merchantID, ctx.UserClaims().UserID())
 	if err != nil {
 		return nil, err
 	}
@@ -51,6 +52,6 @@ func (h *MerchantHandler) MerchantDetailGet(c context.Context, req *reqMerchantC
 			Code:    status.CodePlus(codes.OK),
 			Message: codes.OK.String(),
 		},
-		Data: resMerchantCore.MerchantDetailFromEntity(merchant),
+		Data: resMerchantCore.MerchantDetailFromDTO(merchant),
 	}, nil
 }

@@ -28,7 +28,7 @@ func (h *MerchantHandler) MerchantListGet(c context.Context, req *reqMerchantCor
 
 	param := req.ToParam(ctx)
 
-	res, err := h.merchantService.MerchantListGet(param)
+	res, err := h.merchantService.MerchantsGet(param)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (h *MerchantHandler) MerchantListGet(c context.Context, req *reqMerchantCor
 			Code:    status.CodePlus(code),
 			Message: code.String(),
 		},
-		Data: response.MerchantListFromEntity(res.Data),
+		Data: response.MerchantListFromDTO(&res.Data),
 		Meta: resPkg.ResponseMetaSetup(
 			res.Total,
 			param.Filter.Raw().LimitOrDefault(),
