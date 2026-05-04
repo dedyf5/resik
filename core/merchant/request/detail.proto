@@ -8,5 +8,5 @@ package request;
 option go_package = "github.com/dedyf5/resik/core/merchant/request";
 
 message MerchantDetailGet {
-    uint64 id = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required,min=1" example:"1"
+    string id = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required" example:"01HX9T6P34S1J69E73H951H8R8"
 }

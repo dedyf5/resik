@@ -5,16 +5,18 @@
 package outlet
 
 import (
-	"slices"
 	"time"
 
 	"github.com/dedyf5/resik/entities/merchant"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
+	"gorm.io/gorm"
 )
 
 const TABLE_NAME = "outlets"
 
 type Outlet struct {
-	ID         uint64            `json:"id"`
+	ID         uint64            `json:"-" gorm:"primaryKey;autoIncrement;"`
+	PublicID   uuidPkg.UUIDV7    `json:"id" gorm:"column:public_id;type:uuid;unique;not null;"`
 	MerchantID uint64            `json:"merchant_id" gorm:"not null"`
 	Name       string            `json:"name" gorm:"type:varchar(40);not null"`
 	CreatedAt  time.Time         `json:"created_at" gorm:"type:datetime;not null;"`
@@ -24,25 +26,15 @@ type Outlet struct {
 	Merchant   merchant.Merchant `json:"merchant" gorm:"constraint:OnUpdate:CASCADE,OnDelete:NO ACTION;"`
 }
 
+func (o *Outlet) BeforeCreate(tx *gorm.DB) (err error) {
+	o.PublicID, err = uuidPkg.NewUUIDV7()
+	return
+}
+
 type Tabler interface {
 	TableName() string
 }
 
 func (Outlet) TableName() string {
 	return TABLE_NAME
-}
-
-func GetUniqueMerchantIDsAndOutletIDs(outlets []Outlet) (merchantIDs, outletIDs []uint64) {
-	length := len(outlets)
-	MIDs := make([]uint64, 0, length)
-	OIDs := make([]uint64, 0, length)
-	for _, v := range outlets {
-		if v.ID > 0 {
-			OIDs = append(OIDs, v.ID)
-		}
-		if !slices.Contains(MIDs, v.MerchantID) {
-			MIDs = append(MIDs, v.MerchantID)
-		}
-	}
-	return MIDs, OIDs
 }

@@ -13,6 +13,7 @@ import (
 	trxHandler "github.com/dedyf5/resik/app/rest/handler/transaction"
 	userHandler "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
+	"github.com/dedyf5/resik/internal/identity"
 	"github.com/dedyf5/resik/utils/ratelimit"
 	"github.com/labstack/echo/v5"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
@@ -20,6 +21,7 @@ import (
 
 type Router struct {
 	config          config.Config
+	resolver        identity.IdentityResolver
 	limiter         ratelimit.Limiter
 	generalHandler  *generalHandler.Handler
 	merchantHandler *merchantHandler.Handler
@@ -28,9 +30,10 @@ type Router struct {
 	healthHandler   *healthHandler.HealthHandler
 }
 
-func newRouter(config config.Config, limiter ratelimit.Limiter, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, merchantHandler *merchantHandler.Handler, trxHandler *trxHandler.Handler, healthHandler *healthHandler.HealthHandler) *Router {
+func newRouter(config config.Config, resolver identity.IdentityResolver, limiter ratelimit.Limiter, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, merchantHandler *merchantHandler.Handler, trxHandler *trxHandler.Handler, healthHandler *healthHandler.HealthHandler) *Router {
 	return &Router{
 		config:          config,
+		resolver:        resolver,
 		limiter:         limiter,
 		generalHandler:  generalHandler,
 		userHandler:     userHandler,
@@ -44,7 +47,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	e := server.echo
 
 	validateToken := echoFW.ValidateTokenMiddleware(r.config.Auth.SignatureKey)
-	jwtMiddleware := echoFW.JWTMiddleware(r.config.Auth.SignatureKey, r.config.Module.LangDefault)
+	jwtMiddleware := echoFW.JWTMiddleware(r.config.Auth.SignatureKey, r.resolver, r.config.Module.LangDefault)
 	rateLimit := echoFW.RateLimitMiddleware(r.limiter)
 
 	generalHandler := r.generalHandler

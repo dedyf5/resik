@@ -170,30 +170,25 @@ definitions:
       created_at:
         example: "2026-01-02T15:04:05+07:00"
         type: string
-      created_by:
-        example: 1
-        type: integer
+      creator:
+        $ref: '#/definitions/response.User'
       description:
         description: nullable
         example: Merchant description 1
         type: string
       id:
-        example: 1
-        type: integer
+        example: 019defa1ccd0794c9459795fc65d38b6
+        type: string
       name:
         example: Merchant 1
         type: string
+      owner:
+        $ref: '#/definitions/response.User'
       updated_at:
         example: "2026-01-02T15:04:05+07:00"
         type: string
-      updated_by:
-        example: 1
-        type: integer
-      user:
+      updater:
         $ref: '#/definitions/response.User'
-      user_id:
-        example: 1
-        type: integer
     type: object
   response.MerchantList:
     properties:
@@ -201,8 +196,8 @@ definitions:
         example: "2024-01-14T11:40:00Z"
         type: string
       id:
-        example: 123
-        type: integer
+        example: 019def99a9267f64b75a97b4b19a2c4b
+        type: string
       name:
         example: Resik Merchant
         type: string
@@ -225,8 +220,8 @@ definitions:
   response.MerchantUpsert:
     properties:
       id:
-        example: 123
-        type: integer
+        example: 019df0d3d46f71d0863084d474748c3a
+        type: string
     type: object
   response.Module:
     properties:

@@ -26,12 +26,13 @@ func (h *TransactionHandler) OutletOmzetGet(c context.Context, req *reqTrxCore.O
 		return nil, err
 	}
 
-	param, err := req.ToParam(ctx)
+	outletID, err := ctx.UserClaims().GetOutletID(req.GetOutletId())
 	if err != nil {
 		return nil, err
 	}
 
-	if _, err := ctx.UserClaims().OutletIDIsAccessible(param.OutletID); err != nil {
+	param, err := req.ToParam(ctx, outletID)
+	if err != nil {
 		return nil, err
 	}
 

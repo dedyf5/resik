@@ -81,7 +81,7 @@ func (h *Handler) MerchantPost(echoCtx *echo.Context) error {
 			term.Merchant.Localize(ctx.Lang().Localizer),
 		),
 		&resMerchantCore.MerchantUpsert{
-			Id: entity.ID,
+			Id: entity.PublicID.String32(),
 		},
 	)
 }
@@ -114,12 +114,13 @@ func (h *Handler) MerchantPut(echoCtx *echo.Context) error {
 		return err
 	}
 
-	entity, err := body.ToEntity(ctx)
+	merchantID, err := ctx.UserClaims().GetMerchantID(body.GetId())
 	if err != nil {
 		return err
 	}
 
-	if _, err = ctx.UserClaims().MerchantIDIsAccessible(entity.ID); err != nil {
+	entity, err := body.ToEntity(ctx, merchantID)
+	if err != nil {
 		return err
 	}
 
@@ -135,7 +136,7 @@ func (h *Handler) MerchantPut(echoCtx *echo.Context) error {
 			term.Merchant.Localize(ctx.Lang().Localizer),
 		),
 		&resMerchantCore.MerchantUpsert{
-			Id: entity.ID,
+			Id: body.GetId(),
 		},
 	)
 }
@@ -166,11 +167,12 @@ func (h *Handler) MerchantDetailGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	if _, err = ctx.UserClaims().MerchantIDIsAccessible(param.GetId()); err != nil {
+	merchantID, err := ctx.UserClaims().GetMerchantID(param.GetId())
+	if err != nil {
 		return err
 	}
 
-	merchant, err := h.merchantService.MerchantGetByIDAndUserID(ctx, param.GetId(), ctx.UserClaims().UserID)
+	merchant, err := h.merchantService.MerchantGetByIDAndOwnerID(ctx, merchantID, ctx.UserClaims().UserID())
 	if err != nil {
 		return err
 	}
@@ -186,7 +188,7 @@ func (h *Handler) MerchantDetailGet(echoCtx *echo.Context) error {
 
 	return resPkg.NewStatusData(
 		http.StatusOK,
-		resMerchantCore.MerchantDetailFromEntity(merchant),
+		resMerchantCore.MerchantDetailFromDTO(merchant),
 	)
 }
 
@@ -219,14 +221,14 @@ func (h *Handler) MerchantListGet(echoCtx *echo.Context) error {
 
 	param := payload.ToParam(ctx)
 
-	res, err := h.merchantService.MerchantListGet(param)
+	res, err := h.merchantService.MerchantsGet(param)
 	if err != nil {
 		return err
 	}
 
 	return resPkg.NewStatusDataMeta(
 		http.StatusOK,
-		resMerchantCore.MerchantListFromEntity(res.Data),
+		resMerchantCore.MerchantListFromDTO(&res.Data),
 		&resPkg.Meta{
 			PageCurrent: param.Filter.Raw().PageOrDefault(),
 			Limit:       param.Filter.Raw().LimitOrDefault(),
@@ -262,11 +264,12 @@ func (h *Handler) MerchantDelete(echoCtx *echo.Context) error {
 		return err
 	}
 
-	if _, err = ctx.UserClaims().MerchantIDIsAccessible(param.GetId()); err != nil {
+	merchantID, err := ctx.UserClaims().GetMerchantID(param.GetId())
+	if err != nil {
 		return err
 	}
 
-	_, err = h.merchantService.MerchantDelete(ctx, param.ToMerchant())
+	_, err = h.merchantService.MerchantDelete(ctx, param.ToMerchant(merchantID))
 	if err != nil {
 		return err
 	}

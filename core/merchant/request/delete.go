@@ -6,8 +6,8 @@ package request
 
 import "github.com/dedyf5/resik/entities/merchant"
 
-func (m *MerchantDelete) ToMerchant() *merchant.Merchant {
+func (*MerchantDelete) ToMerchant(merchantID uint64) *merchant.Merchant {
 	return &merchant.Merchant{
-		ID: m.GetId(),
+		ID: merchantID,
 	}
 }

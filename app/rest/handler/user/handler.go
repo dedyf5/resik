@@ -98,7 +98,7 @@ func (h *Handler) TokenRefreshGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	token, err := h.userService.AuthTokenGenerate(ctx.UserClaims().UserID, ctx.UserClaims().Username)
+	token, err := h.userService.AuthTokenGenerate(ctx, ctx.UserClaims().UserID(), ctx.UserClaims().UserPublicID(), ctx.UserClaims().Username())
 	if err != nil {
 		return err
 	}
@@ -106,7 +106,7 @@ func (h *Handler) TokenRefreshGet(echoCtx *echo.Context) error {
 	return resPkg.NewStatusData(
 		http.StatusOK,
 		resUserCore.UserCredential{
-			Username: ctx.UserClaims().Username,
+			Username: ctx.UserClaims().Username(),
 			Token:    token,
 		},
 	)

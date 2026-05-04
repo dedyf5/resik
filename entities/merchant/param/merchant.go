@@ -9,7 +9,7 @@ import (
 	"github.com/dedyf5/resik/pkg/goku"
 )
 
-type MerchantListGet struct {
+type MerchantsGet struct {
 	Ctx         *ctx.Ctx
 	MerchantIDs []uint64
 	Filter      goku.Filter

@@ -28,6 +28,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
+	identity "github.com/dedyf5/resik/internal/identity"
 	pkgHash "github.com/dedyf5/resik/pkg/hash"
 	repo "github.com/dedyf5/resik/repositories"
 	checkRepo "github.com/dedyf5/resik/repositories/check"
@@ -88,10 +89,16 @@ func provideCheckerSlice(db *checkRepo.CheckDatabaseRepo, redis *checkRepo.Check
 	return []repo.ICheck{db, redis}
 }
 
+func provideAppKey(conf configEntity.App) string {
+	return conf.NameKey()
+}
+
 var providerSet = wire.NewSet(
 	provideHasherConfig,
 	pkgHash.NewArgon2Hasher,
 	provideCheckerSlice,
+	provideAppKey,
+	identity.NewResolver,
 )
 
 var serviceSet = wire.NewSet(

@@ -17,6 +17,7 @@ import (
 	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/entities/config"
+	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/dedyf5/resik/utils/ratelimit"
 	statusUtil "github.com/dedyf5/resik/utils/status"
@@ -37,15 +38,17 @@ const (
 type Interceptor struct {
 	module      config.Module
 	auth        config.Auth
+	resolver    identity.IdentityResolver
 	limiter     ratelimit.Limiter
 	log         *logCtx.Log
 	methodRoles map[string][]Role
 }
 
-func NewInterceptor(module config.Module, auth config.Auth, limiter ratelimit.Limiter, log *logCtx.Log) *Interceptor {
+func NewInterceptor(module config.Module, auth config.Auth, resolver identity.IdentityResolver, limiter ratelimit.Limiter, log *logCtx.Log) *Interceptor {
 	return &Interceptor{
 		module:      module,
 		auth:        auth,
+		resolver:    resolver,
 		limiter:     limiter,
 		log:         log,
 		methodRoles: methodRoles(),
@@ -105,7 +108,7 @@ func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*con
 	return &newCtx, langRes, nil
 }
 
-func (i *Interceptor) validateJWT(c context.Context, lang *langCtx.Lang, signatureKey, fullMethod string) (*context.Context, error) {
+func (i *Interceptor) validateJWT(c context.Context, lang *langCtx.Lang, signatureKey string, fullMethod string) (*context.Context, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
 		return i.errorMetadata()
@@ -121,7 +124,7 @@ func (i *Interceptor) validateJWT(c context.Context, lang *langCtx.Lang, signatu
 	}
 	bearer := meta["authorization"][0]
 	token := strings.ReplaceAll(bearer, "Bearer ", "")
-	claim, err := jwtCxt.AuthClaimsFromString(token, signatureKey, lang)
+	claim, err := jwtCxt.AuthClaimsFromString(token, signatureKey, c, i.resolver, lang)
 	if err != nil {
 		return nil, err
 	}

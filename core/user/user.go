@@ -5,12 +5,14 @@
 package user
 
 import (
+	"github.com/dedyf5/resik/ctx"
 	paramUser "github.com/dedyf5/resik/entities/user/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
 //go:generate mockgen -source user.go -package mock -destination ./mock/user.go
 type IService interface {
 	Auth(param paramUser.Auth) (token string, err *resPkg.Status)
-	AuthTokenGenerate(userID uint64, username string) (token string, err *resPkg.Status)
+	AuthTokenGenerate(ctx *ctx.Ctx, userID uint64, userPublicID uuidPkg.UUIDV7, username string) (token string, err *resPkg.Status)
 }

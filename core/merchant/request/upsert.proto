@@ -15,7 +15,7 @@ message MerchantPost {
 }
 
 message MerchantPut {
-    uint64 id = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required" example:"123"
+    string id = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required" example:"019df0d3f6c579ac8976afe7a437166c"
     string name = 2; // @gotags: json:"name" validate:"required,max=40" example:"Resik Merchant"
     // nullable
     optional string description = 3; // @gotags: json:"description" validate:"omitnil,notblank,max=5000" example:"Merchant description 1"

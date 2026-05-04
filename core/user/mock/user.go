@@ -12,8 +12,10 @@ package mock
 import (
 	reflect "reflect"
 
+	ctx "github.com/dedyf5/resik/ctx"
 	param "github.com/dedyf5/resik/entities/user/param"
 	response "github.com/dedyf5/resik/pkg/response"
+	uuid "github.com/dedyf5/resik/pkg/uuid"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -57,16 +59,16 @@ func (mr *MockIServiceMockRecorder) Auth(arg0 any) *gomock.Call {
 }
 
 // AuthTokenGenerate mocks base method.
-func (m *MockIService) AuthTokenGenerate(userID uint64, username string) (string, *response.Status) {
+func (m *MockIService) AuthTokenGenerate(arg0 *ctx.Ctx, userID uint64, userPublicID uuid.UUIDV7, username string) (string, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AuthTokenGenerate", userID, username)
+	ret := m.ctrl.Call(m, "AuthTokenGenerate", arg0, userID, userPublicID, username)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
 // AuthTokenGenerate indicates an expected call of AuthTokenGenerate.
-func (mr *MockIServiceMockRecorder) AuthTokenGenerate(userID, username any) *gomock.Call {
+func (mr *MockIServiceMockRecorder) AuthTokenGenerate(arg0, userID, userPublicID, username any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthTokenGenerate", reflect.TypeOf((*MockIService)(nil).AuthTokenGenerate), userID, username)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AuthTokenGenerate", reflect.TypeOf((*MockIService)(nil).AuthTokenGenerate), arg0, userID, userPublicID, username)
 }

@@ -9,7 +9,6 @@ import (
 	checkEntity "github.com/dedyf5/resik/entities/check"
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	paramMerchant "github.com/dedyf5/resik/entities/merchant/param"
-	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
@@ -31,15 +30,16 @@ type ITransaction interface {
 type IUser interface {
 	UserByID(ctx *ctx.Ctx, userID uint64) (user *userEntity.User, err *resPkg.Status)
 	UserByUsername(ctx *ctx.Ctx, username string) (user *userEntity.User, err *resPkg.Status)
+	UsersGetByIDs(ctx *ctx.Ctx, userIDs []uint64) (users userEntity.Users, err *resPkg.Status)
 	MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, err *resPkg.Status)
-	OutletMerchantByUserIDGetData(userID uint64) (outlets []outletEntity.Outlet, err *resPkg.Status)
+	OutletMerchantByUserIDGetData(ctx *ctx.Ctx, userID uint64) (merchantOutletIDs userEntity.MerchantOutletIDs, err *resPkg.Status)
 }
 
 type IMerchant interface {
 	MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
 	MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
-	MerchantGetByIDAndUserID(ctx *ctx.Ctx, merchantID, userID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status)
-	MerchantListGetData(param *paramMerchant.MerchantListGet) (merchants []merchantEntity.Merchant, err *resPkg.Status)
-	MerchantListGetTotal(param *paramMerchant.MerchantListGet) (total int64, err *resPkg.Status)
+	MerchantGetByIDAndOwnerID(ctx *ctx.Ctx, merchantID, ownerID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status)
+	MerchantsGetData(param *paramMerchant.MerchantsGet) (merchants merchantEntity.Merchants, err *resPkg.Status)
+	MerchantsGetTotal(param *paramMerchant.MerchantsGet) (total int64, err *resPkg.Status)
 	MerchantDelete(c *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
 }

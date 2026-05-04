@@ -17,6 +17,7 @@ import (
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
+	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/dedyf5/resik/utils/ratelimit"
 	"github.com/golang-jwt/jwt/v5"
@@ -109,27 +110,34 @@ func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 	return echojwt.WithConfig(jwtConfig)
 }
 
-func JWTMiddleware(signatureKey string, langDef language.Tag) echo.MiddlewareFunc {
-	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			token := strings.ReplaceAll(r.Header.Get("Authorization"), "Bearer ", "")
+func JWTMiddleware(signatureKey string, resolver identity.IdentityResolver, langDef language.Tag) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(ctx *echo.Context) error {
+			token := strings.ReplaceAll(ctx.Request().Header.Get("Authorization"), "Bearer ", "")
 			if token != "" {
-				c := r.Context()
-				langRes, langErr := langCtx.FromContext(c)
+				reqContext := ctx.Request().Context()
+
+				langRes, langErr := langCtx.FromContext(reqContext)
 				if langErr != nil {
-					langRes = langCtx.NewLang(langDef, nil, r.Header.Get("Accept-Language"))
+					langRes = langCtx.NewLang(langDef, nil, ctx.Request().Header.Get("Accept-Language"))
 				}
-				claim, _ := jwtCtx.AuthClaimsFromString(token, signatureKey, langRes)
-				ctx := context.WithValue(c,
+
+				claim, err := jwtCtx.AuthClaimsFromString(token, signatureKey, reqContext, resolver, langRes)
+				if err != nil {
+					return err
+				}
+
+				newContext := context.WithValue(reqContext,
 					jwtCtx.AuthClaimsKey,
 					claim,
 				)
-				r = r.WithContext(ctx)
+
+				ctx.SetRequest(ctx.Request().WithContext(newContext))
 			}
 
-			h.ServeHTTP(w, r)
-		})
-	})
+			return next(ctx)
+		}
+	}
 }
 
 func RateLimitMiddleware(limiter ratelimit.Limiter) echo.MiddlewareFunc {
