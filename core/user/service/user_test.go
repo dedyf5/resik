@@ -132,19 +132,6 @@ func TestAuthTokenGenerate(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("ALL-OutletMerchantByUserIDGetData-ERROR2", func(t *testing.T) {
-		merchantOutletIDs := outletsExpected()
-		merchantOutletIDs[0].MerchantPublicID = uuidPkg.Nil
-		gomock.InOrder(
-			userRepo.EXPECT().OutletMerchantByUserIDGetData(ctx, userID).Return(merchantOutletIDs, nil),
-		)
-		_, _, _, _, errIDs := merchantOutletIDs.UniqueIDs()
-		res, _ := userService.AuthTokenGenerate(ctx, userID, userPublicID, username)
-		assert.Empty(t, res)
-		assert.NotNil(t, errIDs)
-		assert.Equal(t, errIDs.Code, errIDs.Code)
-	})
-
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
 		gomock.InOrder(
 			userRepo.EXPECT().OutletMerchantByUserIDGetData(ctx, userID).Return(outletsExpected(), nil),

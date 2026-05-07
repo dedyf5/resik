@@ -53,33 +53,14 @@ func (s *Service) AuthTokenGenerate(ctx *ctx.Ctx, userID uint64, userPublicID uu
 		Username: username,
 	}
 
-	merchantIDs, merchantPublicIDs, outletIDs, outletPublicIDs, err := merchantOutletIDs.UniqueIDs()
-	if err != nil {
-		return "", err
-	}
-
-	var merchants []jwtCtx.Base
-	for i, v := range merchantIDs {
-		merchants = append(merchants, jwtCtx.Base{
-			ID:       v,
-			PublicID: merchantPublicIDs[i],
-		})
-	}
-
-	var outlets []jwtCtx.Base
-	for i, v := range outletIDs {
-		outlets = append(outlets, jwtCtx.Base{
-			ID:       v,
-			PublicID: outletPublicIDs[i],
-		})
-	}
+	merchantIDs, outletIDs := merchantOutletIDs.UniqueIDs()
 
 	token, err = jwtCtx.AuthTokenGenerate(
 		s.config.Module,
 		s.config.Auth,
 		user,
-		merchants,
-		outlets,
+		merchantIDs,
+		outletIDs,
 	)
 	return
 }

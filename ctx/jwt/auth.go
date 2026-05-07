@@ -19,7 +19,6 @@ import (
 	outletEntity "github.com/dedyf5/resik/entities/outlet"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	"github.com/dedyf5/resik/internal/identity"
-	"github.com/dedyf5/resik/pkg/collection"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	"github.com/golang-jwt/jwt/v5"
@@ -37,9 +36,9 @@ const (
 
 type AuthClaims struct {
 	jwt.RegisteredClaims
-	User      User   `json:"user"`
-	Merchants []Base `json:"merchants"`
-	Outlets   []Base `json:"outlets"`
+	User        User     `json:"user"`
+	MerchantIDs []uint64 `json:"-"`
+	OutletsIDs  []uint64 `json:"-"`
 }
 
 type User struct {
@@ -50,10 +49,6 @@ type User struct {
 type Base struct {
 	ID       uint64         `json:"-"`
 	PublicID uuidPkg.UUIDV7 `json:"id"`
-}
-
-func (a *AuthClaims) Valid() error {
-	return nil
 }
 
 func (a *AuthClaims) UserID() uint64 {
@@ -77,67 +72,52 @@ func (a *AuthClaims) Username() string {
 	return a.User.Username
 }
 
-func (a *AuthClaims) GetMerchantID(merchantPublicID string) (merchantID uint64, err *resPkg.Status) {
+// getID gets the ID for a specific table by public ID, and check if user has access to it
+func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, ids []uint64, tableName string, publicID string) (id uint64, err *resPkg.Status) {
 	if a == nil {
 		return 0, resPkg.NewStatusCode(http.StatusUnauthorized)
 	}
 
-	for _, v := range a.Merchants {
-		if v.PublicID.Equal(merchantPublicID) {
-			return v.ID, nil
-		}
+	uuidV7, errParse := uuidPkg.ParseUUIDV7(publicID)
+	if errParse != nil {
+		return 0, resPkg.NewStatusMessage(
+			http.StatusBadRequest,
+			term.InvalidID.Localize(lang.Localizer),
+			errParse,
+		)
+	}
+
+	id, errResolver := resolver.Resolve(c, tableName, uuidV7)
+	if errResolver != nil {
+		return 0, HTTPStatusError(errResolver, lang)
+	}
+
+	if slices.Contains(ids, id) {
+		return id, nil
 	}
 
 	return 0, resPkg.NewStatusCode(http.StatusUnauthorized)
 }
 
-func (a *AuthClaims) MerchantIDIsAccessible(merchantID uint64) (ok bool, err *resPkg.Status) {
-	if a == nil {
-		return statusUnauthorized()
-	}
-
-	merchantIDs := collection.Map(a.Merchants, func(n Base) uint64 {
-		return n.ID
-	})
-
-	return checkAccess(merchantIDs, merchantID)
+// GetMerchantID gets the merchant ID by merchant public ID, and check if user has access to it
+func (a *AuthClaims) GetMerchantID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, merchantPublicID string) (merchantID uint64, err *resPkg.Status) {
+	return a.getID(c, resolver, lang, a.MerchantIDs, merchantEntity.TABLE_NAME, merchantPublicID)
 }
 
-func (a *AuthClaims) GetOutletID(outletPublicID string) (outletID uint64, err *resPkg.Status) {
-	if a == nil {
-		return 0, resPkg.NewStatusCode(http.StatusUnauthorized)
-	}
-
-	for _, v := range a.Outlets {
-		if v.PublicID.Equal(outletPublicID) {
-			return v.ID, nil
-		}
-	}
-
-	return 0, resPkg.NewStatusCode(http.StatusUnauthorized)
+// GetOutletID gets the outlet ID by outlet public ID, and check if user has access to it
+func (a *AuthClaims) GetOutletID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, outletPublicID string) (outletID uint64, err *resPkg.Status) {
+	return a.getID(c, resolver, lang, a.OutletsIDs, outletEntity.TABLE_NAME, outletPublicID)
 }
 
-func (a *AuthClaims) OutletIDIsAccessible(outletID uint64) (ok bool, err *resPkg.Status) {
-	if a == nil {
-		return statusUnauthorized()
-	}
-
-	outletIDs := collection.Map(a.Outlets, func(n Base) uint64 {
-		return n.ID
-	})
-
-	return checkAccess(outletIDs, outletID)
-}
-
-func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, user User, merchants, outlets []Base) (token string, err *resPkg.Status) {
+func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, user User, merchantIDs, outletIDs []uint64) (token string, err *resPkg.Status) {
 	claims := AuthClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    moduleConfig.Name,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(authConfig.Expires)),
 		},
-		User:      user,
-		Merchants: merchants,
-		Outlets:   outlets,
+		User:        user,
+		MerchantIDs: merchantIDs,
+		OutletsIDs:  outletIDs,
 	}
 
 	tokenGen := jwt.NewWithClaims(AUTH_SIGNING_METHOD, claims)
@@ -169,35 +149,17 @@ func AuthClaimsFromString(tokenString string, signatureKey string, c context.Con
 			claims.User.ID = userID
 		}
 
-		merchantPublicIDs := collection.Map(claims.Merchants, func(n Base) uuidPkg.UUIDV7 {
-			return n.PublicID
-		})
-
-		if len(merchantPublicIDs) > 0 {
-			merchantIDs, errResolver := resolver.ResolveBatch(c, merchantEntity.TABLE_NAME, merchantPublicIDs)
-			if errResolver != nil {
-				return nil, HTTPStatusError(errResolver, lang)
-			}
-
-			for i, id := range merchantIDs {
-				claims.Merchants[i].ID = id
-			}
+		merchantIDs, errMerchants := resolver.GetMerchantIDs(c, claims.User.ID)
+		if errMerchants != nil {
+			return nil, HTTPStatusError(errMerchants, lang)
 		}
+		claims.MerchantIDs = merchantIDs
 
-		outletPublicIDs := collection.Map(claims.Outlets, func(n Base) uuidPkg.UUIDV7 {
-			return n.PublicID
-		})
-
-		if len(outletPublicIDs) > 0 {
-			outletIDs, errResolver := resolver.ResolveBatch(c, outletEntity.TABLE_NAME, outletPublicIDs)
-			if errResolver != nil {
-				return nil, HTTPStatusError(errResolver, lang)
-			}
-
-			for i, id := range outletIDs {
-				claims.Outlets[i].ID = id
-			}
+		outletIDs, errOutlets := resolver.GetOutletIDs(c, claims.User.ID)
+		if errOutlets != nil {
+			return nil, HTTPStatusError(errOutlets, lang)
 		}
+		claims.OutletsIDs = outletIDs
 
 		return claims, nil
 	}
@@ -233,15 +195,4 @@ func statusInvalid(err error, lang *lang.Lang) *resPkg.Status {
 		term.InvalidOrExpiredSessionLoginAgain.Localize(lang.Localizer),
 		err,
 	)
-}
-
-func statusUnauthorized() (bool, *resPkg.Status) {
-	return false, resPkg.NewStatusCode(http.StatusUnauthorized)
-}
-
-func checkAccess[T comparable](ids []T, id T) (ok bool, err *resPkg.Status) {
-	if !slices.Contains(ids, id) {
-		return statusUnauthorized()
-	}
-	return true, nil
 }

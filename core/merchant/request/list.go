@@ -6,9 +6,7 @@ package request
 
 import (
 	"github.com/dedyf5/resik/ctx"
-	"github.com/dedyf5/resik/ctx/jwt"
 	paramMerchant "github.com/dedyf5/resik/entities/merchant/param"
-	"github.com/dedyf5/resik/pkg/collection"
 	"github.com/dedyf5/resik/pkg/goku"
 )
 
@@ -18,13 +16,9 @@ func (m *MerchantListGet) ToParam(c *ctx.Ctx) *paramMerchant.MerchantsGet {
 		orderStr = m.GetOrder()
 	}
 
-	merchantIDs := collection.Map(c.UserClaims().Merchants, func(v jwt.Base) uint64 {
-		return v.ID
-	})
-
 	return &paramMerchant.MerchantsGet{
 		Ctx:         c,
-		MerchantIDs: merchantIDs,
+		MerchantIDs: c.UserClaims().MerchantIDs,
 		Filter:      *goku.NewFilter(m.GetSearch(), m.GetPage(), m.GetLimit()),
 		Orders:      goku.OrdersBuilder(orderStr),
 	}

@@ -15,6 +15,7 @@ import (
 	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
+	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v5"
 )
@@ -22,6 +23,7 @@ import (
 type Handler struct {
 	log             *logCtx.Log
 	fw              echoFW.IEcho
+	resolver        identity.IdentityResolver
 	merchantService merchantCore.IService
 }
 
@@ -29,10 +31,11 @@ type Handler struct {
 // Currently kept to ensure Swagger can discover types from this package.
 var _ = commonEntity.Request{}
 
-func New(log *logCtx.Log, fw echoFW.IEcho, merchantService merchantCore.IService) *Handler {
+func New(log *logCtx.Log, fw echoFW.IEcho, resolver identity.IdentityResolver, merchantService merchantCore.IService) *Handler {
 	return &Handler{
 		log:             log,
 		fw:              fw,
+		resolver:        resolver,
 		merchantService: merchantService,
 	}
 }
@@ -114,7 +117,7 @@ func (h *Handler) MerchantPut(echoCtx *echo.Context) error {
 		return err
 	}
 
-	merchantID, err := ctx.UserClaims().GetMerchantID(body.GetId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, body.GetId())
 	if err != nil {
 		return err
 	}
@@ -167,7 +170,7 @@ func (h *Handler) MerchantDetailGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	merchantID, err := ctx.UserClaims().GetMerchantID(param.GetId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, param.GetId())
 	if err != nil {
 		return err
 	}
@@ -264,7 +267,7 @@ func (h *Handler) MerchantDelete(echoCtx *echo.Context) error {
 		return err
 	}
 
-	merchantID, err := ctx.UserClaims().GetMerchantID(param.GetId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, param.GetId())
 	if err != nil {
 		return err
 	}

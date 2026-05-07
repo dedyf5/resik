@@ -115,6 +115,10 @@ func (l *Log) Error(msg string) {
 	l.logger.WithOptions(zap.AddCallerSkip(1)).Error(msg, l.ZapFields()...)
 }
 
+func (l *Log) Errorf(format string, args ...any) {
+	l.logger.WithOptions(zap.AddCallerSkip(1)).Error(fmt.Sprintf(format, args...), l.ZapFields()...)
+}
+
 func (l *Log) Warn(msg string) {
 	l.logger.WithOptions(zap.AddCallerSkip(1)).Warn(msg, l.ZapFields()...)
 }
