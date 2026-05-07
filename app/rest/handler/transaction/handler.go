@@ -15,6 +15,7 @@ import (
 	"github.com/dedyf5/resik/ctx"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
+	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v5"
 )
@@ -27,14 +28,16 @@ type Handler struct {
 	config     config.Config
 	log        *logCtx.Log
 	fw         echoFW.IEcho
+	resolver   identity.IdentityResolver
 	trxService trxService.IService
 }
 
-func New(fw echoFW.IEcho, log *logCtx.Log, trxService trxService.IService, config config.Config) *Handler {
+func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho, resolver identity.IdentityResolver, trxService trxService.IService) *Handler {
 	return &Handler{
 		config:     config,
 		log:        log,
 		fw:         fw,
+		resolver:   resolver,
 		trxService: trxService,
 	}
 }
@@ -67,7 +70,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	merchantID, err := ctx.UserClaims().GetMerchantID(payload.GetMerchantId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, payload.GetMerchantId())
 	if err != nil {
 		return err
 	}
@@ -120,7 +123,7 @@ func (h *Handler) OutletOmzetGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	outletID, err := ctx.UserClaims().GetOutletID(payload.GetOutletId())
+	outletID, err := ctx.GetOutletID(h.resolver, payload.GetOutletId())
 	if err != nil {
 		return err
 	}

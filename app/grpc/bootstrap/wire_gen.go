@@ -48,6 +48,8 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	generalHandler := general.New(config, logLog)
 	tag := module.LangDefault
 	validate := validator.New(tag)
+	app := config.App
+	string2 := provideAppKey(app)
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
 	bool2 := _wireBoolValue
@@ -60,19 +62,6 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
-	merchantRepo := merchant.New(gormDB)
-	userRepo := user.New(gormDB)
-	serviceService := service.New(merchantRepo, userRepo, config)
-	merchantHandler := merchant2.New(logLog, validate, serviceService)
-	transactionRepo := transaction.New(gormDB)
-	service5 := service2.New(transactionRepo, config)
-	transactionHandler := transaction2.New(config, logLog, validate, service5)
-	auth := config.Auth
-	argon2Config := provideHasherConfig(auth)
-	iHash := hash.NewArgon2Hasher(argon2Config)
-	service6 := service3.New(userRepo, iHash, config)
-	userHandler := user2.New(logLog, validate, service6)
-	checkDatabaseRepo := check.NewCheckDatabaseRepo(db, config)
 	redisConfig := config.Redis
 	client, cleanup3, err := drivers.NewRedisConnection(redisConfig)
 	if err != nil {
@@ -80,14 +69,25 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
+	identityResolver := identity.NewResolver(string2, gormDB, client)
+	userRepo := user.New(gormDB)
+	merchantRepo := merchant.New(gormDB)
+	serviceService := service.New(config, identityResolver, userRepo, merchantRepo)
+	merchantHandler := merchant2.New(logLog, validate, identityResolver, serviceService)
+	transactionRepo := transaction.New(gormDB)
+	service5 := service2.New(transactionRepo, config)
+	transactionHandler := transaction2.New(config, logLog, validate, identityResolver, service5)
+	auth := config.Auth
+	argon2Config := provideHasherConfig(auth)
+	iHash := hash.NewArgon2Hasher(argon2Config)
+	service6 := service3.New(userRepo, iHash, config)
+	userHandler := user2.New(logLog, validate, service6)
+	checkDatabaseRepo := check.NewCheckDatabaseRepo(db, config)
 	checkRedisRepo := check.NewCheckRedisRepo(client, config)
 	v := provideCheckerSlice(checkDatabaseRepo, checkRedisRepo)
 	service7 := service4.New(v)
 	healthHandler := health.New(service7)
 	router := newRouter(config, generalHandler, merchantHandler, transactionHandler, userHandler, healthHandler)
-	app := config.App
-	string2 := provideAppKey(app)
-	identityResolver := identity.NewResolver(string2, gormDB, client)
 	rateLimit := config.RateLimit
 	limiter, err := ratelimit.NewRateLimiter(app, rateLimit, client)
 	if err != nil {

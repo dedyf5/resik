@@ -41,6 +41,64 @@ func (m *MockIdentityResolver) EXPECT() *MockIdentityResolverMockRecorder {
 	return m.recorder
 }
 
+// GetMerchantIDs mocks base method.
+func (m *MockIdentityResolver) GetMerchantIDs(c context.Context, userID uint64) ([]uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetMerchantIDs", c, userID)
+	ret0, _ := ret[0].([]uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetMerchantIDs indicates an expected call of GetMerchantIDs.
+func (mr *MockIdentityResolverMockRecorder) GetMerchantIDs(c, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMerchantIDs", reflect.TypeOf((*MockIdentityResolver)(nil).GetMerchantIDs), c, userID)
+}
+
+// GetOutletIDs mocks base method.
+func (m *MockIdentityResolver) GetOutletIDs(c context.Context, userID uint64) ([]uint64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetOutletIDs", c, userID)
+	ret0, _ := ret[0].([]uint64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetOutletIDs indicates an expected call of GetOutletIDs.
+func (mr *MockIdentityResolverMockRecorder) GetOutletIDs(c, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOutletIDs", reflect.TypeOf((*MockIdentityResolver)(nil).GetOutletIDs), c, userID)
+}
+
+// InvalidateUserAccessMerchant mocks base method.
+func (m *MockIdentityResolver) InvalidateUserAccessMerchant(ctx context.Context, userID uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InvalidateUserAccessMerchant", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// InvalidateUserAccessMerchant indicates an expected call of InvalidateUserAccessMerchant.
+func (mr *MockIdentityResolverMockRecorder) InvalidateUserAccessMerchant(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InvalidateUserAccessMerchant", reflect.TypeOf((*MockIdentityResolver)(nil).InvalidateUserAccessMerchant), ctx, userID)
+}
+
+// InvalidateUserAccessOutlet mocks base method.
+func (m *MockIdentityResolver) InvalidateUserAccessOutlet(ctx context.Context, userID uint64) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InvalidateUserAccessOutlet", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// InvalidateUserAccessOutlet indicates an expected call of InvalidateUserAccessOutlet.
+func (mr *MockIdentityResolverMockRecorder) InvalidateUserAccessOutlet(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InvalidateUserAccessOutlet", reflect.TypeOf((*MockIdentityResolver)(nil).InvalidateUserAccessOutlet), ctx, userID)
+}
+
 // Resolve mocks base method.
 func (m *MockIdentityResolver) Resolve(c context.Context, tableName string, publicID uuid.UUIDV7) (uint64, error) {
 	m.ctrl.T.Helper()

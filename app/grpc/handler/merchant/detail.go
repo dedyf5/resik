@@ -28,7 +28,7 @@ func (h *MerchantHandler) MerchantDetailGet(c context.Context, req *reqMerchantC
 		return nil, err
 	}
 
-	merchantID, err := ctx.UserClaims().GetMerchantID(req.GetId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, req.GetId())
 	if err != nil {
 		return nil, err
 	}

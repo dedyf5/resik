@@ -60,7 +60,7 @@ func (h *MerchantHandler) MerchantPut(c context.Context, req *reqMerchantCore.Me
 		return nil, err
 	}
 
-	merchantID, err := ctx.UserClaims().GetMerchantID(req.GetId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, req.GetId())
 	if err != nil {
 		return nil, err
 	}

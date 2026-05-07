@@ -12,6 +12,7 @@ import (
 	jwt "github.com/dedyf5/resik/ctx/jwt"
 	lang "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
+	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
@@ -56,4 +57,14 @@ func (c *Ctx) Log() *logCtx.Log {
 
 func (c *Ctx) UserClaims() *jwt.AuthClaims {
 	return c.userClaims
+}
+
+// GetMerchantID gets the merchant ID by merchant public ID, and check if user has access to it
+func (c *Ctx) GetMerchantID(resolver identity.IdentityResolver, merchantPublicID string) (merchantID uint64, err *resPkg.Status) {
+	return c.userClaims.GetMerchantID(c.Context, resolver, c.lang, merchantPublicID)
+}
+
+// GetOutletID gets the outlet ID by outlet public ID, and check if user has access to it
+func (c *Ctx) GetOutletID(resolver identity.IdentityResolver, outletPublicID string) (outletID uint64, err *resPkg.Status) {
+	return c.userClaims.GetOutletID(c.Context, resolver, c.lang, outletPublicID)
 }

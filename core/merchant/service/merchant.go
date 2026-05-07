@@ -16,7 +16,18 @@ import (
 )
 
 func (s *Service) MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status) {
-	return s.merchantRepo.MerchantInsert(ctx, merchant)
+	ok, err = s.merchantRepo.MerchantInsert(ctx, merchant)
+	if err != nil {
+		return ok, err
+	}
+
+	userID := ctx.UserClaims().UserID()
+
+	if err := s.resolver.InvalidateUserAccessMerchant(ctx.Context, userID); err != nil {
+		ctx.Log().Errorf("failed to invalidate user access merchant for user id: %d and error: %s", userID, err.Error())
+	}
+
+	return ok, nil
 }
 
 func (s *Service) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status) {
@@ -82,5 +93,16 @@ func (s *Service) MerchantsGet(param *paramMerchant.MerchantsGet) (res *dtoMerch
 }
 
 func (s *Service) MerchantDelete(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status) {
-	return s.merchantRepo.MerchantDelete(ctx, merchant)
+	ok, err = s.merchantRepo.MerchantDelete(ctx, merchant)
+	if err != nil {
+		return ok, err
+	}
+
+	userID := ctx.UserClaims().UserID()
+
+	if err := s.resolver.InvalidateUserAccessMerchant(ctx.Context, userID); err != nil {
+		ctx.Log().Errorf("failed to invalidate user access merchant for user id: %d and error: %s", userID, err.Error())
+	}
+
+	return ok, nil
 }

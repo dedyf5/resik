@@ -6,6 +6,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -23,6 +24,7 @@ import (
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
 	"github.com/dedyf5/resik/entities/merchant/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
+	identityMock "github.com/dedyf5/resik/internal/identity/mock"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	repoMock "github.com/dedyf5/resik/repositories/mock"
 )
@@ -31,11 +33,12 @@ func TestMerchantInsert(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, _, ctx, merchantService := setup(ctrl)
+	resolver, ctx, merchantRepo, _, merchantService := setup(ctrl)
 
+	userID := ctx.UserClaims().UserID()
 	merchant := &merchantEntity.Merchant{}
 
-	t.Run("MerchantInsert-ERROR", func(t *testing.T) {
+	t.Run("MerchantInsert-ERROR1", func(t *testing.T) {
 		okExpected := false
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
@@ -48,10 +51,23 @@ func TestMerchantInsert(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
+	t.Run("MerchantInsert-ERROR2", func(t *testing.T) {
+		okExpected := true
+		errExpected := errors.New("ERROR")
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantInsert(ctx, merchant).Return(okExpected, nil),
+			resolver.EXPECT().InvalidateUserAccessMerchant(ctx.Context, userID).Return(errExpected),
+		)
+		ok, err := merchantService.MerchantInsert(ctx, merchant)
+		assert.Equal(t, okExpected, ok)
+		assert.Nil(t, err)
+	})
+
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
 		okExpected := true
 		gomock.InOrder(
 			merchantRepo.EXPECT().MerchantInsert(ctx, merchant).Return(okExpected, nil),
+			resolver.EXPECT().InvalidateUserAccessMerchant(ctx.Context, userID).Return(nil),
 		)
 		ok, err := merchantService.MerchantInsert(ctx, merchant)
 		assert.Equal(t, okExpected, ok)
@@ -63,7 +79,7 @@ func TestMerchantUpdate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, _, ctx, merchantService := setup(ctrl)
+	_, ctx, merchantRepo, _, merchantService := setup(ctrl)
 
 	merchant := &merchantEntity.Merchant{}
 
@@ -95,11 +111,12 @@ func TestMerchantDelete(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, _, ctx, merchantService := setup(ctrl)
+	resolver, ctx, merchantRepo, _, merchantService := setup(ctrl)
 
+	userID := ctx.UserClaims().UserID()
 	merchant := &merchantEntity.Merchant{}
 
-	t.Run("MerchantDelete-ERROR", func(t *testing.T) {
+	t.Run("MerchantDelete-ERROR1", func(t *testing.T) {
 		okExpected := false
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
@@ -112,10 +129,23 @@ func TestMerchantDelete(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
+	t.Run("MerchantDelete-ERROR2", func(t *testing.T) {
+		okExpected := true
+		errExpected := errors.New("ERROR")
+		gomock.InOrder(
+			merchantRepo.EXPECT().MerchantDelete(ctx, merchant).Return(okExpected, nil),
+			resolver.EXPECT().InvalidateUserAccessMerchant(ctx.Context, userID).Return(errExpected),
+		)
+		ok, err := merchantService.MerchantDelete(ctx, merchant)
+		assert.Equal(t, okExpected, ok)
+		assert.Nil(t, err)
+	})
+
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
 		okExpected := true
 		gomock.InOrder(
 			merchantRepo.EXPECT().MerchantDelete(ctx, merchant).Return(okExpected, nil),
+			resolver.EXPECT().InvalidateUserAccessMerchant(ctx.Context, userID).Return(nil),
 		)
 		ok, err := merchantService.MerchantDelete(ctx, merchant)
 		assert.Equal(t, okExpected, ok)
@@ -127,7 +157,7 @@ func TestMerchantGetByIDAndOwnerID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, userRepo, ctx, merchantService := setup(ctrl)
+	_, ctx, merchantRepo, userRepo, merchantService := setup(ctrl)
 
 	merchant := &merchantEntity.Merchant{}
 	user := &userEntity.User{}
@@ -195,7 +225,7 @@ func TestMerchantsGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	merchantRepo, userRepo, ctx, merchantService := setup(ctrl)
+	_, ctx, merchantRepo, userRepo, merchantService := setup(ctrl)
 
 	param := &param.MerchantsGet{
 		Ctx: ctx,
@@ -291,11 +321,12 @@ func TestMerchantsGet(t *testing.T) {
 	})
 }
 
-func setup(ctrl *gomock.Controller) (merchantRepo *repoMock.MockIMerchant, userRepo *repoMock.MockIUser, ctx *ctx.Ctx, merchantService *Service) {
+func setup(ctrl *gomock.Controller) (resolver *identityMock.MockIdentityResolver, ctx *ctx.Ctx, merchantRepo *repoMock.MockIMerchant, userRepo *repoMock.MockIUser, merchantService *Service) {
+	resolver = identityMock.NewMockIdentityResolver(ctrl)
 	merchantRepo = repoMock.NewMockIMerchant(ctrl)
 	userRepo = repoMock.NewMockIUser(ctrl)
 	config, ctx := env()
-	merchantService = New(merchantRepo, userRepo, config)
+	merchantService = New(config, resolver, userRepo, merchantRepo)
 	return
 }
 
@@ -310,6 +341,6 @@ func env() (conf config.Config, c *ctx.Ctx) {
 		},
 	}
 	context := context.WithValue(context.Background(), langCtx.ContextKey, langCtx.NewLangLocaleDir(language.English, &language.English, "", fmt.Sprintf("%s%s", "../../../", langCtx.LocaleDir)))
-	c, _ = ctx.NewCtx(context, &log.Log{})
+	c, _ = ctx.NewCtx(context, log.Get(configEntity.Log{}, conf.Module))
 	return
 }

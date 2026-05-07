@@ -26,7 +26,7 @@ func (h *TransactionHandler) MerchantOmzetGet(c context.Context, req *reqTrxCore
 		return nil, err
 	}
 
-	merchantID, err := ctx.UserClaims().GetMerchantID(req.GetMerchantId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, req.GetMerchantId())
 	if err != nil {
 		return nil, err
 	}
