@@ -7,9 +7,11 @@ syntax = "proto3";
 package response;
 option go_package = "github.com/dedyf5/resik/core/merchant/response";
 
+import "google/protobuf/timestamp.proto";
+
 message MerchantList {
     string id = 1; // @gotags: json:"id" example:"019def99a9267f64b75a97b4b19a2c4b"
     string name = 2; // @gotags: json:"name" example:"Resik Merchant"
-    string created_at = 3; // @gotags: json:"created_at" example:"2024-01-14T11:40:00Z"
-    string updated_at = 4; // @gotags: json:"updated_at" example:"2024-01-14T11:40:00Z"
+    google.protobuf.Timestamp created_at = 3; // @gotags: json:"created_at"
+    google.protobuf.Timestamp updated_at = 4; // @gotags: json:"updated_at"
 }

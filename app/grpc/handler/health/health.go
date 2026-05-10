@@ -7,7 +7,6 @@ package health
 import (
 	"context"
 	"net/http"
-	"time"
 
 	status "github.com/dedyf5/resik/app/grpc/proto/status"
 	healthCore "github.com/dedyf5/resik/core/health"
@@ -15,6 +14,7 @@ import (
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	codes "google.golang.org/grpc/codes"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type HealthHandler struct {
@@ -40,7 +40,7 @@ func (h *HealthHandler) HealthzGet(c context.Context, _ *emptypb.Empty) (*Health
 			Message: statusMsg,
 		},
 		Data: &response.HealthHealthz{
-			AccessedAt: time.Now().UTC().Format(time.RFC3339),
+			AccessedAt: timestamppb.Now(),
 		},
 	}, nil
 }
@@ -63,7 +63,7 @@ func (h *HealthHandler) ReadyzGet(c context.Context, _ *emptypb.Empty) (*HealthR
 		},
 		Data: &response.HealthReadyz{
 			OverallStatus: string(readinessStatus.OverallStatus),
-			AccessedAt:    readinessStatus.Timestamp.UTC().Format(time.RFC3339),
+			AccessedAt:    timestamppb.New(readinessStatus.Timestamp),
 			Checks:        response.HealthReadyzCheckFromCheckDetail(readinessStatus.Checks),
 		},
 	}, nil

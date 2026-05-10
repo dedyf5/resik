@@ -8,24 +8,25 @@ import (
 	"fmt"
 
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
-func ResponseFromStatus(status *resPkg.Status) resPkg.Response {
+func ResponseFromStatus(status *resPkg.Status) *resPkg.Response {
 	if status.IsError() {
 		return ResponseErrorAuto(status)
 	}
 	return ResponseSuccessAuto(status)
 }
 
-func ResponseSuccessAuto(status *resPkg.Status) resPkg.Response {
+func ResponseSuccessAuto(status *resPkg.Status) *resPkg.Response {
 	var meta *resPkg.ResponseMeta = nil
 
 	if status.Meta != nil {
 		meta = resPkg.ResponseMetaSetup(status.Meta.Total, status.Meta.Limit, status.Meta.PageCurrent)
 	}
 
-	return resPkg.Response{
-		Status: resPkg.ResponseStatus{
+	return &resPkg.Response{
+		Status: &resPkg.ResponseStatus{
 			Code:    fmt.Sprintf("%d.1", status.Code),
 			Message: status.MessageOrDefault(),
 		},
@@ -34,15 +35,18 @@ func ResponseSuccessAuto(status *resPkg.Status) resPkg.Response {
 	}
 }
 
-func ResponseErrorAuto(status *resPkg.Status) resPkg.Response {
-	var details any = nil
+func ResponseErrorAuto(status *resPkg.Status) *resPkg.Response {
+	var details *structpb.Value = nil
 	badRequests := status.BadRequests()
 	if len(badRequests) > 0 {
-		details = badRequests
+		val, err := resPkg.NewValue(badRequests)
+		if err == nil {
+			details = val
+		}
 	}
 
-	res := resPkg.Response{
-		Status: resPkg.ResponseStatus{
+	res := &resPkg.Response{
+		Status: &resPkg.ResponseStatus{
 			Code:    fmt.Sprintf("%d.1", status.Code),
 			Message: status.MessageOrDefault(),
 			Details: details,
@@ -56,8 +60,8 @@ func ResponseErrorAuto(status *resPkg.Status) resPkg.Response {
 	return res
 }
 
-func LoggerFromStatus(status *resPkg.Status) resPkg.Log {
-	return resPkg.Log{
+func LoggerFromStatus(status *resPkg.Status) *resPkg.Log {
+	return &resPkg.Log{
 		Response:   ResponseFromStatus(status),
 		Message:    status.CauseErrorMessageOrDefault(),
 		Caller:     status.Caller,
@@ -65,8 +69,8 @@ func LoggerFromStatus(status *resPkg.Status) resPkg.Log {
 	}
 }
 
-func LoggerErrorAuto(status *resPkg.Status) resPkg.Log {
-	return resPkg.Log{
+func LoggerErrorAuto(status *resPkg.Status) *resPkg.Log {
+	return &resPkg.Log{
 		Response:   ResponseErrorAuto(status),
 		Message:    status.CauseErrorMessageOrDefault(),
 		Caller:     status.Caller,

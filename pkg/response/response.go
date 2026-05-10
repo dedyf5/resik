@@ -8,17 +8,17 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 )
 
-type Response struct {
-	Status ResponseStatus `json:"status"`
-	Data   any            `json:"data,omitempty"`
-	Meta   *ResponseMeta  `json:"meta,omitempty"`
-}
+// type Response struct {
+// 	Status ResponseStatus  `json:"status"`
+// 	Data   *structpb.Value `json:"data,omitempty"`
+// 	Meta   *ResponseMeta   `json:"meta,omitempty"`
+// }
 
-type ResponseStatus struct {
-	Code    string `json:"code" example:"200.1"`
-	Message string `json:"message" example:"OK"`
-	Details any    `json:"details,omitempty"`
-}
+// type ResponseStatus struct {
+// 	Code    string `json:"code" example:"200.1"`
+// 	Message string `json:"message" example:"OK"`
+// 	Details any    `json:"details,omitempty"`
+// }
 
 type ResponseSuccess struct {
 	Status ResponseStatusWithoutDetails `json:"status"`
@@ -50,9 +50,9 @@ type ResponseStatusBadRequest struct {
 	Details []*errdetails.BadRequest `json:"details,omitempty"`
 }
 
-type Log struct {
-	Response   Response `json:"response"`
-	Message    string   `json:"message"`
-	Caller     string   `json:"caller"`
-	StackTrace []string `json:"stack_trace"`
-}
+// type Log struct {
+// 	Response   Response `json:"response"`
+// 	Message    string   `json:"message"`
+// 	Caller     string   `json:"caller"`
+// 	StackTrace []string `json:"stack_trace"`
+// }

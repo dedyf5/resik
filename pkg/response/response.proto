@@ -1,0 +1,44 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package response;
+option go_package = "github.com/dedyf5/resik/pkg/response";
+
+import "google/protobuf/struct.proto";
+
+message Response {
+  ResponseStatus status = 1; // @gotags: json:"status" 
+  google.protobuf.Value data = 2; // @gotags: json:"data,omitempty"
+  ResponseMeta meta = 3; // @gotags: json:"meta,omitempty"
+}
+
+message ResponseStatus {
+    string code = 1;  // @gotags: json:"code" example:"200.1"
+    string message = 2;  // @gotags: json:"message" example:"OK"
+    google.protobuf.Value details = 3;  // @gotags: json:"details,omitempty"
+}
+
+message ResponseMeta {
+    int64 total = 1; // @gotags: json:"total" example:"100"
+    int32 limit = 2; // @gotags: json:"limit" example:"10"
+    ResponsePage page = 3; // @gotags: json:"page"
+}
+
+message ResponsePage {
+    int32 first = 1; // @gotags: json:"first" example:"1"
+    optional int32 previous = 2; // @gotags: json:"previous" example:"2"
+    int32 current = 3; // @gotags: json:"current" example:"3"
+    optional int32 next = 4; // @gotags: json:"next" example:"4"
+    int32 last = 5; // @gotags: json:"last" example:"9"
+}
+
+message Log {
+    Response response = 1; // @gotags: json:"response"
+    string message = 2; // @gotags: json:"message"
+    string caller = 3; // @gotags: json:"caller"
+    repeated string stack_trace = 4; // @gotags: json:"stack_trace"
+}
+

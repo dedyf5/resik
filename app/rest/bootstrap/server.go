@@ -6,6 +6,7 @@ package bootstrap
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -18,6 +19,7 @@ import (
 	"github.com/dedyf5/resik/config"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/pkg/color"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v5"
 	echoMiddle "github.com/labstack/echo/v5/middleware"
 )
@@ -38,6 +40,8 @@ func newServerHTTP(config config.Config, log *logCtx.Log) *ServerHTTP {
 		}
 		return echo.ExtractIPDirect()(r)
 	}
+	e.JSONSerializer = &ProtobufJSONSerializer{}
+
 	e.Use(echoFW.LoggerAndResponseFormatterMiddleware(log))
 	e.Use(echoFW.LangMiddleware(config.Module.LangDefault))
 	e.Use(echoMiddle.CORSWithConfig(
@@ -99,4 +103,27 @@ func (s *ServerHTTP) Close() error {
 	}
 	log.Println("SUCCESSFULLY SHUTDOWN HTTP SERVER")
 	return nil
+}
+
+type ProtobufJSONSerializer struct{}
+
+func (s *ProtobufJSONSerializer) Serialize(c *echo.Context, i any, indent string) error {
+	if res, ok := i.(*resPkg.Log); ok {
+		newRes, err := resPkg.Marshaler.Marshal(res)
+		if err != nil {
+			return err
+		}
+		return (*c).Blob(http.StatusOK, "application/json", newRes)
+	}
+
+	enc := json.NewEncoder((*c).Response())
+	if indent != "" {
+		enc.SetIndent("", indent)
+	}
+
+	return enc.Encode(i)
+}
+
+func (s *ProtobufJSONSerializer) Deserialize(c *echo.Context, i any) error {
+	return json.NewDecoder((*c).Request().Body).Decode(i)
 }

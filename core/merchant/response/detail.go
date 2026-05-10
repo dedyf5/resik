@@ -5,9 +5,8 @@
 package response
 
 import (
-	"time"
-
 	dtoMerchant "github.com/dedyf5/resik/core/merchant/dto"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func MerchantDetailFromDTO(src *dtoMerchant.Merchant) *MerchantDetail {
@@ -24,13 +23,13 @@ func MerchantDetailFromDTO(src *dtoMerchant.Merchant) *MerchantDetail {
 		},
 		Name:        src.Name,
 		Description: src.Description,
-		CreatedAt:   src.CreatedAt.Format(time.RFC3339),
+		CreatedAt:   timestamppb.New(src.CreatedAt),
 		Creator: &User{
 			Id:       src.Creator.ID,
 			Name:     src.Creator.Name,
 			Username: src.Creator.Username,
 		},
-		UpdatedAt: src.UpdatedAt.Format(time.RFC3339),
+		UpdatedAt: timestamppb.New(src.UpdatedAt),
 		Updater: &User{
 			Id:       src.Updater.ID,
 			Name:     src.Updater.Name,

@@ -6,7 +6,6 @@ package health
 
 import (
 	"net/http"
-	"time"
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
 	healthCore "github.com/dedyf5/resik/core/health"
@@ -15,6 +14,7 @@ import (
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v5"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type HealthHandler struct {
@@ -60,7 +60,7 @@ func (h *HealthHandler) HealthHealthzGet(echoCtx *echo.Context) error {
 		code,
 		statusMsg,
 		&response.HealthHealthz{
-			AccessedAt: time.Now().UTC().Format(time.RFC3339),
+			AccessedAt: timestamppb.Now(),
 		},
 	)
 }
@@ -96,7 +96,7 @@ func (h *HealthHandler) HealthReadyzGet(echoCtx *echo.Context) error {
 		message,
 		&response.HealthReadyz{
 			OverallStatus: string(status.OverallStatus),
-			AccessedAt:    status.Timestamp.UTC().Format(time.RFC3339),
+			AccessedAt:    timestamppb.New(status.Timestamp),
 			Checks:        response.HealthReadyzCheckFromCheckDetail(status.Checks),
 		},
 		status.Error(),

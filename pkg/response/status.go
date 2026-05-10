@@ -5,9 +5,11 @@
 package response
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
+	"reflect"
 	"runtime"
 	"strings"
 
@@ -15,7 +17,17 @@ import (
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/protoadapt"
+	"google.golang.org/protobuf/types/known/structpb"
+)
+
+var (
+	Marshaler = protojson.MarshalOptions{
+		EmitUnpopulated: true,
+		UseProtoNames:   true,
+	}
 )
 
 // use this Status to wrap error across all apps including non http app
@@ -30,7 +42,7 @@ type Status struct {
 	CauseError error    `json:"cause_error"`
 	StackTrace []string `json:"stack_trace"`
 
-	Data    any                    `json:"data"`
+	Data    *structpb.Value        `json:"data"`
 	Meta    *Meta                  `json:"meta"`
 	Details []protoadapt.MessageV1 `json:"details"`
 
@@ -103,20 +115,30 @@ func NewStatusMessage(code int, message string, err error) *Status {
 }
 
 func NewStatusData(code int, data any) *Status {
+	value, errValue := NewValue(data)
+	if errValue != nil {
+		return errValue
+	}
+
 	_, file, line, _ := runtime.Caller(1)
 	return &Status{
 		Code:   code,
-		Data:   data,
+		Data:   value,
 		Caller: fmt.Sprintf("%s:%d", file, line),
 	}
 }
 
 func NewStatusMessageData(code int, message string, data any, err error) *Status {
+	value, errValue := NewValue(data)
+	if errValue != nil {
+		return errValue
+	}
+
 	_, file, line, _ := runtime.Caller(1)
 	status := &Status{
 		Code:    code,
 		Message: message,
-		Data:    data,
+		Data:    value,
 		Caller:  fmt.Sprintf("%s:%d", file, line),
 	}
 
@@ -130,21 +152,31 @@ func NewStatusMessageData(code int, message string, data any, err error) *Status
 }
 
 func NewStatusDataMeta(code int, data any, meta *Meta) *Status {
+	value, errValue := NewValue(data)
+	if errValue != nil {
+		return errValue
+	}
+
 	_, file, line, _ := runtime.Caller(1)
 	return &Status{
 		Code:   code,
-		Data:   data,
+		Data:   value,
 		Meta:   meta,
 		Caller: fmt.Sprintf("%s:%d", file, line),
 	}
 }
 
 func NewStatusSuccess(code int, message string, data any) *Status {
+	value, errValue := NewValue(data)
+	if errValue != nil {
+		return errValue
+	}
+
 	_, file, line, _ := runtime.Caller(1)
 	return &Status{
 		Code:    code,
 		Message: message,
-		Data:    data,
+		Data:    value,
 		Caller:  fmt.Sprintf("%s:%d", file, line),
 	}
 }
@@ -190,6 +222,58 @@ func NewStatusBadRequest(langCode, field, message, reason string, err error) *St
 			},
 		},
 	)
+}
+
+// NewValue convert data to structpb.Value
+// If data is a slice, it will iterate over the slice and convert each element
+// If data is a proto.Message, it will marshal the proto message to JSON and then convert to structpb.Value
+// Otherwise, it will use structpb.NewValue to convert the data
+func NewValue(data any) (value *structpb.Value, err *Status) {
+	if data == nil {
+		return structpb.NewNullValue(), nil
+	}
+
+	rv := reflect.ValueOf(data)
+	if rv.Kind() == reflect.Slice {
+		var list []any
+		for i := 0; i < rv.Len(); i++ {
+			el, errValue := NewValue(rv.Index(i).Interface())
+			if errValue != nil {
+				return nil, NewStatusError(http.StatusInternalServerError, errValue.CauseError)
+			}
+			list = append(list, el.AsInterface())
+		}
+
+		value, errValue := structpb.NewValue(list)
+		if errValue != nil {
+			return nil, NewStatusError(http.StatusInternalServerError, errValue)
+		}
+		return value, nil
+	}
+
+	if msg, ok := data.(proto.Message); ok {
+		b, errMarshal := Marshaler.Marshal(msg)
+		if errMarshal != nil {
+			return nil, NewStatusError(http.StatusInternalServerError, errMarshal)
+		}
+
+		var raw any
+		if errJSON := json.Unmarshal(b, &raw); errJSON != nil {
+			return nil, NewStatusError(http.StatusInternalServerError, errJSON)
+		}
+
+		value, errValue := structpb.NewValue(raw)
+		if errValue != nil {
+			return nil, NewStatusError(http.StatusInternalServerError, errValue)
+		}
+		return value, nil
+	}
+
+	value, errValue := structpb.NewValue(data)
+	if errValue != nil {
+		return nil, NewStatusError(http.StatusInternalServerError, errValue)
+	}
+	return
 }
 
 func (s *Status) BadRequests() []*errdetails.BadRequest {

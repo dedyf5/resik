@@ -7,13 +7,13 @@ syntax = "proto3";
 package response;
 option go_package = "github.com/dedyf5/resik/pkg/response";
 
-message ResponseMeta {
+message ResponseMetaOld {
     int64 total = 1; // @gotags: json:"total" example:"100"
     int32 limit = 2; // @gotags: json:"limit" example:"10"
-    ResponsePage page = 3; // @gotags: json:"page"
+    ResponsePageOld page = 3; // @gotags: json:"page"
 }
 
-message ResponsePage {
+message ResponsePageOld {
     int32 first = 1; // @gotags: json:"first" example:"1"
     optional int32 previous = 2; // @gotags: json:"previous" example:"2"
     int32 current = 3; // @gotags: json:"current" example:"3"

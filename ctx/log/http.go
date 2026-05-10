@@ -16,6 +16,7 @@ import (
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 type HTTP struct {
@@ -44,7 +45,7 @@ func (h *HTTP) WriteHeader(code int) {
 
 func (h *HTTP) Write(buf []byte) (int, error) {
 	loggerRes := getLogResponse(buf)
-	bodyByte, err := json.Marshal(loggerRes.Response)
+	bodyByte, err := protojson.Marshal(loggerRes.GetResponse())
 	if err != nil {
 		panic("error encode new body response error: " + err.Error())
 	}
@@ -56,7 +57,7 @@ func (h *HTTP) Write(buf []byte) (int, error) {
 func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 	msg := ""
 	if loggerRes != nil {
-		msg = loggerRes.Message
+		msg = loggerRes.GetMessage()
 	}
 
 	logger := h.log.logger
@@ -70,8 +71,8 @@ func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 		}
 	}
 
-	if loggerRes.Caller != "" {
-		caller = loggerRes.Caller
+	if loggerRes.GetCaller() != "" {
+		caller = loggerRes.GetCaller()
 	}
 
 	if caller != "" {
@@ -139,7 +140,7 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 
 func getLogResponse(buf []byte) *resPkg.Log {
 	var response resPkg.Log
-	err := json.Unmarshal(buf, &response)
+	err := protojson.Unmarshal(buf, &response)
 	if err != nil {
 		return nil
 	}

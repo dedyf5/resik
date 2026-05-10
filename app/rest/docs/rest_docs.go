@@ -1255,8 +1255,7 @@ const docTemplaterest = `{
             "type": "object",
             "properties": {
                 "accessed_at": {
-                    "type": "string",
-                    "example": "2026-04-17T01:30:08Z"
+                    "$ref": "#/definitions/timestamppb.Timestamp"
                 }
             }
         },
@@ -1264,8 +1263,7 @@ const docTemplaterest = `{
             "type": "object",
             "properties": {
                 "accessed_at": {
-                    "type": "string",
-                    "example": "2026-04-17T01:30:08Z"
+                    "$ref": "#/definitions/timestamppb.Timestamp"
                 },
                 "checks": {
                     "type": "array",
@@ -1298,8 +1296,7 @@ const docTemplaterest = `{
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string",
-                    "example": "2026-01-02T15:04:05+07:00"
+                    "$ref": "#/definitions/timestamppb.Timestamp"
                 },
                 "creator": {
                     "$ref": "#/definitions/response.User"
@@ -1321,8 +1318,7 @@ const docTemplaterest = `{
                     "$ref": "#/definitions/response.User"
                 },
                 "updated_at": {
-                    "type": "string",
-                    "example": "2026-01-02T15:04:05+07:00"
+                    "$ref": "#/definitions/timestamppb.Timestamp"
                 },
                 "updater": {
                     "$ref": "#/definitions/response.User"
@@ -1333,8 +1329,7 @@ const docTemplaterest = `{
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string",
-                    "example": "2024-01-14T11:40:00Z"
+                    "$ref": "#/definitions/timestamppb.Timestamp"
                 },
                 "id": {
                     "type": "string",
@@ -1345,8 +1340,7 @@ const docTemplaterest = `{
                     "example": "Resik Merchant"
                 },
                 "updated_at": {
-                    "type": "string",
-                    "example": "2024-01-14T11:40:00Z"
+                    "$ref": "#/definitions/timestamppb.Timestamp"
                 }
             }
         },
@@ -1545,6 +1539,19 @@ const docTemplaterest = `{
                 "username": {
                     "type": "string",
                     "example": "sakisaki"
+                }
+            }
+        },
+        "timestamppb.Timestamp": {
+            "type": "object",
+            "properties": {
+                "nanos": {
+                    "description": "Non-negative fractions of a second at nanosecond resolution. This field is\nthe nanosecond portion of the duration, not an alternative to seconds.\nNegative second values with fractions must still have non-negative nanos\nvalues that count forward in time. Must be between 0 and 999,999,999\ninclusive.",
+                    "type": "integer"
+                },
+                "seconds": {
+                    "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must\nbe between -315576000000 and 315576000000 inclusive (which corresponds to\n0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z).",
+                    "type": "integer"
                 }
             }
         }

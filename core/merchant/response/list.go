@@ -5,9 +5,8 @@
 package response
 
 import (
-	"time"
-
 	dtoMerchant "github.com/dedyf5/resik/core/merchant/dto"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func MerchantListFromDTO(src *dtoMerchant.Merchants) (res []*MerchantList) {
@@ -15,8 +14,8 @@ func MerchantListFromDTO(src *dtoMerchant.Merchants) (res []*MerchantList) {
 		res = append(res, &MerchantList{
 			Id:        v.PublicID.String32(),
 			Name:      v.Name,
-			CreatedAt: v.CreatedAt.Format(time.RFC3339),
-			UpdatedAt: v.UpdatedAt.Format(time.RFC3339),
+			CreatedAt: timestamppb.New(v.CreatedAt),
+			UpdatedAt: timestamppb.New(v.UpdatedAt),
 		})
 	}
 	return

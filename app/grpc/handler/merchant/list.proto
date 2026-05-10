@@ -9,7 +9,7 @@ option go_package = "github.com/dedyf5/resik/app/grpc/handler/merchant";
 
 import "app/grpc/proto/status/status.proto";
 import "core/merchant/response/list.proto";
-import "pkg/response/response_meta.proto";
+import "pkg/response/response.proto";
 
 message MerchantListGetRes {
     status.Status status = 1; // @gotags: json:"status"

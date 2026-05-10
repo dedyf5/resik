@@ -8,15 +8,17 @@ package response;
 
 option go_package = "github.com/dedyf5/resik/core/merchant/response";
 
+import "google/protobuf/timestamp.proto";
+
 message MerchantDetail {
     string id = 1; // @gotags: json:"id" example:"019defa1ccd0794c9459795fc65d38b6"
     User owner = 2; // @gotags: json:"owner"
     string name = 3; // @gotags: json:"name" example:"Merchant 1"
     // nullable
     optional string description = 4; // @gotags: json:"description" example:"Merchant description 1"
-    string created_at = 5; // @gotags: json:"created_at" example:"2026-01-02T15:04:05+07:00"
+    google.protobuf.Timestamp created_at = 5; // @gotags: json:"created_at"
     User creator = 6; // @gotags: json:"creator"
-    string updated_at = 7; // @gotags: json:"updated_at" example:"2026-01-02T15:04:05+07:00"
+    google.protobuf.Timestamp updated_at = 7; // @gotags: json:"updated_at"
     User updater = 8; // @gotags: json:"updater"
 }
 
