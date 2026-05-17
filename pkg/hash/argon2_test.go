@@ -30,8 +30,8 @@ func TestNewArgon2Hasher(t *testing.T) {
 				KeyLength:   0,
 			},
 			expected: &Argon2Config{
-				Memory:      8 * 1024,
-				Iterations:  3,
+				Memory:      0,
+				Iterations:  0,
 				Parallelism: 1,
 				SaltLength:  16,
 				KeyLength:   32,
@@ -47,8 +47,8 @@ func TestNewArgon2Hasher(t *testing.T) {
 				KeyLength:   5,
 			},
 			expected: &Argon2Config{
-				Memory:      8 * 1024,
-				Iterations:  3,
+				Memory:      1024,
+				Iterations:  0,
 				Parallelism: 1,
 				SaltLength:  16,
 				KeyLength:   5,

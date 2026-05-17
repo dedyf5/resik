@@ -41,7 +41,7 @@ import (
 // Injectors from wire.go:
 
 func InitializeHTTP(c context.Context) (*App, func(), error) {
-	config := _wireConfigValue
+	config := provideGRPCConfig()
 	configLog := config.Log
 	module := config.Module
 	logLog := log.Get(configLog, module)
@@ -114,15 +114,19 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 }
 
 var (
-	_wireConfigValue = *configGeneral
-	_wireBoolValue   = false
+	_wireBoolValue = false
 )
 
 // wire.go:
 
-var configGeneral = config.Load(config2.ModuleTypeGRPC)
+func provideGRPCConfig() config.Config {
+	conf := config.Load(config2.ModuleTypeGRPC)
+	return *conf
+}
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.Module), "Env", "LangDefault", "Type"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(
+	provideGRPCConfig, wire.FieldsOf(new(config.Config), "App", "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.Module), "Env", "LangDefault", "Type"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
+)
 
 var utilSet = wire.NewSet(validator.New, ratelimit.NewRateLimiter, log.Get)
 

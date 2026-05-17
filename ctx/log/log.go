@@ -48,7 +48,7 @@ var log *Log
 var logLevelSeverity = map[zapcore.Level]string{
 	zapcore.DebugLevel:  "debug",
 	zapcore.InfoLevel:   "info",
-	zapcore.WarnLevel:   "warning",
+	zapcore.WarnLevel:   "warn",
 	zapcore.ErrorLevel:  "error",
 	zapcore.DPanicLevel: "critical",
 	zapcore.PanicLevel:  "alert",

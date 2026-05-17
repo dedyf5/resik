@@ -37,12 +37,6 @@ type argon2Hasher struct {
 }
 
 func NewArgon2Hasher(config *Argon2Config) IHash {
-	if config.Memory < 8*1024 {
-		config.Memory = 8 * 1024
-	}
-	if config.Iterations < 1 {
-		config.Iterations = 3
-	}
 	if config.Parallelism < 1 {
 		config.Parallelism = 1
 	}

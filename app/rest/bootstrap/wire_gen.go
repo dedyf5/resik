@@ -41,7 +41,7 @@ import (
 // Injectors from wire.go:
 
 func InitializeHTTP(c context.Context) (*App, func(), error) {
-	config := _wireConfigValue
+	config := provideRESTConfig()
 	configLog := config.Log
 	module := config.Module
 	logLog := log.Get(configLog, module)
@@ -114,15 +114,19 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 }
 
 var (
-	_wireConfigValue = *configGeneral
-	_wireBoolValue   = false
+	_wireBoolValue = false
 )
 
 // wire.go:
 
-var configGeneral = config.Load(config2.ModuleTypeREST)
+func provideRESTConfig() config.Config {
+	conf := config.Load(config2.ModuleTypeREST)
+	return *conf
+}
 
-var configGeneralSet = wire.NewSet(wire.Value(*configGeneral), wire.FieldsOf(new(config.Config), "App", "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.Module), "Env", "LangDefault", "Type"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"))
+var configGeneralSet = wire.NewSet(
+	provideRESTConfig, wire.FieldsOf(new(config.Config), "App", "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"), wire.FieldsOf(new(config2.Module), "Env", "LangDefault", "Type"), wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
+)
 
 var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new(*validator.Validate)), ratelimit.NewRateLimiter, log.Get)
 

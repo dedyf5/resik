@@ -80,22 +80,15 @@ func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func
 		return nil, nil, err
 	}
 
-	conn.SetMaxOpenConns(30)
 	if config.MaxOpenConns != 0 {
 		conn.SetMaxOpenConns(config.MaxOpenConns)
 	}
-
-	conn.SetMaxIdleConns(5)
 	if config.MaxIdleConns != 0 {
 		conn.SetMaxIdleConns(config.MaxIdleConns)
 	}
-
-	conn.SetConnMaxLifetime(time.Second * 300)
 	if config.ConnMaxLifetime != 0 {
 		conn.SetConnMaxLifetime(config.ConnMaxLifetime)
 	}
-
-	conn.SetConnMaxIdleTime(time.Second * 300)
 	if config.ConnMaxIdleTime != 0 {
 		conn.SetConnMaxIdleTime(config.ConnMaxIdleTime)
 	}
