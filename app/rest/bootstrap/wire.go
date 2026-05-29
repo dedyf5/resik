@@ -40,10 +40,13 @@ import (
 	"github.com/google/wire"
 )
 
-var configGeneral = config.Load(configEntity.ModuleTypeREST)
+func provideRESTConfig() config.Config {
+	conf := config.Load(configEntity.ModuleTypeREST)
+	return *conf
+}
 
 var configGeneralSet = wire.NewSet(
-	wire.Value(*configGeneral),
+	provideRESTConfig,
 	wire.FieldsOf(new(config.Config), "App", "Module", "HTTP", "Database", "Redis", "RateLimit", "Auth", "Log"),
 	wire.FieldsOf(new(configEntity.Module), "Env", "LangDefault", "Type"),
 	wire.FieldsOf(new(drivers.SQLConfig), "Engine"),
