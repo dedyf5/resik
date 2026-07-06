@@ -4,4 +4,4 @@ static/locales/translate.*.toml
 .vscode/
 .DS_Store
 .env
-resik
+/resik
