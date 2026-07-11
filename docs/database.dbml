@@ -1,0 +1,211 @@
+Table users {
+  id bigint(20) [pk, increment]
+  public_id uuid [not null, unique]
+  name varchar(45)
+  username varchar(45) [not null, unique]
+  password varchar(225)
+  created_at datetime [not null]
+  created_by_id bigint(20) [null]
+  updated_at datetime [not null]
+  updated_by_id bigint(20) [null]
+
+  Records {
+    1, "019ed599-85ad-7845-8915-289c09053998", "Abadi Owner", "abadiowner", "$argon2id$v=19$m=65536,t=3,p=1$Uv+TruhCKNfrudQYUSzHNQ$nCoTzziYlxjqWXBnzJVD8ND5l9KW1kmg+/K4LrVohTQ", "2026-06-16 00:00:00", null, "2026-06-16 00:00:00", null
+    2, "019ed599-85ad-7400-9e68-f1e71ace75a0", "Abadi Admin", "abadiadmin", "$argon2id$v=19$m=65536,t=3,p=1$zVZDWl2oUeBO2RsGHzN8bg$1zK1waqzTeBl5W8fzM5a4UcV/L6MImBH59DWesCyWEg", "2026-06-16 00:00:00", null, "2026-06-16 00:00:00", null
+    3, "019ed599-85ad-797d-bc7c-c95d4b4426ba", "Abadi Cashier", "abadicashier", "$argon2id$v=19$m=65536,t=3,p=1$zJ55SaCkicVAIQ/Li1+M1g$AJZoyMuFkQ3luqP+5VhliylNK8T244L4OiwQ2oQ/VUE", "2024-02-02 19:52:41", null, "2024-02-02 19:52:41", null
+    4, "019deba3-afa8-779c-af71-f9de56a65ae3", "Maju Owner", "majuowner", "$argon2id$v=19$m=65536,t=3,p=1$99/HwEEG6kz9IK//vnXB6A$70t9JQ9VB7Bp4t0UzyKp0aTwmdrrOd7ZM73HU0lVKlY", "2024-02-02 19:52:41", null, "2024-02-02 19:52:41", null
+    5, "019deba3-f04e-7523-a004-1eccf11f2779", "Maju Admin", "majuadmin", "$argon2id$v=19$m=65536,t=3,p=1$aclVNMWGSopoj6Ok/dp2WQ$x71qgopS/Y2SD2k22FbZOskm7KMil0H1skbWUKlDCS0", "2024-02-02 19:52:41", null, "2024-02-02 19:52:41", null
+  }
+}
+
+Table tenants {
+  id bigint(20) [pk, increment]
+  public_id uuid [not null, unique]
+  name varchar(45) [not null]
+  created_at datetime [not null]
+  created_by_id bigint(20) [not null]
+  updated_at datetime [not null]
+  updated_by_id bigint(20) [not null]
+
+  Records {
+    1, "tenant_uuid_v7_2", "PT Grup Abadi", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    2, "tenant_uuid_v7_1", "PT Grup Maju", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+  }
+}
+
+Table tenant_members {
+  id bigint(20) [pk, increment]
+  tenant_id bigint(20) [not null]
+  user_id bigint(20) [not null]
+  created_at datetime [not null]
+  created_by_id bigint(20) [not null]
+  updated_at datetime [not null]
+  updated_by_id bigint(20) [not null]
+
+  Indexes {
+    (tenant_id, user_id) [unique]
+  }
+
+  Records {
+    1, 1, 1, "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    2, 1, 2, "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    3, 1, 3, "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    4, 2, 4, "2026-06-16 00:00:00", 4, "2026-06-16 00:00:00", 4
+    5, 2, 5, "2026-06-16 00:00:00", 4, "2026-06-16 00:00:00", 4
+  }
+}
+
+Table permissions {
+  id bigint(20) [pk, increment]
+  code varchar(100) [not null, unique]
+  name varchar(100) [not null]
+  created_at datetime [not null]
+  created_by_id bigint(20) [not null]
+  updated_at datetime [not null]
+  updated_by_id bigint(20) [not null]
+
+  Records {
+    1, "user:read", "Read User", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    2, "user:create", "Create User", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    3, "user:update", "Update User", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    4, "user:delete", "Delete User", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+
+    5, "tenant:read", "Read Tenant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    6, "tenant:update", "Update Tenant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+
+    7, "role:read", "Read Role", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    8, "role:create", "Create Role", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    9, "role:update", "Update Role", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    10, "role:delete", "Delete Role", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    11, "role:assign", "Assign Role", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+
+    12, "merchant:read", "Read Merchant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    13, "merchant:create", "Create Merchant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    14, "merchant:update", "Update Merchant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    15, "merchant:delete", "Delete Merchant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    16, "merchant.settings:read", "Read Merchant Settings", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    17, "merchant.settings:update", "Update Merchant Settings", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+
+    18, "outlet:read", "Read Outlet", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    19, "outlet:create", "Create Outlet", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    20, "outlet:update", "Update Outlet", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    21, "outlet:delete", "Delete Outlet", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+
+    22, "transaction:read", "Read Transaction", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    23, "transaction:create", "Create Transaction", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    24, "transaction:update", "Update Transaction", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    25, "transaction:delete", "Delete Transaction", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    26, "transaction:refund", "Refund Transaction", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+  }
+}
+
+Table tenant_member_permissions {
+  tenant_member_id bigint(20) [not null]
+  permission_id bigint(20) [not null]
+
+  Indexes {
+    (tenant_member_id, permission_id) [pk]
+  }
+
+  Records {
+    // Abadi Owner
+    1, 1
+    1, 2
+    1, 3
+    1, 4
+    1, 5
+    1, 6
+    1, 7
+    1, 8
+    1, 9
+    1, 10
+    1, 11
+    1, 12
+    1, 13
+    1, 14
+    1, 15
+    1, 16
+    1, 17
+    1, 18
+    1, 19
+
+    // Abadi Admin
+    2, 5
+    2, 6
+    2, 7
+    2, 8
+    2, 9
+    2, 11
+    2, 12
+    2, 13
+    2, 15
+    2, 16
+
+    // Abadi Cashier
+    3, 15
+    3, 16
+  }
+}
+
+Table tenant_member_resource_scopes {
+  tenant_member_id bigint(20) [not null]
+  resource_code varchar(75) [not null]
+  scope_by varchar(45) [not null]
+  scope_ref varchar(100) [not null]
+
+  Indexes {
+    (tenant_member_id, resource_code, scope_by, scope_ref) [pk]
+    (tenant_member_id, resource_code)
+  }
+
+  Records {
+    2, "merchant.settings", "merchant", "merchant_uuid_v7_10"
+    2, "transaction", "merchant", "merchant_uuid_v7_10"
+    3, "transaction", "outlet", "outlet_uuid_v7_11"
+    3, "transaction", "outlet", "outlet_uuid_v7_12"
+  }
+
+  Note: '''
+  Defines data visibility restrictions for a tenant member.
+
+  Permissions define what actions a member can perform.
+  Resource scopes define which data instances are accessible.
+
+  If a resource has no scope restriction,
+  the member can access all instances of that resource
+  allowed by their permissions.
+
+  Examples:
+  - transaction + merchant + merchant_uuid_1
+  - transaction + outlet + outlet_uuid_10
+  - report + region + region_jakarta
+  '''
+}
+
+Ref: users.created_by_id > users.id
+Ref: users.updated_by_id > users.id
+
+Ref: tenants.created_by_id > users.id
+Ref: tenants.updated_by_id > users.id
+
+Ref: tenant_members.user_id > users.id
+Ref: tenant_members.tenant_id > tenants.id
+Ref: tenant_members.created_by_id > users.id
+Ref: tenant_members.updated_by_id > users.id
+
+Ref: permissions.created_by_id > users.id
+Ref: permissions.updated_by_id > users.id
+
+Ref: tenant_member_permissions.tenant_member_id > tenant_members.id
+Ref: tenant_member_permissions.permission_id > permissions.id
+
+Ref: tenant_member_resource_scopes.tenant_member_id > tenant_members.id
+
+tablegroup identity_service {
+  users
+  tenants
+  tenant_members
+  permissions
+  tenant_member_permissions
+  tenant_member_resource_scopes
+}

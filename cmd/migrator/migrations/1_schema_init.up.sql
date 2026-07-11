@@ -15,6 +15,71 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- Table structure for table `tenants`
+CREATE TABLE IF NOT EXISTS `tenants` (
+    id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    public_id UUID NOT NULL UNIQUE,
+    name VARCHAR(45) NOT NULL,
+    created_at DATETIME NOT NULL,
+    created_by_id BIGINT(20) NOT NULL,
+    updated_at DATETIME NOT NULL,
+    updated_by_id BIGINT(20) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_tenants_created_by` FOREIGN KEY (`created_by_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `fk_tenants_updated_by` FOREIGN KEY (`updated_by_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Table structure for table `tenant_members`
+CREATE TABLE IF NOT EXISTS `tenant_members` (
+    id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    tenant_id BIGINT(20) NOT NULL,
+    user_id BIGINT(20) NOT NULL,
+    created_at DATETIME NOT NULL,
+    created_by_id BIGINT(20) NOT NULL,
+    updated_at DATETIME NOT NULL,
+    updated_by_id BIGINT(20) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_tenant_members` (`tenant_id`, `user_id`),
+    CONSTRAINT `fk_tenant_members_tenant` FOREIGN KEY (`tenant_id`) REFERENCES `tenants`(`id`),
+    CONSTRAINT `fk_tenant_members_user` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
+    CONSTRAINT `fk_tenant_members_created_by` FOREIGN KEY (`created_by_id`) REFERENCES `users`(`id`),
+    CONSTRAINT `fk_tenant_members_updated_by` FOREIGN KEY (`updated_by_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Table structure for table `permissions`
+CREATE TABLE IF NOT EXISTS `permissions` (
+    id BIGINT(20) NOT NULL AUTO_INCREMENT,
+    code VARCHAR(100) NOT NULL UNIQUE,
+    name VARCHAR(100) NOT NULL,
+    created_at DATETIME NOT NULL,
+    created_by_id BIGINT(20) NOT NULL,
+    updated_at DATETIME NOT NULL,
+    updated_by_id BIGINT(20) NOT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `fk_permissions_created_by` FOREIGN KEY (`created_by_id`) REFERENCES `users`(`id`),
+    CONSTRAINT `fk_permissions_updated_by` FOREIGN KEY (`updated_by_id`) REFERENCES `users`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Table structure for table `tenant_member_permissions`
+CREATE TABLE IF NOT EXISTS `tenant_member_permissions` (
+    tenant_member_id BIGINT(20) NOT NULL,
+    permission_id BIGINT(20) NOT NULL,
+    PRIMARY KEY (`tenant_member_id`, `permission_id`),
+    CONSTRAINT `fk_tmp_member` FOREIGN KEY (`tenant_member_id`) REFERENCES `tenant_members`(`id`),
+    CONSTRAINT `fk_tmp_permission` FOREIGN KEY (`permission_id`) REFERENCES `permissions`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Table structure for table `tenant_member_resource_scopes`
+CREATE TABLE IF NOT EXISTS `tenant_member_resource_scopes` (
+    tenant_member_id BIGINT(20) NOT NULL,
+    resource_code VARCHAR(75) NOT NULL,
+    scope_by VARCHAR(45) NOT NULL,
+    scope_ref VARCHAR(100) NOT NULL,
+    PRIMARY KEY (`tenant_member_id`, `resource_code`, `scope_by`, `scope_ref`),
+    INDEX `idx_tmrs_lookup` (`tenant_member_id`, `resource_code`),
+    CONSTRAINT `fk_tmrs_member` FOREIGN KEY (`tenant_member_id`) REFERENCES `tenant_members`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- Table structure for table `merchants`
 CREATE TABLE IF NOT EXISTS `merchants` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
