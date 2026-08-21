@@ -139,12 +139,12 @@ UNLOCK TABLES;
 /*!40000 ALTER TABLE `merchants` DISABLE KEYS */;
 LOCK TABLES `merchants` WRITE;
 INSERT INTO `merchants` VALUES 
-(1,'019deba4-2020-7dc7-a670-769321b06a9b',1,'Merchant 1','merchant description 1','2024-02-02 19:52:41',1,'2024-04-06 00:08:00',1),
-(2,'019deba7-8a22-7cdb-a9f0-9790ec1150d0',1,'Merchant 2','merchant description 2','2024-04-06 22:56:00',1,'2024-04-06 22:56:00',1),
-(3,'019deba7-c288-7575-b125-7124566e2324',1,'Merchant 3','merchant description 3','2024-04-06 22:56:00',1,'2024-04-06 23:00:00',1),
-(4,'019deba8-0079-7372-a40c-423933211d5f',1,'Merchant 4','merchant description 4','2024-04-06 22:56:00',1,'2024-04-07 01:14:00',1),
-(5,'019deba7-5a61-7913-80f8-a97771e2c101',4,'Merchant 1','merchant description 1','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
-(6,'019f2169-fa89-72e9-8295-c6ed2163a1e5',4,'Merchant 2','merchant description 2','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4);
+(1,'019deba4-2020-7dc7-a670-769321b06a9b',1,'019f1710-aed5-74c4-95b0-7bebcef24cbd','Merchant 1','merchant description 1','2024-02-02 19:52:41',1,'2024-04-06 00:08:00',1),
+(2,'019deba7-8a22-7cdb-a9f0-9790ec1150d0',1,'019f1710-aed5-7ed8-b650-05cac4f0ca8d','Merchant 2','merchant description 2','2024-04-06 22:56:00',1,'2024-04-06 22:56:00',1),
+(3,'019deba7-c288-7575-b125-7124566e2324',1,'019f2169-fa89-7c4b-9ee4-911ea7a27f3b','Merchant 3','merchant description 3','2024-04-06 22:56:00',1,'2024-04-06 23:00:00',1),
+(4,'019deba8-0079-7372-a40c-423933211d5f',1,'019f2169-fa89-7431-9201-ac8414528332','Merchant 4','merchant description 4','2024-04-06 22:56:00',1,'2024-04-07 01:14:00',1),
+(5,'019deba7-5a61-7913-80f8-a97771e2c101',4,'019f2169-fa89-7e8d-ad1d-7689e1af4efb','Merchant 1','merchant description 1','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
+(6,'019f2169-fa89-72e9-8295-c6ed2163a1e5',4,'019f2169-fa89-7907-885b-f3bd7d427fb2','Merchant 2','merchant description 2','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `merchants` ENABLE KEYS */;
 

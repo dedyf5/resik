@@ -85,6 +85,7 @@ CREATE TABLE IF NOT EXISTS `merchants` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `public_id` UUID NOT NULL UNIQUE,
   `owner_id` bigint(20) NOT NULL,
+  `tenant_public_id` UUID NOT NULL UNIQUE,
   `name` varchar(40) NOT NULL,
   `description` text NULL DEFAULT NULL,
   `created_at` datetime NOT NULL,
