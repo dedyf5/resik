@@ -6,9 +6,12 @@ package identity
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
+	"slices"
 	"strconv"
+	"strings"
 	"time"
 
 	merchantEntity "github.com/dedyf5/resik/entities/merchant"
@@ -152,22 +155,25 @@ func (r *Resolver) ResolveBatch(c context.Context, tableName string, publicIDs [
 	return ids, nil
 }
 
-// GetMerchantIDs returns all cached merchant IDs for a specific user access to a table.
-func (r *Resolver) GetMerchantIDs(c context.Context, userID uint64) ([]uint64, error) {
-	cacheKey := r.userAccessCacheKey(merchantEntity.TABLE_NAME, userID)
+// GetTenantMerchantIDs returns all merchant IDs belonging to tenants of the user.
+func (r *Resolver) GetTenantMerchantIDs(c context.Context, userID uint64) ([]uint64, error) {
+	cacheKey := fmt.Sprintf("%s:user_tenant_merchants:%d", r.appKey, userID)
 
 	cachedIDs, err := r.getSMembers(c, cacheKey)
 	if err == nil && len(cachedIDs) > 0 {
 		return cachedIDs, nil
 	}
 
-	var ids []uint64
-	err = r.db.WithContext(c).
-		Table(merchantEntity.TABLE_NAME).
-		Where("owner_id = ?", userID).
-		Pluck("id", &ids).
-		Error
+	query := `
+		SELECT DISTINCT m.id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN merchants m ON m.tenant_public_id = t.public_id
+		WHERE tm.user_id = @userID
+	`
 
+	var ids []uint64
+	err = r.db.WithContext(c).Raw(query, sql.Named("userID", userID)).Scan(&ids).Error
 	if err != nil {
 		return nil, err
 	}
@@ -181,23 +187,26 @@ func (r *Resolver) GetMerchantIDs(c context.Context, userID uint64) ([]uint64, e
 	return ids, nil
 }
 
-// GetOutletIDs returns all cached outlet IDs for a specific user access to a table.
-func (r *Resolver) GetOutletIDs(c context.Context, userID uint64) ([]uint64, error) {
-	cacheKey := r.userAccessCacheKey(outletEntity.TABLE_NAME, userID)
+// GetTenantOutletIDs returns all outlet IDs belonging to merchants of tenants of the user.
+func (r *Resolver) GetTenantOutletIDs(c context.Context, userID uint64) ([]uint64, error) {
+	cacheKey := fmt.Sprintf("%s:user_tenant_outlets:%d", r.appKey, userID)
 
 	cachedIDs, err := r.getSMembers(c, cacheKey)
 	if err == nil && len(cachedIDs) > 0 {
 		return cachedIDs, nil
 	}
 
-	var ids []uint64
-	err = r.db.WithContext(c).
-		Table(outletEntity.TABLE_NAME+" AS o1").
-		Joins("INNER JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = o1.merchant_id").
-		Where("m1.owner_id = ?", userID).
-		Pluck("o1.id", &ids).
-		Error
+	query := `
+		SELECT DISTINCT o.id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN merchants m ON m.tenant_public_id = t.public_id
+		JOIN outlets o ON o.merchant_id = m.id
+		WHERE tm.user_id = @userID
+	`
 
+	var ids []uint64
+	err = r.db.WithContext(c).Raw(query, sql.Named("userID", userID)).Scan(&ids).Error
 	if err != nil {
 		return nil, err
 	}
@@ -211,18 +220,187 @@ func (r *Resolver) GetOutletIDs(c context.Context, userID uint64) ([]uint64, err
 	return ids, nil
 }
 
-// InvalidateUserAccessMerchant invalidates the cache for a specific user and merchant.
-// This is used when a merchant is deleted or the user's access to the merchant is revoked.
+// GetResourceIDs returns all resource IDs accessible to a user for a specific table and permission code.
+func (r *Resolver) GetResourceIDs(c context.Context, userID uint64, resourceTable string, permissionCode string) ([]uint64, error) {
+	switch resourceTable {
+	case merchantEntity.TABLE_NAME:
+		return r.GetMerchantIDsByPermission(c, userID, permissionCode)
+	case outletEntity.TABLE_NAME:
+		return r.GetOutletIDsByPermission(c, userID, permissionCode)
+	default:
+		return []uint64{}, nil
+	}
+}
+
+// HasAccessByID checks if a user has access to a specific resource by its internal uint64 ID.
+func (r *Resolver) HasAccessByID(c context.Context, userID uint64, permissionCode string, resourceTable string, resourceID uint64) (bool, error) {
+	ids, err := r.GetResourceIDs(c, userID, resourceTable, permissionCode)
+	if err != nil {
+		return false, err
+	}
+	return slices.Contains(ids, resourceID), nil
+}
+
+// HasAccessByPublicID checks if a user has access to a specific resource by its public UUID.
+func (r *Resolver) HasAccessByPublicID(c context.Context, userID uint64, permissionCode string, resourceTable string, publicID uuidPkg.UUIDV7) (bool, error) {
+	id, err := r.Resolve(c, resourceTable, publicID)
+	if err != nil {
+		return false, err
+	}
+	return r.HasAccessByID(c, userID, permissionCode, resourceTable, id)
+}
+
+// GetMerchantIDsByPermission returns all cached merchant IDs for a specific user and permission code.
+func (r *Resolver) GetMerchantIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
+	cacheKey := r.userAccessCacheKey(merchantEntity.TABLE_NAME, permissionCode, userID)
+
+	cachedIDs, err := r.getSMembers(c, cacheKey)
+	if err == nil && len(cachedIDs) > 0 {
+		return cachedIDs, nil
+	}
+
+	resourceDomain := strings.Split(permissionCode, ":")[0]
+
+	query := `
+		SELECT DISTINCT m.id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
+		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
+		JOIN merchants m ON m.tenant_public_id = t.public_id
+		WHERE tm.user_id = @userID
+		  AND NOT EXISTS (
+		    SELECT 1 FROM tenant_member_resource_scopes tmrs
+		    WHERE tmrs.tenant_member_id = tm.id
+		      AND tmrs.resource_code IN (@resourceDomain, 'merchant')
+		  )
+		UNION
+		SELECT DISTINCT m.id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
+		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
+		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
+		  AND tmrs.resource_code IN (@resourceDomain, 'merchant') 
+		  AND tmrs.scope_by = 'merchant'
+		JOIN merchants m ON m.tenant_public_id = t.public_id AND m.public_id = tmrs.scope_ref
+		WHERE tm.user_id = @userID
+	`
+
+	var ids []uint64
+	err = r.db.WithContext(c).Raw(query,
+		sql.Named("permissionCode", permissionCode),
+		sql.Named("userID", userID),
+		sql.Named("resourceDomain", resourceDomain),
+	).Scan(&ids).Error
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ids) > 0 {
+		if err := r.setSMembers(c, cacheKey, ids); err != nil {
+			log.Printf("failed to set cache: %v", err)
+		}
+	}
+
+	return ids, nil
+}
+
+// GetOutletIDsByPermission returns all cached outlet IDs for a specific user and permission code.
+func (r *Resolver) GetOutletIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
+	cacheKey := r.userAccessCacheKey(outletEntity.TABLE_NAME, permissionCode, userID)
+
+	cachedIDs, err := r.getSMembers(c, cacheKey)
+	if err == nil && len(cachedIDs) > 0 {
+		return cachedIDs, nil
+	}
+
+	resourceDomain := strings.Split(permissionCode, ":")[0]
+
+	query := `
+		SELECT DISTINCT o.id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
+		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
+		JOIN merchants m ON m.tenant_public_id = t.public_id
+		JOIN outlets o ON o.merchant_id = m.id
+		WHERE tm.user_id = @userID
+		  AND NOT EXISTS (
+		    SELECT 1 FROM tenant_member_resource_scopes tmrs
+		    WHERE tmrs.tenant_member_id = tm.id
+		      AND tmrs.resource_code IN (@resourceDomain, 'outlet', 'merchant')
+		  )
+		UNION
+		SELECT DISTINCT o.id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
+		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
+		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
+		  AND tmrs.resource_code IN (@resourceDomain, 'outlet', 'merchant')
+		  AND tmrs.scope_by = 'merchant'
+		JOIN merchants m ON m.tenant_public_id = t.public_id AND m.public_id = tmrs.scope_ref
+		JOIN outlets o ON o.merchant_id = m.id
+		WHERE tm.user_id = @userID
+		UNION
+		SELECT DISTINCT o.id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
+		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
+		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
+		  AND tmrs.resource_code IN (@resourceDomain, 'outlet', 'merchant')
+		  AND tmrs.scope_by = 'outlet'
+		JOIN merchants m ON m.tenant_public_id = t.public_id
+		JOIN outlets o ON o.merchant_id = m.id AND o.public_id = tmrs.scope_ref
+		WHERE tm.user_id = @userID
+	`
+
+	var ids []uint64
+	err = r.db.WithContext(c).Raw(query,
+		sql.Named("permissionCode", permissionCode),
+		sql.Named("userID", userID),
+		sql.Named("resourceDomain", resourceDomain),
+	).Scan(&ids).Error
+	if err != nil {
+		return nil, err
+	}
+
+	if len(ids) > 0 {
+		if err := r.setSMembers(c, cacheKey, ids); err != nil {
+			log.Printf("failed to set cache: %v", err)
+		}
+	}
+
+	return ids, nil
+}
+
+// InvalidateUserAccessMerchant invalidates all user access merchant caches for a specific user.
 func (r *Resolver) InvalidateUserAccessMerchant(c context.Context, userID uint64) error {
-	cacheKey := r.userAccessCacheKey(merchantEntity.TABLE_NAME, userID)
-	return r.cache.Del(c, cacheKey).Err()
+	pattern := fmt.Sprintf("%s:user_access:%s:*:%d", r.appKey, merchantEntity.TABLE_NAME, userID)
+	return r.deleteKeysByPattern(c, pattern)
 }
 
-// InvalidateUserAccessOutlet invalidates the cache for a specific user and outlet.
-// This is used when an outlet is deleted or the user's access to the outlet is revoked.
+// InvalidateUserAccessOutlet invalidates all user access outlet caches for a specific user.
 func (r *Resolver) InvalidateUserAccessOutlet(c context.Context, userID uint64) error {
-	cacheKey := r.userAccessCacheKey(outletEntity.TABLE_NAME, userID)
-	return r.cache.Del(c, cacheKey).Err()
+	pattern := fmt.Sprintf("%s:user_access:%s:*:%d", r.appKey, outletEntity.TABLE_NAME, userID)
+	return r.deleteKeysByPattern(c, pattern)
+}
+
+func (r *Resolver) deleteKeysByPattern(c context.Context, pattern string) error {
+	iter := r.cache.Scan(c, 0, pattern, 0).Iterator()
+	var keys []string
+	for iter.Next(c) {
+		keys = append(keys, iter.Val())
+	}
+	if err := iter.Err(); err != nil {
+		return err
+	}
+	if len(keys) > 0 {
+		return r.cache.Del(c, keys...).Err()
+	}
+	return nil
 }
 
 // getSMembers returns all cached IDs for a specific key.
@@ -261,9 +439,9 @@ func (r *Resolver) setSMembers(c context.Context, key string, ids []uint64) erro
 	return nil
 }
 
-// userAccessCacheKey returns the cache key for a specific user access to a table.
-func (r *Resolver) userAccessCacheKey(tableName string, userID uint64) string {
-	return fmt.Sprintf("%s:user_access:%s:%d", r.appKey, tableName, userID)
+// userAccessCacheKey returns the cache key for a specific user access to a table and permission code.
+func (r *Resolver) userAccessCacheKey(tableName string, permissionCode string, userID uint64) string {
+	return fmt.Sprintf("%s:user_access:%s:%s:%d", r.appKey, tableName, permissionCode, userID)
 }
 
 // idMapCacheKey returns the cache key for a specific table and public ID.

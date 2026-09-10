@@ -26,7 +26,7 @@ func (h *TransactionHandler) OutletOmzetGet(c context.Context, req *reqTrxCore.O
 		return nil, err
 	}
 
-	outletID, err := ctx.GetOutletID(h.resolver, req.GetOutletId())
+	outletID, err := ctx.GetOutletID(h.resolver, req.GetOutletId(), "transaction:read")
 	if err != nil {
 		return nil, err
 	}

@@ -70,7 +70,7 @@ func (h *Handler) MerchantOmzetGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	merchantID, err := ctx.GetMerchantID(h.resolver, payload.GetMerchantId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, payload.GetMerchantId(), "transaction:read")
 	if err != nil {
 		return err
 	}
@@ -123,7 +123,7 @@ func (h *Handler) OutletOmzetGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	outletID, err := ctx.GetOutletID(h.resolver, payload.GetOutletId())
+	outletID, err := ctx.GetOutletID(h.resolver, payload.GetOutletId(), "transaction:read")
 	if err != nil {
 		return err
 	}

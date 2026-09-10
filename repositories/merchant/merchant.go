@@ -33,8 +33,8 @@ func (r *MerchantRepo) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Mer
 	return true, nil
 }
 
-func (r *MerchantRepo) MerchantGetByIDAndOwnerID(ctx *ctx.Ctx, merchantID, ownerID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status) {
-	errDB := r.DB.WithContext(ctx.Context).Where("id = ? AND owner_id = ?", merchantID, ownerID).First(&merchant).Error
+func (r *MerchantRepo) MerchantGetByID(ctx *ctx.Ctx, merchantID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status) {
+	errDB := r.DB.WithContext(ctx.Context).Where("id = ?", merchantID).First(&merchant).Error
 	if errDB != nil {
 		if errors.Is(errDB, gorm.ErrRecordNotFound) {
 			return nil, nil

@@ -38,7 +38,7 @@ type IUser interface {
 type IMerchant interface {
 	MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
 	MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
-	MerchantGetByIDAndOwnerID(ctx *ctx.Ctx, merchantID, ownerID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status)
+	MerchantGetByID(ctx *ctx.Ctx, merchantID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status)
 	MerchantsGetData(param *paramMerchant.MerchantsGet) (merchants merchantEntity.Merchants, err *resPkg.Status)
 	MerchantsGetTotal(param *paramMerchant.MerchantsGet) (total int64, err *resPkg.Status)
 	MerchantDelete(c *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)

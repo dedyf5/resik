@@ -117,7 +117,7 @@ func (h *Handler) MerchantPut(echoCtx *echo.Context) error {
 		return err
 	}
 
-	merchantID, err := ctx.GetMerchantID(h.resolver, body.GetId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, body.GetId(), "merchant:update")
 	if err != nil {
 		return err
 	}
@@ -170,12 +170,12 @@ func (h *Handler) MerchantDetailGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	merchantID, err := ctx.GetMerchantID(h.resolver, param.GetId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, param.GetId(), "merchant:read")
 	if err != nil {
 		return err
 	}
 
-	merchant, err := h.merchantService.MerchantGetByIDAndOwnerID(ctx, merchantID, ctx.UserClaims().UserID())
+	merchant, err := h.merchantService.MerchantGetByID(ctx, merchantID)
 	if err != nil {
 		return err
 	}
@@ -222,7 +222,10 @@ func (h *Handler) MerchantListGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	param := payload.ToParam(ctx)
+	param, err := payload.ToParam(ctx, h.resolver)
+	if err != nil {
+		return err
+	}
 
 	res, err := h.merchantService.MerchantsGet(param)
 	if err != nil {
@@ -267,7 +270,7 @@ func (h *Handler) MerchantDelete(echoCtx *echo.Context) error {
 		return err
 	}
 
-	merchantID, err := ctx.GetMerchantID(h.resolver, param.GetId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, param.GetId(), "merchant:delete")
 	if err != nil {
 		return err
 	}

@@ -28,12 +28,12 @@ func (h *MerchantHandler) MerchantDetailGet(c context.Context, req *reqMerchantC
 		return nil, err
 	}
 
-	merchantID, err := ctx.GetMerchantID(h.resolver, req.GetId())
+	merchantID, err := ctx.GetMerchantID(h.resolver, req.GetId(), "merchant:read")
 	if err != nil {
 		return nil, err
 	}
 
-	merchant, err := h.merchantService.MerchantGetByIDAndOwnerID(ctx, merchantID, ctx.UserClaims().UserID())
+	merchant, err := h.merchantService.MerchantGetByID(ctx, merchantID)
 	if err != nil {
 		return nil, err
 	}

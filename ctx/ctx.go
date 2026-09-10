@@ -59,12 +59,12 @@ func (c *Ctx) UserClaims() *jwt.AuthClaims {
 	return c.userClaims
 }
 
-// GetMerchantID gets the merchant ID by merchant public ID, and check if user has access to it
-func (c *Ctx) GetMerchantID(resolver identity.IdentityResolver, merchantPublicID string) (merchantID uint64, err *resPkg.Status) {
-	return c.userClaims.GetMerchantID(c.Context, resolver, c.lang, merchantPublicID)
+// GetMerchantID gets the merchant ID by merchant public ID, and check if user has access to it for permission code
+func (c *Ctx) GetMerchantID(resolver identity.IdentityResolver, merchantPublicID string, permissionCode string) (merchantID uint64, err *resPkg.Status) {
+	return c.userClaims.GetMerchantID(c.Context, resolver, c.lang, merchantPublicID, permissionCode)
 }
 
-// GetOutletID gets the outlet ID by outlet public ID, and check if user has access to it
-func (c *Ctx) GetOutletID(resolver identity.IdentityResolver, outletPublicID string) (outletID uint64, err *resPkg.Status) {
-	return c.userClaims.GetOutletID(c.Context, resolver, c.lang, outletPublicID)
+// GetOutletID gets the outlet ID by outlet public ID, and check if user has access to it for permission code
+func (c *Ctx) GetOutletID(resolver identity.IdentityResolver, outletPublicID string, permissionCode string) (outletID uint64, err *resPkg.Status) {
+	return c.userClaims.GetOutletID(c.Context, resolver, c.lang, outletPublicID, permissionCode)
 }

@@ -34,8 +34,8 @@ func (s *Service) MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant
 	return s.merchantRepo.MerchantUpdate(ctx, merchant)
 }
 
-func (s *Service) MerchantGetByIDAndOwnerID(ctx *ctx.Ctx, merchantID, ownerID uint64) (*dtoMerchant.Merchant, *resPkg.Status) {
-	merchant, err := s.merchantRepo.MerchantGetByIDAndOwnerID(ctx, merchantID, ownerID)
+func (s *Service) MerchantGetByID(ctx *ctx.Ctx, merchantID uint64) (*dtoMerchant.Merchant, *resPkg.Status) {
+	merchant, err := s.merchantRepo.MerchantGetByID(ctx, merchantID)
 	if err != nil {
 		return nil, err
 	}

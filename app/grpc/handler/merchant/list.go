@@ -26,7 +26,10 @@ func (h *MerchantHandler) MerchantListGet(c context.Context, req *reqMerchantCor
 		return nil, err
 	}
 
-	param := req.ToParam(ctx)
+	param, err := req.ToParam(ctx, h.resolver)
+	if err != nil {
+		return nil, err
+	}
 
 	res, err := h.merchantService.MerchantsGet(param)
 	if err != nil {
