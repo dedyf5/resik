@@ -95,19 +95,19 @@ var (
 		},
 	}
 
-	validationFieldMerchantIDID = "validation.field.merchant_id"
-	ValidationFieldMerchantID   = &Term{
+	validationFieldOrganizationIDID = "validation.field.organization_id"
+	ValidationFieldOrganizationID   = &Term{
 		Message: &i18n.Message{
-			ID:    validationFieldMerchantIDID,
-			Other: "Merchant ID",
+			ID:    validationFieldOrganizationIDID,
+			Other: "Organization ID",
 		},
 	}
 
-	validationFieldOutletIDID = "validation.field.outlet_id"
-	ValidationFieldOutletID   = &Term{
+	validationFieldBranchIDID = "validation.field.branch_id"
+	ValidationFieldBranchID   = &Term{
 		Message: &i18n.Message{
-			ID:    validationFieldOutletIDID,
-			Other: "Outlet ID",
+			ID:    validationFieldBranchIDID,
+			Other: "Branch ID",
 		},
 	}
 

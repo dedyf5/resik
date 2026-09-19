@@ -1,0 +1,12 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package request;
+option go_package = "github.com/dedyf5/resik/core/organization/request";
+
+message OrganizationDelete {
+    string id = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required" example:"019df0d3f6c579ac8976afe7a437166c"
+}

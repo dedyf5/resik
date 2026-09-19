@@ -7,8 +7,8 @@ package repositories
 import (
 	"github.com/dedyf5/resik/ctx"
 	checkEntity "github.com/dedyf5/resik/entities/check"
-	merchantEntity "github.com/dedyf5/resik/entities/merchant"
-	paramMerchant "github.com/dedyf5/resik/entities/merchant/param"
+	organizationEntity "github.com/dedyf5/resik/entities/organization"
+	paramOrganization "github.com/dedyf5/resik/entities/organization/param"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
@@ -21,25 +21,25 @@ type ICheck interface {
 }
 
 type ITransaction interface {
-	MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, err *resPkg.Status)
-	MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total int64, err *resPkg.Status)
-	OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (res []trxEntity.OutletOmzet, err *resPkg.Status)
-	OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (total int64, err *resPkg.Status)
+	OrganizationOmzetGetData(param *paramTrx.OrganizationOmzetGet) (res []trxEntity.OrganizationOmzet, err *resPkg.Status)
+	OrganizationOmzetGetTotal(param *paramTrx.OrganizationOmzetGet) (total int64, err *resPkg.Status)
+	BranchOmzetGetData(param *paramTrx.BranchOmzetGet) (res []trxEntity.BranchOmzet, err *resPkg.Status)
+	BranchOmzetGetTotal(param *paramTrx.BranchOmzetGet) (total int64, err *resPkg.Status)
 }
 
 type IUser interface {
 	UserByID(ctx *ctx.Ctx, userID uint64) (user *userEntity.User, err *resPkg.Status)
 	UserByUsername(ctx *ctx.Ctx, username string) (user *userEntity.User, err *resPkg.Status)
 	UsersGetByIDs(ctx *ctx.Ctx, userIDs []uint64) (users userEntity.Users, err *resPkg.Status)
-	MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, err *resPkg.Status)
-	OutletMerchantByUserIDGetData(ctx *ctx.Ctx, userID uint64) (merchantOutletIDs userEntity.MerchantOutletIDs, err *resPkg.Status)
+	OrganizationIDsByUserIDGetData(userID uint64) (organizationIDs []uint64, err *resPkg.Status)
+	BranchOrganizationByUserIDGetData(ctx *ctx.Ctx, userID uint64) (organizationBranchIDs userEntity.OrganizationBranchIDs, err *resPkg.Status)
 }
 
-type IMerchant interface {
-	MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
-	MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
-	MerchantGetByID(ctx *ctx.Ctx, merchantID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status)
-	MerchantsGetData(param *paramMerchant.MerchantsGet) (merchants merchantEntity.Merchants, err *resPkg.Status)
-	MerchantsGetTotal(param *paramMerchant.MerchantsGet) (total int64, err *resPkg.Status)
-	MerchantDelete(c *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
+type IOrganization interface {
+	OrganizationInsert(ctx *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status)
+	OrganizationUpdate(ctx *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status)
+	OrganizationGetByID(ctx *ctx.Ctx, organizationID uint64) (organization *organizationEntity.Organization, err *resPkg.Status)
+	OrganizationsGetData(param *paramOrganization.OrganizationsGet) (organizations organizationEntity.Organizations, err *resPkg.Status)
+	OrganizationsGetTotal(param *paramOrganization.OrganizationsGet) (total int64, err *resPkg.Status)
+	OrganizationDelete(c *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status)
 }

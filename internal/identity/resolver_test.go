@@ -8,8 +8,8 @@ import (
 	"context"
 	"testing"
 
-	merchantEntity "github.com/dedyf5/resik/entities/merchant"
-	outletEntity "github.com/dedyf5/resik/entities/outlet"
+	branchEntity "github.com/dedyf5/resik/entities/branch"
+	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,16 +20,16 @@ func TestResolverStructure(t *testing.T) {
 	}
 
 	t.Run("userAccessCacheKey", func(t *testing.T) {
-		key := r.userAccessCacheKey(merchantEntity.TABLE_NAME, "merchant:read", 1)
-		assert.Equal(t, "resik:user_access:merchants:merchant:read:1", key)
+		key := r.userAccessCacheKey(organizationEntity.TABLE_NAME, "organization:read", 1)
+		assert.Equal(t, "resik:user_access:organizations:organization:read:1", key)
 
-		outletKey := r.userAccessCacheKey(outletEntity.TABLE_NAME, "outlet:read", 1)
-		assert.Equal(t, "resik:user_access:outlets:outlet:read:1", outletKey)
+		branchKey := r.userAccessCacheKey(branchEntity.TABLE_NAME, "branch:read", 1)
+		assert.Equal(t, "resik:user_access:branches:branch:read:1", branchKey)
 	})
 
 	t.Run("idMapCacheKey", func(t *testing.T) {
-		key := r.idMapCacheKey(merchantEntity.TABLE_NAME, "019deba4-2020-7dc7-a670-769321b06a9b")
-		assert.Equal(t, "resik:id_map:merchants:019deba4-2020-7dc7-a670-769321b06a9b", key)
+		key := r.idMapCacheKey(organizationEntity.TABLE_NAME, "019deba4-2020-7dc7-a670-769321b06a9b")
+		assert.Equal(t, "resik:id_map:organizations:019deba4-2020-7dc7-a670-769321b06a9b", key)
 	})
 
 	t.Run("GetResourceIDs-UnknownTable", func(t *testing.T) {

@@ -42,32 +42,32 @@ func (m *MockIService) EXPECT() *MockIServiceMockRecorder {
 	return m.recorder
 }
 
-// MerchantOmzetGet mocks base method.
-func (m *MockIService) MerchantOmzetGet(arg0 *param.MerchantOmzetGet) (*dto.MerchantOmzet, *response.Status) {
+// BranchOmzetGet mocks base method.
+func (m *MockIService) BranchOmzetGet(arg0 *param.BranchOmzetGet) (*dto.BranchOmzet, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MerchantOmzetGet", arg0)
-	ret0, _ := ret[0].(*dto.MerchantOmzet)
+	ret := m.ctrl.Call(m, "BranchOmzetGet", arg0)
+	ret0, _ := ret[0].(*dto.BranchOmzet)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
-// MerchantOmzetGet indicates an expected call of MerchantOmzetGet.
-func (mr *MockIServiceMockRecorder) MerchantOmzetGet(arg0 any) *gomock.Call {
+// BranchOmzetGet indicates an expected call of BranchOmzetGet.
+func (mr *MockIServiceMockRecorder) BranchOmzetGet(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantOmzetGet", reflect.TypeOf((*MockIService)(nil).MerchantOmzetGet), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BranchOmzetGet", reflect.TypeOf((*MockIService)(nil).BranchOmzetGet), arg0)
 }
 
-// OutletOmzetGet mocks base method.
-func (m *MockIService) OutletOmzetGet(arg0 *param.OutletOmzetGet) (*dto.OutletOmzet, *response.Status) {
+// OrganizationOmzetGet mocks base method.
+func (m *MockIService) OrganizationOmzetGet(arg0 *param.OrganizationOmzetGet) (*dto.OrganizationOmzet, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OutletOmzetGet", arg0)
-	ret0, _ := ret[0].(*dto.OutletOmzet)
+	ret := m.ctrl.Call(m, "OrganizationOmzetGet", arg0)
+	ret0, _ := ret[0].(*dto.OrganizationOmzet)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
-// OutletOmzetGet indicates an expected call of OutletOmzetGet.
-func (mr *MockIServiceMockRecorder) OutletOmzetGet(arg0 any) *gomock.Call {
+// OrganizationOmzetGet indicates an expected call of OrganizationOmzetGet.
+func (mr *MockIServiceMockRecorder) OrganizationOmzetGet(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletOmzetGet", reflect.TypeOf((*MockIService)(nil).OutletOmzetGet), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationOmzetGet", reflect.TypeOf((*MockIService)(nil).OrganizationOmzetGet), arg0)
 }

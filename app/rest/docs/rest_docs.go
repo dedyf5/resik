@@ -225,14 +225,14 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/merchants": {
+        "/organizations": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Merchant list",
+                "description": "Organization list",
                 "consumes": [
                     "application/json"
                 ],
@@ -240,9 +240,9 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchants"
+                    "organizations"
                 ],
-                "summary": "Merchant List",
+                "summary": "Organization List",
                 "parameters": [
                     {
                         "enum": [
@@ -296,7 +296,7 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.MerchantList"
+                                                "$ref": "#/definitions/response.OrganizationList"
                                             }
                                         }
                                     }
@@ -336,7 +336,7 @@ const docTemplaterest = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Create new merchant",
+                "description": "Create new organization",
                 "consumes": [
                     "application/json"
                 ],
@@ -344,9 +344,9 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchants"
+                    "organizations"
                 ],
-                "summary": "Create Merchant",
+                "summary": "Create Organization",
                 "parameters": [
                     {
                         "enum": [
@@ -364,7 +364,7 @@ const docTemplaterest = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.MerchantPost"
+                            "$ref": "#/definitions/request.OrganizationPost"
                         }
                     }
                 ],
@@ -380,7 +380,7 @@ const docTemplaterest = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.MerchantUpsert"
+                                            "$ref": "#/definitions/response.OrganizationUpsert"
                                         }
                                     }
                                 }
@@ -414,14 +414,14 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/merchants/{id}": {
+        "/organizations/{id}": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get merchant by ID",
+                "description": "Get organization by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -429,13 +429,13 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchants"
+                    "organizations"
                 ],
-                "summary": "Get Merchant by ID",
+                "summary": "Get Organization by ID",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Merchant ID",
+                        "description": "Organization ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -463,7 +463,7 @@ const docTemplaterest = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.MerchantDetail"
+                                            "$ref": "#/definitions/response.OrganizationDetail"
                                         }
                                     }
                                 }
@@ -502,7 +502,7 @@ const docTemplaterest = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Update merchant",
+                "description": "Update organization",
                 "consumes": [
                     "application/json"
                 ],
@@ -510,13 +510,13 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchants"
+                    "organizations"
                 ],
-                "summary": "Update Merchant",
+                "summary": "Update Organization",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Merchant ID",
+                        "description": "Organization ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -537,7 +537,7 @@ const docTemplaterest = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/request.MerchantPut"
+                            "$ref": "#/definitions/request.OrganizationPut"
                         }
                     }
                 ],
@@ -553,7 +553,7 @@ const docTemplaterest = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.MerchantUpsert"
+                                            "$ref": "#/definitions/response.OrganizationUpsert"
                                         }
                                     }
                                 }
@@ -592,7 +592,7 @@ const docTemplaterest = `{
                         "BearerAuth": []
                     }
                 ],
-                "description": "Delete merchant",
+                "description": "Delete organization",
                 "consumes": [
                     "application/json"
                 ],
@@ -600,13 +600,13 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchants"
+                    "organizations"
                 ],
-                "summary": "Delete Merchant",
+                "summary": "Delete Organization",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Merchant ID",
+                        "description": "Organization ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -800,14 +800,14 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/transactions/merchant/{merchant_id}/omzet": {
+        "/transactions/branch/{branch_id}/omzet": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get merchant omzet by merchant id",
+                "description": "Get branch omzet by branch id",
                 "consumes": [
                     "application/json"
                 ],
@@ -817,12 +817,12 @@ const docTemplaterest = `{
                 "tags": [
                     "transactions"
                 ],
-                "summary": "Get Merchant Omzet",
+                "summary": "Get Branch Omzet",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Merchant ID",
-                        "name": "merchant_id",
+                        "description": "Branch ID",
+                        "name": "branch_id",
                         "in": "path",
                         "required": true
                     },
@@ -911,7 +911,7 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.MerchantOmzet"
+                                                "$ref": "#/definitions/response.BranchOmzet"
                                             }
                                         }
                                     }
@@ -946,14 +946,14 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/transactions/outlet/{outlet_id}/omzet": {
+        "/transactions/organization/{organization_id}/omzet": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get outlet omzet by outlet id",
+                "description": "Get organization omzet by organization id",
                 "consumes": [
                     "application/json"
                 ],
@@ -963,12 +963,12 @@ const docTemplaterest = `{
                 "tags": [
                     "transactions"
                 ],
-                "summary": "Get Outlet Omzet",
+                "summary": "Get Organization Omzet",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Outlet ID",
-                        "name": "outlet_id",
+                        "description": "Organization ID",
+                        "name": "organization_id",
                         "in": "path",
                         "required": true
                     },
@@ -1057,7 +1057,7 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.OutletOmzet"
+                                                "$ref": "#/definitions/response.OrganizationOmzet"
                                             }
                                         }
                                     }
@@ -1161,7 +1161,7 @@ const docTemplaterest = `{
                 }
             }
         },
-        "request.MerchantPost": {
+        "request.OrganizationPost": {
             "type": "object",
             "required": [
                 "created_at",
@@ -1176,16 +1176,16 @@ const docTemplaterest = `{
                     "description": "nullable",
                     "type": "string",
                     "maxLength": 5000,
-                    "example": "Merchant description 1"
+                    "example": "Organization description 1"
                 },
                 "name": {
                     "type": "string",
                     "maxLength": 40,
-                    "example": "Resik Merchant"
+                    "example": "Resik Organization"
                 }
             }
         },
-        "request.MerchantPut": {
+        "request.OrganizationPut": {
             "type": "object",
             "required": [
                 "name",
@@ -1196,12 +1196,12 @@ const docTemplaterest = `{
                     "description": "nullable",
                     "type": "string",
                     "maxLength": 5000,
-                    "example": "Merchant description 1"
+                    "example": "Organization description 1"
                 },
                 "name": {
                     "type": "string",
                     "maxLength": 40,
-                    "example": "Resik Merchant"
+                    "example": "Resik Organization"
                 },
                 "updated_at": {
                     "type": "string",
@@ -1251,6 +1251,27 @@ const docTemplaterest = `{
                 }
             }
         },
+        "response.BranchOmzet": {
+            "type": "object",
+            "properties": {
+                "branch_name": {
+                    "type": "string",
+                    "example": "Resik Branch"
+                },
+                "omzet": {
+                    "type": "number",
+                    "example": 5000.5
+                },
+                "organization_name": {
+                    "type": "string",
+                    "example": "Resik Organization"
+                },
+                "period": {
+                    "type": "string",
+                    "example": "2023-11-22"
+                }
+            }
+        },
         "response.HealthHealthz": {
             "type": "object",
             "properties": {
@@ -1294,88 +1315,6 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.MerchantDetail": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "2026-01-02T15:04:05+07:00"
-                },
-                "creator": {
-                    "$ref": "#/definitions/response.User"
-                },
-                "description": {
-                    "description": "nullable",
-                    "type": "string",
-                    "example": "Merchant description 1"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "019defa1ccd0794c9459795fc65d38b6"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "Merchant 1"
-                },
-                "owner": {
-                    "$ref": "#/definitions/response.User"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "2026-01-02T15:04:05+07:00"
-                },
-                "updater": {
-                    "$ref": "#/definitions/response.User"
-                }
-            }
-        },
-        "response.MerchantList": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "2024-01-14T11:40:00Z"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "019def99a9267f64b75a97b4b19a2c4b"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "Resik Merchant"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "2024-01-14T11:40:00Z"
-                }
-            }
-        },
-        "response.MerchantOmzet": {
-            "type": "object",
-            "properties": {
-                "merchant_name": {
-                    "type": "string",
-                    "example": "Resik Merchant"
-                },
-                "omzet": {
-                    "type": "number",
-                    "example": 5000.5
-                },
-                "period": {
-                    "type": "string",
-                    "example": "2023-11-22"
-                }
-            }
-        },
-        "response.MerchantUpsert": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": "019df0d3d46f71d0863084d474748c3a"
-                }
-            }
-        },
         "response.Module": {
             "type": "object",
             "properties": {
@@ -1389,24 +1328,85 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.OutletOmzet": {
+        "response.OrganizationDetail": {
             "type": "object",
             "properties": {
-                "merchant_name": {
+                "created_at": {
                     "type": "string",
-                    "example": "Resik Merchant"
+                    "example": "2026-01-02T15:04:05+07:00"
                 },
+                "creator": {
+                    "$ref": "#/definitions/response.User"
+                },
+                "description": {
+                    "description": "nullable",
+                    "type": "string",
+                    "example": "Organization description 1"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "019defa1ccd0794c9459795fc65d38b6"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Organization 1"
+                },
+                "owner": {
+                    "$ref": "#/definitions/response.User"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2026-01-02T15:04:05+07:00"
+                },
+                "updater": {
+                    "$ref": "#/definitions/response.User"
+                }
+            }
+        },
+        "response.OrganizationList": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-14T11:40:00Z"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "019def99a9267f64b75a97b4b19a2c4b"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Resik Organization"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-14T11:40:00Z"
+                }
+            }
+        },
+        "response.OrganizationOmzet": {
+            "type": "object",
+            "properties": {
                 "omzet": {
                     "type": "number",
                     "example": 5000.5
                 },
-                "outlet_name": {
+                "organization_name": {
                     "type": "string",
-                    "example": "Resik Outlet"
+                    "example": "Resik Organization"
                 },
                 "period": {
                     "type": "string",
                     "example": "2023-11-22"
+                }
+            }
+        },
+        "response.OrganizationUpsert": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "019df0d3d46f71d0863084d474748c3a"
                 }
             }
         },

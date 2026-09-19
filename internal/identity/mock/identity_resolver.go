@@ -41,34 +41,34 @@ func (m *MockIdentityResolver) EXPECT() *MockIdentityResolverMockRecorder {
 	return m.recorder
 }
 
-// GetMerchantIDsByPermission mocks base method.
-func (m *MockIdentityResolver) GetMerchantIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
+// GetBranchIDsByPermission mocks base method.
+func (m *MockIdentityResolver) GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetMerchantIDsByPermission", c, userID, permissionCode)
+	ret := m.ctrl.Call(m, "GetBranchIDsByPermission", c, userID, permissionCode)
 	ret0, _ := ret[0].([]uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetMerchantIDsByPermission indicates an expected call of GetMerchantIDsByPermission.
-func (mr *MockIdentityResolverMockRecorder) GetMerchantIDsByPermission(c, userID, permissionCode any) *gomock.Call {
+// GetBranchIDsByPermission indicates an expected call of GetBranchIDsByPermission.
+func (mr *MockIdentityResolverMockRecorder) GetBranchIDsByPermission(c, userID, permissionCode any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetMerchantIDsByPermission", reflect.TypeOf((*MockIdentityResolver)(nil).GetMerchantIDsByPermission), c, userID, permissionCode)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBranchIDsByPermission", reflect.TypeOf((*MockIdentityResolver)(nil).GetBranchIDsByPermission), c, userID, permissionCode)
 }
 
-// GetOutletIDsByPermission mocks base method.
-func (m *MockIdentityResolver) GetOutletIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
+// GetOrganizationIDsByPermission mocks base method.
+func (m *MockIdentityResolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOutletIDsByPermission", c, userID, permissionCode)
+	ret := m.ctrl.Call(m, "GetOrganizationIDsByPermission", c, userID, permissionCode)
 	ret0, _ := ret[0].([]uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetOutletIDsByPermission indicates an expected call of GetOutletIDsByPermission.
-func (mr *MockIdentityResolverMockRecorder) GetOutletIDsByPermission(c, userID, permissionCode any) *gomock.Call {
+// GetOrganizationIDsByPermission indicates an expected call of GetOrganizationIDsByPermission.
+func (mr *MockIdentityResolverMockRecorder) GetOrganizationIDsByPermission(c, userID, permissionCode any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOutletIDsByPermission", reflect.TypeOf((*MockIdentityResolver)(nil).GetOutletIDsByPermission), c, userID, permissionCode)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOrganizationIDsByPermission", reflect.TypeOf((*MockIdentityResolver)(nil).GetOrganizationIDsByPermission), c, userID, permissionCode)
 }
 
 // GetResourceIDs mocks base method.
@@ -86,34 +86,34 @@ func (mr *MockIdentityResolverMockRecorder) GetResourceIDs(c, userID, resourceTa
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetResourceIDs", reflect.TypeOf((*MockIdentityResolver)(nil).GetResourceIDs), c, userID, resourceTable, permissionCode)
 }
 
-// GetTenantMerchantIDs mocks base method.
-func (m *MockIdentityResolver) GetTenantMerchantIDs(c context.Context, userID uint64) ([]uint64, error) {
+// GetTenantBranchIDs mocks base method.
+func (m *MockIdentityResolver) GetTenantBranchIDs(c context.Context, userID uint64) ([]uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTenantMerchantIDs", c, userID)
+	ret := m.ctrl.Call(m, "GetTenantBranchIDs", c, userID)
 	ret0, _ := ret[0].([]uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetTenantMerchantIDs indicates an expected call of GetTenantMerchantIDs.
-func (mr *MockIdentityResolverMockRecorder) GetTenantMerchantIDs(c, userID any) *gomock.Call {
+// GetTenantBranchIDs indicates an expected call of GetTenantBranchIDs.
+func (mr *MockIdentityResolverMockRecorder) GetTenantBranchIDs(c, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTenantMerchantIDs", reflect.TypeOf((*MockIdentityResolver)(nil).GetTenantMerchantIDs), c, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTenantBranchIDs", reflect.TypeOf((*MockIdentityResolver)(nil).GetTenantBranchIDs), c, userID)
 }
 
-// GetTenantOutletIDs mocks base method.
-func (m *MockIdentityResolver) GetTenantOutletIDs(c context.Context, userID uint64) ([]uint64, error) {
+// GetTenantOrganizationIDs mocks base method.
+func (m *MockIdentityResolver) GetTenantOrganizationIDs(c context.Context, userID uint64) ([]uint64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTenantOutletIDs", c, userID)
+	ret := m.ctrl.Call(m, "GetTenantOrganizationIDs", c, userID)
 	ret0, _ := ret[0].([]uint64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetTenantOutletIDs indicates an expected call of GetTenantOutletIDs.
-func (mr *MockIdentityResolverMockRecorder) GetTenantOutletIDs(c, userID any) *gomock.Call {
+// GetTenantOrganizationIDs indicates an expected call of GetTenantOrganizationIDs.
+func (mr *MockIdentityResolverMockRecorder) GetTenantOrganizationIDs(c, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTenantOutletIDs", reflect.TypeOf((*MockIdentityResolver)(nil).GetTenantOutletIDs), c, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTenantOrganizationIDs", reflect.TypeOf((*MockIdentityResolver)(nil).GetTenantOrganizationIDs), c, userID)
 }
 
 // HasAccessByID mocks base method.
@@ -146,32 +146,32 @@ func (mr *MockIdentityResolverMockRecorder) HasAccessByPublicID(c, userID, permi
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAccessByPublicID", reflect.TypeOf((*MockIdentityResolver)(nil).HasAccessByPublicID), c, userID, permissionCode, resourceTable, publicID)
 }
 
-// InvalidateUserAccessMerchant mocks base method.
-func (m *MockIdentityResolver) InvalidateUserAccessMerchant(ctx context.Context, userID uint64) error {
+// InvalidateUserAccessBranch mocks base method.
+func (m *MockIdentityResolver) InvalidateUserAccessBranch(ctx context.Context, userID uint64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InvalidateUserAccessMerchant", ctx, userID)
+	ret := m.ctrl.Call(m, "InvalidateUserAccessBranch", ctx, userID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// InvalidateUserAccessMerchant indicates an expected call of InvalidateUserAccessMerchant.
-func (mr *MockIdentityResolverMockRecorder) InvalidateUserAccessMerchant(ctx, userID any) *gomock.Call {
+// InvalidateUserAccessBranch indicates an expected call of InvalidateUserAccessBranch.
+func (mr *MockIdentityResolverMockRecorder) InvalidateUserAccessBranch(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InvalidateUserAccessMerchant", reflect.TypeOf((*MockIdentityResolver)(nil).InvalidateUserAccessMerchant), ctx, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InvalidateUserAccessBranch", reflect.TypeOf((*MockIdentityResolver)(nil).InvalidateUserAccessBranch), ctx, userID)
 }
 
-// InvalidateUserAccessOutlet mocks base method.
-func (m *MockIdentityResolver) InvalidateUserAccessOutlet(ctx context.Context, userID uint64) error {
+// InvalidateUserAccessOrganization mocks base method.
+func (m *MockIdentityResolver) InvalidateUserAccessOrganization(ctx context.Context, userID uint64) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InvalidateUserAccessOutlet", ctx, userID)
+	ret := m.ctrl.Call(m, "InvalidateUserAccessOrganization", ctx, userID)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// InvalidateUserAccessOutlet indicates an expected call of InvalidateUserAccessOutlet.
-func (mr *MockIdentityResolverMockRecorder) InvalidateUserAccessOutlet(ctx, userID any) *gomock.Call {
+// InvalidateUserAccessOrganization indicates an expected call of InvalidateUserAccessOrganization.
+func (mr *MockIdentityResolverMockRecorder) InvalidateUserAccessOrganization(ctx, userID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InvalidateUserAccessOutlet", reflect.TypeOf((*MockIdentityResolver)(nil).InvalidateUserAccessOutlet), ctx, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InvalidateUserAccessOrganization", reflect.TypeOf((*MockIdentityResolver)(nil).InvalidateUserAccessOrganization), ctx, userID)
 }
 
 // Resolve mocks base method.

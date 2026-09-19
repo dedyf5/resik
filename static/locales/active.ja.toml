@@ -18,13 +18,13 @@ other = "セッションの期限が切れました、再度ログインして�
 hash = "sha1-4dd10a96f5f476a38f798bdb9f09ad77afb90041"
 other = "時刻形式が正しくありません"
 
-[merchant]
-hash = "sha1-0ed527aeba162b5abf0c30b481099d29ca00fed2"
-other = "マーチャント"
-
 [not_found_val]
 hash = "sha1-52a066873d56a106cd5302d7aede09fb9e10f526"
 other = "{{.Val}}が見つかりません"
+
+[organization]
+hash = "sha1-519255ae1f74ffc5ddd29979295c7572f048ad81"
+other = "組織"
 
 [successfully_created_val]
 hash = "sha1-99059eeb725f4134e7ca43740027343904210c12"
@@ -45,6 +45,10 @@ other = "無許可"
 [user]
 hash = "sha1-9f8a2389a20ca0752aa9e95093515517e90e194c"
 other = "ユーザー"
+
+["validation.field.branch_id"]
+hash = "sha1-f136be55fc660ab0b0d9df06d724f28cf983f7c6"
+other = "支店ID"
 
 ["validation.field.created_at"]
 hash = "sha1-f1c69716be47f3a1cb7d0bfc922d70909efbe2b6"
@@ -70,10 +74,6 @@ other = "ID"
 hash = "sha1-24d948e4bdbe5b8224bbc0dfbab1923fab00b98e"
 other = "リミット"
 
-["validation.field.merchant_id"]
-hash = "sha1-9da47f7202153329aed43eae30cb988faab428de"
-other = "マーチャントID"
-
 ["validation.field.mode"]
 hash = "sha1-a7b93d2128e820f861fc8dfccd9f5521e89ad21f"
 other = "モード"
@@ -86,9 +86,9 @@ other = "名前"
 hash = "sha1-1d75774c0f96b6ee44eb6643c9fea71b50b90ea8"
 other = "順序"
 
-["validation.field.outlet_id"]
-hash = "sha1-81ba5a91241cb775b86d658fbf2d1ab4ca2320fa"
-other = "アウトレットID"
+["validation.field.organization_id"]
+hash = "sha1-986c63d3b197d81c6d6058d5efaf5d4c0484e060"
+other = "組織ID"
 
 ["validation.field.page"]
 hash = "sha1-fb06270f7c212baabc8749ffc36e49dc8f321548"

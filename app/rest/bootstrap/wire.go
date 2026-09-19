@@ -13,14 +13,14 @@ import (
 	fw "github.com/dedyf5/resik/app/rest/fw/echo"
 	generalHandler "github.com/dedyf5/resik/app/rest/handler/general"
 	healthHandler "github.com/dedyf5/resik/app/rest/handler/health"
-	merchantHandler "github.com/dedyf5/resik/app/rest/handler/merchant"
+	organizationHandler "github.com/dedyf5/resik/app/rest/handler/organization"
 	trxHandler "github.com/dedyf5/resik/app/rest/handler/transaction"
 	userHandler "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
 	health "github.com/dedyf5/resik/core/health"
 	healthService "github.com/dedyf5/resik/core/health/service"
-	merchant "github.com/dedyf5/resik/core/merchant"
-	merchantService "github.com/dedyf5/resik/core/merchant/service"
+	organization "github.com/dedyf5/resik/core/organization"
+	organizationService "github.com/dedyf5/resik/core/organization/service"
 	trx "github.com/dedyf5/resik/core/transaction"
 	trxService "github.com/dedyf5/resik/core/transaction/service"
 	user "github.com/dedyf5/resik/core/user"
@@ -32,7 +32,7 @@ import (
 	pkgHash "github.com/dedyf5/resik/pkg/hash"
 	repo "github.com/dedyf5/resik/repositories"
 	checkRepo "github.com/dedyf5/resik/repositories/check"
-	merchantRepo "github.com/dedyf5/resik/repositories/merchant"
+	organizationRepo "github.com/dedyf5/resik/repositories/organization"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
 	userRepo "github.com/dedyf5/resik/repositories/user"
 	ratelimitUtil "github.com/dedyf5/resik/utils/ratelimit"
@@ -75,11 +75,11 @@ var repoSet = wire.NewSet(
 	checkRepo.NewCheckDatabaseRepo,
 	checkRepo.NewCheckRedisRepo,
 	userRepo.New,
-	merchantRepo.New,
+	organizationRepo.New,
 	trxRepo.New,
 	wire.Bind(new(repo.ICheck), new(*checkRepo.CheckDatabaseRepo)),
 	wire.Bind(new(repo.IUser), new(*userRepo.UserRepo)),
-	wire.Bind(new(repo.IMerchant), new(*merchantRepo.MerchantRepo)),
+	wire.Bind(new(repo.IOrganization), new(*organizationRepo.OrganizationRepo)),
 	wire.Bind(new(repo.ITransaction), new(*trxRepo.TransactionRepo)),
 )
 
@@ -108,11 +108,11 @@ var providerSet = wire.NewSet(
 
 var serviceSet = wire.NewSet(
 	userService.New,
-	merchantService.New,
+	organizationService.New,
 	trxService.New,
 	healthService.New,
 	wire.Bind(new(user.IService), new(*userService.Service)),
-	wire.Bind(new(merchant.IService), new(*merchantService.Service)),
+	wire.Bind(new(organization.IService), new(*organizationService.Service)),
 	wire.Bind(new(trx.IService), new(*trxService.Service)),
 	wire.Bind(new(health.IService), new(*healthService.Service)),
 )
@@ -120,7 +120,7 @@ var serviceSet = wire.NewSet(
 var handlerSet = wire.NewSet(
 	generalHandler.New,
 	userHandler.New,
-	merchantHandler.New,
+	organizationHandler.New,
 	trxHandler.New,
 	healthHandler.New,
 )

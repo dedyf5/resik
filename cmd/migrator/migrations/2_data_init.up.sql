@@ -15,12 +15,12 @@ UNLOCK TABLES;
 /*!40000 ALTER TABLE `tenants` DISABLE KEYS */;
 LOCK TABLES `tenants` WRITE;
 INSERT INTO `tenants` VALUES 
-(1,'019f1710-aed5-74c4-95b0-7bebcef24cbd','Merchant 1','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(2,'019f1710-aed5-7ed8-b650-05cac4f0ca8d','Merchant 2','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(3,'019f2169-fa89-7c4b-9ee4-911ea7a27f3b','Merchant 3','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(4,'019f2169-fa89-7431-9201-ac8414528332','Merchant 4','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(5,'019f2169-fa89-7e8d-ad1d-7689e1af4efb','Merchant 1','2026-06-16 00:00:00',4,'2026-06-16 00:00:00',4),
-(6,'019f2169-fa89-7907-885b-f3bd7d427fb2','Merchant 2','2026-06-16 00:00:00',4,'2026-06-16 00:00:00',4);
+(1,'019f1710-aed5-74c4-95b0-7bebcef24cbd','Organization 1','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(2,'019f1710-aed5-7ed8-b650-05cac4f0ca8d','Organization 2','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(3,'019f2169-fa89-7c4b-9ee4-911ea7a27f3b','Organization 3','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(4,'019f2169-fa89-7431-9201-ac8414528332','Organization 4','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(5,'019f2169-fa89-7e8d-ad1d-7689e1af4efb','Organization 1','2026-06-16 00:00:00',4,'2026-06-16 00:00:00',4),
+(6,'019f2169-fa89-7907-885b-f3bd7d427fb2','Organization 2','2026-06-16 00:00:00',4,'2026-06-16 00:00:00',4);
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `tenants` ENABLE KEYS */;
 
@@ -61,18 +61,18 @@ INSERT INTO `permissions` VALUES
 (9,'role:update','Update Role','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
 (10,'role:delete','Delete Role','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
 (11,'role:assign','Assign Role','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(12,'merchant:read','Read Merchant','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(13,'merchant:create','Create Merchant','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(14,'merchant:update','Update Merchant','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(15,'merchant:delete','Delete Merchant','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(16,'merchant.settings:read','Read Merchant Settings','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(17,'merchant.settings:update','Update Merchant Settings','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(18,'outlet:read','Read Outlet','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(19,'outlet:create','Create Outlet','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(20,'outlet:update','Update Outlet','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(21,'outlet:delete','Delete Outlet','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(22,'outlet.settings:read','Read Outlet Settings','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
-(23,'outlet.settings:update','Update Outlet Settings','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(12,'organization:read','Read Organization','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(13,'organization:create','Create Organization','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(14,'organization:update','Update Organization','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(15,'organization:delete','Delete Organization','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(16,'organization.settings:read','Read Organization Settings','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(17,'organization.settings:update','Update Organization Settings','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(18,'branch:read','Read Branch','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(19,'branch:create','Create Branch','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(20,'branch:update','Update Branch','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(21,'branch:delete','Delete Branch','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(22,'branch.settings:read','Read Branch Settings','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
+(23,'branch.settings:update','Update Branch Settings','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
 (24,'transaction:read','Read Transaction','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
 (25,'transaction:create','Create Transaction','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
 (26,'transaction:update','Update Transaction','2026-06-16 00:00:00',1,'2026-06-16 00:00:00',1),
@@ -114,42 +114,42 @@ UNLOCK TABLES;
 /*!40000 ALTER TABLE `tenant_member_resource_scopes` DISABLE KEYS */;
 LOCK TABLES `tenant_member_resource_scopes` WRITE;
 INSERT INTO `tenant_member_resource_scopes` VALUES 
-(5,'outlet.settings','outlet','019deba8-3252-77fe-a552-d8bb690fce78'),
-(8,'transaction','outlet','019deba8-3252-77fe-a552-d8bb690fce78'),
-(8,'transaction','outlet','019f2169-fa89-734d-b16f-d10be00fdb37');
+(5,'branch.settings','branch','019deba8-3252-77fe-a552-d8bb690fce78'),
+(8,'transaction','branch','019deba8-3252-77fe-a552-d8bb690fce78'),
+(8,'transaction','branch','019f2169-fa89-734d-b16f-d10be00fdb37');
 UNLOCK TABLES;
 /*!40000 ALTER TABLE `tenant_member_resource_scopes` ENABLE KEYS */;
 
-/*!40000 ALTER TABLE `merchants` DISABLE KEYS */;
-LOCK TABLES `merchants` WRITE;
-INSERT INTO `merchants` VALUES 
-(1,'019deba4-2020-7dc7-a670-769321b06a9b',1,'019f1710-aed5-74c4-95b0-7bebcef24cbd','Merchant 1','merchant description 1','2024-02-02 19:52:41',1,'2024-04-06 00:08:00',1),
-(2,'019deba7-8a22-7cdb-a9f0-9790ec1150d0',1,'019f1710-aed5-7ed8-b650-05cac4f0ca8d','Merchant 2','merchant description 2','2024-04-06 22:56:00',1,'2024-04-06 22:56:00',1),
-(3,'019deba7-c288-7575-b125-7124566e2324',1,'019f2169-fa89-7c4b-9ee4-911ea7a27f3b','Merchant 3','merchant description 3','2024-04-06 22:56:00',1,'2024-04-06 23:00:00',1),
-(4,'019deba8-0079-7372-a40c-423933211d5f',1,'019f2169-fa89-7431-9201-ac8414528332','Merchant 4','merchant description 4','2024-04-06 22:56:00',1,'2024-04-07 01:14:00',1),
-(5,'019deba7-5a61-7913-80f8-a97771e2c101',4,'019f2169-fa89-7e8d-ad1d-7689e1af4efb','Merchant 1','merchant description 1','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
-(6,'019f2169-fa89-72e9-8295-c6ed2163a1e5',4,'019f2169-fa89-7907-885b-f3bd7d427fb2','Merchant 2','merchant description 2','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4);
+/*!40000 ALTER TABLE `organizations` DISABLE KEYS */;
+LOCK TABLES `organizations` WRITE;
+INSERT INTO `organizations` VALUES 
+(1,'019deba4-2020-7dc7-a670-769321b06a9b',1,'019f1710-aed5-74c4-95b0-7bebcef24cbd','Organization 1','Organization description 1','2024-02-02 19:52:41',1,'2024-04-06 00:08:00',1),
+(2,'019deba7-8a22-7cdb-a9f0-9790ec1150d0',1,'019f1710-aed5-7ed8-b650-05cac4f0ca8d','Organization 2','Organization description 2','2024-04-06 22:56:00',1,'2024-04-06 22:56:00',1),
+(3,'019deba7-c288-7575-b125-7124566e2324',1,'019f2169-fa89-7c4b-9ee4-911ea7a27f3b','Organization 3','Organization description 3','2024-04-06 22:56:00',1,'2024-04-06 23:00:00',1),
+(4,'019deba8-0079-7372-a40c-423933211d5f',1,'019f2169-fa89-7431-9201-ac8414528332','Organization 4','Organization description 4','2024-04-06 22:56:00',1,'2024-04-07 01:14:00',1),
+(5,'019deba7-5a61-7913-80f8-a97771e2c101',4,'019f2169-fa89-7e8d-ad1d-7689e1af4efb','Organization 1','Organization description 1','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
+(6,'019f2169-fa89-72e9-8295-c6ed2163a1e5',4,'019f2169-fa89-7907-885b-f3bd7d427fb2','Organization 2','Organization description 2','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4);
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `merchants` ENABLE KEYS */;
+/*!40000 ALTER TABLE `organizations` ENABLE KEYS */;
 
-/*!40000 ALTER TABLE `outlets` DISABLE KEYS */;
-LOCK TABLES `outlets` WRITE;
-INSERT INTO `outlets` VALUES 
-(1,'019deba8-3252-77fe-a552-d8bb690fce78',1,'Outlet 1-1','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
-(2,'019deba8-a20a-734d-b586-a5cd9415abd7',1,'Outlet 1-2','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
-(3,'019f2169-fa89-734d-b16f-d10be00fdb37',1,'Outlet 1-3','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
-(4,'019deba8-68c7-7566-ab46-0b93b99b8ab9',2,'Outlet 2-1','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
-(5,'019f2169-fa89-7a8b-ae0a-299ea16da943',2,'Outlet 2-2','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
-(6,'019f1710-aed5-725f-8855-d0ad7c53c76b',3,'Outlet 3-1','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
-(7,'019f1710-aed5-7510-9c71-7f086aee3b69',3,'Outlet 3-2','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
-(8,'019f1710-aed5-7d3f-8b79-37967e2e2521',4,'Outlet 4-1','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
-(9,'019f2169-fa89-7bcb-b3c6-c068390ba947',5,'Outlet 1-1','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
-(10,'019f2169-fa89-7162-a88c-d3c6056226e8',5,'Outlet 1-2','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
-(11,'019f2169-fa89-70bb-a7a2-4385b2b4462c',5,'Outlet 1-3','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
-(12,'019f2169-fa89-7176-8476-106d15a4db4d',6,'Outlet 2-1','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
-(13,'019f2169-fa89-7534-8e3d-d7e19ddc0183',6,'Outlet 2-2','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4);
+/*!40000 ALTER TABLE `branches` DISABLE KEYS */;
+LOCK TABLES `branches` WRITE;
+INSERT INTO `branches` VALUES 
+(1,'019deba8-3252-77fe-a552-d8bb690fce78',1,'Branch 1-1','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
+(2,'019deba8-a20a-734d-b586-a5cd9415abd7',1,'Branch 1-2','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
+(3,'019f2169-fa89-734d-b16f-d10be00fdb37',1,'Branch 1-3','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
+(4,'019deba8-68c7-7566-ab46-0b93b99b8ab9',2,'Branch 2-1','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
+(5,'019f2169-fa89-7a8b-ae0a-299ea16da943',2,'Branch 2-2','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
+(6,'019f1710-aed5-725f-8855-d0ad7c53c76b',3,'Branch 3-1','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
+(7,'019f1710-aed5-7510-9c71-7f086aee3b69',3,'Branch 3-2','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
+(8,'019f1710-aed5-7d3f-8b79-37967e2e2521',4,'Branch 4-1','2024-02-02 19:52:41',1,'2024-02-02 19:52:41',1),
+(9,'019f2169-fa89-7bcb-b3c6-c068390ba947',5,'Branch 1-1','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
+(10,'019f2169-fa89-7162-a88c-d3c6056226e8',5,'Branch 1-2','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
+(11,'019f2169-fa89-70bb-a7a2-4385b2b4462c',5,'Branch 1-3','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
+(12,'019f2169-fa89-7176-8476-106d15a4db4d',6,'Branch 2-1','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4),
+(13,'019f2169-fa89-7534-8e3d-d7e19ddc0183',6,'Branch 2-2','2024-02-02 19:52:41',4,'2024-02-02 19:52:41',4);
 UNLOCK TABLES;
-/*!40000 ALTER TABLE `outlets` ENABLE KEYS */;
+/*!40000 ALTER TABLE `branches` ENABLE KEYS */;
 
 /*!40000 ALTER TABLE `transactions` DISABLE KEYS */;
 LOCK TABLES `transactions` WRITE;

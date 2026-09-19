@@ -9,7 +9,7 @@ import (
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
 	generalHandler "github.com/dedyf5/resik/app/rest/handler/general"
 	healthHandler "github.com/dedyf5/resik/app/rest/handler/health"
-	merchantHandler "github.com/dedyf5/resik/app/rest/handler/merchant"
+	organizationHandler "github.com/dedyf5/resik/app/rest/handler/organization"
 	trxHandler "github.com/dedyf5/resik/app/rest/handler/transaction"
 	userHandler "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
@@ -20,26 +20,26 @@ import (
 )
 
 type Router struct {
-	config          config.Config
-	resolver        identity.IdentityResolver
-	limiter         ratelimit.Limiter
-	generalHandler  *generalHandler.Handler
-	merchantHandler *merchantHandler.Handler
-	userHandler     *userHandler.Handler
-	trxHandler      *trxHandler.Handler
-	healthHandler   *healthHandler.HealthHandler
+	config              config.Config
+	resolver            identity.IdentityResolver
+	limiter             ratelimit.Limiter
+	generalHandler      *generalHandler.Handler
+	organizationHandler *organizationHandler.Handler
+	userHandler         *userHandler.Handler
+	trxHandler          *trxHandler.Handler
+	healthHandler       *healthHandler.HealthHandler
 }
 
-func newRouter(config config.Config, resolver identity.IdentityResolver, limiter ratelimit.Limiter, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, merchantHandler *merchantHandler.Handler, trxHandler *trxHandler.Handler, healthHandler *healthHandler.HealthHandler) *Router {
+func newRouter(config config.Config, resolver identity.IdentityResolver, limiter ratelimit.Limiter, generalHandler *generalHandler.Handler, userHandler *userHandler.Handler, organizationHandler *organizationHandler.Handler, trxHandler *trxHandler.Handler, healthHandler *healthHandler.HealthHandler) *Router {
 	return &Router{
-		config:          config,
-		resolver:        resolver,
-		limiter:         limiter,
-		generalHandler:  generalHandler,
-		userHandler:     userHandler,
-		merchantHandler: merchantHandler,
-		trxHandler:      trxHandler,
-		healthHandler:   healthHandler,
+		config:              config,
+		resolver:            resolver,
+		limiter:             limiter,
+		generalHandler:      generalHandler,
+		userHandler:         userHandler,
+		organizationHandler: organizationHandler,
+		trxHandler:          trxHandler,
+		healthHandler:       healthHandler,
 	}
 }
 
@@ -57,20 +57,20 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	e.POST("/login", userHandler.LoginPost, rateLimit)
 	e.GET("/token-refresh", userHandler.TokenRefreshGet, validateToken, jwtMiddleware, rateLimit)
 
-	merchantHandler := r.merchantHandler
-	merchant := e.Group("/merchants", validateToken, jwtMiddleware, rateLimit)
-	merchant.GET("", merchantHandler.MerchantListGet)
-	merchant.POST("", merchantHandler.MerchantPost)
-	merchant.GET("/:id", merchantHandler.MerchantDetailGet)
-	merchant.PUT("/:id", merchantHandler.MerchantPut)
-	merchant.DELETE("/:id", merchantHandler.MerchantDelete)
+	organizationHandler := r.organizationHandler
+	organization := e.Group("/organizations", validateToken, jwtMiddleware, rateLimit)
+	organization.GET("", organizationHandler.OrganizationListGet)
+	organization.POST("", organizationHandler.OrganizationPost)
+	organization.GET("/:id", organizationHandler.OrganizationDetailGet)
+	organization.PUT("/:id", organizationHandler.OrganizationPut)
+	organization.DELETE("/:id", organizationHandler.OrganizationDelete)
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transactions", validateToken, jwtMiddleware, rateLimit)
-	trxMerchant := trx.Group("/merchant/:merchant_id")
-	trxMerchant.GET("/omzet", trxHandler.MerchantOmzetGet)
-	trxOutlet := trx.Group("/outlet/:outlet_id")
-	trxOutlet.GET("/omzet", trxHandler.OutletOmzetGet)
+	trxOrganization := trx.Group("/organization/:organization_id")
+	trxOrganization.GET("/omzet", trxHandler.OrganizationOmzetGet)
+	trxBranch := trx.Group("/branch/:branch_id")
+	trxBranch.GET("/omzet", trxHandler.BranchOmzetGet)
 
 	healthH := r.healthHandler
 	e.GET("/healthz", healthH.HealthHealthzGet)

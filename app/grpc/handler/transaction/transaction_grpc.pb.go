@@ -24,16 +24,16 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	TransactionService_MerchantOmzetGet_FullMethodName = "/transaction.TransactionService/MerchantOmzetGet"
-	TransactionService_OutletOmzetGet_FullMethodName   = "/transaction.TransactionService/OutletOmzetGet"
+	TransactionService_OrganizationOmzetGet_FullMethodName = "/transaction.TransactionService/OrganizationOmzetGet"
+	TransactionService_BranchOmzetGet_FullMethodName       = "/transaction.TransactionService/BranchOmzetGet"
 )
 
 // TransactionServiceClient is the client API for TransactionService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionServiceClient interface {
-	MerchantOmzetGet(ctx context.Context, in *request.MerchantOmzetGet, opts ...grpc.CallOption) (*MerchantOmzetGetRes, error)
-	OutletOmzetGet(ctx context.Context, in *request.OutletOmzetGet, opts ...grpc.CallOption) (*OutletOmzetGetRes, error)
+	OrganizationOmzetGet(ctx context.Context, in *request.OrganizationOmzetGet, opts ...grpc.CallOption) (*OrganizationOmzetGetRes, error)
+	BranchOmzetGet(ctx context.Context, in *request.BranchOmzetGet, opts ...grpc.CallOption) (*BranchOmzetGetRes, error)
 }
 
 type transactionServiceClient struct {
@@ -44,20 +44,20 @@ func NewTransactionServiceClient(cc grpc.ClientConnInterface) TransactionService
 	return &transactionServiceClient{cc}
 }
 
-func (c *transactionServiceClient) MerchantOmzetGet(ctx context.Context, in *request.MerchantOmzetGet, opts ...grpc.CallOption) (*MerchantOmzetGetRes, error) {
+func (c *transactionServiceClient) OrganizationOmzetGet(ctx context.Context, in *request.OrganizationOmzetGet, opts ...grpc.CallOption) (*OrganizationOmzetGetRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(MerchantOmzetGetRes)
-	err := c.cc.Invoke(ctx, TransactionService_MerchantOmzetGet_FullMethodName, in, out, cOpts...)
+	out := new(OrganizationOmzetGetRes)
+	err := c.cc.Invoke(ctx, TransactionService_OrganizationOmzetGet_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *transactionServiceClient) OutletOmzetGet(ctx context.Context, in *request.OutletOmzetGet, opts ...grpc.CallOption) (*OutletOmzetGetRes, error) {
+func (c *transactionServiceClient) BranchOmzetGet(ctx context.Context, in *request.BranchOmzetGet, opts ...grpc.CallOption) (*BranchOmzetGetRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OutletOmzetGetRes)
-	err := c.cc.Invoke(ctx, TransactionService_OutletOmzetGet_FullMethodName, in, out, cOpts...)
+	out := new(BranchOmzetGetRes)
+	err := c.cc.Invoke(ctx, TransactionService_BranchOmzetGet_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -68,8 +68,8 @@ func (c *transactionServiceClient) OutletOmzetGet(ctx context.Context, in *reque
 // All implementations must embed UnimplementedTransactionServiceServer
 // for forward compatibility
 type TransactionServiceServer interface {
-	MerchantOmzetGet(context.Context, *request.MerchantOmzetGet) (*MerchantOmzetGetRes, error)
-	OutletOmzetGet(context.Context, *request.OutletOmzetGet) (*OutletOmzetGetRes, error)
+	OrganizationOmzetGet(context.Context, *request.OrganizationOmzetGet) (*OrganizationOmzetGetRes, error)
+	BranchOmzetGet(context.Context, *request.BranchOmzetGet) (*BranchOmzetGetRes, error)
 	mustEmbedUnimplementedTransactionServiceServer()
 }
 
@@ -77,11 +77,11 @@ type TransactionServiceServer interface {
 type UnimplementedTransactionServiceServer struct {
 }
 
-func (UnimplementedTransactionServiceServer) MerchantOmzetGet(context.Context, *request.MerchantOmzetGet) (*MerchantOmzetGetRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method MerchantOmzetGet not implemented")
+func (UnimplementedTransactionServiceServer) OrganizationOmzetGet(context.Context, *request.OrganizationOmzetGet) (*OrganizationOmzetGetRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OrganizationOmzetGet not implemented")
 }
-func (UnimplementedTransactionServiceServer) OutletOmzetGet(context.Context, *request.OutletOmzetGet) (*OutletOmzetGetRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OutletOmzetGet not implemented")
+func (UnimplementedTransactionServiceServer) BranchOmzetGet(context.Context, *request.BranchOmzetGet) (*BranchOmzetGetRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BranchOmzetGet not implemented")
 }
 func (UnimplementedTransactionServiceServer) mustEmbedUnimplementedTransactionServiceServer() {}
 
@@ -96,38 +96,38 @@ func RegisterTransactionServiceServer(s grpc.ServiceRegistrar, srv TransactionSe
 	s.RegisterService(&TransactionService_ServiceDesc, srv)
 }
 
-func _TransactionService_MerchantOmzetGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(request.MerchantOmzetGet)
+func _TransactionService_OrganizationOmzetGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(request.OrganizationOmzetGet)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).MerchantOmzetGet(ctx, in)
+		return srv.(TransactionServiceServer).OrganizationOmzetGet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_MerchantOmzetGet_FullMethodName,
+		FullMethod: TransactionService_OrganizationOmzetGet_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).MerchantOmzetGet(ctx, req.(*request.MerchantOmzetGet))
+		return srv.(TransactionServiceServer).OrganizationOmzetGet(ctx, req.(*request.OrganizationOmzetGet))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TransactionService_OutletOmzetGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(request.OutletOmzetGet)
+func _TransactionService_BranchOmzetGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(request.BranchOmzetGet)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(TransactionServiceServer).OutletOmzetGet(ctx, in)
+		return srv.(TransactionServiceServer).BranchOmzetGet(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: TransactionService_OutletOmzetGet_FullMethodName,
+		FullMethod: TransactionService_BranchOmzetGet_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).OutletOmzetGet(ctx, req.(*request.OutletOmzetGet))
+		return srv.(TransactionServiceServer).BranchOmzetGet(ctx, req.(*request.BranchOmzetGet))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -140,12 +140,12 @@ var TransactionService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*TransactionServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "MerchantOmzetGet",
-			Handler:    _TransactionService_MerchantOmzetGet_Handler,
+			MethodName: "OrganizationOmzetGet",
+			Handler:    _TransactionService_OrganizationOmzetGet_Handler,
 		},
 		{
-			MethodName: "OutletOmzetGet",
-			Handler:    _TransactionService_OutletOmzetGet_Handler,
+			MethodName: "BranchOmzetGet",
+			Handler:    _TransactionService_BranchOmzetGet_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -10,31 +10,31 @@ import (
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
-func (s *Service) MerchantOmzetGet(param *paramTrx.MerchantOmzetGet) (res *trxDTO.MerchantOmzet, err *resPkg.Status) {
-	total, err := s.transactionRepo.MerchantOmzetGetTotal(param)
+func (s *Service) OrganizationOmzetGet(param *paramTrx.OrganizationOmzetGet) (res *trxDTO.OrganizationOmzet, err *resPkg.Status) {
+	total, err := s.transactionRepo.OrganizationOmzetGetTotal(param)
 	if err != nil {
 		return nil, err
 	}
-	data, err := s.transactionRepo.MerchantOmzetGetData(param)
+	data, err := s.transactionRepo.OrganizationOmzetGetData(param)
 	if err != nil {
 		return nil, err
 	}
-	return &trxDTO.MerchantOmzet{
+	return &trxDTO.OrganizationOmzet{
 		Data:  data,
 		Total: total,
 	}, nil
 }
 
-func (s *Service) OutletOmzetGet(param *paramTrx.OutletOmzetGet) (res *trxDTO.OutletOmzet, err *resPkg.Status) {
-	total, err := s.transactionRepo.OutletOmzetGetTotal(param)
+func (s *Service) BranchOmzetGet(param *paramTrx.BranchOmzetGet) (res *trxDTO.BranchOmzet, err *resPkg.Status) {
+	total, err := s.transactionRepo.BranchOmzetGetTotal(param)
 	if err != nil {
 		return nil, err
 	}
-	data, err := s.transactionRepo.OutletOmzetGetData(param)
+	data, err := s.transactionRepo.BranchOmzetGetData(param)
 	if err != nil {
 		return nil, err
 	}
-	return &trxDTO.OutletOmzet{
+	return &trxDTO.BranchOmzet{
 		Data:  data,
 		Total: total,
 	}, nil

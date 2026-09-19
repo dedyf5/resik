@@ -40,7 +40,7 @@ func (s *Service) Auth(param paramUser.Auth) (token string, err *resPkg.Status) 
 }
 
 func (s *Service) AuthTokenGenerate(ctx *ctx.Ctx, userID uint64, userPublicID uuidPkg.UUIDV7, username string) (token string, err *resPkg.Status) {
-	merchantOutletIDs, err := s.userRepo.OutletMerchantByUserIDGetData(ctx, userID)
+	organizationBranchIDs, err := s.userRepo.BranchOrganizationByUserIDGetData(ctx, userID)
 	if err != nil {
 		return "", err
 	}
@@ -53,14 +53,14 @@ func (s *Service) AuthTokenGenerate(ctx *ctx.Ctx, userID uint64, userPublicID uu
 		Username: username,
 	}
 
-	merchantIDs, outletIDs := merchantOutletIDs.UniqueIDs()
+	organizationIDs, branchIDs := organizationBranchIDs.UniqueIDs()
 
 	token, err = jwtCtx.AuthTokenGenerate(
 		s.config.Module,
 		s.config.Auth,
 		user,
-		merchantIDs,
-		outletIDs,
+		organizationIDs,
+		branchIDs,
 	)
 	return
 }

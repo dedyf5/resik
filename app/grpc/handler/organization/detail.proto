@@ -1,0 +1,16 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package organization;
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/organization";
+
+import "app/grpc/proto/status/status.proto";
+import "core/organization/response/detail.proto";
+
+message OrganizationDetailGetRes {
+    status.Status status = 1; // @gotags: json:"status"
+    response.OrganizationDetail data = 2; // @gotags: json:"data"
+}

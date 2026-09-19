@@ -1,0 +1,25 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package organization;
+option go_package = "github.com/dedyf5/resik/app/grpc/handler/organization";
+
+import "app/grpc/handler/organization/list.proto";
+import "app/grpc/handler/organization/detail.proto";
+import "app/grpc/handler/organization/upsert.proto";
+import "app/grpc/proto/status/status.proto";
+import "core/organization/request/delete.proto";
+import "core/organization/request/list.proto";
+import "core/organization/request/detail.proto";
+import "core/organization/request/upsert.proto";
+
+service OrganizationService {
+    rpc OrganizationPost(request.OrganizationPost) returns (organization.OrganizationUpsertRes);
+    rpc OrganizationPut(request.OrganizationPut) returns (organization.OrganizationUpsertRes);
+    rpc OrganizationDetailGet(request.OrganizationDetailGet) returns (organization.OrganizationDetailGetRes);
+    rpc OrganizationListGet(request.OrganizationListGet) returns (organization.OrganizationListGetRes);
+    rpc OrganizationDelete(request.OrganizationDelete) returns (status.Empty);
+}

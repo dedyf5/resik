@@ -42,52 +42,52 @@ func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho, resolver identi
 	}
 }
 
-// @Summary Get Merchant Omzet
-// @Description Get merchant omzet by merchant id
+// @Summary Get Organization Omzet
+// @Description Get organization omzet by organization id
 // @Tags transactions
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param       merchant_id path int true "Merchant ID"
+// @Param       organization_id path int true "Organization ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Param       parameter query reqTrxCore.MerchantOmzetGet true "Query Param"
-// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{data=[]resTrxCore.MerchantOmzet}
+// @Param       parameter query reqTrxCore.OrganizationOmzetGet true "Query Param"
+// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{data=[]resTrxCore.OrganizationOmzet}
 // @Failure     400 {object}	resPkg.ResponseBadRequest
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
-// @Router		/transactions/merchant/{merchant_id}/omzet [get]
-func (h *Handler) MerchantOmzetGet(echoCtx *echo.Context) error {
+// @Router		/transactions/organization/{organization_id}/omzet [get]
+func (h *Handler) OrganizationOmzetGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
-	h.log.Debug("MerchantOmzetGet")
+	h.log.Debug("OrganizationOmzetGet")
 
-	var payload reqTrxCore.MerchantOmzetGet
+	var payload reqTrxCore.OrganizationOmzetGet
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
 	}
 
-	merchantID, err := ctx.GetMerchantID(h.resolver, payload.GetMerchantId(), "transaction:read")
+	organizationID, err := ctx.GetOrganizationID(h.resolver, payload.GetOrganizationId(), "transaction:read")
 	if err != nil {
 		return err
 	}
 
-	param, err := payload.ToParam(ctx, merchantID)
+	param, err := payload.ToParam(ctx, organizationID)
 	if err != nil {
 		return err
 	}
 
-	res, err := h.trxService.MerchantOmzetGet(param)
+	res, err := h.trxService.OrganizationOmzetGet(param)
 	if err != nil {
 		return err
 	}
 
 	return resPkg.NewStatusDataMeta(
 		http.StatusOK,
-		resTrxCore.MerchantOmzetFromEntity(res.Data),
+		resTrxCore.OrganizationOmzetFromEntity(res.Data),
 		&resPkg.Meta{
 			PageCurrent: param.Filter.Raw().PageOrDefault(),
 			Limit:       param.Filter.Raw().LimitOrDefault(),
@@ -96,51 +96,51 @@ func (h *Handler) MerchantOmzetGet(echoCtx *echo.Context) error {
 	)
 }
 
-// @Summary Get Outlet Omzet
-// @Description Get outlet omzet by outlet id
+// @Summary Get Branch Omzet
+// @Description Get branch omzet by branch id
 // @Tags transactions
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param       outlet_id path int true "Outlet ID"
+// @Param       branch_id path int true "Branch ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
-// @Param       parameter query reqTrxCore.OutletOmzetGet true "Query Param"
-// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{data=[]resTrxCore.OutletOmzet}
+// @Param       parameter query reqTrxCore.BranchOmzetGet true "Query Param"
+// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{data=[]resTrxCore.BranchOmzet}
 // @Failure     400 {object}	resPkg.ResponseBadRequest
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
-// @Router		/transactions/outlet/{outlet_id}/omzet [get]
-func (h *Handler) OutletOmzetGet(echoCtx *echo.Context) error {
+// @Router		/transactions/branch/{branch_id}/omzet [get]
+func (h *Handler) BranchOmzetGet(echoCtx *echo.Context) error {
 	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
 	if err != nil {
 		return err
 	}
 
-	var payload reqTrxCore.OutletOmzetGet
+	var payload reqTrxCore.BranchOmzetGet
 
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
 	}
 
-	outletID, err := ctx.GetOutletID(h.resolver, payload.GetOutletId(), "transaction:read")
+	branchID, err := ctx.GetBranchID(h.resolver, payload.GetBranchId(), "transaction:read")
 	if err != nil {
 		return err
 	}
 
-	param, err := payload.ToParam(ctx, outletID)
+	param, err := payload.ToParam(ctx, branchID)
 	if err != nil {
 		return err
 	}
 
-	res, err := h.trxService.OutletOmzetGet(param)
+	res, err := h.trxService.BranchOmzetGet(param)
 	if err != nil {
 		return err
 	}
 
 	return resPkg.NewStatusDataMeta(
 		http.StatusOK,
-		resTrxCore.OutletOmzetFromEntity(res.Data),
+		resTrxCore.BranchOmzetFromEntity(res.Data),
 		&resPkg.Meta{
 			PageCurrent: param.Filter.Raw().PageOrDefault(),
 			Limit:       param.Filter.Raw().LimitOrDefault(),

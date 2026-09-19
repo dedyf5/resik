@@ -13,9 +13,9 @@ import (
 
 	"github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/ctx/lang/term"
+	branchEntity "github.com/dedyf5/resik/entities/branch"
 	"github.com/dedyf5/resik/entities/config"
-	merchantEntity "github.com/dedyf5/resik/entities/merchant"
-	outletEntity "github.com/dedyf5/resik/entities/outlet"
+	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -35,9 +35,9 @@ const (
 
 type AuthClaims struct {
 	jwt.RegisteredClaims
-	User        User     `json:"user"`
-	MerchantIDs []uint64 `json:"-"`
-	OutletsIDs  []uint64 `json:"-"`
+	User            User     `json:"user"`
+	OrganizationIDs []uint64 `json:"-"`
+	BranchIDs       []uint64 `json:"-"`
 }
 
 type User struct {
@@ -102,25 +102,25 @@ func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver
 	return 0, resPkg.NewStatusCode(http.StatusUnauthorized)
 }
 
-// GetMerchantID gets the merchant ID by merchant public ID, and check if user has access to it for permission code
-func (a *AuthClaims) GetMerchantID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, merchantPublicID string, permissionCode string) (merchantID uint64, err *resPkg.Status) {
-	return a.getID(c, resolver, lang, permissionCode, merchantEntity.TABLE_NAME, merchantPublicID)
+// GetOrganizationID gets the organization ID by organization public ID, and check if user has access to it for permission code
+func (a *AuthClaims) GetOrganizationID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, organizationPublicID string, permissionCode string) (organizationID uint64, err *resPkg.Status) {
+	return a.getID(c, resolver, lang, permissionCode, organizationEntity.TABLE_NAME, organizationPublicID)
 }
 
-// GetOutletID gets the outlet ID by outlet public ID, and check if user has access to it for permission code
-func (a *AuthClaims) GetOutletID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, outletPublicID string, permissionCode string) (outletID uint64, err *resPkg.Status) {
-	return a.getID(c, resolver, lang, permissionCode, outletEntity.TABLE_NAME, outletPublicID)
+// GetBranchID gets the branch ID by branch public ID, and check if user has access to it for permission code
+func (a *AuthClaims) GetBranchID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, branchPublicID string, permissionCode string) (branchID uint64, err *resPkg.Status) {
+	return a.getID(c, resolver, lang, permissionCode, branchEntity.TABLE_NAME, branchPublicID)
 }
 
-func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, user User, merchantIDs, outletIDs []uint64) (token string, err *resPkg.Status) {
+func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, user User, organizationIDs, branchIDs []uint64) (token string, err *resPkg.Status) {
 	claims := AuthClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    moduleConfig.Name,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(authConfig.Expires)),
 		},
-		User:        user,
-		MerchantIDs: merchantIDs,
-		OutletsIDs:  outletIDs,
+		User:            user,
+		OrganizationIDs: organizationIDs,
+		BranchIDs:       branchIDs,
 	}
 
 	tokenGen := jwt.NewWithClaims(AUTH_SIGNING_METHOD, claims)
@@ -152,17 +152,17 @@ func AuthClaimsFromString(tokenString string, signatureKey string, c context.Con
 			claims.User.ID = userID
 		}
 
-		merchantIDs, errMerchants := resolver.GetTenantMerchantIDs(c, claims.User.ID)
-		if errMerchants != nil {
-			return nil, HTTPStatusError(errMerchants, lang)
+		organizationIDs, errOrganizations := resolver.GetTenantOrganizationIDs(c, claims.User.ID)
+		if errOrganizations != nil {
+			return nil, HTTPStatusError(errOrganizations, lang)
 		}
-		claims.MerchantIDs = merchantIDs
+		claims.OrganizationIDs = organizationIDs
 
-		outletIDs, errOutlets := resolver.GetTenantOutletIDs(c, claims.User.ID)
-		if errOutlets != nil {
-			return nil, HTTPStatusError(errOutlets, lang)
+		branchIDs, errBranches := resolver.GetTenantBranchIDs(c, claims.User.ID)
+		if errBranches != nil {
+			return nil, HTTPStatusError(errBranches, lang)
 		}
-		claims.OutletsIDs = outletIDs
+		claims.BranchIDs = branchIDs
 
 		return claims, nil
 	}

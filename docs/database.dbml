@@ -79,17 +79,17 @@ Table permissions {
     10, "role:delete", "Delete Role", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
     11, "role:assign", "Assign Role", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
 
-    12, "merchant:read", "Read Merchant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
-    13, "merchant:create", "Create Merchant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
-    14, "merchant:update", "Update Merchant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
-    15, "merchant:delete", "Delete Merchant", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
-    16, "merchant.settings:read", "Read Merchant Settings", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
-    17, "merchant.settings:update", "Update Merchant Settings", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    12, "organization:read", "Read Organization", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    13, "organization:create", "Create Organization", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    14, "organization:update", "Update Organization", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    15, "organization:delete", "Delete Organization", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    16, "organization.settings:read", "Read Organization Settings", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    17, "organization.settings:update", "Update Organization Settings", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
 
-    18, "outlet:read", "Read Outlet", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
-    19, "outlet:create", "Create Outlet", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
-    20, "outlet:update", "Update Outlet", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
-    21, "outlet:delete", "Delete Outlet", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    18, "branch:read", "Read Branch", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    19, "branch:create", "Create Branch", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    20, "branch:update", "Update Branch", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
+    21, "branch:delete", "Delete Branch", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
 
     22, "transaction:read", "Read Transaction", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
     23, "transaction:create", "Create Transaction", "2026-06-16 00:00:00", 1, "2026-06-16 00:00:00", 1
@@ -159,10 +159,10 @@ Table tenant_member_resource_scopes {
   }
 
   Records {
-    2, "merchant.settings", "merchant", "merchant_uuid_v7_10"
-    2, "transaction", "merchant", "merchant_uuid_v7_10"
-    3, "transaction", "outlet", "outlet_uuid_v7_11"
-    3, "transaction", "outlet", "outlet_uuid_v7_12"
+    2, "organization.settings", "organization", "organization_uuid_v7_10"
+    2, "transaction", "organization", "organization_uuid_v7_10"
+    3, "transaction", "branch", "branch_uuid_v7_11"
+    3, "transaction", "branch", "branch_uuid_v7_12"
   }
 
   Note: '''
@@ -176,8 +176,8 @@ Table tenant_member_resource_scopes {
   allowed by their permissions.
 
   Examples:
-  - transaction + merchant + merchant_uuid_1
-  - transaction + outlet + outlet_uuid_10
+  - transaction + organization + organization_uuid_1
+  - transaction + branch + branch_uuid_10
   - report + region + region_jakarta
   '''
 }

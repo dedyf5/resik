@@ -11,14 +11,14 @@ import (
 	"github.com/dedyf5/resik/app/rest/fw/echo"
 	"github.com/dedyf5/resik/app/rest/handler/general"
 	"github.com/dedyf5/resik/app/rest/handler/health"
-	merchant2 "github.com/dedyf5/resik/app/rest/handler/merchant"
+	organization2 "github.com/dedyf5/resik/app/rest/handler/organization"
 	transaction2 "github.com/dedyf5/resik/app/rest/handler/transaction"
 	user2 "github.com/dedyf5/resik/app/rest/handler/user"
 	"github.com/dedyf5/resik/config"
 	health2 "github.com/dedyf5/resik/core/health"
 	service4 "github.com/dedyf5/resik/core/health/service"
-	merchant3 "github.com/dedyf5/resik/core/merchant"
-	service2 "github.com/dedyf5/resik/core/merchant/service"
+	organization3 "github.com/dedyf5/resik/core/organization"
+	service2 "github.com/dedyf5/resik/core/organization/service"
 	transaction3 "github.com/dedyf5/resik/core/transaction"
 	service3 "github.com/dedyf5/resik/core/transaction/service"
 	user3 "github.com/dedyf5/resik/core/user"
@@ -30,7 +30,7 @@ import (
 	"github.com/dedyf5/resik/pkg/hash"
 	"github.com/dedyf5/resik/repositories"
 	"github.com/dedyf5/resik/repositories/check"
-	"github.com/dedyf5/resik/repositories/merchant"
+	"github.com/dedyf5/resik/repositories/organization"
 	"github.com/dedyf5/resik/repositories/transaction"
 	"github.com/dedyf5/resik/repositories/user"
 	"github.com/dedyf5/resik/utils/ratelimit"
@@ -86,9 +86,9 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	iHash := hash.NewArgon2Hasher(argon2Config)
 	serviceService := service.New(userRepo, iHash, config)
 	userHandler := user2.New(echoEcho, logLog, serviceService)
-	merchantRepo := merchant.New(gormDB)
-	service5 := service2.New(config, identityResolver, userRepo, merchantRepo)
-	merchantHandler := merchant2.New(logLog, echoEcho, identityResolver, service5)
+	organizationRepo := organization.New(gormDB)
+	service5 := service2.New(config, identityResolver, userRepo, organizationRepo)
+	organizationHandler := organization2.New(logLog, echoEcho, identityResolver, service5)
 	transactionRepo := transaction.New(gormDB)
 	service6 := service3.New(transactionRepo, config)
 	transactionHandler := transaction2.New(config, logLog, echoEcho, identityResolver, service6)
@@ -97,7 +97,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	v := provideCheckerSlice(checkDatabaseRepo, checkRedisRepo)
 	service7 := service4.New(v)
 	healthHandler := health.New(logLog, echoEcho, service7)
-	router := newRouter(config, identityResolver, limiter, handler, userHandler, merchantHandler, transactionHandler, healthHandler)
+	router := newRouter(config, identityResolver, limiter, handler, userHandler, organizationHandler, transactionHandler, healthHandler)
 	bootstrapApp, cleanup4, err := newApp(serverHTTP, router)
 	if err != nil {
 		cleanup3()
@@ -134,7 +134,7 @@ var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 
 var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm, drivers.NewRedisConnection)
 
-var repoSet = wire.NewSet(check.NewCheckDatabaseRepo, check.NewCheckRedisRepo, user.New, merchant.New, transaction.New, wire.Bind(new(repositories.ICheck), new(*check.CheckDatabaseRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IMerchant), new(*merchant.MerchantRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
+var repoSet = wire.NewSet(check.NewCheckDatabaseRepo, check.NewCheckRedisRepo, user.New, organization.New, transaction.New, wire.Bind(new(repositories.ICheck), new(*check.CheckDatabaseRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)), wire.Bind(new(repositories.IOrganization), new(*organization.OrganizationRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)))
 
 func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 	return &hash.Argon2Config{
@@ -156,6 +156,6 @@ var providerSet = wire.NewSet(
 	provideAppKey, identity.NewResolver,
 )
 
-var serviceSet = wire.NewSet(service.New, service2.New, service3.New, service4.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(merchant3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)), wire.Bind(new(health2.IService), new(*service4.Service)))
+var serviceSet = wire.NewSet(service.New, service2.New, service3.New, service4.New, wire.Bind(new(user3.IService), new(*service.Service)), wire.Bind(new(organization3.IService), new(*service2.Service)), wire.Bind(new(transaction3.IService), new(*service3.Service)), wire.Bind(new(health2.IService), new(*service4.Service)))
 
-var handlerSet = wire.NewSet(general.New, user2.New, merchant2.New, transaction2.New, health.New)
+var handlerSet = wire.NewSet(general.New, user2.New, organization2.New, transaction2.New, health.New)

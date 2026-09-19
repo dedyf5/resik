@@ -71,33 +71,33 @@ definitions:
     - password
     - username
     type: object
-  request.MerchantPost:
+  request.OrganizationPost:
     properties:
       created_at:
         example: "2024-04-14T14:18:00Z"
         type: string
       description:
         description: nullable
-        example: Merchant description 1
+        example: Organization description 1
         maxLength: 5000
         type: string
       name:
-        example: Resik Merchant
+        example: Resik Organization
         maxLength: 40
         type: string
     required:
     - created_at
     - name
     type: object
-  request.MerchantPut:
+  request.OrganizationPut:
     properties:
       description:
         description: nullable
-        example: Merchant description 1
+        example: Organization description 1
         maxLength: 5000
         type: string
       name:
-        example: Resik Merchant
+        example: Resik Organization
         maxLength: 40
         type: string
       updated_at:
@@ -136,6 +136,21 @@ definitions:
         example: id
         type: string
     type: object
+  response.BranchOmzet:
+    properties:
+      branch_name:
+        example: Resik Branch
+        type: string
+      omzet:
+        example: 5000.5
+        type: number
+      organization_name:
+        example: Resik Organization
+        type: string
+      period:
+        example: "2023-11-22"
+        type: string
+    type: object
   response.HealthHealthz:
     properties:
       accessed_at:
@@ -165,64 +180,6 @@ definitions:
         example: UP
         type: string
     type: object
-  response.MerchantDetail:
-    properties:
-      created_at:
-        example: "2026-01-02T15:04:05+07:00"
-        type: string
-      creator:
-        $ref: '#/definitions/response.User'
-      description:
-        description: nullable
-        example: Merchant description 1
-        type: string
-      id:
-        example: 019defa1ccd0794c9459795fc65d38b6
-        type: string
-      name:
-        example: Merchant 1
-        type: string
-      owner:
-        $ref: '#/definitions/response.User'
-      updated_at:
-        example: "2026-01-02T15:04:05+07:00"
-        type: string
-      updater:
-        $ref: '#/definitions/response.User'
-    type: object
-  response.MerchantList:
-    properties:
-      created_at:
-        example: "2024-01-14T11:40:00Z"
-        type: string
-      id:
-        example: 019def99a9267f64b75a97b4b19a2c4b
-        type: string
-      name:
-        example: Resik Merchant
-        type: string
-      updated_at:
-        example: "2024-01-14T11:40:00Z"
-        type: string
-    type: object
-  response.MerchantOmzet:
-    properties:
-      merchant_name:
-        example: Resik Merchant
-        type: string
-      omzet:
-        example: 5000.5
-        type: number
-      period:
-        example: "2023-11-22"
-        type: string
-    type: object
-  response.MerchantUpsert:
-    properties:
-      id:
-        example: 019df0d3d46f71d0863084d474748c3a
-        type: string
-    type: object
   response.Module:
     properties:
       name:
@@ -232,19 +189,62 @@ definitions:
         example: REST
         type: string
     type: object
-  response.OutletOmzet:
+  response.OrganizationDetail:
     properties:
-      merchant_name:
-        example: Resik Merchant
+      created_at:
+        example: "2026-01-02T15:04:05+07:00"
         type: string
+      creator:
+        $ref: '#/definitions/response.User'
+      description:
+        description: nullable
+        example: Organization description 1
+        type: string
+      id:
+        example: 019defa1ccd0794c9459795fc65d38b6
+        type: string
+      name:
+        example: Organization 1
+        type: string
+      owner:
+        $ref: '#/definitions/response.User'
+      updated_at:
+        example: "2026-01-02T15:04:05+07:00"
+        type: string
+      updater:
+        $ref: '#/definitions/response.User'
+    type: object
+  response.OrganizationList:
+    properties:
+      created_at:
+        example: "2024-01-14T11:40:00Z"
+        type: string
+      id:
+        example: 019def99a9267f64b75a97b4b19a2c4b
+        type: string
+      name:
+        example: Resik Organization
+        type: string
+      updated_at:
+        example: "2024-01-14T11:40:00Z"
+        type: string
+    type: object
+  response.OrganizationOmzet:
+    properties:
       omzet:
         example: 5000.5
         type: number
-      outlet_name:
-        example: Resik Outlet
+      organization_name:
+        example: Resik Organization
         type: string
       period:
         example: "2023-11-22"
+        type: string
+    type: object
+  response.OrganizationUpsert:
+    properties:
+      id:
+        example: 019df0d3d46f71d0863084d474748c3a
         type: string
     type: object
   response.ResponseBadRequest:
@@ -474,11 +474,11 @@ paths:
       summary: Login
       tags:
       - user
-  /merchants:
+  /organizations:
     get:
       consumes:
       - application/json
-      description: Merchant list
+      description: Organization list
       parameters:
       - enum:
         - en
@@ -517,7 +517,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/response.MerchantList'
+                    $ref: '#/definitions/response.OrganizationList'
                   type: array
               type: object
         "400":
@@ -538,13 +538,13 @@ paths:
             $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
-      summary: Merchant List
+      summary: Organization List
       tags:
-      - merchants
+      - organizations
     post:
       consumes:
       - application/json
-      description: Create new merchant
+      description: Create new organization
       parameters:
       - enum:
         - en
@@ -558,7 +558,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/request.MerchantPost'
+          $ref: '#/definitions/request.OrganizationPost'
       produces:
       - application/json
       responses:
@@ -569,7 +569,7 @@ paths:
             - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/response.MerchantUpsert'
+                  $ref: '#/definitions/response.OrganizationUpsert'
               type: object
         "400":
           description: Bad Request
@@ -589,16 +589,16 @@ paths:
             $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
-      summary: Create Merchant
+      summary: Create Organization
       tags:
-      - merchants
-  /merchants/{id}:
+      - organizations
+  /organizations/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete merchant
+      description: Delete organization
       parameters:
-      - description: Merchant ID
+      - description: Organization ID
         in: path
         name: id
         required: true
@@ -633,15 +633,15 @@ paths:
             $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
-      summary: Delete Merchant
+      summary: Delete Organization
       tags:
-      - merchants
+      - organizations
     get:
       consumes:
       - application/json
-      description: Get merchant by ID
+      description: Get organization by ID
       parameters:
-      - description: Merchant ID
+      - description: Organization ID
         in: path
         name: id
         required: true
@@ -663,7 +663,7 @@ paths:
             - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/response.MerchantDetail'
+                  $ref: '#/definitions/response.OrganizationDetail'
               type: object
         "400":
           description: Bad Request
@@ -683,15 +683,15 @@ paths:
             $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
-      summary: Get Merchant by ID
+      summary: Get Organization by ID
       tags:
-      - merchants
+      - organizations
     put:
       consumes:
       - application/json
-      description: Update merchant
+      description: Update organization
       parameters:
-      - description: Merchant ID
+      - description: Organization ID
         in: path
         name: id
         required: true
@@ -708,7 +708,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/request.MerchantPut'
+          $ref: '#/definitions/request.OrganizationPut'
       produces:
       - application/json
       responses:
@@ -719,7 +719,7 @@ paths:
             - $ref: '#/definitions/response.ResponseSuccess'
             - properties:
                 data:
-                  $ref: '#/definitions/response.MerchantUpsert'
+                  $ref: '#/definitions/response.OrganizationUpsert'
               type: object
         "400":
           description: Bad Request
@@ -739,9 +739,9 @@ paths:
             $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
-      summary: Update Merchant
+      summary: Update Organization
       tags:
-      - merchants
+      - organizations
   /readyz:
     get:
       consumes:
@@ -832,15 +832,15 @@ paths:
       summary: Token Refresh
       tags:
       - user
-  /transactions/merchant/{merchant_id}/omzet:
+  /transactions/branch/{branch_id}/omzet:
     get:
       consumes:
       - application/json
-      description: Get merchant omzet by merchant id
+      description: Get branch omzet by branch id
       parameters:
-      - description: Merchant ID
+      - description: Branch ID
         in: path
-        name: merchant_id
+        name: branch_id
         required: true
         type: integer
       - enum:
@@ -904,7 +904,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/response.MerchantOmzet'
+                    $ref: '#/definitions/response.BranchOmzet'
                   type: array
               type: object
         "400":
@@ -925,18 +925,18 @@ paths:
             $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
-      summary: Get Merchant Omzet
+      summary: Get Branch Omzet
       tags:
       - transactions
-  /transactions/outlet/{outlet_id}/omzet:
+  /transactions/organization/{organization_id}/omzet:
     get:
       consumes:
       - application/json
-      description: Get outlet omzet by outlet id
+      description: Get organization omzet by organization id
       parameters:
-      - description: Outlet ID
+      - description: Organization ID
         in: path
-        name: outlet_id
+        name: organization_id
         required: true
         type: integer
       - enum:
@@ -1000,7 +1000,7 @@ paths:
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/response.OutletOmzet'
+                    $ref: '#/definitions/response.OrganizationOmzet'
                   type: array
               type: object
         "400":
@@ -1021,7 +1021,7 @@ paths:
             $ref: '#/definitions/response.ResponseErrorWithoutDetails'
       security:
       - BearerAuth: []
-      summary: Get Outlet Omzet
+      summary: Get Organization Omzet
       tags:
       - transactions
 securityDefinitions:

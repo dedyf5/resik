@@ -9,8 +9,8 @@ import (
 	"net/http"
 
 	"github.com/dedyf5/resik/ctx"
-	merchantEntity "github.com/dedyf5/resik/entities/merchant"
-	outletEntity "github.com/dedyf5/resik/entities/outlet"
+	branchEntity "github.com/dedyf5/resik/entities/branch"
+	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"gorm.io/gorm"
@@ -64,9 +64,9 @@ func (r *UserRepo) UsersGetByIDs(ctx *ctx.Ctx, userIDs []uint64) (users userEnti
 	return
 }
 
-func (r *UserRepo) MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, err *resPkg.Status) {
-	query := r.DB.Select("id").Table(merchantEntity.TABLE_NAME).Where("owner_id = ?", userID)
-	errQuery := query.Find(&merchantIDs).Error
+func (r *UserRepo) OrganizationIDsByUserIDGetData(userID uint64) (organizationIDs []uint64, err *resPkg.Status) {
+	query := r.DB.Select("id").Table(organizationEntity.TABLE_NAME).Where("owner_id = ?", userID)
+	errQuery := query.Find(&organizationIDs).Error
 	if errQuery != nil {
 		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
 			return
@@ -76,13 +76,13 @@ func (r *UserRepo) MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint
 	return
 }
 
-func (r *UserRepo) OutletMerchantByUserIDGetData(ctx *ctx.Ctx, userID uint64) (merchantOutletIDs userEntity.MerchantOutletIDs, err *resPkg.Status) {
+func (r *UserRepo) BranchOrganizationByUserIDGetData(ctx *ctx.Ctx, userID uint64) (organizationBranchIDs userEntity.OrganizationBranchIDs, err *resPkg.Status) {
 	query := r.DB.WithContext(ctx.Context).
-		Select("o1.id AS outlet_id, o1.public_id AS outlet_public_id, m1.id AS merchant_id, m1.public_id AS merchant_public_id").
-		Table(outletEntity.TABLE_NAME+" AS o1").
-		Joins("RIGHT JOIN "+merchantEntity.TABLE_NAME+" AS m1 ON m1.id = o1.merchant_id").
-		Where("m1.owner_id = ?", userID)
-	errQuery := query.Find(&merchantOutletIDs).Error
+		Select("b1.id AS branch_id, b1.public_id AS branch_public_id, o1.id AS organization_id, o1.public_id AS organization_public_id").
+		Table(branchEntity.TABLE_NAME+" AS b1").
+		Joins("RIGHT JOIN "+organizationEntity.TABLE_NAME+" AS o1 ON o1.id = b1.organization_id").
+		Where("o1.owner_id = ?", userID)
+	errQuery := query.Find(&organizationBranchIDs).Error
 	if errQuery != nil {
 		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
 			return

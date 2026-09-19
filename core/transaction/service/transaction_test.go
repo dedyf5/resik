@@ -25,44 +25,44 @@ import (
 	"golang.org/x/text/language"
 )
 
-func TestMerchantOmzetGet(t *testing.T) {
+func TestOrganizationOmzetGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	trxRepo, ctx, trxService := setup(ctrl)
 
-	p := trxParam.MerchantOmzetGet{
-		Ctx:        ctx,
-		MerchantID: 1,
+	p := trxParam.OrganizationOmzetGet{
+		Ctx:            ctx,
+		OrganizationID: 1,
 	}
 
-	t.Run("MerchantOmzetGetTotal-ERROR", func(t *testing.T) {
+	t.Run("OrganizationOmzetGetTotal-ERROR", func(t *testing.T) {
 		errNative := errors.New("failed to get total")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: errNative,
 		}
 		gomock.InOrder(
-			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(int64(0), statusErr),
+			trxRepo.EXPECT().OrganizationOmzetGetTotal(&p).Return(int64(0), statusErr),
 		)
-		res, err := trxService.MerchantOmzetGet(&p)
+		res, err := trxService.OrganizationOmzetGet(&p)
 		assert.Nil(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
 		assert.Equal(t, statusErr.CauseError.Error(), err.CauseError.Error())
 	})
 
-	t.Run("MerchantOmzetGetData-ERROR", func(t *testing.T) {
+	t.Run("OrganizationOmzetGetData-ERROR", func(t *testing.T) {
 		errNative := errors.New("failed to get data")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: errNative,
 		}
 		gomock.InOrder(
-			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(int64(1), nil),
-			trxRepo.EXPECT().MerchantOmzetGetData(&p).Return(nil, statusErr),
+			trxRepo.EXPECT().OrganizationOmzetGetTotal(&p).Return(int64(1), nil),
+			trxRepo.EXPECT().OrganizationOmzetGetData(&p).Return(nil, statusErr),
 		)
-		res, err := trxService.MerchantOmzetGet(&p)
+		res, err := trxService.OrganizationOmzetGet(&p)
 		assert.Nil(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
@@ -70,19 +70,19 @@ func TestMerchantOmzetGet(t *testing.T) {
 	})
 
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
-		expRes := make([]trxEntity.MerchantOmzet, 0, 1)
-		expRes = append(expRes, trxEntity.MerchantOmzet{
-			MerchantID:   1,
-			MerchantName: "Merchant Name",
-			Omzet:        500.75,
-			Period:       "2024-03-07",
+		expRes := make([]trxEntity.OrganizationOmzet, 0, 1)
+		expRes = append(expRes, trxEntity.OrganizationOmzet{
+			OrganizationID:   1,
+			OrganizationName: "Organization Name",
+			Omzet:            500.75,
+			Period:           "2024-03-07",
 		})
 		resInt64 := int64(len(expRes))
 		gomock.InOrder(
-			trxRepo.EXPECT().MerchantOmzetGetTotal(&p).Return(resInt64, nil),
-			trxRepo.EXPECT().MerchantOmzetGetData(&p).Return(expRes, nil),
+			trxRepo.EXPECT().OrganizationOmzetGetTotal(&p).Return(resInt64, nil),
+			trxRepo.EXPECT().OrganizationOmzetGetData(&p).Return(expRes, nil),
 		)
-		res, err := trxService.MerchantOmzetGet(&p)
+		res, err := trxService.OrganizationOmzetGet(&p)
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, resInt64, res.Total)
@@ -91,44 +91,44 @@ func TestMerchantOmzetGet(t *testing.T) {
 	})
 }
 
-func TestOutletOmzetGet(t *testing.T) {
+func TestBranchOmzetGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
 	trxRepo, ctx, trxService := setup(ctrl)
 
-	p := trxParam.OutletOmzetGet{
+	p := trxParam.BranchOmzetGet{
 		Ctx:      ctx,
-		OutletID: 1,
+		BranchID: 1,
 	}
 
-	t.Run("OutletOmzetGetTotal-ERROR", func(t *testing.T) {
+	t.Run("BranchOmzetGetTotal-ERROR", func(t *testing.T) {
 		errNative := errors.New("failed to get total")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: errNative,
 		}
 		gomock.InOrder(
-			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(int64(0), statusErr),
+			trxRepo.EXPECT().BranchOmzetGetTotal(&p).Return(int64(0), statusErr),
 		)
-		res, err := trxService.OutletOmzetGet(&p)
+		res, err := trxService.BranchOmzetGet(&p)
 		assert.Nil(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
 		assert.Equal(t, statusErr.CauseError.Error(), err.CauseError.Error())
 	})
 
-	t.Run("OutletOmzetGetData-ERROR", func(t *testing.T) {
+	t.Run("BranchOmzetGetData-ERROR", func(t *testing.T) {
 		errNative := errors.New("failed to get data")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
 			CauseError: errNative,
 		}
 		gomock.InOrder(
-			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(int64(1), nil),
-			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(nil, statusErr),
+			trxRepo.EXPECT().BranchOmzetGetTotal(&p).Return(int64(1), nil),
+			trxRepo.EXPECT().BranchOmzetGetData(&p).Return(nil, statusErr),
 		)
-		res, err := trxService.OutletOmzetGet(&p)
+		res, err := trxService.BranchOmzetGet(&p)
 		assert.Nil(t, res)
 		assert.NotNil(t, err)
 		assert.Equal(t, statusErr.MessageOrDefault(), err.MessageOrDefault())
@@ -136,21 +136,21 @@ func TestOutletOmzetGet(t *testing.T) {
 	})
 
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
-		expRes := make([]trxEntity.OutletOmzet, 0, 1)
-		expRes = append(expRes, trxEntity.OutletOmzet{
-			MerchantID:   1,
-			MerchantName: "Merchant Name",
-			OutletID:     1,
-			OutletName:   "Outlet Name",
-			Omzet:        500.75,
-			Period:       "2024-03-07",
+		expRes := make([]trxEntity.BranchOmzet, 0, 1)
+		expRes = append(expRes, trxEntity.BranchOmzet{
+			OrganizationID:   1,
+			OrganizationName: "Organization Name",
+			BranchID:         1,
+			BranchName:       "Branch Name",
+			Omzet:            500.75,
+			Period:           "2024-03-07",
 		})
 		resInt64 := int64(len(expRes))
 		gomock.InOrder(
-			trxRepo.EXPECT().OutletOmzetGetTotal(&p).Return(resInt64, nil),
-			trxRepo.EXPECT().OutletOmzetGetData(&p).Return(expRes, nil),
+			trxRepo.EXPECT().BranchOmzetGetTotal(&p).Return(resInt64, nil),
+			trxRepo.EXPECT().BranchOmzetGetData(&p).Return(expRes, nil),
 		)
-		res, err := trxService.OutletOmzetGet(&p)
+		res, err := trxService.BranchOmzetGet(&p)
 		assert.Nil(t, err)
 		assert.NotNil(t, res)
 		assert.Equal(t, resInt64, res.Total)

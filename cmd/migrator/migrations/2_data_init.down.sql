@@ -4,8 +4,8 @@
 SET FOREIGN_KEY_CHECKS = 0;
 
 TRUNCATE TABLE `transactions`;
-TRUNCATE TABLE `outlets`;
-TRUNCATE TABLE `merchants`;
+TRUNCATE TABLE `branches`;
+TRUNCATE TABLE `organizations`;
 TRUNCATE TABLE `tenant_member_resource_scopes`;
 TRUNCATE TABLE `tenant_member_permissions`;
 TRUNCATE TABLE `permissions`;

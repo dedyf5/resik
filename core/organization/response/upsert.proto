@@ -1,0 +1,12 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package response;
+option go_package = "github.com/dedyf5/resik/core/organization/response";
+
+message OrganizationUpsert {
+    string id = 1; // @gotags: json:"id" example:"019df0d3d46f71d0863084d474748c3a"
+}
