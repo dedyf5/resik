@@ -31,8 +31,6 @@ type IUser interface {
 	UserByID(ctx *ctx.Ctx, userID uint64) (user *userEntity.User, err *resPkg.Status)
 	UserByUsername(ctx *ctx.Ctx, username string) (user *userEntity.User, err *resPkg.Status)
 	UsersGetByIDs(ctx *ctx.Ctx, userIDs []uint64) (users userEntity.Users, err *resPkg.Status)
-	OrganizationIDsByUserIDGetData(userID uint64) (organizationIDs []uint64, err *resPkg.Status)
-	BranchOrganizationByUserIDGetData(ctx *ctx.Ctx, userID uint64) (organizationBranchIDs userEntity.OrganizationBranchIDs, err *resPkg.Status)
 }
 
 type IOrganization interface {

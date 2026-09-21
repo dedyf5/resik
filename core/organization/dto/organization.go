@@ -11,17 +11,13 @@ import (
 
 type Organization struct {
 	organization.Organization
-	Owner   *user.User `json:"owner"`
 	Creator *user.User `json:"creator"`
 	Updater *user.User `json:"updater"`
 }
 
 func OrganizationFromEntity(data organization.Organization, users map[uint64]user.User) Organization {
-	var owner, creator, updater *user.User
+	var creator, updater *user.User
 
-	if u, ok := users[data.OwnerID]; ok {
-		owner = &u
-	}
 	if u, ok := users[data.CreatedBy]; ok {
 		creator = &u
 	}
@@ -31,7 +27,6 @@ func OrganizationFromEntity(data organization.Organization, users map[uint64]use
 
 	return Organization{
 		Organization: data,
-		Owner:        owner,
 		Creator:      creator,
 		Updater:      updater,
 	}

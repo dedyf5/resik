@@ -20,7 +20,6 @@ func (m *OrganizationPost) ToEntity(ctx *ctx.Ctx) (res *organizationEntity.Organ
 	}
 	userID := ctx.UserClaims().UserID()
 	return &organizationEntity.Organization{
-		OwnerID:     userID,
 		Name:        m.GetName(),
 		Description: m.Description,
 		CreatedBy:   userID,

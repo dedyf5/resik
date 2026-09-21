@@ -16,12 +16,7 @@ func OrganizationDetailFromDTO(src *dtoOrganization.Organization) *OrganizationD
 	}
 
 	return &OrganizationDetail{
-		Id: src.PublicID.String32(),
-		Owner: &User{
-			Id:       src.Owner.ID,
-			Name:     src.Owner.Name,
-			Username: src.Owner.Username,
-		},
+		Id:          src.PublicID.String32(),
 		Name:        src.Name,
 		Description: src.Description,
 		CreatedAt:   src.CreatedAt.Format(time.RFC3339),

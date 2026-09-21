@@ -1351,9 +1351,6 @@ const docTemplaterest = `{
                     "type": "string",
                     "example": "Organization 1"
                 },
-                "owner": {
-                    "$ref": "#/definitions/response.User"
-                },
                 "updated_at": {
                     "type": "string",
                     "example": "2026-01-02T15:04:05+07:00"

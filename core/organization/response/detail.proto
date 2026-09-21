@@ -10,14 +10,13 @@ option go_package = "github.com/dedyf5/resik/core/organization/response";
 
 message OrganizationDetail {
     string id = 1; // @gotags: json:"id" example:"019defa1ccd0794c9459795fc65d38b6"
-    User owner = 2; // @gotags: json:"owner"
-    string name = 3; // @gotags: json:"name" example:"Organization 1"
+    string name = 2; // @gotags: json:"name" example:"Organization 1"
     // nullable
-    optional string description = 4; // @gotags: json:"description" example:"Organization description 1"
-    string created_at = 5; // @gotags: json:"created_at" example:"2026-01-02T15:04:05+07:00"
-    User creator = 6; // @gotags: json:"creator"
-    string updated_at = 7; // @gotags: json:"updated_at" example:"2026-01-02T15:04:05+07:00"
-    User updater = 8; // @gotags: json:"updater"
+    optional string description = 3; // @gotags: json:"description" example:"Organization description 1"
+    string created_at = 4; // @gotags: json:"created_at" example:"2026-01-02T15:04:05+07:00"
+    User creator = 5; // @gotags: json:"creator"
+    string updated_at = 6; // @gotags: json:"updated_at" example:"2026-01-02T15:04:05+07:00"
+    User updater = 7; // @gotags: json:"updater"
 }
 
 message User {

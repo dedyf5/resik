@@ -112,15 +112,13 @@ func (a *AuthClaims) GetBranchID(c context.Context, resolver identity.IdentityRe
 	return a.getID(c, resolver, lang, permissionCode, branchEntity.TABLE_NAME, branchPublicID)
 }
 
-func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, user User, organizationIDs, branchIDs []uint64) (token string, err *resPkg.Status) {
+func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, user User) (token string, err *resPkg.Status) {
 	claims := AuthClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    moduleConfig.Name,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(authConfig.Expires)),
 		},
-		User:            user,
-		OrganizationIDs: organizationIDs,
-		BranchIDs:       branchIDs,
+		User: user,
 	}
 
 	tokenGen := jwt.NewWithClaims(AUTH_SIGNING_METHOD, claims)

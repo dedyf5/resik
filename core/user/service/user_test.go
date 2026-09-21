@@ -102,7 +102,6 @@ func TestAuth(t *testing.T) {
 		gomock.InOrder(
 			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(userExpected, nil),
 			hasher.EXPECT().Compare(param.Password, userExpected.Password).Return(true, nil),
-			userRepo.EXPECT().BranchOrganizationByUserIDGetData(param.Ctx, userID).Return(branchesExpected(), nil),
 		)
 		token, err := userService.Auth(param)
 		assert.Nil(t, err)
@@ -114,48 +113,15 @@ func TestAuthTokenGenerate(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	userRepo, _, ctx, userService := setup(ctrl)
+	_, _, ctx, userService := setup(ctrl)
 
 	userPublicID, _ := uuidPkg.NewUUIDV7()
 
-	statusErr := &resPkg.Status{
-		Code: http.StatusInternalServerError,
-	}
-
-	t.Run("BranchOrganizationByUserIDGetData-ERROR", func(t *testing.T) {
-		gomock.InOrder(
-			userRepo.EXPECT().BranchOrganizationByUserIDGetData(ctx, userID).Return(nil, statusErr),
-		)
-		res, err := userService.AuthTokenGenerate(ctx, userID, userPublicID, username)
-		assert.Empty(t, res)
-		assert.NotNil(t, err)
-		assert.Equal(t, statusErr, err)
-	})
-
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
-		gomock.InOrder(
-			userRepo.EXPECT().BranchOrganizationByUserIDGetData(ctx, userID).Return(branchesExpected(), nil),
-		)
 		res, err := userService.AuthTokenGenerate(ctx, userID, userPublicID, username)
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)
 	})
-}
-
-func branchesExpected() userEntity.OrganizationBranchIDs {
-	res := userEntity.OrganizationBranchIDs{}
-	for n := 1; n <= 3; n++ {
-		organizationPublicID, _ := uuidPkg.NewUUIDV7()
-		branchPublicID, _ := uuidPkg.NewUUIDV7()
-		res = append(res, userEntity.OrganizationBranchID{
-			OrganizationID:       uint64(n),
-			OrganizationPublicID: organizationPublicID,
-			BranchID:             uint64(n),
-			BranchPublicID:       branchPublicID,
-		})
-	}
-
-	return res
 }
 
 func setup(ctrl *gomock.Controller) (userRepo *userMock.MockIUser, hasher *hashMock.MockIHash, ctx *ctx.Ctx, userService *Service) {

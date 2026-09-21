@@ -17,7 +17,6 @@ const TABLE_NAME = "organizations"
 type Organization struct {
 	ID          uint64         `json:"-" gorm:"primaryKey;autoIncrement;"`
 	PublicID    uuidPkg.UUIDV7 `json:"id" gorm:"column:public_id;type:uuid;unique;not null;"`
-	OwnerID     uint64         `json:"owner_id" gorm:"not null"`
 	Name        string         `json:"name" gorm:"type:varchar(40);not null"`
 	Description *string        `json:"description" gorm:"type:text;null"`
 	CreatedAt   time.Time      `json:"created_at" gorm:"type:datetime;not null;"`
@@ -31,12 +30,12 @@ func (m *Organization) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (m *Organization) AllUserIDs() [3]uint64 {
-	return [3]uint64{m.OwnerID, m.CreatedBy, m.UpdatedBy}
+func (m *Organization) AllUserIDs() [2]uint64 {
+	return [2]uint64{m.CreatedBy, m.UpdatedBy}
 }
 
 func (m *Organization) UniqueAllUserIDs() []uint64 {
-	keys := make(map[uint64]bool, 3)
+	keys := make(map[uint64]bool, 2)
 	var list []uint64
 
 	ids := m.AllUserIDs()
@@ -58,12 +57,6 @@ type Tabler interface {
 }
 
 type Organizations []Organization
-
-func (ms Organizations) UniqueOwnerIDs() []uint64 {
-	return collection.Unique(ms, func(m Organization) uint64 {
-		return m.OwnerID
-	})
-}
 
 func (ms Organizations) UniqueCreatedBys() []uint64 {
 	return collection.Unique(ms, func(m Organization) uint64 {

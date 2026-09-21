@@ -169,36 +169,6 @@ func (m *MockIUser) EXPECT() *MockIUserMockRecorder {
 	return m.recorder
 }
 
-// BranchOrganizationByUserIDGetData mocks base method.
-func (m *MockIUser) BranchOrganizationByUserIDGetData(arg0 *ctx.Ctx, userID uint64) (user.OrganizationBranchIDs, *response.Status) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "BranchOrganizationByUserIDGetData", arg0, userID)
-	ret0, _ := ret[0].(user.OrganizationBranchIDs)
-	ret1, _ := ret[1].(*response.Status)
-	return ret0, ret1
-}
-
-// BranchOrganizationByUserIDGetData indicates an expected call of BranchOrganizationByUserIDGetData.
-func (mr *MockIUserMockRecorder) BranchOrganizationByUserIDGetData(arg0, userID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BranchOrganizationByUserIDGetData", reflect.TypeOf((*MockIUser)(nil).BranchOrganizationByUserIDGetData), arg0, userID)
-}
-
-// OrganizationIDsByUserIDGetData mocks base method.
-func (m *MockIUser) OrganizationIDsByUserIDGetData(userID uint64) ([]uint64, *response.Status) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OrganizationIDsByUserIDGetData", userID)
-	ret0, _ := ret[0].([]uint64)
-	ret1, _ := ret[1].(*response.Status)
-	return ret0, ret1
-}
-
-// OrganizationIDsByUserIDGetData indicates an expected call of OrganizationIDsByUserIDGetData.
-func (mr *MockIUserMockRecorder) OrganizationIDsByUserIDGetData(userID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationIDsByUserIDGetData", reflect.TypeOf((*MockIUser)(nil).OrganizationIDsByUserIDGetData), userID)
-}
-
 // UserByID mocks base method.
 func (m *MockIUser) UserByID(arg0 *ctx.Ctx, userID uint64) (*user.User, *response.Status) {
 	m.ctrl.T.Helper()

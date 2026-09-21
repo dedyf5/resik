@@ -206,8 +206,6 @@ definitions:
       name:
         example: Organization 1
         type: string
-      owner:
-        $ref: '#/definitions/response.User'
       updated_at:
         example: "2026-01-02T15:04:05+07:00"
         type: string
