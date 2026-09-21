@@ -113,16 +113,14 @@ CREATE TABLE IF NOT EXISTS `branches` (
 CREATE TABLE IF NOT EXISTS `transactions` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `public_id` UUID NOT NULL UNIQUE,
-  `organization_id` bigint(20) NOT NULL,
-  `branch_id` bigint(20) NOT NULL,
+  `organization_public_id` UUID NOT NULL,
+  `branch_public_id` UUID NOT NULL,
   `bill_total` double NOT NULL,
   `created_at` datetime NOT NULL,
   `created_by` bigint(20) NOT NULL,
   `updated_at` datetime NOT NULL,
   `updated_by` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_transactions_organizations` (`organization_id`),
-  KEY `fk_transactions_branches` (`branch_id`),
-  CONSTRAINT `fk_transactions_organizations` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE,
-  CONSTRAINT `fk_transactions_branches` FOREIGN KEY (`branch_id`) REFERENCES `branches` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
+  KEY `fk_transactions_organizations` (`organization_public_id`),
+  KEY `fk_transactions_branches` (`branch_public_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

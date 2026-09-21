@@ -24,7 +24,7 @@ func (h *OrganizationHandler) OrganizationDelete(c context.Context, req *reqOrga
 		return nil, err
 	}
 
-	organizationID, err := ctx.GetOrganizationID(h.resolver, req.GetId(), "organization:delete")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), "organization:delete")
 	if err != nil {
 		return nil, err
 	}

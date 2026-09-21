@@ -53,7 +53,7 @@ func (r *TransactionRepo) OrganizationOmzetGetTotal(param *paramTrx.Organization
 	}
 	query = r.DB.
 		WithContext(param.Ctx.Context).
-		Select("COUNT(x.organization_id)").
+		Select("COUNT(x.organization_public_id)").
 		Table("(?) AS x", query)
 	errQuery := query.Take(&total).Error
 	if errQuery != nil {
@@ -66,16 +66,16 @@ func (r *TransactionRepo) OrganizationOmzetGetQuery(param *paramTrx.Organization
 	query = r.DB.
 		WithContext(param.Ctx.Context).
 		Select(`
-		t1.organization_id,
+		t1.organization_public_id,
 		DATE_FORMAT(CONVERT_TZ(t1.created_at, 'UTC', ?), ?) period,
 		SUM(t1.bill_total) AS omzet,
 		o1.name AS organization_name
 		`, param.GroupPeriod.Timezone, param.GroupPeriod.Mode.DateFormatMySQL()).
 		Table(trxEntity.TABLE_NAME+" AS t1").
-		Joins("INNER JOIN "+organizationEntity.TABLE_NAME+" AS o1 ON o1.id = t1.organization_id").
-		Where("t1.organization_id = ?", param.OrganizationID).
+		Joins("INNER JOIN "+organizationEntity.TABLE_NAME+" AS o1 ON o1.public_id = t1.organization_public_id").
+		Where("t1.organization_public_id = ?", param.OrganizationPublicID).
 		Where("t1.created_at >= ? AND t1.created_at < ?", param.GroupPeriod.DatetimeStartString(), param.GroupPeriod.DatetimeEndString()).
-		Group("t1.organization_id, period")
+		Group("t1.organization_public_id, period")
 	if search := param.Filter.Search; search != "" {
 		query = query.Where("o1.name LIKE ?", "%"+search+"%")
 	}
@@ -120,7 +120,7 @@ func (r *TransactionRepo) BranchOmzetGetTotal(param *paramTrx.BranchOmzetGet) (t
 	}
 	query = r.DB.
 		WithContext(param.Ctx.Context).
-		Select("COUNT(x.branch_id)").
+		Select("COUNT(x.branch_public_id)").
 		Table("(?) AS x", query)
 	errQuery := query.Take(&total).Error
 	if errQuery != nil {
@@ -133,19 +133,19 @@ func (r *TransactionRepo) BranchOmzetGetQuery(param *paramTrx.BranchOmzetGet) (q
 	query = r.DB.
 		WithContext(param.Ctx.Context).
 		Select(`
-		t1.organization_id,
+		t1.organization_public_id,
 		DATE_FORMAT(CONVERT_TZ(t1.created_at, 'UTC', ?), ?) period,
 		SUM(t1.bill_total) AS omzet,
 		o1.name AS organization_name,
-		t1.branch_id,
+		t1.branch_public_id,
 		b1.name AS branch_name
 		`, param.GroupPeriod.Timezone, param.GroupPeriod.Mode.DateFormatMySQL()).
 		Table(trxEntity.TABLE_NAME+" AS t1").
-		Joins("INNER JOIN "+organizationEntity.TABLE_NAME+" AS o1 ON o1.id = t1.organization_id").
-		Joins("INNER JOIN "+branchEntity.TABLE_NAME+" AS b1 ON b1.id = t1.branch_id").
-		Where("t1.branch_id = ?", param.BranchID).
+		Joins("INNER JOIN "+organizationEntity.TABLE_NAME+" AS o1 ON o1.public_id = t1.organization_public_id").
+		Joins("INNER JOIN "+branchEntity.TABLE_NAME+" AS b1 ON b1.public_id = t1.branch_public_id").
+		Where("t1.branch_public_id = ?", param.BranchPublicID).
 		Where("t1.created_at >= ? AND t1.created_at < ?", param.GroupPeriod.DatetimeStartString(), param.GroupPeriod.DatetimeEndString()).
-		Group("t1.branch_id, period")
+		Group("t1.branch_public_id, period")
 	if search := param.Filter.Search; search != "" {
 		query = query.Where("o1.name LIKE ? OR b1.name LIKE ?", "%"+search+"%", "%"+search+"%")
 	}

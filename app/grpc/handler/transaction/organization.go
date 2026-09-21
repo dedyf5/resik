@@ -26,12 +26,12 @@ func (h *TransactionHandler) OrganizationOmzetGet(c context.Context, req *reqTrx
 		return nil, err
 	}
 
-	organizationID, err := ctx.GetOrganizationID(h.resolver, req.GetOrganizationId(), "transaction:read")
+	_, organizationPublicID, err := ctx.GetOrganizationID(h.resolver, req.GetOrganizationId(), "transaction:read")
 	if err != nil {
 		return nil, err
 	}
 
-	param, err := req.ToParam(ctx, organizationID)
+	param, err := req.ToParam(ctx, organizationPublicID)
 	if err != nil {
 		return nil, err
 	}

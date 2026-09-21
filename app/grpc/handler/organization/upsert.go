@@ -60,7 +60,7 @@ func (h *OrganizationHandler) OrganizationPut(c context.Context, req *reqOrganiz
 		return nil, err
 	}
 
-	organizationID, err := ctx.GetOrganizationID(h.resolver, req.GetId(), "organization:update")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), "organization:update")
 	if err != nil {
 		return nil, err
 	}

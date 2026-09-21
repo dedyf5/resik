@@ -14,6 +14,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
 type Ctx struct {
@@ -60,11 +61,11 @@ func (c *Ctx) UserClaims() *jwt.AuthClaims {
 }
 
 // GetOrganizationID gets the organization ID by organization public ID, and check if user has access to it for permission code
-func (c *Ctx) GetOrganizationID(resolver identity.IdentityResolver, organizationPublicID string, permissionCode string) (organizationID uint64, err *resPkg.Status) {
+func (c *Ctx) GetOrganizationID(resolver identity.IdentityResolver, organizationPublicID string, permissionCode string) (organizationID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return c.userClaims.GetOrganizationID(c.Context, resolver, c.lang, organizationPublicID, permissionCode)
 }
 
 // GetBranchID gets the branch ID by branch public ID, and check if user has access to it for permission code
-func (c *Ctx) GetBranchID(resolver identity.IdentityResolver, branchPublicID string, permissionCode string) (branchID uint64, err *resPkg.Status) {
+func (c *Ctx) GetBranchID(resolver identity.IdentityResolver, branchPublicID string, permissionCode string) (branchID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return c.userClaims.GetBranchID(c.Context, resolver, c.lang, branchPublicID, permissionCode)
 }

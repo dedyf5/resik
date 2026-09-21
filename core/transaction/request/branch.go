@@ -12,10 +12,11 @@ import (
 	trxParam "github.com/dedyf5/resik/entities/transaction/param"
 	"github.com/dedyf5/resik/pkg/goku"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	"github.com/dedyf5/resik/utils/datetime"
 )
 
-func (o *BranchOmzetGet) ToParam(c *ctx.Ctx, branchID uint64) (result *trxParam.BranchOmzetGet, err *resPkg.Status) {
+func (o *BranchOmzetGet) ToParam(c *ctx.Ctx, branchPublicID uuidPkg.UUIDV7) (result *trxParam.BranchOmzetGet, err *resPkg.Status) {
 	orderStr := "period"
 	if o.Order != nil {
 		orderStr = o.GetOrder()
@@ -32,8 +33,8 @@ func (o *BranchOmzetGet) ToParam(c *ctx.Ctx, branchID uint64) (result *trxParam.
 	}
 
 	return &trxParam.BranchOmzetGet{
-		Ctx:      c,
-		BranchID: branchID,
+		Ctx:            c,
+		BranchPublicID: branchPublicID,
 		GroupPeriod: groupperiod.GroupPeriod{
 			Mode:          groupperiod.Mode(o.GetMode()),
 			DatetimeStart: datetimeStart,

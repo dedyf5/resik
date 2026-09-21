@@ -28,7 +28,7 @@ func (h *OrganizationHandler) OrganizationDetailGet(c context.Context, req *reqO
 		return nil, err
 	}
 
-	organizationID, err := ctx.GetOrganizationID(h.resolver, req.GetId(), "organization:read")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), "organization:read")
 	if err != nil {
 		return nil, err
 	}

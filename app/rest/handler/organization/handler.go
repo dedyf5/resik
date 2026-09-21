@@ -117,7 +117,7 @@ func (h *Handler) OrganizationPut(echoCtx *echo.Context) error {
 		return err
 	}
 
-	organizationID, err := ctx.GetOrganizationID(h.resolver, body.GetId(), "organization:update")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, body.GetId(), "organization:update")
 	if err != nil {
 		return err
 	}
@@ -170,7 +170,7 @@ func (h *Handler) OrganizationDetailGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	organizationID, err := ctx.GetOrganizationID(h.resolver, param.GetId(), "organization:read")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, param.GetId(), "organization:read")
 	if err != nil {
 		return err
 	}
@@ -270,7 +270,7 @@ func (h *Handler) OrganizationDelete(echoCtx *echo.Context) error {
 		return err
 	}
 
-	organizationID, err := ctx.GetOrganizationID(h.resolver, param.GetId(), "organization:delete")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, param.GetId(), "organization:delete")
 	if err != nil {
 		return err
 	}

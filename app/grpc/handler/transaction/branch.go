@@ -26,12 +26,12 @@ func (h *TransactionHandler) BranchOmzetGet(c context.Context, req *reqTrxCore.B
 		return nil, err
 	}
 
-	branchID, err := ctx.GetBranchID(h.resolver, req.GetBranchId(), "transaction:read")
+	_, branchPublicID, err := ctx.GetBranchID(h.resolver, req.GetBranchId(), "transaction:read")
 	if err != nil {
 		return nil, err
 	}
 
-	param, err := req.ToParam(ctx, branchID)
+	param, err := req.ToParam(ctx, branchPublicID)
 	if err != nil {
 		return nil, err
 	}

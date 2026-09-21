@@ -70,12 +70,12 @@ func (h *Handler) OrganizationOmzetGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	organizationID, err := ctx.GetOrganizationID(h.resolver, payload.GetOrganizationId(), "transaction:read")
+	_, organizationPublicID, err := ctx.GetOrganizationID(h.resolver, payload.GetOrganizationId(), "transaction:read")
 	if err != nil {
 		return err
 	}
 
-	param, err := payload.ToParam(ctx, organizationID)
+	param, err := payload.ToParam(ctx, organizationPublicID)
 	if err != nil {
 		return err
 	}
@@ -123,12 +123,12 @@ func (h *Handler) BranchOmzetGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	branchID, err := ctx.GetBranchID(h.resolver, payload.GetBranchId(), "transaction:read")
+	_, branchPublicID, err := ctx.GetBranchID(h.resolver, payload.GetBranchId(), "transaction:read")
 	if err != nil {
 		return err
 	}
 
-	param, err := payload.ToParam(ctx, branchID)
+	param, err := payload.ToParam(ctx, branchPublicID)
 	if err != nil {
 		return err
 	}

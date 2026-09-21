@@ -19,6 +19,7 @@ import (
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	trxParam "github.com/dedyf5/resik/entities/transaction/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	trxRepoMock "github.com/dedyf5/resik/repositories/mock"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
@@ -31,9 +32,14 @@ func TestOrganizationOmzetGet(t *testing.T) {
 
 	trxRepo, ctx, trxService := setup(ctrl)
 
+	organizationPublicID, err := uuidPkg.NewUUIDV7()
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	p := trxParam.OrganizationOmzetGet{
-		Ctx:            ctx,
-		OrganizationID: 1,
+		Ctx:                  ctx,
+		OrganizationPublicID: organizationPublicID,
 	}
 
 	t.Run("OrganizationOmzetGetTotal-ERROR", func(t *testing.T) {
@@ -72,10 +78,10 @@ func TestOrganizationOmzetGet(t *testing.T) {
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
 		expRes := make([]trxEntity.OrganizationOmzet, 0, 1)
 		expRes = append(expRes, trxEntity.OrganizationOmzet{
-			OrganizationID:   1,
-			OrganizationName: "Organization Name",
-			Omzet:            500.75,
-			Period:           "2024-03-07",
+			OrganizationPublicID: organizationPublicID,
+			OrganizationName:     "Organization Name",
+			Omzet:                500.75,
+			Period:               "2024-03-07",
 		})
 		resInt64 := int64(len(expRes))
 		gomock.InOrder(
@@ -97,9 +103,19 @@ func TestBranchOmzetGet(t *testing.T) {
 
 	trxRepo, ctx, trxService := setup(ctrl)
 
+	organizationPublicID, err := uuidPkg.NewUUIDV7()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	branchPublicID, err := uuidPkg.NewUUIDV7()
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	p := trxParam.BranchOmzetGet{
-		Ctx:      ctx,
-		BranchID: 1,
+		Ctx:            ctx,
+		BranchPublicID: branchPublicID,
 	}
 
 	t.Run("BranchOmzetGetTotal-ERROR", func(t *testing.T) {
@@ -138,12 +154,12 @@ func TestBranchOmzetGet(t *testing.T) {
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
 		expRes := make([]trxEntity.BranchOmzet, 0, 1)
 		expRes = append(expRes, trxEntity.BranchOmzet{
-			OrganizationID:   1,
-			OrganizationName: "Organization Name",
-			BranchID:         1,
-			BranchName:       "Branch Name",
-			Omzet:            500.75,
-			Period:           "2024-03-07",
+			OrganizationPublicID: organizationPublicID,
+			OrganizationName:     "Organization Name",
+			BranchPublicID:       branchPublicID,
+			BranchName:           "Branch Name",
+			Omzet:                500.75,
+			Period:               "2024-03-07",
 		})
 		resInt64 := int64(len(expRes))
 		gomock.InOrder(

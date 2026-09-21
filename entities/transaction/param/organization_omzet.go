@@ -8,12 +8,13 @@ import (
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/entities/groupperiod"
 	"github.com/dedyf5/resik/pkg/goku"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
 type OrganizationOmzetGet struct {
-	Ctx            *ctx.Ctx
-	OrganizationID uint64
-	GroupPeriod    groupperiod.GroupPeriod
-	Filter         goku.Filter
-	Orders         []goku.Order
+	Ctx                  *ctx.Ctx
+	OrganizationPublicID uuidPkg.UUIDV7
+	GroupPeriod          groupperiod.GroupPeriod
+	Filter               goku.Filter
+	Orders               []goku.Order
 }

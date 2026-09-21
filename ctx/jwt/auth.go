@@ -72,14 +72,14 @@ func (a *AuthClaims) Username() string {
 }
 
 // getID gets the ID for a specific table by public ID, and check if user has access to it for the given permission code
-func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, permissionCode string, tableName string, publicID string) (id uint64, err *resPkg.Status) {
+func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, permissionCode string, tableName string, publicIDString string) (id uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	if a == nil {
-		return 0, resPkg.NewStatusCode(http.StatusUnauthorized)
+		return 0, uuidPkg.Nil, resPkg.NewStatusCode(http.StatusUnauthorized)
 	}
 
-	uuidV7, errParse := uuidPkg.ParseUUIDV7(publicID)
+	uuidV7, errParse := uuidPkg.ParseUUIDV7(publicIDString)
 	if errParse != nil {
-		return 0, resPkg.NewStatusMessage(
+		return 0, uuidPkg.Nil, resPkg.NewStatusMessage(
 			http.StatusBadRequest,
 			term.InvalidID.Localize(lang.Localizer),
 			errParse,
@@ -88,27 +88,27 @@ func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver
 
 	hasAccess, errResolver := resolver.HasAccessByPublicID(c, a.User.ID, permissionCode, tableName, uuidV7)
 	if errResolver != nil {
-		return 0, HTTPStatusError(errResolver, lang)
+		return 0, uuidPkg.Nil, HTTPStatusError(errResolver, lang)
 	}
 
 	if hasAccess {
 		id, errResolve := resolver.Resolve(c, tableName, uuidV7)
 		if errResolve != nil {
-			return 0, HTTPStatusError(errResolve, lang)
+			return 0, uuidPkg.Nil, HTTPStatusError(errResolve, lang)
 		}
-		return id, nil
+		return id, uuidV7, nil
 	}
 
-	return 0, resPkg.NewStatusCode(http.StatusUnauthorized)
+	return 0, uuidPkg.Nil, resPkg.NewStatusCode(http.StatusUnauthorized)
 }
 
 // GetOrganizationID gets the organization ID by organization public ID, and check if user has access to it for permission code
-func (a *AuthClaims) GetOrganizationID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, organizationPublicID string, permissionCode string) (organizationID uint64, err *resPkg.Status) {
+func (a *AuthClaims) GetOrganizationID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, organizationPublicID string, permissionCode string) (organizationID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return a.getID(c, resolver, lang, permissionCode, organizationEntity.TABLE_NAME, organizationPublicID)
 }
 
 // GetBranchID gets the branch ID by branch public ID, and check if user has access to it for permission code
-func (a *AuthClaims) GetBranchID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, branchPublicID string, permissionCode string) (branchID uint64, err *resPkg.Status) {
+func (a *AuthClaims) GetBranchID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, branchPublicID string, permissionCode string) (branchID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return a.getID(c, resolver, lang, permissionCode, branchEntity.TABLE_NAME, branchPublicID)
 }
 

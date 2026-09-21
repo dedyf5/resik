@@ -4,9 +4,13 @@
 
 package transaction
 
+import (
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
+)
+
 type OrganizationOmzet struct {
-	OrganizationID   uint64  `gorm:"column:organization_id"`
-	OrganizationName string  `gorm:"column:organization_name"`
-	Omzet            float64 `gorm:"column:omzet"`
-	Period           string  `gorm:"column:period"`
+	OrganizationPublicID uuidPkg.UUIDV7 `gorm:"column:organization_public_id"`
+	OrganizationName     string         `gorm:"column:organization_name"`
+	Omzet                float64        `gorm:"column:omzet"`
+	Period               string         `gorm:"column:period"`
 }
