@@ -18,14 +18,14 @@ func (m *OrganizationPost) ToEntity(ctx *ctx.Ctx) (res *organizationEntity.Organ
 	if err != nil {
 		return nil, err
 	}
-	userID := ctx.UserClaims().UserID()
+	userPublicID := ctx.UserClaims().UserPublicID()
 	return &organizationEntity.Organization{
-		Name:        m.GetName(),
-		Description: m.Description,
-		CreatedBy:   userID,
-		CreatedAt:   *datetime,
-		UpdatedBy:   userID,
-		UpdatedAt:   *datetime,
+		Name:              m.GetName(),
+		Description:       m.Description,
+		CreatedByPublicID: userPublicID,
+		CreatedAt:         *datetime,
+		UpdatedByPublicID: userPublicID,
+		UpdatedAt:         *datetime,
 	}, nil
 }
 
@@ -36,10 +36,10 @@ func (m *OrganizationPut) ToEntity(ctx *ctx.Ctx, organizationID uint64) (res *or
 	}
 
 	return &organizationEntity.Organization{
-		ID:          organizationID,
-		Name:        m.GetName(),
-		Description: m.Description,
-		UpdatedBy:   ctx.UserClaims().UserID(),
-		UpdatedAt:   *datetime,
+		ID:                organizationID,
+		Name:              m.GetName(),
+		Description:       m.Description,
+		UpdatedByPublicID: ctx.UserClaims().UserPublicID(),
+		UpdatedAt:         *datetime,
 	}, nil
 }

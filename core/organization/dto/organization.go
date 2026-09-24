@@ -7,6 +7,7 @@ package dto
 import (
 	"github.com/dedyf5/resik/entities/organization"
 	"github.com/dedyf5/resik/entities/user"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
 type Organization struct {
@@ -15,13 +16,13 @@ type Organization struct {
 	Updater *user.User `json:"updater"`
 }
 
-func OrganizationFromEntity(data organization.Organization, users map[uint64]user.User) Organization {
+func OrganizationFromEntity(data organization.Organization, users map[uuidPkg.UUIDV7]user.User) Organization {
 	var creator, updater *user.User
 
-	if u, ok := users[data.CreatedBy]; ok {
+	if u, ok := users[data.CreatedByPublicID]; ok {
 		creator = &u
 	}
-	if u, ok := users[data.UpdatedBy]; ok {
+	if u, ok := users[data.UpdatedByPublicID]; ok {
 		updater = &u
 	}
 
@@ -34,7 +35,7 @@ func OrganizationFromEntity(data organization.Organization, users map[uint64]use
 
 type Organizations []Organization
 
-func OrganizationsFromEntity(data organization.Organizations, users map[uint64]user.User) Organizations {
+func OrganizationsFromEntity(data organization.Organizations, users map[uuidPkg.UUIDV7]user.User) Organizations {
 	n := len(data)
 	if n == 0 {
 		return Organizations{}

@@ -21,13 +21,13 @@ func OrganizationDetailFromDTO(src *dtoOrganization.Organization) *OrganizationD
 		Description: src.Description,
 		CreatedAt:   src.CreatedAt.Format(time.RFC3339),
 		Creator: &User{
-			Id:       src.Creator.ID,
+			Id:       src.Creator.PublicID.String32(),
 			Name:     src.Creator.Name,
 			Username: src.Creator.Username,
 		},
 		UpdatedAt: src.UpdatedAt.Format(time.RFC3339),
 		Updater: &User{
-			Id:       src.Updater.ID,
+			Id:       src.Updater.PublicID.String32(),
 			Name:     src.Updater.Name,
 			Username: src.Updater.Username,
 		},

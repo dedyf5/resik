@@ -9,10 +9,12 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(45) NOT NULL UNIQUE,
   `password` varchar(225) NOT NULL,
   `created_at` datetime NOT NULL,
-  `created_by` bigint(20) NULL,
+  `created_by_id` bigint(20) NULL,
   `updated_at` datetime NOT NULL,
-  `updated_by` bigint(20) NULL,
-  PRIMARY KEY (`id`)
+  `updated_by_id` bigint(20) NULL,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_users_created_by` FOREIGN KEY (`created_by_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `fk_users_updated_by` FOREIGN KEY (`updated_by_id`) REFERENCES `users` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- Table structure for table `tenants`
@@ -88,9 +90,9 @@ CREATE TABLE IF NOT EXISTS `organizations` (
   `name` varchar(40) NOT NULL,
   `description` text NULL DEFAULT NULL,
   `created_at` datetime NOT NULL,
-  `created_by` bigint(20) NOT NULL,
+  `created_by_public_id` UUID NOT NULL COMMENT 'users.public_id',
   `updated_at` datetime NOT NULL,
-  `updated_by` bigint(20) NOT NULL,
+  `updated_by_public_id` UUID NOT NULL COMMENT 'users.public_id',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -101,9 +103,9 @@ CREATE TABLE IF NOT EXISTS `branches` (
   `organization_id` bigint(20) NOT NULL,
   `name` varchar(40) NOT NULL,
   `created_at` datetime NOT NULL,
-  `created_by` bigint(20) NOT NULL,
+  `created_by_public_id` UUID NOT NULL COMMENT 'users.public_id',
   `updated_at` datetime NOT NULL,
-  `updated_by` bigint(20) NOT NULL,
+  `updated_by_public_id` UUID NOT NULL COMMENT 'users.public_id',
   PRIMARY KEY (`id`),
   KEY `fk_branches_organizations` (`organization_id`),
   CONSTRAINT `fk_branches_organizations` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE NO ACTION ON UPDATE CASCADE
@@ -117,9 +119,9 @@ CREATE TABLE IF NOT EXISTS `transactions` (
   `branch_public_id` UUID NOT NULL,
   `bill_total` double NOT NULL,
   `created_at` datetime NOT NULL,
-  `created_by` bigint(20) NOT NULL,
+  `created_by_public_id` UUID NOT NULL COMMENT 'users.public_id',
   `updated_at` datetime NOT NULL,
-  `updated_by` bigint(20) NOT NULL,
+  `updated_by_public_id` UUID NOT NULL COMMENT 'users.public_id',
   PRIMARY KEY (`id`),
   KEY `fk_transactions_organizations` (`organization_public_id`),
   KEY `fk_transactions_branches` (`branch_public_id`)

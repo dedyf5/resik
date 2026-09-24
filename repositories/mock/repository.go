@@ -20,6 +20,7 @@ import (
 	param0 "github.com/dedyf5/resik/entities/transaction/param"
 	user "github.com/dedyf5/resik/entities/user"
 	response "github.com/dedyf5/resik/pkg/response"
+	uuid "github.com/dedyf5/resik/pkg/uuid"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -199,19 +200,19 @@ func (mr *MockIUserMockRecorder) UserByUsername(arg0, username any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UserByUsername", reflect.TypeOf((*MockIUser)(nil).UserByUsername), arg0, username)
 }
 
-// UsersGetByIDs mocks base method.
-func (m *MockIUser) UsersGetByIDs(arg0 *ctx.Ctx, userIDs []uint64) (user.Users, *response.Status) {
+// UsersGetByPublicIDs mocks base method.
+func (m *MockIUser) UsersGetByPublicIDs(arg0 *ctx.Ctx, userIDs []uuid.UUIDV7) (user.Users, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UsersGetByIDs", arg0, userIDs)
+	ret := m.ctrl.Call(m, "UsersGetByPublicIDs", arg0, userIDs)
 	ret0, _ := ret[0].(user.Users)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
-// UsersGetByIDs indicates an expected call of UsersGetByIDs.
-func (mr *MockIUserMockRecorder) UsersGetByIDs(arg0, userIDs any) *gomock.Call {
+// UsersGetByPublicIDs indicates an expected call of UsersGetByPublicIDs.
+func (mr *MockIUserMockRecorder) UsersGetByPublicIDs(arg0, userIDs any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UsersGetByIDs", reflect.TypeOf((*MockIUser)(nil).UsersGetByIDs), arg0, userIDs)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UsersGetByPublicIDs", reflect.TypeOf((*MockIUser)(nil).UsersGetByPublicIDs), arg0, userIDs)
 }
 
 // MockIOrganization is a mock of IOrganization interface.

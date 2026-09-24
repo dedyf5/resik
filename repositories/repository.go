@@ -13,6 +13,7 @@ import (
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
 //go:generate mockgen -source repository.go -package mock -destination ./mock/repository.go
@@ -30,7 +31,7 @@ type ITransaction interface {
 type IUser interface {
 	UserByID(ctx *ctx.Ctx, userID uint64) (user *userEntity.User, err *resPkg.Status)
 	UserByUsername(ctx *ctx.Ctx, username string) (user *userEntity.User, err *resPkg.Status)
-	UsersGetByIDs(ctx *ctx.Ctx, userIDs []uint64) (users userEntity.Users, err *resPkg.Status)
+	UsersGetByPublicIDs(ctx *ctx.Ctx, userIDs []uuidPkg.UUIDV7) (users userEntity.Users, err *resPkg.Status)
 }
 
 type IOrganization interface {

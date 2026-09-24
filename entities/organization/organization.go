@@ -15,14 +15,14 @@ import (
 const TABLE_NAME = "organizations"
 
 type Organization struct {
-	ID          uint64         `json:"-" gorm:"primaryKey;autoIncrement;"`
-	PublicID    uuidPkg.UUIDV7 `json:"id" gorm:"column:public_id;type:uuid;unique;not null;"`
-	Name        string         `json:"name" gorm:"type:varchar(40);not null"`
-	Description *string        `json:"description" gorm:"type:text;null"`
-	CreatedAt   time.Time      `json:"created_at" gorm:"type:datetime;not null;"`
-	CreatedBy   uint64         `json:"created_by" gorm:"not null"`
-	UpdatedAt   time.Time      `json:"updated_at" gorm:"type:datetime;not null;"`
-	UpdatedBy   uint64         `json:"updated_by" gorm:"not null"`
+	ID                uint64         `json:"-" gorm:"primaryKey;autoIncrement;"`
+	PublicID          uuidPkg.UUIDV7 `json:"id" gorm:"column:public_id;type:uuid;unique;not null;"`
+	Name              string         `json:"name" gorm:"type:varchar(40);not null"`
+	Description       *string        `json:"description" gorm:"type:text;null"`
+	CreatedAt         time.Time      `json:"created_at" gorm:"type:datetime;not null;"`
+	CreatedByPublicID uuidPkg.UUIDV7 `json:"created_by" gorm:"column:created_by_public_id;type:uuid;not null;"`
+	UpdatedAt         time.Time      `json:"updated_at" gorm:"type:datetime;not null;"`
+	UpdatedByPublicID uuidPkg.UUIDV7 `json:"updated_by" gorm:"column:updated_by_public_id;type:uuid;not null;"`
 }
 
 func (m *Organization) BeforeCreate(tx *gorm.DB) (err error) {
@@ -30,15 +30,15 @@ func (m *Organization) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (m *Organization) AllUserIDs() [2]uint64 {
-	return [2]uint64{m.CreatedBy, m.UpdatedBy}
+func (m *Organization) AllUserPublicIDs() [2]uuidPkg.UUIDV7 {
+	return [2]uuidPkg.UUIDV7{m.CreatedByPublicID, m.UpdatedByPublicID}
 }
 
-func (m *Organization) UniqueAllUserIDs() []uint64 {
-	keys := make(map[uint64]bool, 2)
-	var list []uint64
+func (m *Organization) UniqueAllUserPublicIDs() []uuidPkg.UUIDV7 {
+	keys := make(map[uuidPkg.UUIDV7]bool, 2)
+	var list []uuidPkg.UUIDV7
 
-	ids := m.AllUserIDs()
+	ids := m.AllUserPublicIDs()
 	for _, id := range ids {
 		if !keys[id] {
 			keys[id] = true
@@ -58,24 +58,24 @@ type Tabler interface {
 
 type Organizations []Organization
 
-func (ms Organizations) UniqueCreatedBys() []uint64 {
-	return collection.Unique(ms, func(m Organization) uint64 {
-		return m.CreatedBy
+func (ms Organizations) UniqueCreatedByPublicIDs() []uuidPkg.UUIDV7 {
+	return collection.Unique(ms, func(m Organization) uuidPkg.UUIDV7 {
+		return m.CreatedByPublicID
 	})
 }
 
-func (ms Organizations) UniqueUpdatedBys() []uint64 {
-	return collection.Unique(ms, func(m Organization) uint64 {
-		return m.UpdatedBy
+func (ms Organizations) UniqueUpdatedByPublicIDs() []uuidPkg.UUIDV7 {
+	return collection.Unique(ms, func(m Organization) uuidPkg.UUIDV7 {
+		return m.UpdatedByPublicID
 	})
 }
 
-func (ms Organizations) UniqueAllUserIDs() []uint64 {
-	keys := make(map[uint64]bool, len(ms)*2)
-	var list []uint64
+func (ms Organizations) UniqueAllUserPublicIDs() []uuidPkg.UUIDV7 {
+	keys := make(map[uuidPkg.UUIDV7]bool, len(ms)*2)
+	var list []uuidPkg.UUIDV7
 
 	for _, m := range ms {
-		ids := m.AllUserIDs()
+		ids := m.AllUserPublicIDs()
 		for _, id := range ids {
 			if !keys[id] {
 				keys[id] = true

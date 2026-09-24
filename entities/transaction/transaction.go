@@ -22,9 +22,9 @@ type Transaction struct {
 	BranchPublicID       uuidPkg.UUIDV7            `json:"branch_id" gorm:"column:branch_public_id;type:uuid;not null;"`
 	BillTotal            float64                   `json:"bill_total" gorm:"not null;"`
 	CreatedAt            time.Time                 `json:"created_at" gorm:"type:datetime;not null;"`
-	CreatedBy            uint64                    `json:"created_by" gorm:"not null;"`
+	CreatedByPublicID    uuidPkg.UUIDV7            `json:"created_by" gorm:"column:created_by_public_id;type:uuid;not null;"`
 	UpdatedAt            time.Time                 `json:"updated_at" gorm:"type:datetime;not null;"`
-	UpdatedBy            uint64                    `json:"updated_by" gorm:"not null;"`
+	UpdatedByPublicID    uuidPkg.UUIDV7            `json:"updated_by" gorm:"column:updated_by_public_id;type:uuid;not null;"`
 	Organization         organization.Organization `json:"organization" gorm:"foreignKey:OrganizationPublicID;references:PublicID;constraint:OnUpdate:-,OnDelete:-;"`
 	Branch               branch.Branch             `json:"branch" gorm:"foreignKey:BranchPublicID;references:PublicID;constraint:OnUpdate:-,OnDelete:-;"`
 }

@@ -26,6 +26,7 @@ import (
 	userEntity "github.com/dedyf5/resik/entities/user"
 	identityMock "github.com/dedyf5/resik/internal/identity/mock"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	repoMock "github.com/dedyf5/resik/repositories/mock"
 )
 
@@ -164,7 +165,7 @@ func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
 	users := userEntity.Users{
 		*user,
 	}
-	userIDs := []uint64{user.ID}
+	userPublicIDs := []uuidPkg.UUIDV7{user.PublicID}
 
 	t.Run("OrganizationGetByIDAndOrganizationIDs-ERROR OrganizationGetByIDAndOrganizationIDs", func(t *testing.T) {
 		statusErr := &resPkg.Status{
@@ -183,7 +184,7 @@ func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
 		}
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationGetByID(ctx, organization.ID).Return(organization, nil),
-			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(users, statusErr),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(users, statusErr),
 		)
 		_, err := organizationService.OrganizationGetByID(ctx, organization.ID)
 		assert.Equal(t, statusErr, err)
@@ -195,7 +196,7 @@ func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
 		}
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationGetByID(ctx, organization.ID).Return(organization, nil),
-			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(nil, nil),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(nil, nil),
 		)
 		_, err := organizationService.OrganizationGetByID(ctx, organization.ID)
 		assert.Equal(t, statusErr.Code, err.Code)
@@ -213,7 +214,7 @@ func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
 	t.Run("ALL-SUCCESS", func(t *testing.T) {
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationGetByID(ctx, organization.ID).Return(organization, nil),
-			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(users, nil),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(users, nil),
 		)
 		res, err := organizationService.OrganizationGetByID(ctx, organization.ID)
 		assert.Nil(t, err)
@@ -242,7 +243,7 @@ func TestOrganizationsGet(t *testing.T) {
 	users := userEntity.Users{
 		*user,
 	}
-	userIDs := []uint64{user.ID}
+	userPublicIDs := []uuidPkg.UUIDV7{user.PublicID}
 
 	t.Run("OrganizationListGetTotal-ERROR", func(t *testing.T) {
 		var totalExpected int64 = 0
@@ -299,7 +300,7 @@ func TestOrganizationsGet(t *testing.T) {
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationsGetTotal(param).Return(totalExpected, nil),
 			organizationRepo.EXPECT().OrganizationsGetData(param).Return(organizations, nil),
-			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(nil, statusErr),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(nil, statusErr),
 		)
 		res, err := organizationService.OrganizationsGet(param)
 		assert.Nil(t, res)
@@ -311,7 +312,7 @@ func TestOrganizationsGet(t *testing.T) {
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationsGetTotal(param).Return(totalExpected, nil),
 			organizationRepo.EXPECT().OrganizationsGetData(param).Return(organizations, nil),
-			userRepo.EXPECT().UsersGetByIDs(ctx, userIDs).Return(users, nil),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(users, nil),
 		)
 		res, err := organizationService.OrganizationsGet(param)
 		assert.Nil(t, err)

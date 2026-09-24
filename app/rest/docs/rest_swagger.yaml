@@ -321,8 +321,8 @@ definitions:
   response.User:
     properties:
       id:
-        example: 1
-        type: integer
+        example: 01a0d3979d5e7ab99b47d88a5f9349bd
+        type: string
       name:
         example: User 1
         type: string

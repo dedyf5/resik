@@ -11,6 +11,7 @@ import (
 	"github.com/dedyf5/resik/ctx"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	"gorm.io/gorm"
 )
 
@@ -37,7 +38,7 @@ func (r *UserRepo) UserByUsername(ctx *ctx.Ctx, username string) (user *userEnti
 	return &res, nil
 }
 
-func (r *UserRepo) UsersGetByIDs(ctx *ctx.Ctx, userIDs []uint64) (users userEntity.Users, err *resPkg.Status) {
+func (r *UserRepo) UsersGetByPublicIDs(ctx *ctx.Ctx, userIDs []uuidPkg.UUIDV7) (users userEntity.Users, err *resPkg.Status) {
 	n := len(userIDs)
 	if n == 0 {
 		return userEntity.Users{}, nil
@@ -47,9 +48,9 @@ func (r *UserRepo) UsersGetByIDs(ctx *ctx.Ctx, userIDs []uint64) (users userEnti
 		Table(userEntity.TABLE_NAME)
 
 	if len(userIDs) == 1 {
-		query = query.Where("id = ?", userIDs[0])
+		query = query.Where("public_id = ?", userIDs[0])
 	} else {
-		query = query.Where("id IN ?", userIDs)
+		query = query.Where("public_id IN ?", userIDs)
 	}
 
 	errQuery := query.Find(&users).Error

@@ -44,7 +44,7 @@ func (s *Service) OrganizationGetByID(ctx *ctx.Ctx, organizationID uint64) (*dto
 		return nil, nil
 	}
 
-	users, err := s.userRepo.UsersGetByIDs(ctx, organization.UniqueAllUserIDs())
+	users, err := s.userRepo.UsersGetByPublicIDs(ctx, organization.UniqueAllUserPublicIDs())
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (s *Service) OrganizationGetByID(ctx *ctx.Ctx, organizationID uint64) (*dto
 		)
 	}
 
-	res := dtoOrganization.OrganizationFromEntity(*organization, users.UniqueMap())
+	res := dtoOrganization.OrganizationFromEntity(*organization, users.UniquePublicIDsMap())
 	return &res, nil
 }
 
@@ -81,13 +81,13 @@ func (s *Service) OrganizationsGet(param *paramOrganization.OrganizationsGet) (r
 		return &dtoOrganization.OrganizationsResultEmpty, nil
 	}
 
-	users, err := s.userRepo.UsersGetByIDs(param.Ctx, organizations.UniqueAllUserIDs())
+	users, err := s.userRepo.UsersGetByPublicIDs(param.Ctx, organizations.UniqueAllUserPublicIDs())
 	if err != nil {
 		return nil, err
 	}
 
 	return &dtoOrganization.OrganizationsResult{
-		Data:  dtoOrganization.OrganizationsFromEntity(organizations, users.UniqueMap()),
+		Data:  dtoOrganization.OrganizationsFromEntity(organizations, users.UniquePublicIDsMap()),
 		Total: total,
 	}, nil
 }

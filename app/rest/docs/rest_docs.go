@@ -1519,8 +1519,8 @@ const docTemplaterest = `{
             "type": "object",
             "properties": {
                 "id": {
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "01a0d3979d5e7ab99b47d88a5f9349bd"
                 },
                 "name": {
                     "type": "string",

@@ -26,7 +26,7 @@ func (r *OrganizationRepo) OrganizationInsert(ctx *ctx.Ctx, organization *organi
 
 func (r *OrganizationRepo) OrganizationUpdate(ctx *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status) {
 	result := r.DB.WithContext(ctx.Context).
-		Exec("UPDATE "+organizationEntity.TABLE_NAME+" SET name = ?, description = ?, updated_at = ?, updated_by = ? WHERE id = ?", organization.Name, organization.Description, organization.UpdatedAt, organization.UpdatedBy, organization.ID)
+		Exec("UPDATE "+organizationEntity.TABLE_NAME+" SET name = ?, description = ?, updated_at = ?, updated_by_public_id = ? WHERE id = ?", organization.Name, organization.Description, organization.UpdatedAt, organization.UpdatedByPublicID, organization.ID)
 	if result.Error != nil {
 		return false, resPkg.NewStatusError(http.StatusInternalServerError, result.Error)
 	}

@@ -20,7 +20,7 @@ message OrganizationDetail {
 }
 
 message User {
-    uint64 id = 1; // @gotags: json:"id" example:"1"
+    string id = 1; // @gotags: json:"id" example:"01a0d3979d5e7ab99b47d88a5f9349bd"
     string name = 2; // @gotags: json:"name" example:"User 1"
     string username = 3; // @gotags: json:"username" example:"user1"
 }
