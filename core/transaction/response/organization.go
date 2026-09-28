@@ -10,9 +10,12 @@ func OrganizationOmzetFromEntity(src []trxEntity.OrganizationOmzet) []*Organizat
 	res := make([]*OrganizationOmzet, 0, cap(src))
 	for _, v := range src {
 		res = append(res, &OrganizationOmzet{
-			OrganizationName: v.OrganizationName,
-			Omzet:            v.Omzet,
-			Period:           v.Period,
+			Organization: &Organization{
+				Id:   v.OrganizationPublicID.String32(),
+				Name: v.OrganizationName,
+			},
+			Omzet:  v.Omzet,
+			Period: v.Period,
 		})
 	}
 	return res

@@ -136,17 +136,24 @@ definitions:
         example: id
         type: string
     type: object
-  response.BranchOmzet:
+  response.Branch:
     properties:
-      branch_name:
+      id:
+        example: 019df0d3f6c579ac8976afe7a437166c
+        type: string
+      name:
         example: Resik Branch
         type: string
+      organization:
+        $ref: '#/definitions/response.Organization'
+    type: object
+  response.BranchOmzet:
+    properties:
+      branch:
+        $ref: '#/definitions/response.Branch'
       omzet:
         example: 5000.5
         type: number
-      organization_name:
-        example: Resik Organization
-        type: string
       period:
         example: "2023-11-22"
         type: string
@@ -187,6 +194,15 @@ definitions:
         type: string
       type:
         example: REST
+        type: string
+    type: object
+  response.Organization:
+    properties:
+      id:
+        example: 01a0e7406f8f737fa0818fb93226ee61
+        type: string
+      name:
+        example: Resik Organization
         type: string
     type: object
   response.OrganizationDetail:
@@ -232,9 +248,8 @@ definitions:
       omzet:
         example: 5000.5
         type: number
-      organization_name:
-        example: Resik Organization
-        type: string
+      organization:
+        $ref: '#/definitions/response.Organization'
       period:
         example: "2023-11-22"
         type: string

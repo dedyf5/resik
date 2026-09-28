@@ -1251,20 +1251,31 @@ const docTemplaterest = `{
                 }
             }
         },
+        "response.Branch": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "019df0d3f6c579ac8976afe7a437166c"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Resik Branch"
+                },
+                "organization": {
+                    "$ref": "#/definitions/response.Organization"
+                }
+            }
+        },
         "response.BranchOmzet": {
             "type": "object",
             "properties": {
-                "branch_name": {
-                    "type": "string",
-                    "example": "Resik Branch"
+                "branch": {
+                    "$ref": "#/definitions/response.Branch"
                 },
                 "omzet": {
                     "type": "number",
                     "example": 5000.5
-                },
-                "organization_name": {
-                    "type": "string",
-                    "example": "Resik Organization"
                 },
                 "period": {
                     "type": "string",
@@ -1328,6 +1339,19 @@ const docTemplaterest = `{
                 }
             }
         },
+        "response.Organization": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "01a0e7406f8f737fa0818fb93226ee61"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Resik Organization"
+                }
+            }
+        },
         "response.OrganizationDetail": {
             "type": "object",
             "properties": {
@@ -1388,9 +1412,8 @@ const docTemplaterest = `{
                     "type": "number",
                     "example": 5000.5
                 },
-                "organization_name": {
-                    "type": "string",
-                    "example": "Resik Organization"
+                "organization": {
+                    "$ref": "#/definitions/response.Organization"
                 },
                 "period": {
                     "type": "string",

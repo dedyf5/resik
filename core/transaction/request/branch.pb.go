@@ -35,7 +35,7 @@ type BranchOmzetGet struct {
 	DatetimeEnd   string  `protobuf:"bytes,4,opt,name=datetime_end,json=datetimeEnd,proto3" json:"datetime_end" query:"datetime_end" validate:"required,datetime=2006-01-02T15:04:05Z07:00" example:"2023-11-22T13:45:00Z"`        
 	Timezone      string  `protobuf:"bytes,5,opt,name=timezone,proto3" json:"timezone" query:"timezone" validate:"required,timezone" example:"Asia/Jakarta"`                                 
 	Search        string  `protobuf:"bytes,6,opt,name=search,proto3" json:"search" query:"search" example:"keyword"`                                     
-	Order         *string `protobuf:"bytes,7,opt,name=order,proto3,oneof" json:"order" query:"order" validate:"omitempty,oneof_order=period omzet organization_name" example:"period"`                                 
+	Order         *string `protobuf:"bytes,7,opt,name=order,proto3,oneof" json:"order" query:"order" validate:"omitempty,oneof_order=period omzet" example:"period"`                                 
 	Page          *int32  `protobuf:"varint,8,opt,name=page,proto3,oneof" json:"page" query:"page" validate:"omitempty,min=1" example:"1"`                                  
 	Limit         *int32  `protobuf:"varint,9,opt,name=limit,proto3,oneof" json:"limit" query:"limit" validate:"omitempty,min=1,max=100" example:"10"`                                
 }
