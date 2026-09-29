@@ -262,6 +262,7 @@ func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint
 	resourceDomain := strings.Split(permissionCode, ":")[0]
 
 	query := `
+		-- 1. Full access: User does not have scope restrictions for this resource domain
 		SELECT DISTINCT o.id
 		FROM tenant_members tm
 		JOIN tenants t ON t.id = tm.tenant_id
@@ -272,16 +273,19 @@ func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint
 		  AND NOT EXISTS (
 		    SELECT 1 FROM tenant_member_resource_scopes tmrs
 		    WHERE tmrs.tenant_member_id = tm.id
-		      AND tmrs.resource_code IN (@resourceDomain, 'organization')
+		      AND tmrs.resource_code = @resourceDomain
 		  )
+
 		UNION
+
+		-- 2. Scoped by Organization: User scope is set at the organization level
 		SELECT DISTINCT o.id
 		FROM tenant_members tm
 		JOIN tenants t ON t.id = tm.tenant_id
 		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
 		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
 		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
-		  AND tmrs.resource_code IN (@resourceDomain, 'organization') 
+		  AND tmrs.resource_code = @resourceDomain
 		  AND tmrs.scope_by = 'organization'
 		JOIN organizations o ON o.tenant_public_id = t.public_id AND o.public_id = tmrs.scope_ref
 		WHERE tm.user_id = @userID
@@ -318,6 +322,7 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 	resourceDomain := strings.Split(permissionCode, ":")[0]
 
 	query := `
+		-- 1. Full access: User does not have scope restrictions for this resource domain
 		SELECT DISTINCT b.id
 		FROM tenant_members tm
 		JOIN tenants t ON t.id = tm.tenant_id
@@ -329,28 +334,34 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 		  AND NOT EXISTS (
 		    SELECT 1 FROM tenant_member_resource_scopes tmrs
 		    WHERE tmrs.tenant_member_id = tm.id
-		      AND tmrs.resource_code IN (@resourceDomain, 'branch', 'organization')
+		      AND tmrs.resource_code = @resourceDomain
 		  )
+
 		UNION
+
+		-- 2. Scoped by Organization: User scope is set at the organization level
 		SELECT DISTINCT b.id
 		FROM tenant_members tm
 		JOIN tenants t ON t.id = tm.tenant_id
 		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
 		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
 		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
-		  AND tmrs.resource_code IN (@resourceDomain, 'branch', 'organization')
+		  AND tmrs.resource_code = @resourceDomain
 		  AND tmrs.scope_by = 'organization'
 		JOIN organizations o ON o.tenant_public_id = t.public_id AND o.public_id = tmrs.scope_ref
 		JOIN branches b ON b.organization_id = o.id
 		WHERE tm.user_id = @userID
+
 		UNION
+
+		-- 3. Scoped by Branch: User scope is set directly at a specific branch level
 		SELECT DISTINCT b.id
 		FROM tenant_members tm
 		JOIN tenants t ON t.id = tm.tenant_id
 		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
 		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
 		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
-		  AND tmrs.resource_code IN (@resourceDomain, 'branch', 'organization')
+		  AND tmrs.resource_code = @resourceDomain
 		  AND tmrs.scope_by = 'branch'
 		JOIN organizations o ON o.tenant_public_id = t.public_id
 		JOIN branches b ON b.organization_id = o.id AND b.public_id = tmrs.scope_ref
