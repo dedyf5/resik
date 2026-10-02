@@ -387,6 +387,83 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 	return ids, nil
 }
 
+// GetBranchPublicIDsByPermission returns all cached branch Public IDs for a specific user and permission code.
+func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uuidPkg.UUIDV7, error) {
+	cacheKey := r.userAccessPublicCacheKey(branchEntity.TABLE_NAME, permissionCode, userID)
+
+	cachedPublicIDs, err := r.getSMembersPublicIDs(c, cacheKey)
+	if err == nil && len(cachedPublicIDs) > 0 {
+		return cachedPublicIDs, nil
+	}
+
+	resourceDomain := strings.Split(permissionCode, ":")[0]
+
+	query := `
+		-- 1. Full access: User does not have scope restrictions for this resource domain
+		SELECT DISTINCT b.public_id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
+		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
+		JOIN organizations o ON o.tenant_public_id = t.public_id
+		JOIN branches b ON b.organization_id = o.id
+		WHERE tm.user_id = @userID
+		  AND NOT EXISTS (
+		    SELECT 1 FROM tenant_member_resource_scopes tmrs
+		    WHERE tmrs.tenant_member_id = tm.id
+		      AND tmrs.resource_code = @resourceDomain
+		  )
+
+		UNION
+
+		-- 2. Scoped by Organization: User scope is set at the organization level
+		SELECT DISTINCT b.public_id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
+		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
+		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
+		  AND tmrs.resource_code = @resourceDomain
+		  AND tmrs.scope_by = 'organization'
+		JOIN organizations o ON o.tenant_public_id = t.public_id AND o.public_id = tmrs.scope_ref
+		JOIN branches b ON b.organization_id = o.id
+		WHERE tm.user_id = @userID
+
+		UNION
+
+		-- 3. Scoped by Branch: User scope is set directly at a specific branch level
+		SELECT DISTINCT b.public_id
+		FROM tenant_members tm
+		JOIN tenants t ON t.id = tm.tenant_id
+		JOIN tenant_member_permissions tmp ON tmp.tenant_member_id = tm.id
+		JOIN permissions p ON p.id = tmp.permission_id AND p.code = @permissionCode
+		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
+		  AND tmrs.resource_code = @resourceDomain
+		  AND tmrs.scope_by = 'branch'
+		JOIN organizations o ON o.tenant_public_id = t.public_id
+		JOIN branches b ON b.organization_id = o.id AND b.public_id = tmrs.scope_ref
+		WHERE tm.user_id = @userID
+	`
+
+	var publicIDs []uuidPkg.UUIDV7
+	err = r.db.WithContext(c).Raw(query,
+		sql.Named("permissionCode", permissionCode),
+		sql.Named("userID", userID),
+		sql.Named("resourceDomain", resourceDomain),
+	).Scan(&publicIDs).Error
+	if err != nil {
+		return nil, err
+	}
+
+	if len(publicIDs) > 0 {
+		if err := r.setSMembersPublicIDs(c, cacheKey, publicIDs); err != nil {
+			log.Printf("failed to set cache: %v", err)
+		}
+	}
+
+	return publicIDs, nil
+}
+
 // InvalidateUserAccessOrganization invalidates all user access organization caches for a specific user.
 func (r *Resolver) InvalidateUserAccessOrganization(c context.Context, userID uint64) error {
 	pattern := fmt.Sprintf("%s:user_access:%s:*:%d", r.appKey, organizationEntity.TABLE_NAME, userID)
@@ -427,6 +504,23 @@ func (r *Resolver) getSMembers(c context.Context, key string) ([]uint64, error) 
 	return nil, nil
 }
 
+// getSMembersPublicIDs returns all cached Public IDs (UUIDV7) for a specific key.
+func (r *Resolver) getSMembersPublicIDs(c context.Context, key string) ([]uuidPkg.UUIDV7, error) {
+	cachedStrs, err := r.cache.SMembers(c, key).Result()
+	if err == nil && len(cachedStrs) > 0 {
+		publicIDs := make([]uuidPkg.UUIDV7, 0, len(cachedStrs))
+		for _, s := range cachedStrs {
+			pid, err := uuidPkg.ParseUUIDV7(s)
+			if err != nil {
+				return nil, err
+			}
+			publicIDs = append(publicIDs, pid)
+		}
+		return publicIDs, nil
+	}
+	return nil, nil
+}
+
 // setSMembers adds all IDs to the cache for a specific key.
 func (r *Resolver) setSMembers(c context.Context, key string, ids []uint64) error {
 	if len(ids) == 0 {
@@ -450,9 +544,32 @@ func (r *Resolver) setSMembers(c context.Context, key string, ids []uint64) erro
 	return nil
 }
 
+// setSMembersPublicIDs adds all Public IDs (UUIDV7) to the cache for a specific key.
+func (r *Resolver) setSMembersPublicIDs(c context.Context, key string, publicIDs []uuidPkg.UUIDV7) error {
+	if len(publicIDs) == 0 {
+		return nil
+	}
+	pipe := r.cache.Pipeline()
+	interfaces := make([]any, len(publicIDs))
+	for i, pid := range publicIDs {
+		interfaces[i] = pid.String()
+	}
+	pipe.SAdd(c, key, interfaces...)
+	pipe.Expire(c, key, cacheExpiration)
+	if _, err := pipe.Exec(c); err != nil {
+		return err
+	}
+	return nil
+}
+
 // userAccessCacheKey returns the cache key for a specific user access to a table and permission code.
 func (r *Resolver) userAccessCacheKey(tableName string, permissionCode string, userID uint64) string {
 	return fmt.Sprintf("%s:user_access:%s:%s:%d", r.appKey, tableName, permissionCode, userID)
+}
+
+// userAccessPublicCacheKey returns the cache key of public ID for a specific user access to a table and permission code.
+func (r *Resolver) userAccessPublicCacheKey(tableName string, permissionCode string, userID uint64) string {
+	return fmt.Sprintf("%s:user_access_public:%s:%s:%d", r.appKey, tableName, permissionCode, userID)
 }
 
 // idMapCacheKey returns the cache key for a specific table and public ID.

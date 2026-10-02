@@ -12,5 +12,5 @@ import "core/organization/response/detail.proto";
 
 message OrganizationDetailGetRes {
     status.Status status = 1; // @gotags: json:"status"
-    response.OrganizationDetail data = 2; // @gotags: json:"data"
+    core.organization.response.OrganizationDetail data = 2; // @gotags: json:"data"
 }

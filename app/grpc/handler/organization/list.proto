@@ -13,6 +13,6 @@ import "pkg/response/response_meta.proto";
 
 message OrganizationListGetRes {
     status.Status status = 1; // @gotags: json:"status"
-    repeated response.OrganizationList data = 2; // @gotags: json:"data"
+    repeated core.organization.response.OrganizationList data = 2; // @gotags: json:"data"
     response.ResponseMeta meta = 3; // @gotags: json:"meta"
 }

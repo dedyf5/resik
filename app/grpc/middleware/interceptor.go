@@ -65,6 +65,7 @@ func methodRoles() map[string][]Role {
 		organizationService + "OrganizationDelete":    {RoleValidToken},
 		organizationService + "OrganizationDetailGet": {RoleValidToken},
 		organizationService + "OrganizationListGet":   {RoleValidToken},
+		transactionService + "TransactionListGet":     {RoleValidToken},
 		transactionService + "OrganizationOmzetGet":   {RoleValidToken},
 		transactionService + "BranchOmzetGet":         {RoleValidToken},
 		userService + "TokenRefreshGet":               {RoleValidToken},

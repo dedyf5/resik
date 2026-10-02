@@ -75,7 +75,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	serviceService := service.New(config, identityResolver, userRepo, organizationRepo)
 	organizationHandler := organization2.New(logLog, validate, identityResolver, serviceService)
 	transactionRepo := transaction.New(gormDB)
-	service5 := service2.New(transactionRepo, config)
+	service5 := service2.New(config, transactionRepo, userRepo)
 	transactionHandler := transaction2.New(config, logLog, validate, identityResolver, service5)
 	auth := config.Auth
 	argon2Config := provideHasherConfig(auth)

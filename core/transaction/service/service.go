@@ -6,17 +6,19 @@ package service
 
 import (
 	"github.com/dedyf5/resik/config"
-	trxRepo "github.com/dedyf5/resik/repositories"
+	repo "github.com/dedyf5/resik/repositories"
 )
 
 type Service struct {
-	transactionRepo trxRepo.ITransaction
 	config          config.Config
+	transactionRepo repo.ITransaction
+	userRepo        repo.IUser
 }
 
-func New(transactionRepo trxRepo.ITransaction, config config.Config) *Service {
+func New(config config.Config, transactionRepo repo.ITransaction, userRepo repo.IUser) *Service {
 	return &Service{
-		transactionRepo: transactionRepo,
 		config:          config,
+		transactionRepo: transactionRepo,
+		userRepo:        userRepo,
 	}
 }

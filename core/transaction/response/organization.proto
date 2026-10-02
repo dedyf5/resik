@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package response;
+package core.transaction.response;
 option go_package = "github.com/dedyf5/resik/core/transaction/response";
 
 import "core/transaction/response/common.proto";

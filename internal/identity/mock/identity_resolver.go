@@ -56,6 +56,21 @@ func (mr *MockIdentityResolverMockRecorder) GetBranchIDsByPermission(c, userID, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBranchIDsByPermission", reflect.TypeOf((*MockIdentityResolver)(nil).GetBranchIDsByPermission), c, userID, permissionCode)
 }
 
+// GetBranchPublicIDsByPermission mocks base method.
+func (m *MockIdentityResolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uuid.UUIDV7, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetBranchPublicIDsByPermission", c, userID, permissionCode)
+	ret0, _ := ret[0].([]uuid.UUIDV7)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetBranchPublicIDsByPermission indicates an expected call of GetBranchPublicIDsByPermission.
+func (mr *MockIdentityResolverMockRecorder) GetBranchPublicIDsByPermission(c, userID, permissionCode any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBranchPublicIDsByPermission", reflect.TypeOf((*MockIdentityResolver)(nil).GetBranchPublicIDsByPermission), c, userID, permissionCode)
+}
+
 // GetOrganizationIDsByPermission mocks base method.
 func (m *MockIdentityResolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
 	m.ctrl.T.Helper()

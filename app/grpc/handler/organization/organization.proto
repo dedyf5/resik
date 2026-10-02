@@ -17,9 +17,9 @@ import "core/organization/request/detail.proto";
 import "core/organization/request/upsert.proto";
 
 service OrganizationService {
-    rpc OrganizationPost(request.OrganizationPost) returns (organization.OrganizationUpsertRes);
-    rpc OrganizationPut(request.OrganizationPut) returns (organization.OrganizationUpsertRes);
-    rpc OrganizationDetailGet(request.OrganizationDetailGet) returns (organization.OrganizationDetailGetRes);
-    rpc OrganizationListGet(request.OrganizationListGet) returns (organization.OrganizationListGetRes);
-    rpc OrganizationDelete(request.OrganizationDelete) returns (status.Empty);
+    rpc OrganizationPost(core.organization.request.OrganizationPost) returns (organization.OrganizationUpsertRes);
+    rpc OrganizationPut(core.organization.request.OrganizationPut) returns (organization.OrganizationUpsertRes);
+    rpc OrganizationDetailGet(core.organization.request.OrganizationDetailGet) returns (organization.OrganizationDetailGetRes);
+    rpc OrganizationListGet(core.organization.request.OrganizationListGet) returns (organization.OrganizationListGetRes);
+    rpc OrganizationDelete(core.organization.request.OrganizationDelete) returns (status.Empty);
 }

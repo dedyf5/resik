@@ -146,6 +146,36 @@ func (mr *MockITransactionMockRecorder) OrganizationOmzetGetTotal(arg0 any) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationOmzetGetTotal", reflect.TypeOf((*MockITransaction)(nil).OrganizationOmzetGetTotal), arg0)
 }
 
+// TransactionsGetData mocks base method.
+func (m *MockITransaction) TransactionsGetData(arg0 *param0.TransactionsGet) (transaction.Transactions, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionsGetData", arg0)
+	ret0, _ := ret[0].(transaction.Transactions)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionsGetData indicates an expected call of TransactionsGetData.
+func (mr *MockITransactionMockRecorder) TransactionsGetData(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionsGetData", reflect.TypeOf((*MockITransaction)(nil).TransactionsGetData), arg0)
+}
+
+// TransactionsGetTotal mocks base method.
+func (m *MockITransaction) TransactionsGetTotal(arg0 *param0.TransactionsGet) (int64, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionsGetTotal", arg0)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionsGetTotal indicates an expected call of TransactionsGetTotal.
+func (mr *MockITransactionMockRecorder) TransactionsGetTotal(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionsGetTotal", reflect.TypeOf((*MockITransaction)(nil).TransactionsGetTotal), arg0)
+}
+
 // MockIUser is a mock of IUser interface.
 type MockIUser struct {
 	ctrl     *gomock.Controller

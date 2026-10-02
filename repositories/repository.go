@@ -22,6 +22,8 @@ type ICheck interface {
 }
 
 type ITransaction interface {
+	TransactionsGetData(param *paramTrx.TransactionsGet) (transactions trxEntity.Transactions, err *resPkg.Status)
+	TransactionsGetTotal(param *paramTrx.TransactionsGet) (total int64, err *resPkg.Status)
 	OrganizationOmzetGetData(param *paramTrx.OrganizationOmzetGet) (res []trxEntity.OrganizationOmzet, err *resPkg.Status)
 	OrganizationOmzetGetTotal(param *paramTrx.OrganizationOmzetGet) (total int64, err *resPkg.Status)
 	BranchOmzetGetData(param *paramTrx.BranchOmzetGet) (res []trxEntity.BranchOmzet, err *resPkg.Status)

@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package response;
+package core.organization.response;
 option go_package = "github.com/dedyf5/resik/core/organization/response";
 
 message OrganizationUpsert {

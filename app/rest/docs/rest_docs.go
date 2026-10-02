@@ -800,6 +800,95 @@ const docTemplaterest = `{
                 }
             }
         },
+        "/transactions": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get transactions list",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Transactions List",
+                "parameters": [
+                    {
+                        "enum": [
+                            "en",
+                            "id",
+                            "ja"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "example": 10,
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "example": 1,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "keyword",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseSuccessWithMeta"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    }
+                }
+            }
+        },
         "/transactions/branch/{branch_id}/omzet": {
             "get": {
                 "security": [
@@ -1144,6 +1233,23 @@ const docTemplaterest = `{
                 }
             }
         },
+        "github_com_dedyf5_resik_core_organization_response.User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "01a0d3979d5e7ab99b47d88a5f9349bd"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "User 1"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "user1"
+                }
+            }
+        },
         "request.LoginPost": {
             "type": "object",
             "required": [
@@ -1360,7 +1466,7 @@ const docTemplaterest = `{
                     "example": "2026-01-02T15:04:05+07:00"
                 },
                 "creator": {
-                    "$ref": "#/definitions/response.User"
+                    "$ref": "#/definitions/github_com_dedyf5_resik_core_organization_response.User"
                 },
                 "description": {
                     "description": "nullable",
@@ -1380,7 +1486,7 @@ const docTemplaterest = `{
                     "example": "2026-01-02T15:04:05+07:00"
                 },
                 "updater": {
-                    "$ref": "#/definitions/response.User"
+                    "$ref": "#/definitions/github_com_dedyf5_resik_core_organization_response.User"
                 }
             }
         },
@@ -1535,23 +1641,6 @@ const docTemplaterest = `{
                 },
                 "status": {
                     "$ref": "#/definitions/response.ResponseStatusWithoutDetails"
-                }
-            }
-        },
-        "response.User": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": "01a0d3979d5e7ab99b47d88a5f9349bd"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "User 1"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "user1"
                 }
             }
         },

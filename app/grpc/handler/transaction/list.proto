@@ -8,11 +8,12 @@ package transaction;
 option go_package = "github.com/dedyf5/resik/app/grpc/handler/transaction";
 
 import "app/grpc/proto/status/status.proto";
-import "core/transaction/response/organization.proto";
+import "core/transaction/response/list.proto";
 import "pkg/response/response_meta.proto";
 
-message OrganizationOmzetGetRes {
+// Message response of transactions list.
+message TransactionListGetRes {
     status.Status status = 1; // @gotags: json:"status"
-    repeated core.transaction.response.OrganizationOmzet data = 2; // @gotags: json:"data"
+    repeated core.transaction.response.TransactionList data = 2; // @gotags: json:"data"
     response.ResponseMeta meta = 3; // @gotags: json:"meta"
 }

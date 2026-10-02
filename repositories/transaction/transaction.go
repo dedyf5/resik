@@ -16,6 +16,58 @@ import (
 	"gorm.io/gorm"
 )
 
+func (r *TransactionRepo) TransactionsGetData(param *paramTrx.TransactionsGet) (transactions trxEntity.Transactions, err *resPkg.Status) {
+	query := r.TransactionsBaseQuery(param)
+
+	query = query.Select("*").
+		Limit(param.Filter.LimitOrDefault()).
+		Offset(param.Filter.Offset())
+
+	if len(param.Orders) > 0 {
+		orderMap := map[string]string{
+			"branch_name":       "branch_name",
+			"organization_name": "organization_name",
+			"transacted_at":     "transacted_at",
+		}
+		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
+		if err != nil {
+			return nil, resPkg.NewStatusError(http.StatusInternalServerError, err)
+		}
+		query = query.Order(order)
+	}
+
+	errQuery := query.Find(&transactions).Error
+	if errQuery != nil {
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
+	}
+	return
+}
+
+func (r *TransactionRepo) TransactionsGetTotal(param *paramTrx.TransactionsGet) (total int64, err *resPkg.Status) {
+	query := r.TransactionsBaseQuery(param).Select("COUNT(id) AS total")
+	errQuery := query.Take(&total).Error
+	if errQuery != nil {
+		return 0, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
+	}
+	return
+}
+
+func (r *TransactionRepo) TransactionsBaseQuery(param *paramTrx.TransactionsGet) (query *gorm.DB) {
+	query = r.DB.WithContext(param.Ctx.Context).Table(trxEntity.TABLE_NAME)
+
+	if len(param.BranchPublicIDs) == 1 {
+		query = query.Where("branch_public_id = ?", param.BranchPublicIDs[0])
+	} else {
+		query = query.Where("branch_public_id IN ?", param.BranchPublicIDs)
+	}
+
+	if search := param.Filter.FulltextSeach(); search != "" {
+		query = query.Where("MATCH(organization_name, branch_name) AGAINST(? IN BOOLEAN MODE)", search)
+	}
+
+	return
+}
+
 func (r *TransactionRepo) OrganizationOmzetGetData(param *paramTrx.OrganizationOmzetGet) (res []trxEntity.OrganizationOmzet, err *resPkg.Status) {
 	query, err := r.OrganizationOmzetGetQuery(param)
 	if err != nil {

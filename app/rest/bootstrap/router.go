@@ -67,6 +67,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transactions", validateToken, jwtMiddleware, rateLimit)
+	trx.GET("", trxHandler.TransactionListGet)
 	trxOrganization := trx.Group("/organization/:organization_id")
 	trxOrganization.GET("/omzet", trxHandler.OrganizationOmzetGet)
 	trxBranch := trx.Group("/branch/:branch_id")

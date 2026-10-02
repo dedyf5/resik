@@ -116,13 +116,19 @@ CREATE TABLE IF NOT EXISTS `transactions` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `public_id` UUID NOT NULL UNIQUE,
   `organization_public_id` UUID NOT NULL,
+  `organization_name` varchar(40) NOT NULL,
   `branch_public_id` UUID NOT NULL,
+  `branch_name` varchar(40) NOT NULL,
   `bill_total` double NOT NULL,
+  `transacted_at` datetime NOT NULL,
   `created_at` datetime NOT NULL,
   `created_by_public_id` UUID NOT NULL COMMENT 'users.public_id',
   `updated_at` datetime NOT NULL,
   `updated_by_public_id` UUID NOT NULL COMMENT 'users.public_id',
   PRIMARY KEY (`id`),
-  KEY `fk_transactions_organizations` (`organization_public_id`),
-  KEY `fk_transactions_branches` (`branch_public_id`)
+  KEY `idx_organization` (`organization_public_id`),
+  KEY `idx_transacted` (`transacted_at` DESC),
+  KEY `idx_branch_bill_total` (`branch_public_id`, `bill_total` DESC),
+  KEY `idx_branch_transacted` (`branch_public_id`, `transacted_at` DESC),
+  FULLTEXT INDEX `ft_org_branch_name` (`organization_name`, `branch_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

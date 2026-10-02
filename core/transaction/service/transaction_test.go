@@ -10,27 +10,135 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/dedyf5/resik/config"
+	dtoTrx "github.com/dedyf5/resik/core/transaction/dto"
 	"github.com/dedyf5/resik/ctx"
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/ctx/log"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	trxParam "github.com/dedyf5/resik/entities/transaction/param"
+	userEntity "github.com/dedyf5/resik/entities/user"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
-	trxRepoMock "github.com/dedyf5/resik/repositories/mock"
+	repoMock "github.com/dedyf5/resik/repositories/mock"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"golang.org/x/text/language"
 )
 
+func TestTransactionsGet(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	trxRepo, userRepo, ctx, trxService := setup(ctrl)
+
+	param := &trxParam.TransactionsGet{
+		Ctx: ctx,
+	}
+
+	datetime := time.Now()
+
+	transactions := trxEntity.Transactions{
+		{
+			ID:           1,
+			TransactedAt: datetime,
+			UpdatedAt:    datetime,
+			CreatedAt:    datetime,
+		},
+	}
+
+	user := &userEntity.User{}
+	users := userEntity.Users{
+		*user,
+	}
+	userPublicIDs := []uuidPkg.UUIDV7{user.PublicID}
+
+	t.Run("TransactionsGetTotal-ERROR", func(t *testing.T) {
+		var totalExpected int64 = 0
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionsGetTotal(param).Return(totalExpected, statusErr),
+		)
+		res, err := trxService.TransactionsGet(param)
+		assert.Nil(t, res)
+		assert.Equal(t, statusErr, err)
+	})
+
+	t.Run("TransactionsGetTotal-0", func(t *testing.T) {
+		var totalExpected int64 = 0
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionsGetTotal(param).Return(totalExpected, nil),
+		)
+		res, err := trxService.TransactionsGet(param)
+		assert.Nil(t, err)
+		assert.Equal(t, dtoTrx.TransactionsResultEmpty, *res)
+	})
+
+	var totalExpected int64 = 1
+	t.Run("TransactionsGetData-ERROR", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionsGetTotal(param).Return(totalExpected, nil),
+			trxRepo.EXPECT().TransactionsGetData(param).Return(nil, statusErr),
+		)
+		res, err := trxService.TransactionsGet(param)
+		assert.Nil(t, res)
+		assert.Equal(t, statusErr, err)
+	})
+
+	t.Run("TransactionsGetData-0", func(t *testing.T) {
+		transactionsEmpty := trxEntity.Transactions{}
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionsGetTotal(param).Return(totalExpected, nil),
+			trxRepo.EXPECT().TransactionsGetData(param).Return(transactionsEmpty, nil),
+		)
+		res, err := trxService.TransactionsGet(param)
+		assert.Nil(t, err)
+		assert.Equal(t, dtoTrx.TransactionsResultEmpty, *res)
+	})
+
+	t.Run("UsersGetByIDs-ERROR", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionsGetTotal(param).Return(totalExpected, nil),
+			trxRepo.EXPECT().TransactionsGetData(param).Return(transactions, nil),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(nil, statusErr),
+		)
+		res, err := trxService.TransactionsGet(param)
+		assert.Nil(t, res)
+		assert.NotNil(t, err)
+		assert.Equal(t, statusErr.Code, err.Code)
+	})
+
+	t.Run("ALL-SUCCESS", func(t *testing.T) {
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionsGetTotal(param).Return(totalExpected, nil),
+			trxRepo.EXPECT().TransactionsGetData(param).Return(transactions, nil),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(users, nil),
+		)
+		res, err := trxService.TransactionsGet(param)
+		assert.Nil(t, err)
+		assert.Len(t, res.Data, len(transactions))
+		assert.Equal(t, transactions[0].ID, res.Data[0].Transaction.ID)
+		assert.Equal(t, transactions[0].BillTotal, res.Data[0].BillTotal)
+		assert.Equal(t, transactions[0].TransactedAt, res.Data[0].TransactedAt)
+	})
+}
+
 func TestOrganizationOmzetGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	trxRepo, ctx, trxService := setup(ctrl)
+	trxRepo, _, ctx, trxService := setup(ctrl)
 
 	organizationPublicID, err := uuidPkg.NewUUIDV7()
 	if err != nil {
@@ -101,7 +209,7 @@ func TestBranchOmzetGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	trxRepo, ctx, trxService := setup(ctrl)
+	trxRepo, _, ctx, trxService := setup(ctrl)
 
 	organizationPublicID, err := uuidPkg.NewUUIDV7()
 	if err != nil {
@@ -175,10 +283,11 @@ func TestBranchOmzetGet(t *testing.T) {
 	})
 }
 
-func setup(ctrl *gomock.Controller) (trxRepo *trxRepoMock.MockITransaction, ctx *ctx.Ctx, trxService *Service) {
-	trxRepo = trxRepoMock.NewMockITransaction(ctrl)
+func setup(ctrl *gomock.Controller) (trxRepo *repoMock.MockITransaction, userRepo *repoMock.MockIUser, ctx *ctx.Ctx, trxService *Service) {
+	trxRepo = repoMock.NewMockITransaction(ctrl)
+	userRepo = repoMock.NewMockIUser(ctrl)
 	config, ctx := env()
-	trxService = New(trxRepo, config)
+	trxService = New(config, trxRepo, userRepo)
 	return
 }
 

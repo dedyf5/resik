@@ -25,6 +25,7 @@ type IdentityResolver interface {
 	// Domain Convenience Helpers
 	GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error)
 	GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error)
+	GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uuidPkg.UUIDV7, error)
 	InvalidateUserAccessOrganization(ctx context.Context, userID uint64) error
 	InvalidateUserAccessBranch(ctx context.Context, userID uint64) error
 }

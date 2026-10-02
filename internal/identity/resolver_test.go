@@ -27,6 +27,14 @@ func TestResolverStructure(t *testing.T) {
 		assert.Equal(t, "resik:user_access:branches:branch:read:1", branchKey)
 	})
 
+	t.Run("userAccessPublicCacheKey", func(t *testing.T) {
+		key := r.userAccessPublicCacheKey(organizationEntity.TABLE_NAME, "organization:read", 1)
+		assert.Equal(t, "resik:user_access_public:organizations:organization:read:1", key)
+
+		branchKey := r.userAccessPublicCacheKey(branchEntity.TABLE_NAME, "branch:read", 1)
+		assert.Equal(t, "resik:user_access_public:branches:branch:read:1", branchKey)
+	})
+
 	t.Run("idMapCacheKey", func(t *testing.T) {
 		key := r.idMapCacheKey(organizationEntity.TABLE_NAME, "019deba4-2020-7dc7-a670-769321b06a9b")
 		assert.Equal(t, "resik:id_map:organizations:019deba4-2020-7dc7-a670-769321b06a9b", key)

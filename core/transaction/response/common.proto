@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package response;
+package core.transaction.response;
 option go_package = "github.com/dedyf5/resik/core/transaction/response";
 
 message Organization {
@@ -16,4 +16,10 @@ message Branch {
   string id = 1; // @gotags: json:"id" example:"019df0d3f6c579ac8976afe7a437166c"
   string name = 2; // @gotags: json:"name" example:"Resik Branch"
   Organization organization = 3; // @gotags: json:"organization"
+}
+
+message User {
+    string id = 1; // @gotags: json:"id" example:"01a0d3979d5e7ab99b47d88a5f9349bd"
+    string name = 2; // @gotags: json:"name" example:"User 1"
+    string username = 3; // @gotags: json:"username" example:"user1"
 }

@@ -42,6 +42,54 @@ func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho, resolver identi
 	}
 }
 
+// @Summary Transactions List
+// @Description Get transactions list
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param       parameter query commonEntity.Request true "Query Param"
+// @Param       parameter query reqTrxCore.TransactionListGet true "Query Param"
+// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{[]resTrxCore.TransactionList}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
+// @Router		/transactions [get]
+func (h *Handler) TransactionListGet(echoCtx *echo.Context) error {
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
+	if err != nil {
+		return err
+	}
+	h.log.Debug("TransactionListGet")
+
+	var payload reqTrxCore.TransactionListGet
+
+	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
+		return err
+	}
+
+	param, err := payload.ToParam(ctx, h.resolver)
+	if err != nil {
+		return err
+	}
+
+	res, err := h.trxService.TransactionsGet(param)
+	if err != nil {
+		return err
+	}
+
+	return resPkg.NewStatusDataMeta(
+		http.StatusOK,
+		resTrxCore.TransactionsGetFromDTO(&res.Data),
+		&resPkg.Meta{
+			PageCurrent: param.Filter.Raw().PageOrDefault(),
+			Limit:       param.Filter.Raw().LimitOrDefault(),
+			Total:       res.Total,
+		},
+	)
+}
+
 // @Summary Get Organization Omzet
 // @Description Get organization omzet by organization id
 // @Tags transactions

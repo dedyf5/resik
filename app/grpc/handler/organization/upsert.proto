@@ -12,5 +12,5 @@ import "core/organization/response/upsert.proto";
 
 message OrganizationUpsertRes {
     status.Status status = 1; // @gotags: json:"status"
-    response.OrganizationUpsert data = 2; // @gotags: json:"data"
+    core.organization.response.OrganizationUpsert data = 2; // @gotags: json:"data"
 }

@@ -10,6 +10,36 @@ import (
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
 
+func (s *Service) TransactionsGet(param *paramTrx.TransactionsGet) (res *trxDTO.TransactionsResult, err *resPkg.Status) {
+	total, err := s.transactionRepo.TransactionsGetTotal(param)
+	if err != nil {
+		return nil, err
+	}
+
+	if total == 0 {
+		return &trxDTO.TransactionsResultEmpty, nil
+	}
+
+	transactions, err := s.transactionRepo.TransactionsGetData(param)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(transactions) == 0 {
+		return &trxDTO.TransactionsResultEmpty, nil
+	}
+
+	users, err := s.userRepo.UsersGetByPublicIDs(param.Ctx, transactions.UniqueAllUserPublicIDs())
+	if err != nil {
+		return nil, err
+	}
+
+	return &trxDTO.TransactionsResult{
+		Data:  trxDTO.TransactionsFromEntity(transactions, users.UniquePublicIDsMap()),
+		Total: total,
+	}, nil
+}
+
 func (s *Service) OrganizationOmzetGet(param *paramTrx.OrganizationOmzetGet) (res *trxDTO.OrganizationOmzet, err *resPkg.Status) {
 	total, err := s.transactionRepo.OrganizationOmzetGetTotal(param)
 	if err != nil {

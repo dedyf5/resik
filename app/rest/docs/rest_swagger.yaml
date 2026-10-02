@@ -59,6 +59,18 @@ definitions:
         description: The localized error message in the above locale.
         type: string
     type: object
+  github_com_dedyf5_resik_core_organization_response.User:
+    properties:
+      id:
+        example: 01a0d3979d5e7ab99b47d88a5f9349bd
+        type: string
+      name:
+        example: User 1
+        type: string
+      username:
+        example: user1
+        type: string
+    type: object
   request.LoginPost:
     properties:
       password:
@@ -211,7 +223,7 @@ definitions:
         example: "2026-01-02T15:04:05+07:00"
         type: string
       creator:
-        $ref: '#/definitions/response.User'
+        $ref: '#/definitions/github_com_dedyf5_resik_core_organization_response.User'
       description:
         description: nullable
         example: Organization description 1
@@ -226,7 +238,7 @@ definitions:
         example: "2026-01-02T15:04:05+07:00"
         type: string
       updater:
-        $ref: '#/definitions/response.User'
+        $ref: '#/definitions/github_com_dedyf5_resik_core_organization_response.User'
     type: object
   response.OrganizationList:
     properties:
@@ -332,18 +344,6 @@ definitions:
         $ref: '#/definitions/response.ResponseMeta'
       status:
         $ref: '#/definitions/response.ResponseStatusWithoutDetails'
-    type: object
-  response.User:
-    properties:
-      id:
-        example: 01a0d3979d5e7ab99b47d88a5f9349bd
-        type: string
-      name:
-        example: User 1
-        type: string
-      username:
-        example: user1
-        type: string
     type: object
   response.UserCredential:
     properties:
@@ -845,6 +845,64 @@ paths:
       summary: Token Refresh
       tags:
       - user
+  /transactions:
+    get:
+      consumes:
+      - application/json
+      description: Get transactions list
+      parameters:
+      - enum:
+        - en
+        - id
+        - ja
+        in: query
+        name: lang
+        type: string
+      - example: 10
+        in: query
+        minimum: 1
+        name: limit
+        type: integer
+      - in: query
+        name: order
+        type: string
+      - example: 1
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - example: keyword
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ResponseSuccessWithMeta'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ResponseBadRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+      security:
+      - BearerAuth: []
+      summary: Transactions List
+      tags:
+      - transactions
   /transactions/branch/{branch_id}/omzet:
     get:
       consumes:
