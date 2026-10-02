@@ -129,6 +129,5 @@ CREATE TABLE IF NOT EXISTS `transactions` (
   KEY `idx_organization` (`organization_public_id`),
   KEY `idx_transacted` (`transacted_at` DESC),
   KEY `idx_branch_bill_total` (`branch_public_id`, `bill_total` DESC),
-  KEY `idx_branch_transacted` (`branch_public_id`, `transacted_at` DESC),
-  FULLTEXT INDEX `ft_org_branch_name` (`organization_name`, `branch_name`)
+  KEY `idx_branch_transacted` (`branch_public_id`, `transacted_at` DESC)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

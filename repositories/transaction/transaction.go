@@ -61,8 +61,8 @@ func (r *TransactionRepo) TransactionsBaseQuery(param *paramTrx.TransactionsGet)
 		query = query.Where("branch_public_id IN ?", param.BranchPublicIDs)
 	}
 
-	if search := param.Filter.FulltextSeach(); search != "" {
-		query = query.Where("MATCH(organization_name, branch_name) AGAINST(? IN BOOLEAN MODE)", search)
+	if param.Filter.Search != "" {
+		query = query.Where("organization_name LIKE ? OR branch_name LIKE ?", "%"+param.Filter.Search+"%", "%"+param.Filter.Search+"%")
 	}
 
 	return
