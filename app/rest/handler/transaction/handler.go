@@ -13,6 +13,7 @@ import (
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
 	"github.com/dedyf5/resik/internal/identity"
@@ -40,6 +41,58 @@ func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho, resolver identi
 		resolver:   resolver,
 		trxService: trxService,
 	}
+}
+
+// @Summary Get Transaction by ID
+// @Description Get transaction by ID
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param       id path string true "Transaction ID"
+// @Param       parameter query commonEntity.Request true "Query Param"
+// @Success		200	{object}	resPkg.ResponseSuccess{data=resTrxCore.TransactionDetail}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     404 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
+// @Router		/transactions/{id} [get]
+func (h *Handler) TransactionDetailGet(echoCtx *echo.Context) error {
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
+	if err != nil {
+		return err
+	}
+	h.log.Debug("TransactionDetailGet")
+
+	var payload reqTrxCore.TransactionDetailGet
+	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
+		return err
+	}
+
+	param, err := payload.ToParam(ctx, h.resolver)
+	if err != nil {
+		return err
+	}
+
+	transaction, err := h.trxService.TransactionGetByPublicID(param)
+	if err != nil {
+		return err
+	}
+
+	if transaction == nil {
+		localizer := ctx.Lang().Localizer
+		return resPkg.NewStatusMessage(
+			http.StatusNotFound,
+			term.NotFoundVal.Localize(localizer, term.Transaction.Localize(localizer)),
+			nil,
+		)
+	}
+
+	return resPkg.NewStatusData(
+		http.StatusOK,
+		resTrxCore.TransactionDetailFromDTO(transaction),
+	)
 }
 
 // @Summary Transactions List

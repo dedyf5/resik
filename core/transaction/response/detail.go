@@ -8,19 +8,27 @@ import (
 	"time"
 
 	commonCore "github.com/dedyf5/resik/core/common"
-	dtoOrganization "github.com/dedyf5/resik/core/organization/dto"
+	dtoTrx "github.com/dedyf5/resik/core/transaction/dto"
 )
 
-func OrganizationDetailFromDTO(src *dtoOrganization.Organization) *OrganizationDetail {
+func TransactionDetailFromDTO(src *dtoTrx.Transaction) *TransactionDetail {
 	if src == nil {
 		return nil
 	}
 
-	return &OrganizationDetail{
-		Id:          src.PublicID.String32(),
-		Name:        src.Name,
-		Description: src.Description,
-		CreatedAt:   src.CreatedAt.Format(time.RFC3339),
+	return &TransactionDetail{
+		Id:           src.PublicID.String32(),
+		BillTotal:    src.BillTotal,
+		TransactedAt: src.TransactedAt.Format(time.RFC3339),
+		Branch: &Branch{
+			Id:   src.BranchPublicID.String32(),
+			Name: src.BranchName,
+			Organization: &Organization{
+				Id:   src.OrganizationPublicID.String32(),
+				Name: src.OrganizationName,
+			},
+		},
+		CreatedAt: src.CreatedAt.Format(time.RFC3339),
 		Creator: &commonCore.User{
 			Id:       src.Creator.PublicID.String32(),
 			Name:     src.Creator.Name,

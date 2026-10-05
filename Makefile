@@ -12,6 +12,8 @@ generate-rest: generate-doc generate-wire
 
 ## generate-proto: Generate proto files
 generate-proto:
+	protoc $(PROTOC_FLAGS) --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/common/*.proto
+	protoc-go-inject-tag -input="core/common/*.pb.go" -remove_tag_comment
 	protoc $(PROTOC_FLAGS) --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/request/*.proto
 	protoc-go-inject-tag -input="core/*/request/*.pb.go" -remove_tag_comment
 	protoc $(PROTOC_FLAGS) --go_opt=paths=source_relative --go-grpc_opt=paths=source_relative --go_out=. --go-grpc_out=. core/*/response/*.proto

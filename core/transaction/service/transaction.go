@@ -5,10 +5,41 @@
 package service
 
 import (
+	"net/http"
+
 	trxDTO "github.com/dedyf5/resik/core/transaction/dto"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
+
+func (s *Service) TransactionGetByPublicID(param *paramTrx.TransactionGet) (res *trxDTO.Transaction, err *resPkg.Status) {
+	transaction, err := s.transactionRepo.TransactionGetByPublicID(param)
+	if err != nil {
+		return nil, err
+	}
+
+	if transaction == nil {
+		return nil, nil
+	}
+
+	users, err := s.userRepo.UsersGetByPublicIDs(param.Ctx, transaction.UniqueAllUserPublicIDs())
+	if err != nil {
+		return nil, err
+	}
+
+	if len(users) == 0 {
+		localizer := param.Ctx.Lang().Localizer
+		return nil, resPkg.NewStatusMessage(
+			http.StatusNotFound,
+			term.NotFoundVal.Localize(localizer, term.User.Localize(localizer)),
+			nil,
+		)
+	}
+
+	resDTO := trxDTO.TransactionFromEntity(*transaction, users.UniquePublicIDsMap())
+	return &resDTO, nil
+}
 
 func (s *Service) TransactionsGet(param *paramTrx.TransactionsGet) (res *trxDTO.TransactionsResult, err *resPkg.Status) {
 	total, err := s.transactionRepo.TransactionsGetTotal(param)

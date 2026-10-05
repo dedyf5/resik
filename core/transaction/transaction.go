@@ -12,6 +12,7 @@ import (
 
 //go:generate mockgen -source transaction.go -package mock -destination ./mock/transaction.go
 type IService interface {
+	TransactionGetByPublicID(param *paramTrx.TransactionGet) (res *trxDTO.Transaction, err *resPkg.Status)
 	TransactionsGet(param *paramTrx.TransactionsGet) (res *trxDTO.TransactionsResult, err *resPkg.Status)
 	OrganizationOmzetGet(param *paramTrx.OrganizationOmzetGet) (res *trxDTO.OrganizationOmzet, err *resPkg.Status)
 	BranchOmzetGet(param *paramTrx.BranchOmzetGet) (res *trxDTO.BranchOmzet, err *resPkg.Status)

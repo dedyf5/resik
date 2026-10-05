@@ -8,19 +8,15 @@ package core.organization.response;
 
 option go_package = "github.com/dedyf5/resik/core/organization/response";
 
+import "core/common/user.proto";
+
 message OrganizationDetail {
     string id = 1; // @gotags: json:"id" example:"019defa1ccd0794c9459795fc65d38b6"
     string name = 2; // @gotags: json:"name" example:"Organization 1"
     // nullable
     optional string description = 3; // @gotags: json:"description" example:"Organization description 1"
     string created_at = 4; // @gotags: json:"created_at" example:"2026-01-02T15:04:05+07:00"
-    User creator = 5; // @gotags: json:"creator"
+    core.common.User creator = 5; // @gotags: json:"creator"
     string updated_at = 6; // @gotags: json:"updated_at" example:"2026-01-02T15:04:05+07:00"
-    User updater = 7; // @gotags: json:"updater"
-}
-
-message User {
-    string id = 1; // @gotags: json:"id" example:"01a0d3979d5e7ab99b47d88a5f9349bd"
-    string name = 2; // @gotags: json:"name" example:"User 1"
-    string username = 3; // @gotags: json:"username" example:"user1"
+    core.common.User updater = 7; // @gotags: json:"updater"
 }

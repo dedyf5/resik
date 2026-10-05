@@ -1,4 +1,16 @@
 definitions:
+  common.User:
+    properties:
+      id:
+        example: 01a0d3979d5e7ab99b47d88a5f9349bd
+        type: string
+      name:
+        example: User 1
+        type: string
+      username:
+        example: user1
+        type: string
+    type: object
   errdetails.BadRequest:
     properties:
       field_violations:
@@ -57,18 +69,6 @@ definitions:
         type: string
       message:
         description: The localized error message in the above locale.
-        type: string
-    type: object
-  github_com_dedyf5_resik_core_organization_response.User:
-    properties:
-      id:
-        example: 01a0d3979d5e7ab99b47d88a5f9349bd
-        type: string
-      name:
-        example: User 1
-        type: string
-      username:
-        example: user1
         type: string
     type: object
   request.LoginPost:
@@ -223,7 +223,7 @@ definitions:
         example: "2026-01-02T15:04:05+07:00"
         type: string
       creator:
-        $ref: '#/definitions/github_com_dedyf5_resik_core_organization_response.User'
+        $ref: '#/definitions/common.User'
       description:
         description: nullable
         example: Organization description 1
@@ -238,7 +238,7 @@ definitions:
         example: "2026-01-02T15:04:05+07:00"
         type: string
       updater:
-        $ref: '#/definitions/github_com_dedyf5_resik_core_organization_response.User'
+        $ref: '#/definitions/common.User'
     type: object
   response.OrganizationList:
     properties:
@@ -344,6 +344,30 @@ definitions:
         $ref: '#/definitions/response.ResponseMeta'
       status:
         $ref: '#/definitions/response.ResponseStatusWithoutDetails'
+    type: object
+  response.TransactionDetail:
+    properties:
+      bill_total:
+        example: 1000.5
+        type: number
+      branch:
+        $ref: '#/definitions/response.Branch'
+      created_at:
+        example: "2024-02-02T19:52:41Z"
+        type: string
+      creator:
+        $ref: '#/definitions/common.User'
+      id:
+        example: 01a0eca283a4796fa0e51d3ab1cfd2ba
+        type: string
+      transacted_at:
+        example: "2024-02-02T19:52:41Z"
+        type: string
+      updated_at:
+        example: "2024-02-02T19:52:41Z"
+        type: string
+      updater:
+        $ref: '#/definitions/common.User'
     type: object
   response.UserCredential:
     properties:
@@ -901,6 +925,61 @@ paths:
       security:
       - BearerAuth: []
       summary: Transactions List
+      tags:
+      - transactions
+  /transactions/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get transaction by ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - enum:
+        - en
+        - id
+        - ja
+        in: query
+        name: lang
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/response.TransactionDetail'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ResponseBadRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+      security:
+      - BearerAuth: []
+      summary: Get Transaction by ID
       tags:
       - transactions
   /transactions/branch/{branch_id}/omzet:

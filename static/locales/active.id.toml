@@ -38,6 +38,10 @@ other = "Berhasil memperbarui {{.Val}}"
 hash = "sha1-1f55c90d5ce61c6447e923443d496b137be35c63"
 other = "Terlalu banyak permintaan"
 
+[transaction]
+hash = "sha1-1a7b7c1b33d161f45804730c70b75175dccd9883"
+other = "Transaksi"
+
 [unauthorized]
 hash = "sha1-740b83150add8d2de17b3ab10d33605bb00e9589"
 other = "Akses tidak diizinkan"

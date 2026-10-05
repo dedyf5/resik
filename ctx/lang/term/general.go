@@ -90,6 +90,13 @@ var (
 		},
 	}
 
+	Transaction = &Term{
+		Message: &i18n.Message{
+			ID:    "transaction",
+			Other: "Transaction",
+		},
+	}
+
 	notFoundValID = "not_found_val"
 	NotFoundVal   = &struct {
 		Message  func() *i18n.Message

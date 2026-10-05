@@ -29,6 +29,78 @@ import (
 	"golang.org/x/text/language"
 )
 
+func TestTransactionGetByPublicID(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	trxRepo, userRepo, ctx, trxService := setup(ctrl)
+
+	param := &trxParam.TransactionGet{
+		Ctx: ctx,
+	}
+
+	transaction := &trxEntity.Transaction{}
+	user := &userEntity.User{}
+	users := userEntity.Users{
+		*user,
+	}
+	userPublicIDs := []uuidPkg.UUIDV7{user.PublicID}
+
+	t.Run("TestTransactionGetByPublicID-ERROR TransactionGetByPublicID", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(transaction, statusErr),
+		)
+		_, err := trxService.TransactionGetByPublicID(param)
+		assert.Equal(t, statusErr, err)
+	})
+
+	t.Run("TestTransactionGetByPublicID-ERROR UsersGetByIDs 500", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(transaction, nil),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(users, statusErr),
+		)
+		_, err := trxService.TransactionGetByPublicID(param)
+		assert.Equal(t, statusErr, err)
+	})
+
+	t.Run("TestTransactionGetByPublicID-ERROR UsersGetByIDs 404", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusNotFound,
+		}
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(transaction, nil),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(nil, nil),
+		)
+		_, err := trxService.TransactionGetByPublicID(param)
+		assert.Equal(t, statusErr.Code, err.Code)
+	})
+
+	t.Run("TestTransactionGetByPublicID ALL-EMPTY", func(t *testing.T) {
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(nil, nil),
+		)
+		res, err := trxService.TransactionGetByPublicID(param)
+		assert.Nil(t, err)
+		assert.Nil(t, res)
+	})
+
+	t.Run("TestTransactionGetByPublicID ALL-SUCCESS", func(t *testing.T) {
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(transaction, nil),
+			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(users, nil),
+		)
+		res, err := trxService.TransactionGetByPublicID(param)
+		assert.Nil(t, err)
+		assert.Equal(t, transaction.PublicID, res.PublicID)
+	})
+}
+
 func TestTransactionsGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

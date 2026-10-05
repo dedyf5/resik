@@ -1180,9 +1180,115 @@ const docTemplaterest = `{
                     }
                 }
             }
+        },
+        "/transactions/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get transaction by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get Transaction by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Transaction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "en",
+                            "id",
+                            "ja"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.TransactionDetail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "common.User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "01a0d3979d5e7ab99b47d88a5f9349bd"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "User 1"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "user1"
+                }
+            }
+        },
         "errdetails.BadRequest": {
             "type": "object",
             "properties": {
@@ -1230,23 +1336,6 @@ const docTemplaterest = `{
                 "message": {
                     "description": "The localized error message in the above locale.",
                     "type": "string"
-                }
-            }
-        },
-        "github_com_dedyf5_resik_core_organization_response.User": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": "01a0d3979d5e7ab99b47d88a5f9349bd"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "User 1"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "user1"
                 }
             }
         },
@@ -1466,7 +1555,7 @@ const docTemplaterest = `{
                     "example": "2026-01-02T15:04:05+07:00"
                 },
                 "creator": {
-                    "$ref": "#/definitions/github_com_dedyf5_resik_core_organization_response.User"
+                    "$ref": "#/definitions/common.User"
                 },
                 "description": {
                     "description": "nullable",
@@ -1486,7 +1575,7 @@ const docTemplaterest = `{
                     "example": "2026-01-02T15:04:05+07:00"
                 },
                 "updater": {
-                    "$ref": "#/definitions/github_com_dedyf5_resik_core_organization_response.User"
+                    "$ref": "#/definitions/common.User"
                 }
             }
         },
@@ -1641,6 +1730,40 @@ const docTemplaterest = `{
                 },
                 "status": {
                     "$ref": "#/definitions/response.ResponseStatusWithoutDetails"
+                }
+            }
+        },
+        "response.TransactionDetail": {
+            "type": "object",
+            "properties": {
+                "bill_total": {
+                    "type": "number",
+                    "example": 1000.5
+                },
+                "branch": {
+                    "$ref": "#/definitions/response.Branch"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-02-02T19:52:41Z"
+                },
+                "creator": {
+                    "$ref": "#/definitions/common.User"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "01a0eca283a4796fa0e51d3ab1cfd2ba"
+                },
+                "transacted_at": {
+                    "type": "string",
+                    "example": "2024-02-02T19:52:41Z"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-02-02T19:52:41Z"
+                },
+                "updater": {
+                    "$ref": "#/definitions/common.User"
                 }
             }
         },

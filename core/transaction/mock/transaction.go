@@ -72,6 +72,21 @@ func (mr *MockIServiceMockRecorder) OrganizationOmzetGet(arg0 any) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationOmzetGet", reflect.TypeOf((*MockIService)(nil).OrganizationOmzetGet), arg0)
 }
 
+// TransactionGetByPublicID mocks base method.
+func (m *MockIService) TransactionGetByPublicID(arg0 *param.TransactionGet) (*dto.Transaction, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionGetByPublicID", arg0)
+	ret0, _ := ret[0].(*dto.Transaction)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionGetByPublicID indicates an expected call of TransactionGetByPublicID.
+func (mr *MockIServiceMockRecorder) TransactionGetByPublicID(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionGetByPublicID", reflect.TypeOf((*MockIService)(nil).TransactionGetByPublicID), arg0)
+}
+
 // TransactionsGet mocks base method.
 func (m *MockIService) TransactionsGet(arg0 *param.TransactionsGet) (*dto.TransactionsResult, *response.Status) {
 	m.ctrl.T.Helper()

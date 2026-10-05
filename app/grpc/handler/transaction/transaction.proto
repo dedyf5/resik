@@ -7,15 +7,18 @@ syntax = "proto3";
 package transaction;
 option go_package = "github.com/dedyf5/resik/app/grpc/handler/transaction";
 
-import "core/transaction/request/list.proto";
-import "app/grpc/handler/transaction/list.proto";
-
-import "app/grpc/handler/transaction/organization.proto";
 import "app/grpc/handler/transaction/branch.proto";
-import "core/transaction/request/organization.proto";
+import "app/grpc/handler/transaction/detail.proto";
+import "app/grpc/handler/transaction/list.proto";
+import "app/grpc/handler/transaction/organization.proto";
+
 import "core/transaction/request/branch.proto";
+import "core/transaction/request/detail.proto";
+import "core/transaction/request/list.proto";
+import "core/transaction/request/organization.proto";
 
 service TransactionService {
+    rpc TransactionDetailGet(core.transaction.request.TransactionDetailGet) returns (transaction.TransactionDetailRes);
     rpc TransactionListGet(core.transaction.request.TransactionListGet) returns (transaction.TransactionListGetRes);
     rpc OrganizationOmzetGet(core.transaction.request.OrganizationOmzetGet) returns (transaction.OrganizationOmzetGetRes);
     rpc BranchOmzetGet(core.transaction.request.BranchOmzetGet) returns (transaction.BranchOmzetGetRes);

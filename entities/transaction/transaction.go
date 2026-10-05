@@ -42,6 +42,10 @@ func (t *Transaction) AllUserPublicIDs() []uuidPkg.UUIDV7 {
 	return []uuidPkg.UUIDV7{t.CreatedByPublicID, t.UpdatedByPublicID}
 }
 
+func (t *Transaction) UniqueAllUserPublicIDs() []uuidPkg.UUIDV7 {
+	return commonEntity.UniqueAllUserPublicIDs([]Transaction{*t})
+}
+
 func (Transaction) TableName() string {
 	return TABLE_NAME
 }

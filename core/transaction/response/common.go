@@ -5,15 +5,16 @@
 package response
 
 import (
+	commonCore "github.com/dedyf5/resik/core/common"
 	userEntity "github.com/dedyf5/resik/entities/user"
 )
 
-func UserFromUserEntity(src *userEntity.User) *User {
+func UserFromUserEntity(src *userEntity.User) *commonCore.User {
 	if src == nil {
 		return nil
 	}
 
-	return &User{
+	return &commonCore.User{
 		Id:       src.PublicID.String32(),
 		Name:     src.Name,
 		Username: src.Username,

@@ -5,6 +5,7 @@
 package transaction
 
 import (
+	"errors"
 	"net/http"
 
 	branchEntity "github.com/dedyf5/resik/entities/branch"
@@ -15,6 +16,20 @@ import (
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"gorm.io/gorm"
 )
+
+func (r *TransactionRepo) TransactionGetByPublicID(param *paramTrx.TransactionGet) (transaction *trxEntity.Transaction, err *resPkg.Status) {
+	query := r.DB.WithContext(param.Ctx.Context).Table(trxEntity.TABLE_NAME).
+		Where("public_id = ?", param.PublicID).
+		Where("branch_public_id IN ?", param.BranchPublicIDs)
+	errQuery := query.First(&transaction).Error
+	if errQuery != nil {
+		if errors.Is(errQuery, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
+	}
+	return
+}
 
 func (r *TransactionRepo) TransactionsGetData(param *paramTrx.TransactionsGet) (transactions trxEntity.Transactions, err *resPkg.Status) {
 	query := r.TransactionsBaseQuery(param)
