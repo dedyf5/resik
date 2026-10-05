@@ -39,7 +39,7 @@ func TestOrganizationInsert(t *testing.T) {
 	userID := ctx.UserClaims().UserID()
 	organization := &organizationEntity.Organization{}
 
-	t.Run("OrganizationInsert-ERROR1", func(t *testing.T) {
+	t.Run("TestOrganizationInsert OrganizationInsert ERROR-500", func(t *testing.T) {
 		okExpected := false
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
@@ -52,7 +52,7 @@ func TestOrganizationInsert(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("OrganizationInsert-ERROR2", func(t *testing.T) {
+	t.Run("TestOrganizationInsert InvalidateUserAccessOrganization ERROR-500", func(t *testing.T) {
 		okExpected := true
 		errExpected := errors.New("ERROR")
 		gomock.InOrder(
@@ -64,7 +64,7 @@ func TestOrganizationInsert(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestOrganizationInsert ALL-SUCCESS", func(t *testing.T) {
 		okExpected := true
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationInsert(ctx, organization).Return(okExpected, nil),
@@ -84,7 +84,7 @@ func TestOrganizationUpdate(t *testing.T) {
 
 	organization := &organizationEntity.Organization{}
 
-	t.Run("OrganizationUpdate-ERROR", func(t *testing.T) {
+	t.Run("TestOrganizationUpdate OrganizationUpdate ERROR-500", func(t *testing.T) {
 		okExpected := false
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
@@ -97,7 +97,7 @@ func TestOrganizationUpdate(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestOrganizationUpdate ALL-SUCCESS", func(t *testing.T) {
 		okExpected := true
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationUpdate(ctx, organization).Return(true, nil),
@@ -117,7 +117,7 @@ func TestOrganizationDelete(t *testing.T) {
 	userID := ctx.UserClaims().UserID()
 	organization := &organizationEntity.Organization{}
 
-	t.Run("OrganizationDelete-ERROR1", func(t *testing.T) {
+	t.Run("TestOrganizationDelete OrganizationDelete ERROR-500", func(t *testing.T) {
 		okExpected := false
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
@@ -130,7 +130,7 @@ func TestOrganizationDelete(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("OrganizationDelete-ERROR2", func(t *testing.T) {
+	t.Run("TestOrganizationDelete InvalidateUserAccessOrganization ERROR-500", func(t *testing.T) {
 		okExpected := true
 		errExpected := errors.New("ERROR")
 		gomock.InOrder(
@@ -142,7 +142,7 @@ func TestOrganizationDelete(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestOrganizationDelete ALL-SUCCESS", func(t *testing.T) {
 		okExpected := true
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationDelete(ctx, organization).Return(okExpected, nil),
@@ -154,7 +154,7 @@ func TestOrganizationDelete(t *testing.T) {
 	})
 }
 
-func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
+func TestOrganizationGetByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -167,7 +167,7 @@ func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
 	}
 	userPublicIDs := []uuidPkg.UUIDV7{user.PublicID}
 
-	t.Run("OrganizationGetByIDAndOrganizationIDs-ERROR OrganizationGetByIDAndOrganizationIDs", func(t *testing.T) {
+	t.Run("TestOrganizationGetByID OrganizationGetByID ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -178,7 +178,7 @@ func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("OrganizationGetByIDAndOrganizationIDs-ERROR UsersGetByIDs ERROR", func(t *testing.T) {
+	t.Run("TestOrganizationGetByID UsersGetByPublicIDs ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -190,7 +190,7 @@ func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("OrganizationGetByIDAndOrganizationIDs-ERROR UsersGetByIDs Not Found", func(t *testing.T) {
+	t.Run("TestOrganizationGetByID UsersGetByPublicIDs ERROR-404", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusNotFound,
 		}
@@ -202,7 +202,7 @@ func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
 		assert.Equal(t, statusErr.Code, err.Code)
 	})
 
-	t.Run("ALL-EMPTY", func(t *testing.T) {
+	t.Run("TestOrganizationGetByID ALL-EMPTY", func(t *testing.T) {
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationGetByID(ctx, organization.ID).Return(nil, nil),
 		)
@@ -211,7 +211,7 @@ func TestOrganizationGetByIDAndOrganizationIDs(t *testing.T) {
 		assert.Nil(t, res)
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestOrganizationGetByID ALL-SUCCESS", func(t *testing.T) {
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationGetByID(ctx, organization.ID).Return(organization, nil),
 			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(users, nil),
@@ -245,7 +245,7 @@ func TestOrganizationsGet(t *testing.T) {
 	}
 	userPublicIDs := []uuidPkg.UUIDV7{user.PublicID}
 
-	t.Run("OrganizationListGetTotal-ERROR", func(t *testing.T) {
+	t.Run("TestOrganizationsGet OrganizationsGetTotal ERROR-500", func(t *testing.T) {
 		var totalExpected int64 = 0
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
@@ -258,7 +258,7 @@ func TestOrganizationsGet(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("OrganizationListGetTotal-0", func(t *testing.T) {
+	t.Run("TestOrganizationsGet OrganizationsGetTotal 0", func(t *testing.T) {
 		var totalExpected int64 = 0
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationsGetTotal(param).Return(totalExpected, nil),
@@ -269,7 +269,7 @@ func TestOrganizationsGet(t *testing.T) {
 	})
 
 	var totalExpected int64 = 1
-	t.Run("OrganizationListGetData-ERROR", func(t *testing.T) {
+	t.Run("TestOrganizationsGet OrganizationsGetData ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -282,7 +282,7 @@ func TestOrganizationsGet(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("OrganizationListGetData-0", func(t *testing.T) {
+	t.Run("TestOrganizationsGet OrganizationsGetData 0", func(t *testing.T) {
 		organizationsEmpty := organizationEntity.Organizations{}
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationsGetTotal(param).Return(totalExpected, nil),
@@ -293,7 +293,7 @@ func TestOrganizationsGet(t *testing.T) {
 		assert.Equal(t, dtoOrganization.OrganizationsResultEmpty, *res)
 	})
 
-	t.Run("UsersGetByIDs-ERROR", func(t *testing.T) {
+	t.Run("TestOrganizationsGet UsersGetByPublicIDs ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -308,7 +308,7 @@ func TestOrganizationsGet(t *testing.T) {
 		assert.Equal(t, statusErr.Code, err.Code)
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestOrganizationsGet ALL-SUCCESS", func(t *testing.T) {
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationsGetTotal(param).Return(totalExpected, nil),
 			organizationRepo.EXPECT().OrganizationsGetData(param).Return(organizations, nil),

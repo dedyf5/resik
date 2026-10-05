@@ -49,7 +49,7 @@ func TestAuth(t *testing.T) {
 		Username: username,
 	}
 
-	t.Run("UserByUsername-ERROR-500", func(t *testing.T) {
+	t.Run("TestAuth UserByUsername ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -61,7 +61,7 @@ func TestAuth(t *testing.T) {
 		assert.Empty(t, token)
 	})
 
-	t.Run("UserByUsername-ERROR-401-1", func(t *testing.T) {
+	t.Run("TestAuth UserByUsername ERROR-401-1", func(t *testing.T) {
 		gomock.InOrder(
 			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(nil, nil),
 		)
@@ -77,7 +77,7 @@ func TestAuth(t *testing.T) {
 		assert.Empty(t, token)
 	})
 
-	t.Run("UserByUsername-ERROR-401-2", func(t *testing.T) {
+	t.Run("TestAuth UserByUsername ERROR-401-2", func(t *testing.T) {
 		gomock.InOrder(
 			userRepo.EXPECT().UserByUsername(param.Ctx, param.Username).Return(userExpected, nil),
 			hasher.EXPECT().Compare(param.Password, userExpected.Password).Return(false, nil),
@@ -94,7 +94,7 @@ func TestAuth(t *testing.T) {
 		assert.Empty(t, token)
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestAuth ALL-SUCCESS", func(t *testing.T) {
 		userExpected := &userEntity.User{
 			ID:       1,
 			Username: username,
@@ -117,7 +117,7 @@ func TestAuthTokenGenerate(t *testing.T) {
 
 	userPublicID, _ := uuidPkg.NewUUIDV7()
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestAuthTokenGenerate ALL-SUCCESS", func(t *testing.T) {
 		res, err := userService.AuthTokenGenerate(ctx, userID, userPublicID, username)
 		assert.Nil(t, err)
 		assert.NotEmpty(t, res)

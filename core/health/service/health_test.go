@@ -35,11 +35,9 @@ func TestLivenessCheck(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	// No checkers are needed for LivenessCheck as it's a static response.
-	// We pass 0 for numCheckers.
 	_, healthService := setup(ctrl, 0)
 
-	t.Run("LivenessCheck always returns true and SERVING", func(t *testing.T) {
+	t.Run("TestLivenessCheck ALL-SUCCESS", func(t *testing.T) {
 		isLive, statusMessage := healthService.LivenessCheck(context.Background())
 		assert.True(t, isLive)
 		assert.Equal(t, "SERVING", statusMessage)
@@ -52,7 +50,7 @@ func TestReadinessCheck(t *testing.T) {
 
 	ctx := context.Background()
 
-	t.Run("All checkers are UP", func(t *testing.T) {
+	t.Run("TestReadinessCheck ALL-UP", func(t *testing.T) {
 		mockCheckers, healthService := setup(ctrl, 3)
 		expectedDetails := []checkEntity.CheckDetail{
 			{Name: "Checker1", Status: checkEntity.StatusUp, Error: nil},
@@ -78,11 +76,11 @@ func TestReadinessCheck(t *testing.T) {
 		assert.WithinDuration(t, time.Now(), overallStatus.Timestamp, 5*time.Second)
 	})
 
-	t.Run("One checker is DOWN", func(t *testing.T) {
+	t.Run("TestReadinessCheck ONE-DOWN", func(t *testing.T) {
 		mockCheckers, healthService := setup(ctrl, 2)
-		errStr := errors.New("database connection failed") // Error message for the DOWN status
+		errStr := errors.New("database connection failed")
 		expectedDetails := []checkEntity.CheckDetail{
-			{Name: "DBChecker", Status: checkEntity.StatusDown, Error: errStr}, // This one is DOWN
+			{Name: "DBChecker", Status: checkEntity.StatusDown, Error: errStr},
 			{Name: "APIChecker", Status: checkEntity.StatusUp, Error: nil},
 		}
 
@@ -91,18 +89,18 @@ func TestReadinessCheck(t *testing.T) {
 
 		overallStatus := healthService.ReadinessCheck(ctx)
 
-		assert.Equal(t, checkEntity.StatusDown, overallStatus.OverallStatus) // Overall status should be DOWN
+		assert.Equal(t, checkEntity.StatusDown, overallStatus.OverallStatus)
 		assert.Len(t, overallStatus.Checks, 2)
 		for _, expected := range expectedDetails {
 			assert.Contains(t, overallStatus.Checks, expected)
 		}
 	})
 
-	t.Run("One checker is DEGRADED, others UP", func(t *testing.T) {
+	t.Run("TestReadinessCheck ONE-DEGRADED OTHERS-UP", func(t *testing.T) {
 		mockCheckers, healthService := setup(ctrl, 2)
 		errStr := errors.New("cache performance degraded")
 		expectedDetails := []checkEntity.CheckDetail{
-			{Name: "CacheChecker", Status: checkEntity.StatusDegraded, Error: errStr}, // This one is DEGRADED
+			{Name: "CacheChecker", Status: checkEntity.StatusDegraded, Error: errStr},
 			{Name: "QueueChecker", Status: checkEntity.StatusUp, Error: nil},
 		}
 
@@ -111,21 +109,21 @@ func TestReadinessCheck(t *testing.T) {
 
 		overallStatus := healthService.ReadinessCheck(ctx)
 
-		assert.Equal(t, checkEntity.StatusDegraded, overallStatus.OverallStatus) // Overall status should be DEGRADED
+		assert.Equal(t, checkEntity.StatusDegraded, overallStatus.OverallStatus)
 		assert.Len(t, overallStatus.Checks, 2)
 		for _, expected := range expectedDetails {
 			assert.Contains(t, overallStatus.Checks, expected)
 		}
 	})
 
-	t.Run("Mix of DOWN and DEGRADED (DOWN takes precedence)", func(t *testing.T) {
+	t.Run("TestReadinessCheck MIXED-DOWN-DEGRADED-UP", func(t *testing.T) {
 		mockCheckers, healthService := setup(ctrl, 3)
 		errStrDown := errors.New("critical service down")
 		errStrDegraded := errors.New("minor service degraded")
 		expectedDetails := []checkEntity.CheckDetail{
-			{Name: "CriticalService", Status: checkEntity.StatusDown, Error: errStrDown},      // DOWN
-			{Name: "MinorService", Status: checkEntity.StatusDegraded, Error: errStrDegraded}, // DEGRADED
-			{Name: "AnotherService", Status: checkEntity.StatusUp, Error: nil},                // UP
+			{Name: "CriticalService", Status: checkEntity.StatusDown, Error: errStrDown},
+			{Name: "MinorService", Status: checkEntity.StatusDegraded, Error: errStrDegraded},
+			{Name: "AnotherService", Status: checkEntity.StatusUp, Error: nil},
 		}
 
 		mockCheckers[0].EXPECT().Check().Return(expectedDetails[0]).Times(1)
@@ -134,25 +132,24 @@ func TestReadinessCheck(t *testing.T) {
 
 		overallStatus := healthService.ReadinessCheck(ctx)
 
-		assert.Equal(t, checkEntity.StatusDown, overallStatus.OverallStatus) // Overall status should be DOWN
+		assert.Equal(t, checkEntity.StatusDown, overallStatus.OverallStatus)
 		assert.Len(t, overallStatus.Checks, 3)
 		for _, expected := range expectedDetails {
 			assert.Contains(t, overallStatus.Checks, expected)
 		}
 	})
 
-	t.Run("No checkers configured", func(t *testing.T) {
-		// No checkers are provided to the service
+	t.Run("TestReadinessCheck NO-CHECKERS", func(t *testing.T) {
 		_, healthService := setup(ctrl, 0)
 
 		overallStatus := healthService.ReadinessCheck(ctx)
 
-		assert.Equal(t, checkEntity.StatusUp, overallStatus.OverallStatus) // Default to UP if no checks are performed
-		assert.Empty(t, overallStatus.Checks)                              // No check details
+		assert.Equal(t, checkEntity.StatusUp, overallStatus.OverallStatus)
+		assert.Empty(t, overallStatus.Checks)
 		assert.WithinDuration(t, time.Now(), overallStatus.Timestamp, 5*time.Second)
 	})
 
-	t.Run("Checker returns an error message", func(t *testing.T) {
+	t.Run("TestReadinessCheck ERROR", func(t *testing.T) {
 		mockCheckers, healthService := setup(ctrl, 1)
 		errMessage := errors.New("simulated error during check")
 		expectedDetail := checkEntity.CheckDetail{

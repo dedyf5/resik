@@ -46,7 +46,7 @@ func TestTransactionGetByPublicID(t *testing.T) {
 	}
 	userPublicIDs := []uuidPkg.UUIDV7{user.PublicID}
 
-	t.Run("TestTransactionGetByPublicID-ERROR TransactionGetByPublicID", func(t *testing.T) {
+	t.Run("TestTransactionGetByPublicID TransactionGetByPublicID ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -57,7 +57,7 @@ func TestTransactionGetByPublicID(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("TestTransactionGetByPublicID-ERROR UsersGetByIDs 500", func(t *testing.T) {
+	t.Run("TestTransactionGetByPublicID UsersGetByPublicIDs ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -69,7 +69,7 @@ func TestTransactionGetByPublicID(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("TestTransactionGetByPublicID-ERROR UsersGetByIDs 404", func(t *testing.T) {
+	t.Run("TestTransactionGetByPublicID UsersGetByPublicIDs ERROR-404", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusNotFound,
 		}
@@ -128,7 +128,7 @@ func TestTransactionsGet(t *testing.T) {
 	}
 	userPublicIDs := []uuidPkg.UUIDV7{user.PublicID}
 
-	t.Run("TransactionsGetTotal-ERROR", func(t *testing.T) {
+	t.Run("TestTransactionsGet TransactionsGetTotal ERROR-500", func(t *testing.T) {
 		var totalExpected int64 = 0
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
@@ -141,7 +141,7 @@ func TestTransactionsGet(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("TransactionsGetTotal-0", func(t *testing.T) {
+	t.Run("TestTransactionsGet TransactionsGetTotal 0", func(t *testing.T) {
 		var totalExpected int64 = 0
 		gomock.InOrder(
 			trxRepo.EXPECT().TransactionsGetTotal(param).Return(totalExpected, nil),
@@ -152,7 +152,7 @@ func TestTransactionsGet(t *testing.T) {
 	})
 
 	var totalExpected int64 = 1
-	t.Run("TransactionsGetData-ERROR", func(t *testing.T) {
+	t.Run("TestTransactionsGet TransactionsGetData ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -165,7 +165,7 @@ func TestTransactionsGet(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("TransactionsGetData-0", func(t *testing.T) {
+	t.Run("TestTransactionsGet TransactionsGetData 0", func(t *testing.T) {
 		transactionsEmpty := trxEntity.Transactions{}
 		gomock.InOrder(
 			trxRepo.EXPECT().TransactionsGetTotal(param).Return(totalExpected, nil),
@@ -176,7 +176,7 @@ func TestTransactionsGet(t *testing.T) {
 		assert.Equal(t, dtoTrx.TransactionsResultEmpty, *res)
 	})
 
-	t.Run("UsersGetByIDs-ERROR", func(t *testing.T) {
+	t.Run("TestTransactionsGet UsersGetByPublicIDs ERROR-500", func(t *testing.T) {
 		statusErr := &resPkg.Status{
 			Code: http.StatusInternalServerError,
 		}
@@ -191,7 +191,7 @@ func TestTransactionsGet(t *testing.T) {
 		assert.Equal(t, statusErr.Code, err.Code)
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestTransactionsGet ALL-SUCCESS", func(t *testing.T) {
 		gomock.InOrder(
 			trxRepo.EXPECT().TransactionsGetTotal(param).Return(totalExpected, nil),
 			trxRepo.EXPECT().TransactionsGetData(param).Return(transactions, nil),
@@ -222,7 +222,7 @@ func TestOrganizationOmzetGet(t *testing.T) {
 		OrganizationPublicID: organizationPublicID,
 	}
 
-	t.Run("OrganizationOmzetGetTotal-ERROR", func(t *testing.T) {
+	t.Run("TestOrganizationOmzetGet OrganizationOmzetGetTotal ERROR-500", func(t *testing.T) {
 		errNative := errors.New("failed to get total")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
@@ -238,7 +238,7 @@ func TestOrganizationOmzetGet(t *testing.T) {
 		assert.Equal(t, statusErr.CauseError.Error(), err.CauseError.Error())
 	})
 
-	t.Run("OrganizationOmzetGetData-ERROR", func(t *testing.T) {
+	t.Run("TestOrganizationOmzetGet OrganizationOmzetGetData ERROR-500", func(t *testing.T) {
 		errNative := errors.New("failed to get data")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
@@ -255,7 +255,7 @@ func TestOrganizationOmzetGet(t *testing.T) {
 		assert.Equal(t, statusErr.CauseError.Error(), err.CauseError.Error())
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestOrganizationOmzetGet ALL-SUCCESS", func(t *testing.T) {
 		expRes := make([]trxEntity.OrganizationOmzet, 0, 1)
 		expRes = append(expRes, trxEntity.OrganizationOmzet{
 			OrganizationPublicID: organizationPublicID,
@@ -298,7 +298,7 @@ func TestBranchOmzetGet(t *testing.T) {
 		BranchPublicID: branchPublicID,
 	}
 
-	t.Run("BranchOmzetGetTotal-ERROR", func(t *testing.T) {
+	t.Run("TestBranchOmzetGet BranchOmzetGetTotal ERROR-500", func(t *testing.T) {
 		errNative := errors.New("failed to get total")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
@@ -314,7 +314,7 @@ func TestBranchOmzetGet(t *testing.T) {
 		assert.Equal(t, statusErr.CauseError.Error(), err.CauseError.Error())
 	})
 
-	t.Run("BranchOmzetGetData-ERROR", func(t *testing.T) {
+	t.Run("TestBranchOmzetGet BranchOmzetGetData ERROR-500", func(t *testing.T) {
 		errNative := errors.New("failed to get data")
 		statusErr := &resPkg.Status{
 			Code:       http.StatusInternalServerError,
@@ -331,7 +331,7 @@ func TestBranchOmzetGet(t *testing.T) {
 		assert.Equal(t, statusErr.CauseError.Error(), err.CauseError.Error())
 	})
 
-	t.Run("ALL-SUCCESS", func(t *testing.T) {
+	t.Run("TestBranchOmzetGet ALL-SUCCESS", func(t *testing.T) {
 		expRes := make([]trxEntity.BranchOmzet, 0, 1)
 		expRes = append(expRes, trxEntity.BranchOmzet{
 			OrganizationPublicID: organizationPublicID,
