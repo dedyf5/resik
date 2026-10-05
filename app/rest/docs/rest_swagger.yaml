@@ -369,6 +369,24 @@ definitions:
       updater:
         $ref: '#/definitions/common.User'
     type: object
+  response.TransactionList:
+    properties:
+      bill_total:
+        example: 1000.5
+        type: number
+      branch:
+        $ref: '#/definitions/response.Branch'
+      creator:
+        $ref: '#/definitions/common.User'
+      id:
+        example: 01a0eca283a4796fa0e51d3ab1cfd2ba
+        type: string
+      transacted_at:
+        example: "2024-02-02T19:52:41Z"
+        type: string
+      updater:
+        $ref: '#/definitions/common.User'
+    type: object
   response.UserCredential:
     properties:
       token:
@@ -639,7 +657,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       - enum:
         - en
         - id
@@ -682,7 +700,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       - enum:
         - en
         - id
@@ -732,7 +750,7 @@ paths:
         in: path
         name: id
         required: true
-        type: integer
+        type: string
       - enum:
         - en
         - id
@@ -905,7 +923,14 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/response.ResponseSuccessWithMeta'
+            allOf:
+            - $ref: '#/definitions/response.ResponseSuccessWithMeta'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/response.TransactionList'
+                  type: array
+              type: object
         "400":
           description: Bad Request
           schema:

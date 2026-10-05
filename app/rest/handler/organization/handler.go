@@ -95,7 +95,7 @@ func (h *Handler) OrganizationPost(echoCtx *echo.Context) error {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param       id path int true "Organization ID"
+// @Param       id path string true "Organization ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       payload body reqOrganizationCore.OrganizationPut true "Payload"
 // @Success		200	{object}	resPkg.ResponseSuccess{data=resOrganizationCore.OrganizationUpsert}
@@ -150,7 +150,7 @@ func (h *Handler) OrganizationPut(echoCtx *echo.Context) error {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param       id path int true "Organization ID"
+// @Param       id path string true "Organization ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Success		200	{object}	resPkg.ResponseSuccess{data=resOrganizationCore.OrganizationDetail}
 // @Failure     400 {object}	resPkg.ResponseBadRequest
@@ -249,7 +249,7 @@ func (h *Handler) OrganizationListGet(echoCtx *echo.Context) error {
 // @Accept json
 // @Produce json
 // @Security BearerAuth
-// @Param       id path int true "Organization ID"
+// @Param       id path string true "Organization ID"
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqOrganizationCore.OrganizationDelete true "Query Param"
 // @Success		204	{object}	nil

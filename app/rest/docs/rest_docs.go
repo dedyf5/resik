@@ -434,7 +434,7 @@ const docTemplaterest = `{
                 "summary": "Get Organization by ID",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Organization ID",
                         "name": "id",
                         "in": "path",
@@ -515,7 +515,7 @@ const docTemplaterest = `{
                 "summary": "Update Organization",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Organization ID",
                         "name": "id",
                         "in": "path",
@@ -605,7 +605,7 @@ const docTemplaterest = `{
                 "summary": "Delete Organization",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Organization ID",
                         "name": "id",
                         "in": "path",
@@ -859,7 +859,22 @@ const docTemplaterest = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/response.ResponseSuccessWithMeta"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseSuccessWithMeta"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.TransactionList"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -1759,6 +1774,32 @@ const docTemplaterest = `{
                     "example": "2024-02-02T19:52:41Z"
                 },
                 "updated_at": {
+                    "type": "string",
+                    "example": "2024-02-02T19:52:41Z"
+                },
+                "updater": {
+                    "$ref": "#/definitions/common.User"
+                }
+            }
+        },
+        "response.TransactionList": {
+            "type": "object",
+            "properties": {
+                "bill_total": {
+                    "type": "number",
+                    "example": 1000.5
+                },
+                "branch": {
+                    "$ref": "#/definitions/response.Branch"
+                },
+                "creator": {
+                    "$ref": "#/definitions/common.User"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "01a0eca283a4796fa0e51d3ab1cfd2ba"
+                },
+                "transacted_at": {
                     "type": "string",
                     "example": "2024-02-02T19:52:41Z"
                 },

@@ -103,7 +103,7 @@ func (h *Handler) TransactionDetailGet(echoCtx *echo.Context) error {
 // @Security BearerAuth
 // @Param       parameter query commonEntity.Request true "Query Param"
 // @Param       parameter query reqTrxCore.TransactionListGet true "Query Param"
-// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{[]resTrxCore.TransactionList}
+// @Success		200	{object}	resPkg.ResponseSuccessWithMeta{data=[]resTrxCore.TransactionList}
 // @Failure     400 {object}	resPkg.ResponseBadRequest
 // @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
 // @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
