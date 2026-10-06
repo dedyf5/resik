@@ -7,6 +7,7 @@ package response
 import (
 	"time"
 
+	commonCore "github.com/dedyf5/resik/core/common"
 	dtoTrx "github.com/dedyf5/resik/core/transaction/dto"
 )
 
@@ -24,8 +25,8 @@ func TransactionsGetFromDTO(src *dtoTrx.Transactions) (res []*TransactionList) {
 					Name: v.OrganizationName,
 				},
 			},
-			Creator: UserFromUserEntity(v.Creator),
-			Updater: UserFromUserEntity(v.Updater),
+			Creator: commonCore.UserFromUserEntity(v.Creator),
+			Updater: commonCore.UserFromUserEntity(v.Updater),
 		})
 	}
 	return

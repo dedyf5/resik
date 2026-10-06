@@ -21,16 +21,8 @@ func OrganizationDetailFromDTO(src *dtoOrganization.Organization) *OrganizationD
 		Name:        src.Name,
 		Description: src.Description,
 		CreatedAt:   src.CreatedAt.Format(time.RFC3339),
-		Creator: &commonCore.User{
-			Id:       src.Creator.PublicID.String32(),
-			Name:     src.Creator.Name,
-			Username: src.Creator.Username,
-		},
-		UpdatedAt: src.UpdatedAt.Format(time.RFC3339),
-		Updater: &commonCore.User{
-			Id:       src.Updater.PublicID.String32(),
-			Name:     src.Updater.Name,
-			Username: src.Updater.Username,
-		},
+		Creator:     commonCore.UserFromUserEntity(src.Creator),
+		UpdatedAt:   src.UpdatedAt.Format(time.RFC3339),
+		Updater:     commonCore.UserFromUserEntity(src.Updater),
 	}
 }
