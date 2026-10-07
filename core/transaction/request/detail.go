@@ -21,7 +21,7 @@ func (t *TransactionDetailGet) ToParam(ctx *ctx.Ctx, resolver identity.IdentityR
 		return nil, resPkg.NewStatusMessage(
 			http.StatusBadRequest,
 			term.InvalidID.Localize(ctx.Lang().Localizer),
-			nil,
+			uuidErr,
 		)
 	}
 
