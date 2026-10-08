@@ -7,11 +7,11 @@ syntax = "proto3";
 package core.transaction.response;
 option go_package = "github.com/dedyf5/resik/core/transaction/response";
 
-import "core/transaction/response/common.proto";
+import "core/common/organization.proto";
 
 // Message response for organization omzet transaction.
 message OrganizationOmzet {
-    Organization organization = 1; // @gotags: json:"organization"
+    core.common.Organization organization = 1; // @gotags: json:"organization"
     double omzet = 2; // @gotags: json:"omzet" example:"5000.5"
     string period = 3; // @gotags: json:"period" example:"2023-11-22"
 }

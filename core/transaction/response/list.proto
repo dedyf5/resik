@@ -8,12 +8,12 @@ package core.transaction.response;
 option go_package = "github.com/dedyf5/resik/core/transaction/response";
 
 import "core/common/user.proto";
-import "core/transaction/response/common.proto";
+import "core/common/organization.proto";
 
 // Message response item for transactions list
 message TransactionList {
     string id = 1; // @gotags: json:"id" example:"01a0eca283a4796fa0e51d3ab1cfd2ba"
-    Branch branch = 2; // @gotags: json:"branch"
+    core.common.Branch branch = 2; // @gotags: json:"branch"
     double bill_total = 3; // @gotags: json:"bill_total" example:"1000.5"
     string transacted_at = 4; // @gotags: json:"transacted_at" example:"2024-02-02T19:52:41Z"
     core.common.User creator = 5; // @gotags: json:"creator"

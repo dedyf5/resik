@@ -13,6 +13,8 @@ import (
 	reflect "reflect"
 
 	dto "github.com/dedyf5/resik/core/transaction/dto"
+	ctx "github.com/dedyf5/resik/ctx"
+	transaction "github.com/dedyf5/resik/entities/transaction"
 	param "github.com/dedyf5/resik/entities/transaction/param"
 	response "github.com/dedyf5/resik/pkg/response"
 	gomock "go.uber.org/mock/gomock"
@@ -85,6 +87,21 @@ func (m *MockIService) TransactionGetByPublicID(arg0 *param.TransactionGet) (*dt
 func (mr *MockIServiceMockRecorder) TransactionGetByPublicID(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionGetByPublicID", reflect.TypeOf((*MockIService)(nil).TransactionGetByPublicID), arg0)
+}
+
+// TransactionInsert mocks base method.
+func (m *MockIService) TransactionInsert(arg0 *ctx.Ctx, arg1 *transaction.Transaction) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionInsert", arg0, arg1)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionInsert indicates an expected call of TransactionInsert.
+func (mr *MockIServiceMockRecorder) TransactionInsert(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionInsert", reflect.TypeOf((*MockIService)(nil).TransactionInsert), arg0, arg1)
 }
 
 // TransactionsGet mocks base method.

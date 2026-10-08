@@ -29,6 +29,38 @@ import (
 	"golang.org/x/text/language"
 )
 
+func TestTransactionInsert(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	trxRepo, _, ctx, trxService := setup(ctrl)
+
+	transaction := &trxEntity.Transaction{}
+
+	t.Run("TestTransactionInsert TransactionInsert ERROR-500", func(t *testing.T) {
+		okExpected := false
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionInsert(ctx, transaction).Return(okExpected, statusErr),
+		)
+		res, err := trxService.TransactionInsert(ctx, transaction)
+		assert.Equal(t, okExpected, res)
+		assert.Equal(t, statusErr, err)
+	})
+
+	t.Run("TestTransactionInsert ALL-SUCCESS", func(t *testing.T) {
+		okExpected := true
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionInsert(ctx, transaction).Return(okExpected, nil),
+		)
+		res, err := trxService.TransactionInsert(ctx, transaction)
+		assert.Equal(t, okExpected, res)
+		assert.Nil(t, err)
+	})
+}
+
 func TestTransactionGetByPublicID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

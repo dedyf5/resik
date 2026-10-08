@@ -8,10 +8,17 @@ import (
 	"net/http"
 
 	trxDTO "github.com/dedyf5/resik/core/transaction/dto"
+	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/ctx/lang/term"
+	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
+
+func (s *Service) TransactionInsert(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
+	ok, err = s.transactionRepo.TransactionInsert(ctx, transaction)
+	return
+}
 
 func (s *Service) TransactionGetByPublicID(param *paramTrx.TransactionGet) (res *trxDTO.Transaction, err *resPkg.Status) {
 	transaction, err := s.transactionRepo.TransactionGetByPublicID(param)

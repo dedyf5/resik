@@ -50,6 +50,26 @@ other = "Akses tidak diizinkan"
 hash = "sha1-9f8a2389a20ca0752aa9e95093515517e90e194c"
 other = "User"
 
+["validation.field.bill_total"]
+hash = "sha1-7b474ef780ef63a2f105368318f0051440f83848"
+other = "Total Tagihan"
+
+["validation.field.branch.id"]
+hash = "sha1-f136be55fc660ab0b0d9df06d724f28cf983f7c6"
+other = "ID Cabang"
+
+["validation.field.branch.name"]
+hash = "sha1-0e465da2910929893a4482298b60766911680146"
+other = "Nama Cabang"
+
+["validation.field.branch.organization.id"]
+hash = "sha1-986c63d3b197d81c6d6058d5efaf5d4c0484e060"
+other = "ID Organisasi"
+
+["validation.field.branch.organization.name"]
+hash = "sha1-1458ffedd0eb28449819f4e1cddff91aa254a592"
+other = "Nama Organisasi"
+
 ["validation.field.branch_id"]
 hash = "sha1-f136be55fc660ab0b0d9df06d724f28cf983f7c6"
 other = "ID Cabang"
@@ -105,6 +125,10 @@ other = "Password"
 ["validation.field.timezone"]
 hash = "sha1-d1f7dc891b5e5d1797163b556e805123c9369e4f"
 other = "Zona waktu"
+
+["validation.field.transacted_at"]
+hash = "sha1-d93cb17edc25c3a9a1419eadb9972e4d129e60b9"
+other = "Waktu Transaksi"
 
 ["validation.field.updated_at"]
 hash = "sha1-307fd06961c6145ce10557e9b092f2365e480405"

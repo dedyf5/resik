@@ -12,9 +12,11 @@ import (
 	"regexp"
 	"slices"
 	"strings"
+	"time"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	"github.com/go-playground/locales"
 	"github.com/go-playground/locales/en"
 	"github.com/go-playground/locales/id"
@@ -42,15 +44,63 @@ type Validate struct {
 	universalTranslator *ut.UniversalTranslator
 }
 
+type customTag struct {
+	tag          string
+	transFunc    validator.Func
+	regisFunc    func(v *validator.Validate, trans ut.Translator, msg string) error
+	translations map[language.Tag]string
+}
+
+var customTags = []customTag{
+	{
+		tag:       "notblank",
+		transFunc: validators.NotBlank,
+		regisFunc: registerNotBlank,
+		translations: map[language.Tag]string{
+			language.Indonesian: "{0} tidak boleh kosong",
+			language.English:    "{0} must not be blank",
+			language.Japanese:   "{0}は空であってはなりません",
+		},
+	},
+	{
+		tag:       "oneof_order",
+		transFunc: isOneOfOrder,
+		regisFunc: registerOneOfOrder,
+		translations: map[language.Tag]string{
+			language.Indonesian: "{0} harus berupa salah satu dari [{1}]",
+			language.English:    "{0} must be one of [{1}]",
+			language.Japanese:   "{0}は[{1}]のうちのいずれかでなければなりません",
+		},
+	},
+	{
+		tag:       "uuidv7",
+		transFunc: isUUIDV7,
+		regisFunc: registerUUIDV7,
+		translations: map[language.Tag]string{
+			language.Indonesian: "format {0} tidak valid",
+			language.English:    "format {0} is invalid",
+			language.Japanese:   "{0}の形式が正しくありません",
+		},
+	},
+	{
+		tag:       "past_or_present",
+		transFunc: isPastOrPresent,
+		regisFunc: registerPastOrPresent,
+		translations: map[language.Tag]string{
+			language.Indonesian: "{0} tidak boleh lebih dari waktu sekarang",
+			language.English:    "{0} must be a past or present date",
+			language.Japanese:   "{0}には過去または現在の日付を指定してください",
+		},
+	},
+}
+
 func New(langDefault language.Tag) *Validate {
 	validate := validator.New()
 
-	if err := validate.RegisterValidation("notblank", validators.NotBlank); err != nil {
-		log.Panic("error register validation tag notblank")
-	}
-
-	if err := validate.RegisterValidation("oneof_order", isOneOfOrder); err != nil {
-		log.Panic("error register validation tag oneof_order")
+	for _, v := range customTags {
+		if err := validate.RegisterValidation(v.tag, v.transFunc); err != nil {
+			log.Panicf("error register validation tag %s", v.tag)
+		}
 	}
 
 	uni := ut.New(LanguageToTranslator(langDefault), Translators()...)
@@ -89,42 +139,37 @@ func New(langDefault language.Tag) *Validate {
 }
 
 func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator) {
-	// Indonesian
-	if t, found := uni.GetTranslator(language.Indonesian.String()); found {
-		if err := idTrans.RegisterDefaultTranslations(v, t); err != nil {
-			log.Printf("[validator] failed to register ID translation: %v", err)
-		}
-		if err := registerNotBlank(v, t, "{0} tidak boleh kosong"); err != nil {
-			log.Printf("[validator] failed to register notblank for ID: %v", err)
-		}
-		if err := registerOneOfOrder(v, t, "{0} harus berupa salah satu dari [{1}]"); err != nil {
-			log.Printf("[validator] failed to register oneof_order for ID: %v", err)
-		}
+	type translator struct {
+		langTag language.Tag
+		fn      func(*validator.Validate, ut.Translator) error
 	}
 
-	// English
-	if t, found := uni.GetTranslator(language.English.String()); found {
-		if err := enTrans.RegisterDefaultTranslations(v, t); err != nil {
-			log.Printf("[validator] failed to register EN translation: %v", err)
-		}
-		if err := registerNotBlank(v, t, "{0} must not be blank"); err != nil {
-			log.Printf("[validator] failed to register notblank for EN: %v", err)
-		}
-		if err := registerOneOfOrder(v, t, "{0} must be one of [{1}]"); err != nil {
-			log.Printf("[validator] failed to register oneof_order for EN: %v", err)
-		}
+	var translators = []translator{
+		{
+			langTag: language.Indonesian,
+			fn:      idTrans.RegisterDefaultTranslations,
+		},
+		{
+			langTag: language.English,
+			fn:      enTrans.RegisterDefaultTranslations,
+		},
+		{
+			langTag: language.Japanese,
+			fn:      jaTrans.RegisterDefaultTranslations,
+		},
 	}
 
-	// Japanese
-	if t, found := uni.GetTranslator(language.Japanese.String()); found {
-		if err := jaTrans.RegisterDefaultTranslations(v, t); err != nil {
-			log.Printf("[validator] failed to register JA translation: %v", err)
-		}
-		if err := registerNotBlank(v, t, "{0}は空であってはなりません"); err != nil {
-			log.Printf("[validator] failed to register notblank for JA: %v", err)
-		}
-		if err := registerOneOfOrder(v, t, "{0}は[{1}]のうちのいずれかでなければなりません"); err != nil {
-			log.Printf("[validator] failed to register oneof_order for JA: %v", err)
+	for _, t1 := range translators {
+		if t2, found := uni.GetTranslator(t1.langTag.String()); found {
+			langCode := strings.ToUpper(t1.langTag.String())
+			if err := t1.fn(v, t2); err != nil {
+				log.Printf("[validator] failed to register %s translation: %v", langCode, err)
+			}
+			for _, ct := range customTags {
+				if err := ct.regisFunc(v, t2, ct.translations[t1.langTag]); err != nil {
+					log.Printf("[validator] failed to register %s translation for %s: %v", ct.tag, langCode, err)
+				}
+			}
 		}
 	}
 }
@@ -146,6 +191,24 @@ func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) 
 		param := strings.Join(options, " ")
 
 		t, _ := ut.T("oneof_order", fe.Field(), param)
+		return t
+	})
+}
+
+func registerUUIDV7(v *validator.Validate, trans ut.Translator, msg string) error {
+	return v.RegisterTranslation("uuidv7", trans, func(ut ut.Translator) error {
+		return ut.Add("uuidv7", msg, true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("uuidv7", fe.Field())
+		return t
+	})
+}
+
+func registerPastOrPresent(v *validator.Validate, trans ut.Translator, msg string) error {
+	return v.RegisterTranslation("past_or_present", trans, func(ut ut.Translator) error {
+		return ut.Add("past_or_present", msg, true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("past_or_present", fe.Field())
 		return t
 	})
 }
@@ -241,6 +304,28 @@ func isOneOfOrder(fl validator.FieldLevel) bool {
 	return true
 }
 
+func isUUIDV7(fl validator.FieldLevel) bool {
+	_, err := uuidPkg.ParseUUIDV7(fl.Field().String())
+	return err == nil
+}
+
+func isPastOrPresent(fl validator.FieldLevel) bool {
+	str := fl.Field().String()
+	if str == "" {
+		return true
+	}
+
+	t, err := time.Parse(time.RFC3339, str)
+	if err != nil {
+		return false
+	}
+
+	const clockSkewTolerance = 5 * time.Second
+	nowWithTolerance := time.Now().Add(clockSkewTolerance)
+
+	return !t.After(nowWithTolerance)
+}
+
 func getOneOfOrderOptions(param string) []string {
 	s := strings.ReplaceAll(param, "'", "")
 	s = strings.ReplaceAll(s, `\"`, ``)
@@ -258,10 +343,10 @@ func errorReason(err validator.FieldError) string {
 	case "required", "required_if", "required_unless", "required_with", "required_with_all", "required_without", "required_without_all":
 		return "REQUIRED"
 
-	case "oneof", "oneof_order":
+	case "oneof", "oneof_order", "past_or_present":
 		return "OUT_OF_RANGE"
 
-	case "datetime", "email", "url", "uuid", "hostname", "ip", "latitude", "longitude":
+	case "datetime", "email", "url", "uuid", "uuidv7", "hostname", "ip", "latitude", "longitude":
 		return "INVALID_FORMAT"
 
 	case "min", "gt", "gte":

@@ -8,6 +8,7 @@ import (
 	"errors"
 	"net/http"
 
+	"github.com/dedyf5/resik/ctx"
 	branchEntity "github.com/dedyf5/resik/entities/branch"
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
@@ -16,6 +17,14 @@ import (
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"gorm.io/gorm"
 )
+
+func (r *TransactionRepo) TransactionInsert(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
+	result := r.DB.WithContext(ctx.Context).Create(transaction)
+	if result.Error != nil {
+		return false, resPkg.NewStatusError(http.StatusInternalServerError, result.Error)
+	}
+	return true, nil
+}
 
 func (r *TransactionRepo) TransactionGetByPublicID(param *paramTrx.TransactionGet) (transaction *trxEntity.Transaction, err *resPkg.Status) {
 	query := r.DB.WithContext(param.Ctx.Context).Table(trxEntity.TABLE_NAME).

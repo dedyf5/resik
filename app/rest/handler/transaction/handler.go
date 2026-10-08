@@ -9,6 +9,7 @@ import (
 
 	echoFW "github.com/dedyf5/resik/app/rest/fw/echo"
 	"github.com/dedyf5/resik/config"
+	commonCore "github.com/dedyf5/resik/core/common"
 	trxService "github.com/dedyf5/resik/core/transaction"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
@@ -41,6 +42,52 @@ func New(config config.Config, log *logCtx.Log, fw echoFW.IEcho, resolver identi
 		resolver:   resolver,
 		trxService: trxService,
 	}
+}
+
+// @Summary Create Transaction
+// @Description Create new transaction
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param       parameter query commonEntity.Request true "Query Param"
+// @Param       payload body reqTrxCore.TransactionPost true "Payload"
+// @Success		201	{object}	resPkg.ResponseSuccess{data=commonCore.Id}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
+// @Router		/transactions [post]
+func (h *Handler) TransactionPost(echoCtx *echo.Context) error {
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
+	if err != nil {
+		return err
+	}
+	h.log.Debug("TransactionPost")
+
+	var payload reqTrxCore.TransactionPost
+	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
+		return err
+	}
+
+	entity, err := payload.ToEntity(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = h.trxService.TransactionInsert(ctx, entity)
+	if err != nil {
+		return err
+	}
+
+	return resPkg.NewStatusSuccess(
+		http.StatusCreated,
+		term.SuccessfullyCreatedVal.Localize(
+			ctx.Lang().Localizer,
+			term.Transaction.Localize(ctx.Lang().Localizer),
+		),
+		&commonCore.Id{Id: entity.PublicID.String32()},
+	)
 }
 
 // @Summary Get Transaction by ID

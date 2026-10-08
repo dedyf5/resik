@@ -17,10 +17,10 @@ func TransactionsGetFromDTO(src *dtoTrx.Transactions) (res []*TransactionList) {
 			Id:           v.PublicID.String32(),
 			BillTotal:    v.BillTotal,
 			TransactedAt: v.TransactedAt.Format(time.RFC3339),
-			Branch: &Branch{
+			Branch: &commonCore.Branch{
 				Id:   v.BranchPublicID.String32(),
 				Name: v.BranchName,
-				Organization: &Organization{
+				Organization: &commonCore.Organization{
 					Id:   v.OrganizationPublicID.String32(),
 					Name: v.OrganizationName,
 				},

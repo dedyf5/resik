@@ -11,13 +11,16 @@ import "app/grpc/handler/transaction/branch.proto";
 import "app/grpc/handler/transaction/detail.proto";
 import "app/grpc/handler/transaction/list.proto";
 import "app/grpc/handler/transaction/organization.proto";
+import "app/grpc/handler/transaction/upsert.proto";
 
 import "core/transaction/request/branch.proto";
 import "core/transaction/request/detail.proto";
 import "core/transaction/request/list.proto";
 import "core/transaction/request/organization.proto";
+import "core/transaction/request/upsert.proto";
 
 service TransactionService {
+    rpc TransactionPost(core.transaction.request.TransactionPost) returns (transaction.TransactionUpsertRes);
     rpc TransactionDetailGet(core.transaction.request.TransactionDetailGet) returns (transaction.TransactionDetailRes);
     rpc TransactionListGet(core.transaction.request.TransactionListGet) returns (transaction.TransactionListGetRes);
     rpc OrganizationOmzetGet(core.transaction.request.OrganizationOmzetGet) returns (transaction.OrganizationOmzetGetRes);

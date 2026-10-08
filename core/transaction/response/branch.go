@@ -4,16 +4,19 @@
 
 package response
 
-import trxEntity "github.com/dedyf5/resik/entities/transaction"
+import (
+	commonCore "github.com/dedyf5/resik/core/common"
+	trxEntity "github.com/dedyf5/resik/entities/transaction"
+)
 
 func BranchOmzetFromEntity(src []trxEntity.BranchOmzet) []*BranchOmzet {
 	res := make([]*BranchOmzet, 0, cap(src))
 	for _, v := range src {
 		res = append(res, &BranchOmzet{
-			Branch: &Branch{
+			Branch: &commonCore.Branch{
 				Id:   v.BranchPublicID.String32(),
 				Name: v.BranchName,
-				Organization: &Organization{
+				Organization: &commonCore.Organization{
 					Id:   v.OrganizationPublicID.String32(),
 					Name: v.OrganizationName,
 				},

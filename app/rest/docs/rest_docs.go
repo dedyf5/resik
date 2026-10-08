@@ -902,6 +902,89 @@ const docTemplaterest = `{
                         }
                     }
                 }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create new transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Create Transaction",
+                "parameters": [
+                    {
+                        "enum": [
+                            "en",
+                            "id",
+                            "ja"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TransactionPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/common.Id"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    }
+                }
             }
         },
         "/transactions/branch/{branch_id}/omzet": {
@@ -1287,6 +1370,53 @@ const docTemplaterest = `{
         }
     },
     "definitions": {
+        "common.Branch": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "organization"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "019df0d3f6c579ac8976afe7a437166c"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Resik Branch"
+                },
+                "organization": {
+                    "$ref": "#/definitions/common.Organization"
+                }
+            }
+        },
+        "common.Id": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "01a10efed4a1715081b36e0ebed6d68a"
+                }
+            }
+        },
+        "common.Organization": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "01a0e7406f8f737fa0818fb93226ee61"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Resik Organization"
+                }
+            }
+        },
         "common.User": {
             "type": "object",
             "properties": {
@@ -1419,6 +1549,28 @@ const docTemplaterest = `{
                 }
             }
         },
+        "request.TransactionPost": {
+            "type": "object",
+            "required": [
+                "bill_total",
+                "branch",
+                "transacted_at"
+            ],
+            "properties": {
+                "bill_total": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 1000.5
+                },
+                "branch": {
+                    "$ref": "#/definitions/common.Branch"
+                },
+                "transacted_at": {
+                    "type": "string",
+                    "example": "2024-02-02T19:52:41Z"
+                }
+            }
+        },
         "response.App": {
             "type": "object",
             "properties": {
@@ -1461,27 +1613,11 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.Branch": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": "019df0d3f6c579ac8976afe7a437166c"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "Resik Branch"
-                },
-                "organization": {
-                    "$ref": "#/definitions/response.Organization"
-                }
-            }
-        },
         "response.BranchOmzet": {
             "type": "object",
             "properties": {
                 "branch": {
-                    "$ref": "#/definitions/response.Branch"
+                    "$ref": "#/definitions/common.Branch"
                 },
                 "omzet": {
                     "type": "number",
@@ -1549,19 +1685,6 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.Organization": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": "01a0e7406f8f737fa0818fb93226ee61"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "Resik Organization"
-                }
-            }
-        },
         "response.OrganizationDetail": {
             "type": "object",
             "properties": {
@@ -1623,7 +1746,7 @@ const docTemplaterest = `{
                     "example": 5000.5
                 },
                 "organization": {
-                    "$ref": "#/definitions/response.Organization"
+                    "$ref": "#/definitions/common.Organization"
                 },
                 "period": {
                     "type": "string",
@@ -1756,7 +1879,7 @@ const docTemplaterest = `{
                     "example": 1000.5
                 },
                 "branch": {
-                    "$ref": "#/definitions/response.Branch"
+                    "$ref": "#/definitions/common.Branch"
                 },
                 "created_at": {
                     "type": "string",
@@ -1790,7 +1913,7 @@ const docTemplaterest = `{
                     "example": 1000.5
                 },
                 "branch": {
-                    "$ref": "#/definitions/response.Branch"
+                    "$ref": "#/definitions/common.Branch"
                 },
                 "creator": {
                     "$ref": "#/definitions/common.User"

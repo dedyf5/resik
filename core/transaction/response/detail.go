@@ -20,10 +20,10 @@ func TransactionDetailFromDTO(src *dtoTrx.Transaction) *TransactionDetail {
 		Id:           src.PublicID.String32(),
 		BillTotal:    src.BillTotal,
 		TransactedAt: src.TransactedAt.Format(time.RFC3339),
-		Branch: &Branch{
+		Branch: &commonCore.Branch{
 			Id:   src.BranchPublicID.String32(),
 			Name: src.BranchName,
-			Organization: &Organization{
+			Organization: &commonCore.Organization{
 				Id:   src.OrganizationPublicID.String32(),
 				Name: src.OrganizationName,
 			},

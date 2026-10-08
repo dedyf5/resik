@@ -22,6 +22,7 @@ type ICheck interface {
 }
 
 type ITransaction interface {
+	TransactionInsert(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status)
 	TransactionGetByPublicID(param *paramTrx.TransactionGet) (transaction *trxEntity.Transaction, err *resPkg.Status)
 	TransactionsGetData(param *paramTrx.TransactionsGet) (transactions trxEntity.Transactions, err *resPkg.Status)
 	TransactionsGetTotal(param *paramTrx.TransactionsGet) (total int64, err *resPkg.Status)

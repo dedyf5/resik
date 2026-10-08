@@ -1,0 +1,18 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package core.transaction.request;
+option go_package = "github.com/dedyf5/resik/core/transaction/request";
+
+import "core/common/user.proto";
+import "core/common/organization.proto";
+
+// Message request to create a transaction
+message TransactionPost {
+  core.common.Branch branch = 1; // @gotags: json:"branch" validate:"required"
+  optional double bill_total = 2; // @gotags: json:"bill_total" validate:"required,gte=0" example:"1000.5"
+  string transacted_at = 3; // @gotags: json:"transacted_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00,past_or_present" example:"2024-02-02T19:52:41Z"
+}

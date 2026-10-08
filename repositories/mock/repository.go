@@ -161,6 +161,21 @@ func (mr *MockITransactionMockRecorder) TransactionGetByPublicID(arg0 any) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionGetByPublicID", reflect.TypeOf((*MockITransaction)(nil).TransactionGetByPublicID), arg0)
 }
 
+// TransactionInsert mocks base method.
+func (m *MockITransaction) TransactionInsert(arg0 *ctx.Ctx, arg1 *transaction.Transaction) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionInsert", arg0, arg1)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionInsert indicates an expected call of TransactionInsert.
+func (mr *MockITransactionMockRecorder) TransactionInsert(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionInsert", reflect.TypeOf((*MockITransaction)(nil).TransactionInsert), arg0, arg1)
+}
+
 // TransactionsGetData mocks base method.
 func (m *MockITransaction) TransactionsGetData(arg0 *param0.TransactionsGet) (transaction.Transactions, *response.Status) {
 	m.ctrl.T.Helper()
