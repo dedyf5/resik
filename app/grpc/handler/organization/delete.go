@@ -7,13 +7,13 @@ package organization
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/status"
+	commonCore "github.com/dedyf5/resik/core/common"
 	reqOrganizationCore "github.com/dedyf5/resik/core/organization/request"
 	"github.com/dedyf5/resik/ctx"
 	"google.golang.org/grpc/codes"
 )
 
-func (h *OrganizationHandler) OrganizationDelete(c context.Context, req *reqOrganizationCore.OrganizationDelete) (*status.Empty, error) {
+func (h *OrganizationHandler) OrganizationDelete(c context.Context, req *reqOrganizationCore.OrganizationDelete) (*commonCore.Empty, error) {
 	ctx, err := ctx.NewCtx(c, h.log)
 	if err != nil {
 		return nil, err
@@ -33,8 +33,8 @@ func (h *OrganizationHandler) OrganizationDelete(c context.Context, req *reqOrga
 		return nil, err
 	}
 
-	return &status.Empty{
-		Code:    status.CodePlus(codes.OK),
+	return &commonCore.Empty{
+		Code:    commonCore.StatusCodePlus(codes.OK),
 		Message: codes.OK.String(),
 	}, nil
 }

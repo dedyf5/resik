@@ -12,11 +12,11 @@ package organization
 
 import (
 	context "context"
-	status "github.com/dedyf5/resik/app/grpc/proto/status"
+	common "github.com/dedyf5/resik/core/common"
 	request "github.com/dedyf5/resik/core/organization/request"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
-	status1 "google.golang.org/grpc/status"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -40,7 +40,7 @@ type OrganizationServiceClient interface {
 	OrganizationPut(ctx context.Context, in *request.OrganizationPut, opts ...grpc.CallOption) (*OrganizationUpsertRes, error)
 	OrganizationDetailGet(ctx context.Context, in *request.OrganizationDetailGet, opts ...grpc.CallOption) (*OrganizationDetailGetRes, error)
 	OrganizationListGet(ctx context.Context, in *request.OrganizationListGet, opts ...grpc.CallOption) (*OrganizationListGetRes, error)
-	OrganizationDelete(ctx context.Context, in *request.OrganizationDelete, opts ...grpc.CallOption) (*status.Empty, error)
+	OrganizationDelete(ctx context.Context, in *request.OrganizationDelete, opts ...grpc.CallOption) (*common.Empty, error)
 }
 
 type organizationServiceClient struct {
@@ -91,9 +91,9 @@ func (c *organizationServiceClient) OrganizationListGet(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *organizationServiceClient) OrganizationDelete(ctx context.Context, in *request.OrganizationDelete, opts ...grpc.CallOption) (*status.Empty, error) {
+func (c *organizationServiceClient) OrganizationDelete(ctx context.Context, in *request.OrganizationDelete, opts ...grpc.CallOption) (*common.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(status.Empty)
+	out := new(common.Empty)
 	err := c.cc.Invoke(ctx, OrganizationService_OrganizationDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -109,7 +109,7 @@ type OrganizationServiceServer interface {
 	OrganizationPut(context.Context, *request.OrganizationPut) (*OrganizationUpsertRes, error)
 	OrganizationDetailGet(context.Context, *request.OrganizationDetailGet) (*OrganizationDetailGetRes, error)
 	OrganizationListGet(context.Context, *request.OrganizationListGet) (*OrganizationListGetRes, error)
-	OrganizationDelete(context.Context, *request.OrganizationDelete) (*status.Empty, error)
+	OrganizationDelete(context.Context, *request.OrganizationDelete) (*common.Empty, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }
 
@@ -118,19 +118,19 @@ type UnimplementedOrganizationServiceServer struct {
 }
 
 func (UnimplementedOrganizationServiceServer) OrganizationPost(context.Context, *request.OrganizationPost) (*OrganizationUpsertRes, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method OrganizationPost not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method OrganizationPost not implemented")
 }
 func (UnimplementedOrganizationServiceServer) OrganizationPut(context.Context, *request.OrganizationPut) (*OrganizationUpsertRes, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method OrganizationPut not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method OrganizationPut not implemented")
 }
 func (UnimplementedOrganizationServiceServer) OrganizationDetailGet(context.Context, *request.OrganizationDetailGet) (*OrganizationDetailGetRes, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method OrganizationDetailGet not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method OrganizationDetailGet not implemented")
 }
 func (UnimplementedOrganizationServiceServer) OrganizationListGet(context.Context, *request.OrganizationListGet) (*OrganizationListGetRes, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method OrganizationListGet not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method OrganizationListGet not implemented")
 }
-func (UnimplementedOrganizationServiceServer) OrganizationDelete(context.Context, *request.OrganizationDelete) (*status.Empty, error) {
-	return nil, status1.Errorf(codes.Unimplemented, "method OrganizationDelete not implemented")
+func (UnimplementedOrganizationServiceServer) OrganizationDelete(context.Context, *request.OrganizationDelete) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OrganizationDelete not implemented")
 }
 func (UnimplementedOrganizationServiceServer) mustEmbedUnimplementedOrganizationServiceServer() {}
 

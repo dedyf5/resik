@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	status "github.com/dedyf5/resik/app/grpc/proto/status"
+	commonCore "github.com/dedyf5/resik/core/common"
 	healthCore "github.com/dedyf5/resik/core/health"
 	"github.com/dedyf5/resik/core/health/response"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -35,8 +35,8 @@ func (h *HealthHandler) HealthzGet(c context.Context, _ *emptypb.Empty) (*Health
 	}
 
 	return &HealthHealthzGetRes{
-		Status: &status.Status{
-			Code:    status.CodePlus(codes.OK),
+		Status: &commonCore.Status{
+			Code:    commonCore.StatusCodePlus(codes.OK),
 			Message: statusMsg,
 		},
 		Data: &response.HealthHealthz{
@@ -57,8 +57,8 @@ func (h *HealthHandler) ReadyzGet(c context.Context, _ *emptypb.Empty) (*HealthR
 	}
 
 	return &HealthReadyzGetRes{
-		Status: &status.Status{
-			Code:    status.CodePlus(readinessStatus.GRPCStatusCode()),
+		Status: &commonCore.Status{
+			Code:    commonCore.StatusCodePlus(readinessStatus.GRPCStatusCode()),
 			Message: string(readinessStatus.OverallStatus),
 		},
 		Data: &response.HealthReadyz{

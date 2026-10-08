@@ -7,7 +7,7 @@ package transaction
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/status"
+	commonCore "github.com/dedyf5/resik/core/common"
 	reqTransactionCore "github.com/dedyf5/resik/core/transaction/request"
 
 	"github.com/dedyf5/resik/core/transaction/response"
@@ -40,8 +40,8 @@ func (h *TransactionHandler) TransactionListGet(c context.Context, req *reqTrans
 	code := codes.OK
 
 	return &TransactionListGetRes{
-		Status: &status.Status{
-			Code:    status.CodePlus(code),
+		Status: &commonCore.Status{
+			Code:    commonCore.StatusCodePlus(code),
 			Message: code.String(),
 		},
 		Data: response.TransactionsGetFromDTO(&res.Data),

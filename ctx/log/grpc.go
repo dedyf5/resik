@@ -12,7 +12,7 @@ import (
 	"sync"
 	"time"
 
-	statusProto "github.com/dedyf5/resik/app/grpc/proto/status"
+	commonCore "github.com/dedyf5/resik/core/common"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -50,7 +50,7 @@ var sensitiveFields = map[string]struct{}{
 func NewGRPC(c context.Context, log *Log, start time.Time, path string, requestBody any, responseBody any, err error) *GRPC {
 	status := resPkg.NewStatusCode(http.StatusOK)
 
-	if s := statusProto.Extract(responseBody); s != nil {
+	if s := commonCore.StatusExtract(responseBody); s != nil {
 		status.Message = s.GetMessage()
 	}
 

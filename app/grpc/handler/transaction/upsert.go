@@ -7,7 +7,6 @@ package transaction
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/status"
 	commonCore "github.com/dedyf5/resik/core/common"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	"github.com/dedyf5/resik/ctx"
@@ -15,7 +14,7 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-func (h *TransactionHandler) TransactionPost(c context.Context, req *reqTrxCore.TransactionPost) (*TransactionUpsertRes, error) {
+func (h *TransactionHandler) TransactionPost(c context.Context, req *reqTrxCore.TransactionPost) (*commonCore.StatusAndId, error) {
 	ctx, err := ctx.NewCtx(c, h.log)
 	if err != nil {
 		return nil, err
@@ -35,9 +34,9 @@ func (h *TransactionHandler) TransactionPost(c context.Context, req *reqTrxCore.
 		return nil, err
 	}
 
-	return &TransactionUpsertRes{
-		Status: &status.Status{
-			Code: status.CodePlus(codes.OK),
+	return &commonCore.StatusAndId{
+		Status: &commonCore.Status{
+			Code: commonCore.StatusCodePlus(codes.OK),
 			Message: term.SuccessfullyCreatedVal.Localize(
 				ctx.Lang().Localizer,
 				term.Transaction.Localize(ctx.Lang().Localizer),

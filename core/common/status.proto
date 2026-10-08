@@ -4,8 +4,8 @@
 
 syntax = "proto3";
 
-package status;
-option go_package = "github.com/dedyf5/resik/app/grpc/proto/status";
+package core.common;
+option go_package = "github.com/dedyf5/resik/core/common";
 
 message Status {
     string code = 1; // @gotags: json:"code" example:"0"

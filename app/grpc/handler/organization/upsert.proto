@@ -7,10 +7,10 @@ syntax = "proto3";
 package organization;
 option go_package = "github.com/dedyf5/resik/app/grpc/handler/organization";
 
-import "app/grpc/proto/status/status.proto";
+import "core/common/status.proto";
 import "core/organization/response/upsert.proto";
 
 message OrganizationUpsertRes {
-    status.Status status = 1; // @gotags: json:"status"
+    core.common.Status status = 1; // @gotags: json:"status"
     core.organization.response.OrganizationUpsert data = 2; // @gotags: json:"data"
 }

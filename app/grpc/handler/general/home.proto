@@ -7,15 +7,15 @@ syntax = "proto3";
 package general;
 option go_package = "github.com/dedyf5/resik/app/grpc/handler/general";
 
-import "app/grpc/proto/common/request.proto";
-import "app/grpc/proto/status/status.proto";
+import "core/common/lang.proto";
+import "core/common/status.proto";
 import "core/app/response/app.proto";
 
 message HomeReq {
-    common.Request common = 1; // @gotags: json:"common"
+    core.common.Lang lang = 1; // @gotags: json:"lang"
 }
 
 message HomeRes {
-    status.Status status = 1; // @gotags: json:"status"
-    response.App data = 2; // @gotags: json:"data"
+    core.common.Status status = 1; // @gotags: json:"status"
+    core.app.response.App data = 2; // @gotags: json:"data"
 }

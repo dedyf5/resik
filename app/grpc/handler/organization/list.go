@@ -7,7 +7,7 @@ package organization
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/status"
+	commonCore "github.com/dedyf5/resik/core/common"
 	reqOrganizationCore "github.com/dedyf5/resik/core/organization/request"
 	"github.com/dedyf5/resik/core/organization/response"
 	"github.com/dedyf5/resik/ctx"
@@ -39,8 +39,8 @@ func (h *OrganizationHandler) OrganizationListGet(c context.Context, req *reqOrg
 	code := codes.OK
 
 	return &OrganizationListGetRes{
-		Status: &status.Status{
-			Code:    status.CodePlus(code),
+		Status: &commonCore.Status{
+			Code:    commonCore.StatusCodePlus(code),
 			Message: code.String(),
 		},
 		Data: response.OrganizationListFromDTO(&res.Data),

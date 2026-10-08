@@ -7,7 +7,6 @@ syntax = "proto3";
 package core.transaction.request;
 option go_package = "github.com/dedyf5/resik/core/transaction/request";
 
-import "core/common/user.proto";
 import "core/common/organization.proto";
 
 // Message request to create a transaction

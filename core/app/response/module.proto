@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package response;
+package core.app.response;
 option go_package = "github.com/dedyf5/resik/core/app/response";
 
 message Module {

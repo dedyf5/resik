@@ -12,6 +12,7 @@ package transaction
 
 import (
 	context "context"
+	common "github.com/dedyf5/resik/core/common"
 	request "github.com/dedyf5/resik/core/transaction/request"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -35,7 +36,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionServiceClient interface {
-	TransactionPost(ctx context.Context, in *request.TransactionPost, opts ...grpc.CallOption) (*TransactionUpsertRes, error)
+	TransactionPost(ctx context.Context, in *request.TransactionPost, opts ...grpc.CallOption) (*common.StatusAndId, error)
 	TransactionDetailGet(ctx context.Context, in *request.TransactionDetailGet, opts ...grpc.CallOption) (*TransactionDetailRes, error)
 	TransactionListGet(ctx context.Context, in *request.TransactionListGet, opts ...grpc.CallOption) (*TransactionListGetRes, error)
 	OrganizationOmzetGet(ctx context.Context, in *request.OrganizationOmzetGet, opts ...grpc.CallOption) (*OrganizationOmzetGetRes, error)
@@ -50,9 +51,9 @@ func NewTransactionServiceClient(cc grpc.ClientConnInterface) TransactionService
 	return &transactionServiceClient{cc}
 }
 
-func (c *transactionServiceClient) TransactionPost(ctx context.Context, in *request.TransactionPost, opts ...grpc.CallOption) (*TransactionUpsertRes, error) {
+func (c *transactionServiceClient) TransactionPost(ctx context.Context, in *request.TransactionPost, opts ...grpc.CallOption) (*common.StatusAndId, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TransactionUpsertRes)
+	out := new(common.StatusAndId)
 	err := c.cc.Invoke(ctx, TransactionService_TransactionPost_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -104,7 +105,7 @@ func (c *transactionServiceClient) BranchOmzetGet(ctx context.Context, in *reque
 // All implementations must embed UnimplementedTransactionServiceServer
 // for forward compatibility
 type TransactionServiceServer interface {
-	TransactionPost(context.Context, *request.TransactionPost) (*TransactionUpsertRes, error)
+	TransactionPost(context.Context, *request.TransactionPost) (*common.StatusAndId, error)
 	TransactionDetailGet(context.Context, *request.TransactionDetailGet) (*TransactionDetailRes, error)
 	TransactionListGet(context.Context, *request.TransactionListGet) (*TransactionListGetRes, error)
 	OrganizationOmzetGet(context.Context, *request.OrganizationOmzetGet) (*OrganizationOmzetGetRes, error)
@@ -116,7 +117,7 @@ type TransactionServiceServer interface {
 type UnimplementedTransactionServiceServer struct {
 }
 
-func (UnimplementedTransactionServiceServer) TransactionPost(context.Context, *request.TransactionPost) (*TransactionUpsertRes, error) {
+func (UnimplementedTransactionServiceServer) TransactionPost(context.Context, *request.TransactionPost) (*common.StatusAndId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TransactionPost not implemented")
 }
 func (UnimplementedTransactionServiceServer) TransactionDetailGet(context.Context, *request.TransactionDetailGet) (*TransactionDetailRes, error) {

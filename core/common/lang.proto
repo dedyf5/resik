@@ -4,9 +4,9 @@
 
 syntax = "proto3";
 
-package common;
-option go_package = "github.com/dedyf5/resik/app/grpc/proto/common";
+package core.common;
+option go_package = "github.com/dedyf5/resik/core/common";
 
-message Request {
+message Lang {
     string lang = 1; // @gotags: json:"lang" example:"id"
 }

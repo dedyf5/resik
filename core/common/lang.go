@@ -6,7 +6,7 @@ package common
 
 import commonEntity "github.com/dedyf5/resik/entities/common"
 
-func (r *Request) ToRequestEntity() commonEntity.Request {
+func (r *Lang) ToRequestEntity() commonEntity.Request {
 	return commonEntity.Request{
 		Lang: r.GetLang(),
 	}

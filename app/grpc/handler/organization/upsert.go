@@ -7,7 +7,7 @@ package organization
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/status"
+	commonCore "github.com/dedyf5/resik/core/common"
 	reqOrganizationCore "github.com/dedyf5/resik/core/organization/request"
 	resOrganizationCore "github.com/dedyf5/resik/core/organization/response"
 	"github.com/dedyf5/resik/ctx"
@@ -36,8 +36,8 @@ func (h *OrganizationHandler) OrganizationPost(c context.Context, req *reqOrgani
 	}
 
 	return &OrganizationUpsertRes{
-		Status: &status.Status{
-			Code: status.CodePlus(codes.OK),
+		Status: &commonCore.Status{
+			Code: commonCore.StatusCodePlus(codes.OK),
 			Message: term.SuccessfullyCreatedVal.Localize(
 				ctx.Lang().Localizer,
 				term.Organization.Localize(ctx.Lang().Localizer),
@@ -75,8 +75,8 @@ func (h *OrganizationHandler) OrganizationPut(c context.Context, req *reqOrganiz
 	}
 
 	return &OrganizationUpsertRes{
-		Status: &status.Status{
-			Code: status.CodePlus(codes.OK),
+		Status: &commonCore.Status{
+			Code: commonCore.StatusCodePlus(codes.OK),
 			Message: term.SuccessfullyUpdatedVal.Localize(
 				ctx.Lang().Localizer,
 				term.Organization.Localize(ctx.Lang().Localizer),

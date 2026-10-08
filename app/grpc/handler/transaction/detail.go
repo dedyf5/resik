@@ -8,7 +8,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/dedyf5/resik/app/grpc/proto/status"
+	commonCore "github.com/dedyf5/resik/core/common"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
@@ -48,8 +48,8 @@ func (h *TransactionHandler) TransactionDetailGet(c context.Context, req *reqTrx
 	}
 
 	return &TransactionDetailRes{
-		Status: &status.Status{
-			Code:    status.CodePlus(codes.OK),
+		Status: &commonCore.Status{
+			Code:    commonCore.StatusCodePlus(codes.OK),
 			Message: codes.OK.String(),
 		},
 		Data: resTrxCore.TransactionDetailFromDTO(tx),

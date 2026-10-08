@@ -2,7 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package status
+package common
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ type statusGetter interface {
 // Extract pulls the Status message from an arbitrary object, typically a gRPC response.
 //
 // Returns nil if the object is nil, or if it does not satisfy the status getter interface.
-func Extract(param any) *Status {
+func StatusExtract(param any) *Status {
 	if param == nil {
 		return nil
 	}
@@ -29,6 +29,6 @@ func Extract(param any) *Status {
 	return nil
 }
 
-func CodePlus(code codes.Code) string {
+func StatusCodePlus(code codes.Code) string {
 	return fmt.Sprintf("%d.1", code)
 }

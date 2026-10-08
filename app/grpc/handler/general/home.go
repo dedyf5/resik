@@ -7,8 +7,8 @@ package general
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/status"
 	resAppCore "github.com/dedyf5/resik/core/app/response"
+	commonCore "github.com/dedyf5/resik/core/common"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/ctx/lang/term"
 	"github.com/dedyf5/resik/entities/common"
@@ -25,8 +25,8 @@ func (h *GeneralHandler) Home(c context.Context, _ *emptypb.Empty) (*HomeRes, er
 	req := common.Request{}
 
 	return &HomeRes{
-		Status: &status.Status{
-			Code: status.CodePlus(codes.OK),
+		Status: &commonCore.Status{
+			Code: commonCore.StatusCodePlus(codes.OK),
 			Message: term.HomeMessage.Localize(
 				ctx.Lang().Localizer,
 				h.config.App.Name(),
