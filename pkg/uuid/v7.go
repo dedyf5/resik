@@ -33,6 +33,9 @@ func ParseUUIDV7(value string) (UUIDV7, error) {
 	if err != nil {
 		return Nil, err
 	}
+	if u.Version() != 7 {
+		return Nil, errors.New("uuid: invalid version")
+	}
 	return UUIDV7(u), nil
 }
 
