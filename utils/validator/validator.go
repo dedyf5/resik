@@ -298,7 +298,7 @@ func fieldPlaceholder(field string) string {
 }
 
 func removeFieldPlaceholder(field string) string {
-	return strings.TrimPrefix(strings.TrimSuffix(field, "}"), "{")
+	return strings.NewReplacer("{", "", "}", "").Replace(field)
 }
 
 func getLangReqOrDefault(languageDefault language.Tag, lang *langCtx.Lang) *langCtx.Lang {
