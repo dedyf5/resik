@@ -17,13 +17,23 @@ import (
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
-func (s *Service) TransactionInsert(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
-	ok, err = s.transactionRepo.TransactionInsert(ctx, transaction)
+func (s *Service) TransactionInsert(ctx *ctx.Ctx, trx *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
+	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID, trxDTO.PERMISSION_CODE_CREATE)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = s.ValidateBranchOrganization(ctx, &trx.BranchPublicID, &trx.OrganizationPublicID)
+	if err != nil {
+		return false, err
+	}
+
+	ok, err = s.transactionRepo.TransactionInsert(ctx, trx)
 	return
 }
 
 func (s *Service) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
-	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID)
+	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID, trxDTO.PERMISSION_CODE_UPDATE)
 	if err != nil {
 		return false, err
 	}
@@ -37,10 +47,10 @@ func (s *Service) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (o
 	return
 }
 
-func (s *Service) HasAccessBranch(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7) (ok bool, err *resPkg.Status) {
+func (s *Service) HasAccessBranch(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7, permissionCode trxDTO.PERMISSION_CODE) (ok bool, err *resPkg.Status) {
 	hasAccess, accessErr := s.resolver.HasAccessByPublicID(
 		ctx.Context, ctx.UserClaims().UserID(),
-		"transaction:update",
+		permissionCode.String(),
 		branch.TABLE_NAME,
 		*branchPublicID,
 	)

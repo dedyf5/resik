@@ -61,18 +61,18 @@ func (mr *MockIServiceMockRecorder) BranchOmzetGet(arg0 any) *gomock.Call {
 }
 
 // HasAccessBranch mocks base method.
-func (m *MockIService) HasAccessBranch(arg0 *ctx.Ctx, branchPublicID *uuid.UUIDV7) (bool, *response.Status) {
+func (m *MockIService) HasAccessBranch(arg0 *ctx.Ctx, branchPublicID *uuid.UUIDV7, permissionCode dto.PERMISSION_CODE) (bool, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasAccessBranch", arg0, branchPublicID)
+	ret := m.ctrl.Call(m, "HasAccessBranch", arg0, branchPublicID, permissionCode)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
 // HasAccessBranch indicates an expected call of HasAccessBranch.
-func (mr *MockIServiceMockRecorder) HasAccessBranch(arg0, branchPublicID any) *gomock.Call {
+func (mr *MockIServiceMockRecorder) HasAccessBranch(arg0, branchPublicID, permissionCode any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAccessBranch", reflect.TypeOf((*MockIService)(nil).HasAccessBranch), arg0, branchPublicID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAccessBranch", reflect.TypeOf((*MockIService)(nil).HasAccessBranch), arg0, branchPublicID, permissionCode)
 }
 
 // OrganizationOmzetGet mocks base method.
@@ -106,18 +106,18 @@ func (mr *MockIServiceMockRecorder) TransactionGetByPublicID(arg0 any) *gomock.C
 }
 
 // TransactionInsert mocks base method.
-func (m *MockIService) TransactionInsert(arg0 *ctx.Ctx, arg1 *transaction.Transaction) (bool, *response.Status) {
+func (m *MockIService) TransactionInsert(arg0 *ctx.Ctx, trx *transaction.Transaction) (bool, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "TransactionInsert", arg0, arg1)
+	ret := m.ctrl.Call(m, "TransactionInsert", arg0, trx)
 	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
 // TransactionInsert indicates an expected call of TransactionInsert.
-func (mr *MockIServiceMockRecorder) TransactionInsert(arg0, arg1 any) *gomock.Call {
+func (mr *MockIServiceMockRecorder) TransactionInsert(arg0, trx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionInsert", reflect.TypeOf((*MockIService)(nil).TransactionInsert), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionInsert", reflect.TypeOf((*MockIService)(nil).TransactionInsert), arg0, trx)
 }
 
 // TransactionUpdate mocks base method.

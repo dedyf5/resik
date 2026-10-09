@@ -59,3 +59,14 @@ var (
 		Data: Transactions{},
 	}
 )
+
+type PERMISSION_CODE string
+
+const (
+	PERMISSION_CODE_CREATE PERMISSION_CODE = "transaction:create"
+	PERMISSION_CODE_UPDATE PERMISSION_CODE = "transaction:update"
+)
+
+func (u PERMISSION_CODE) String() string {
+	return string(u)
+}

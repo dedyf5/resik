@@ -36,9 +36,71 @@ func TestTransactionInsert(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	_, trxRepo, _, ctx, trxService, _ := setup(ctrl)
+	orgRepo, trxRepo, _, ctx, trxService, resolver := setup(ctrl)
 
-	transaction := &trxEntity.Transaction{}
+	orgPublicID, err := uuidPkg.NewUUIDV7()
+	if err != nil {
+		t.Error(err)
+	}
+
+	branchPublicID, err := uuidPkg.NewUUIDV7()
+	if err != nil {
+		t.Error(err)
+	}
+
+	branch := &branchEntity.Branch{
+		PublicID: branchPublicID,
+		Organization: orgEntity.Organization{
+			PublicID: orgPublicID,
+		},
+	}
+
+	transaction := &trxEntity.Transaction{
+		BranchPublicID:       branchPublicID,
+		OrganizationPublicID: orgPublicID,
+	}
+
+	t.Run("TestTransactionInsert HasAccessByPublicID ERROR-500", func(t *testing.T) {
+		okExpected := false
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			resolver.EXPECT().
+				HasAccessByPublicID(
+					ctx.Context,
+					ctx.UserClaims().UserID(),
+					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					branchEntity.TABLE_NAME,
+					branchPublicID,
+				).
+				Return(okExpected, errors.New("error 500")),
+		)
+		ok, err := trxService.TransactionInsert(ctx, transaction)
+		assert.Equal(t, okExpected, ok)
+		assert.Equal(t, statusErr.Code, err.Code)
+	})
+
+	t.Run("TestTransactionInsert BranchGetByPublicID ERROR-500", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusInternalServerError,
+		}
+		gomock.InOrder(
+			resolver.EXPECT().
+				HasAccessByPublicID(
+					ctx.Context,
+					ctx.UserClaims().UserID(),
+					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					branchEntity.TABLE_NAME,
+					branchPublicID,
+				).
+				Return(true, nil),
+			orgRepo.EXPECT().BranchGetByPublicID(ctx, &branchPublicID).Return(nil, statusErr),
+		)
+		ok, err := trxService.TransactionInsert(ctx, transaction)
+		assert.False(t, ok)
+		assert.Equal(t, statusErr, err)
+	})
 
 	t.Run("TestTransactionInsert TransactionInsert ERROR-500", func(t *testing.T) {
 		okExpected := false
@@ -46,20 +108,40 @@ func TestTransactionInsert(t *testing.T) {
 			Code: http.StatusInternalServerError,
 		}
 		gomock.InOrder(
+			resolver.EXPECT().
+				HasAccessByPublicID(
+					ctx.Context,
+					ctx.UserClaims().UserID(),
+					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					branchEntity.TABLE_NAME,
+					branchPublicID,
+				).
+				Return(true, nil),
+			orgRepo.EXPECT().BranchGetByPublicID(ctx, &branchPublicID).Return(branch, nil),
 			trxRepo.EXPECT().TransactionInsert(ctx, transaction).Return(okExpected, statusErr),
 		)
-		res, err := trxService.TransactionInsert(ctx, transaction)
-		assert.Equal(t, okExpected, res)
-		assert.Equal(t, statusErr, err)
+		ok, err := trxService.TransactionInsert(ctx, transaction)
+		assert.Equal(t, okExpected, ok)
+		assert.Equal(t, statusErr.Code, err.Code)
 	})
 
 	t.Run("TestTransactionInsert ALL-SUCCESS", func(t *testing.T) {
 		okExpected := true
 		gomock.InOrder(
+			resolver.EXPECT().
+				HasAccessByPublicID(
+					ctx.Context,
+					ctx.UserClaims().UserID(),
+					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					branchEntity.TABLE_NAME,
+					branchPublicID,
+				).
+				Return(okExpected, nil),
+			orgRepo.EXPECT().BranchGetByPublicID(ctx, &branchPublicID).Return(branch, nil),
 			trxRepo.EXPECT().TransactionInsert(ctx, transaction).Return(okExpected, nil),
 		)
-		res, err := trxService.TransactionInsert(ctx, transaction)
-		assert.Equal(t, okExpected, res)
+		ok, err := trxService.TransactionInsert(ctx, transaction)
+		assert.Equal(t, okExpected, ok)
 		assert.Nil(t, err)
 	})
 }
@@ -102,7 +184,7 @@ func TestTransactionUpdate(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					"transaction:update",
+					dtoTrx.PERMISSION_CODE_UPDATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -122,7 +204,7 @@ func TestTransactionUpdate(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					"transaction:update",
+					dtoTrx.PERMISSION_CODE_UPDATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -141,7 +223,7 @@ func TestTransactionUpdate(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					"transaction:update",
+					dtoTrx.PERMISSION_CODE_UPDATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -176,13 +258,13 @@ func TestHasAccessBranch(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					"transaction:update",
+					dtoTrx.PERMISSION_CODE_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
 				Return(okExpected, errors.New("error 500")),
 		)
-		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID)
+		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, dtoTrx.PERMISSION_CODE_CREATE)
 		assert.Equal(t, okExpected, ok)
 		assert.Equal(t, statusErr.Code, err.Code)
 	})
@@ -197,13 +279,13 @@ func TestHasAccessBranch(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					"transaction:update",
+					dtoTrx.PERMISSION_CODE_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
 				Return(okExpected, nil),
 		)
-		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID)
+		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, dtoTrx.PERMISSION_CODE_CREATE)
 		assert.Equal(t, okExpected, ok)
 		assert.Equal(t, statusErr.Code, err.Code)
 	})
@@ -215,13 +297,13 @@ func TestHasAccessBranch(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					"transaction:update",
+					dtoTrx.PERMISSION_CODE_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
 				Return(okExpected, nil),
 		)
-		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID)
+		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, dtoTrx.PERMISSION_CODE_CREATE)
 		assert.Equal(t, okExpected, ok)
 		assert.Nil(t, err)
 	})
