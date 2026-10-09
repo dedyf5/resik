@@ -5,9 +5,11 @@
 package branch
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/dedyf5/resik/entities/organization"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	"gorm.io/gorm"
 )
@@ -23,12 +25,22 @@ type Branch struct {
 	CreatedByPublicID uuidPkg.UUIDV7            `json:"created_by" gorm:"column:created_by_public_id;type:uuid;not null;"`
 	UpdatedAt         time.Time                 `json:"updated_at" gorm:"type:datetime;not null;"`
 	UpdatedByPublicID uuidPkg.UUIDV7            `json:"updated_by" gorm:"column:updated_by_public_id;type:uuid;not null;"`
-	Organization      organization.Organization `json:"organization" gorm:"constraint:OnUpdate:CASCADE,OnDelete:NO ACTION;"`
+	Organization      organization.Organization `json:"organization" gorm:"foreignKey:OrganizationID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:NO ACTION;"`
 }
 
-func (o *Branch) BeforeCreate(tx *gorm.DB) (err error) {
-	o.PublicID, err = uuidPkg.NewUUIDV7()
+func (b *Branch) BeforeCreate(tx *gorm.DB) (err error) {
+	b.PublicID, err = uuidPkg.NewUUIDV7()
 	return
+}
+
+func (b *Branch) IsBelongToOrganization(organizationPublicID *uuidPkg.UUIDV7) (ok bool, err *resPkg.Status) {
+	if b.Organization.PublicID == *organizationPublicID {
+		return true, nil
+	}
+	return false, resPkg.NewStatusError(
+		http.StatusUnprocessableEntity,
+		nil,
+	)
 }
 
 type Tabler interface {

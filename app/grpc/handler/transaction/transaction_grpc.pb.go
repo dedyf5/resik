@@ -26,6 +26,7 @@ const _ = grpc.SupportPackageIsVersion8
 
 const (
 	TransactionService_TransactionPost_FullMethodName      = "/transaction.TransactionService/TransactionPost"
+	TransactionService_TransactionPut_FullMethodName       = "/transaction.TransactionService/TransactionPut"
 	TransactionService_TransactionDetailGet_FullMethodName = "/transaction.TransactionService/TransactionDetailGet"
 	TransactionService_TransactionListGet_FullMethodName   = "/transaction.TransactionService/TransactionListGet"
 	TransactionService_OrganizationOmzetGet_FullMethodName = "/transaction.TransactionService/OrganizationOmzetGet"
@@ -37,6 +38,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TransactionServiceClient interface {
 	TransactionPost(ctx context.Context, in *request.TransactionPost, opts ...grpc.CallOption) (*common.StatusAndId, error)
+	TransactionPut(ctx context.Context, in *request.TransactionPut, opts ...grpc.CallOption) (*common.StatusAndId, error)
 	TransactionDetailGet(ctx context.Context, in *request.TransactionDetailGet, opts ...grpc.CallOption) (*TransactionDetailRes, error)
 	TransactionListGet(ctx context.Context, in *request.TransactionListGet, opts ...grpc.CallOption) (*TransactionListGetRes, error)
 	OrganizationOmzetGet(ctx context.Context, in *request.OrganizationOmzetGet, opts ...grpc.CallOption) (*OrganizationOmzetGetRes, error)
@@ -55,6 +57,16 @@ func (c *transactionServiceClient) TransactionPost(ctx context.Context, in *requ
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(common.StatusAndId)
 	err := c.cc.Invoke(ctx, TransactionService_TransactionPost_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *transactionServiceClient) TransactionPut(ctx context.Context, in *request.TransactionPut, opts ...grpc.CallOption) (*common.StatusAndId, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(common.StatusAndId)
+	err := c.cc.Invoke(ctx, TransactionService_TransactionPut_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -106,6 +118,7 @@ func (c *transactionServiceClient) BranchOmzetGet(ctx context.Context, in *reque
 // for forward compatibility
 type TransactionServiceServer interface {
 	TransactionPost(context.Context, *request.TransactionPost) (*common.StatusAndId, error)
+	TransactionPut(context.Context, *request.TransactionPut) (*common.StatusAndId, error)
 	TransactionDetailGet(context.Context, *request.TransactionDetailGet) (*TransactionDetailRes, error)
 	TransactionListGet(context.Context, *request.TransactionListGet) (*TransactionListGetRes, error)
 	OrganizationOmzetGet(context.Context, *request.OrganizationOmzetGet) (*OrganizationOmzetGetRes, error)
@@ -119,6 +132,9 @@ type UnimplementedTransactionServiceServer struct {
 
 func (UnimplementedTransactionServiceServer) TransactionPost(context.Context, *request.TransactionPost) (*common.StatusAndId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TransactionPost not implemented")
+}
+func (UnimplementedTransactionServiceServer) TransactionPut(context.Context, *request.TransactionPut) (*common.StatusAndId, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TransactionPut not implemented")
 }
 func (UnimplementedTransactionServiceServer) TransactionDetailGet(context.Context, *request.TransactionDetailGet) (*TransactionDetailRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TransactionDetailGet not implemented")
@@ -159,6 +175,24 @@ func _TransactionService_TransactionPost_Handler(srv interface{}, ctx context.Co
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionServiceServer).TransactionPost(ctx, req.(*request.TransactionPost))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TransactionService_TransactionPut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(request.TransactionPut)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionServiceServer).TransactionPut(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TransactionService_TransactionPut_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionServiceServer).TransactionPut(ctx, req.(*request.TransactionPut))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -245,6 +279,10 @@ var TransactionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TransactionPost",
 			Handler:    _TransactionService_TransactionPost_Handler,
+		},
+		{
+			MethodName: "TransactionPut",
+			Handler:    _TransactionService_TransactionPut_Handler,
 		},
 		{
 			MethodName: "TransactionDetailGet",

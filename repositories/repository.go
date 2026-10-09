@@ -6,6 +6,7 @@ package repositories
 
 import (
 	"github.com/dedyf5/resik/ctx"
+	branchEntity "github.com/dedyf5/resik/entities/branch"
 	checkEntity "github.com/dedyf5/resik/entities/check"
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	paramOrganization "github.com/dedyf5/resik/entities/organization/param"
@@ -23,6 +24,7 @@ type ICheck interface {
 
 type ITransaction interface {
 	TransactionInsert(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status)
+	TransactionUpdate(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status)
 	TransactionGetByPublicID(param *paramTrx.TransactionGet) (transaction *trxEntity.Transaction, err *resPkg.Status)
 	TransactionsGetData(param *paramTrx.TransactionsGet) (transactions trxEntity.Transactions, err *resPkg.Status)
 	TransactionsGetTotal(param *paramTrx.TransactionsGet) (total int64, err *resPkg.Status)
@@ -45,4 +47,6 @@ type IOrganization interface {
 	OrganizationsGetData(param *paramOrganization.OrganizationsGet) (organizations organizationEntity.Organizations, err *resPkg.Status)
 	OrganizationsGetTotal(param *paramOrganization.OrganizationsGet) (total int64, err *resPkg.Status)
 	OrganizationDelete(c *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status)
+
+	BranchGetByPublicID(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7) (branch *branchEntity.Branch, err *resPkg.Status)
 }

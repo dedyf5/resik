@@ -26,6 +26,27 @@ func (r *TransactionRepo) TransactionInsert(ctx *ctx.Ctx, transaction *trxEntity
 	return true, nil
 }
 
+func (r *TransactionRepo) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
+	sql := "UPDATE " + trxEntity.TABLE_NAME + `
+		SET 
+			organization_public_id = ?, organization_name = ?,
+			branch_public_id = ?, branch_name = ?,
+			bill_total = ?, transacted_at = ?,
+			updated_at = ?, updated_by_public_id = ?
+		WHERE public_id = ?`
+	result := r.DB.WithContext(ctx.Context).
+		Exec(sql,
+			trx.OrganizationPublicID, trx.OrganizationName,
+			trx.BranchPublicID, trx.BranchName,
+			trx.BillTotal, trx.TransactedAt,
+			trx.UpdatedAt, trx.UpdatedByPublicID,
+			trx.PublicID)
+	if result.Error != nil {
+		return false, resPkg.NewStatusError(http.StatusInternalServerError, result.Error)
+	}
+	return true, nil
+}
+
 func (r *TransactionRepo) TransactionGetByPublicID(param *paramTrx.TransactionGet) (transaction *trxEntity.Transaction, err *resPkg.Status) {
 	query := r.DB.WithContext(param.Ctx.Context).Table(trxEntity.TABLE_NAME).
 		Where("public_id = ?", param.PublicID).

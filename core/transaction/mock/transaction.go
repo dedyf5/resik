@@ -17,6 +17,7 @@ import (
 	transaction "github.com/dedyf5/resik/entities/transaction"
 	param "github.com/dedyf5/resik/entities/transaction/param"
 	response "github.com/dedyf5/resik/pkg/response"
+	uuid "github.com/dedyf5/resik/pkg/uuid"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -57,6 +58,21 @@ func (m *MockIService) BranchOmzetGet(arg0 *param.BranchOmzetGet) (*dto.BranchOm
 func (mr *MockIServiceMockRecorder) BranchOmzetGet(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BranchOmzetGet", reflect.TypeOf((*MockIService)(nil).BranchOmzetGet), arg0)
+}
+
+// HasAccessBranch mocks base method.
+func (m *MockIService) HasAccessBranch(arg0 *ctx.Ctx, branchPublicID *uuid.UUIDV7) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "HasAccessBranch", arg0, branchPublicID)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// HasAccessBranch indicates an expected call of HasAccessBranch.
+func (mr *MockIServiceMockRecorder) HasAccessBranch(arg0, branchPublicID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAccessBranch", reflect.TypeOf((*MockIService)(nil).HasAccessBranch), arg0, branchPublicID)
 }
 
 // OrganizationOmzetGet mocks base method.
@@ -104,6 +120,21 @@ func (mr *MockIServiceMockRecorder) TransactionInsert(arg0, arg1 any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionInsert", reflect.TypeOf((*MockIService)(nil).TransactionInsert), arg0, arg1)
 }
 
+// TransactionUpdate mocks base method.
+func (m *MockIService) TransactionUpdate(arg0 *ctx.Ctx, trx *transaction.Transaction) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionUpdate", arg0, trx)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionUpdate indicates an expected call of TransactionUpdate.
+func (mr *MockIServiceMockRecorder) TransactionUpdate(arg0, trx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionUpdate", reflect.TypeOf((*MockIService)(nil).TransactionUpdate), arg0, trx)
+}
+
 // TransactionsGet mocks base method.
 func (m *MockIService) TransactionsGet(arg0 *param.TransactionsGet) (*dto.TransactionsResult, *response.Status) {
 	m.ctrl.T.Helper()
@@ -117,4 +148,19 @@ func (m *MockIService) TransactionsGet(arg0 *param.TransactionsGet) (*dto.Transa
 func (mr *MockIServiceMockRecorder) TransactionsGet(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionsGet", reflect.TypeOf((*MockIService)(nil).TransactionsGet), arg0)
+}
+
+// ValidateBranchOrganization mocks base method.
+func (m *MockIService) ValidateBranchOrganization(arg0 *ctx.Ctx, branchPublicID, orgPublicID *uuid.UUIDV7) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ValidateBranchOrganization", arg0, branchPublicID, orgPublicID)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// ValidateBranchOrganization indicates an expected call of ValidateBranchOrganization.
+func (mr *MockIServiceMockRecorder) ValidateBranchOrganization(arg0, branchPublicID, orgPublicID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateBranchOrganization", reflect.TypeOf((*MockIService)(nil).ValidateBranchOrganization), arg0, branchPublicID, orgPublicID)
 }

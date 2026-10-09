@@ -22,6 +22,7 @@ import "core/transaction/request/upsert.proto";
 
 service TransactionService {
     rpc TransactionPost(core.transaction.request.TransactionPost) returns (core.common.StatusAndId);
+    rpc TransactionPut(core.transaction.request.TransactionPut) returns (core.common.StatusAndId);
     rpc TransactionDetailGet(core.transaction.request.TransactionDetailGet) returns (transaction.TransactionDetailRes);
     rpc TransactionListGet(core.transaction.request.TransactionListGet) returns (transaction.TransactionListGetRes);
     rpc OrganizationOmzetGet(core.transaction.request.OrganizationOmzetGet) returns (transaction.OrganizationOmzetGetRes);

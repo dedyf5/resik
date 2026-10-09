@@ -168,6 +168,22 @@ definitions:
     - branch
     - transacted_at
     type: object
+  request.TransactionPut:
+    properties:
+      bill_total:
+        example: 1000.5
+        minimum: 0
+        type: number
+      branch:
+        $ref: '#/definitions/common.Branch'
+      transacted_at:
+        example: "2024-02-02T19:52:41Z"
+        type: string
+    required:
+    - bill_total
+    - branch
+    - transacted_at
+    type: object
   response.App:
     properties:
       app:
@@ -1085,6 +1101,70 @@ paths:
       security:
       - BearerAuth: []
       summary: Get Transaction by ID
+      tags:
+      - transactions
+    put:
+      consumes:
+      - application/json
+      description: Update a transaction
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - enum:
+        - en
+        - id
+        - ja
+        in: query
+        name: lang
+        type: string
+      - description: Payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/request.TransactionPut'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.ResponseSuccess'
+            - properties:
+                data:
+                  $ref: '#/definitions/common.Id'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.ResponseBadRequest'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "429":
+          description: Too Many Requests
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
+      security:
+      - BearerAuth: []
+      summary: Update Transaction
       tags:
       - transactions
   /transactions/branch/{branch_id}/omzet:

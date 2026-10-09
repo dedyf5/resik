@@ -10,14 +10,64 @@ import (
 	trxDTO "github.com/dedyf5/resik/core/transaction/dto"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/ctx/lang/term"
+	"github.com/dedyf5/resik/entities/branch"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
 func (s *Service) TransactionInsert(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
 	ok, err = s.transactionRepo.TransactionInsert(ctx, transaction)
 	return
+}
+
+func (s *Service) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
+	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID)
+	if err != nil {
+		return false, err
+	}
+
+	_, err = s.ValidateBranchOrganization(ctx, &trx.BranchPublicID, &trx.OrganizationPublicID)
+	if err != nil {
+		return false, err
+	}
+
+	ok, err = s.transactionRepo.TransactionUpdate(ctx, trx)
+	return
+}
+
+func (s *Service) HasAccessBranch(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7) (ok bool, err *resPkg.Status) {
+	hasAccess, accessErr := s.resolver.HasAccessByPublicID(
+		ctx.Context, ctx.UserClaims().UserID(),
+		"transaction:update",
+		branch.TABLE_NAME,
+		*branchPublicID,
+	)
+	if accessErr != nil {
+		return false, resPkg.NewStatusError(http.StatusInternalServerError, accessErr)
+	}
+	if !hasAccess {
+		return false, resPkg.NewStatusError(
+			http.StatusForbidden,
+			accessErr,
+		)
+	}
+	return true, nil
+}
+
+func (s *Service) ValidateBranchOrganization(ctx *ctx.Ctx, branchPublicID, orgPublicID *uuidPkg.UUIDV7) (ok bool, err *resPkg.Status) {
+	branch, err := s.organizationRepo.BranchGetByPublicID(ctx, branchPublicID)
+	if err != nil {
+		return false, err
+	}
+	if branch == nil {
+		return false, resPkg.NewStatusError(
+			http.StatusUnprocessableEntity,
+			nil,
+		)
+	}
+	return branch.IsBelongToOrganization(orgPublicID)
 }
 
 func (s *Service) TransactionGetByPublicID(param *paramTrx.TransactionGet) (res *trxDTO.Transaction, err *resPkg.Status) {

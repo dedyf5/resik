@@ -13,6 +13,7 @@ import (
 	reflect "reflect"
 
 	ctx "github.com/dedyf5/resik/ctx"
+	branch "github.com/dedyf5/resik/entities/branch"
 	check "github.com/dedyf5/resik/entities/check"
 	organization "github.com/dedyf5/resik/entities/organization"
 	param "github.com/dedyf5/resik/entities/organization/param"
@@ -176,6 +177,21 @@ func (mr *MockITransactionMockRecorder) TransactionInsert(arg0, arg1 any) *gomoc
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionInsert", reflect.TypeOf((*MockITransaction)(nil).TransactionInsert), arg0, arg1)
 }
 
+// TransactionUpdate mocks base method.
+func (m *MockITransaction) TransactionUpdate(arg0 *ctx.Ctx, arg1 *transaction.Transaction) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionUpdate", arg0, arg1)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionUpdate indicates an expected call of TransactionUpdate.
+func (mr *MockITransactionMockRecorder) TransactionUpdate(arg0, arg1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionUpdate", reflect.TypeOf((*MockITransaction)(nil).TransactionUpdate), arg0, arg1)
+}
+
 // TransactionsGetData mocks base method.
 func (m *MockITransaction) TransactionsGetData(arg0 *param0.TransactionsGet) (transaction.Transactions, *response.Status) {
 	m.ctrl.T.Helper()
@@ -297,6 +313,21 @@ func NewMockIOrganization(ctrl *gomock.Controller) *MockIOrganization {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockIOrganization) EXPECT() *MockIOrganizationMockRecorder {
 	return m.recorder
+}
+
+// BranchGetByPublicID mocks base method.
+func (m *MockIOrganization) BranchGetByPublicID(arg0 *ctx.Ctx, branchPublicID *uuid.UUIDV7) (*branch.Branch, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "BranchGetByPublicID", arg0, branchPublicID)
+	ret0, _ := ret[0].(*branch.Branch)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// BranchGetByPublicID indicates an expected call of BranchGetByPublicID.
+func (mr *MockIOrganizationMockRecorder) BranchGetByPublicID(arg0, branchPublicID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BranchGetByPublicID", reflect.TypeOf((*MockIOrganization)(nil).BranchGetByPublicID), arg0, branchPublicID)
 }
 
 // OrganizationDelete mocks base method.

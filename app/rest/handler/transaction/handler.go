@@ -90,6 +90,55 @@ func (h *Handler) TransactionPost(echoCtx *echo.Context) error {
 	)
 }
 
+// @Summary Update Transaction
+// @Description Update a transaction
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param       id path string true "Transaction ID"
+// @Param       parameter query commonEntity.Request true "Query Param"
+// @Param       payload body reqTrxCore.TransactionPut true "Payload"
+// @Success		200	{object}	resPkg.ResponseSuccess{data=commonCore.Id}
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     403 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     422 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
+// @Router		/transactions/{id} [put]
+func (h *Handler) TransactionPut(echoCtx *echo.Context) error {
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
+	if err != nil {
+		return err
+	}
+	h.log.Debug("TransactionPut")
+
+	var payload reqTrxCore.TransactionPut
+	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
+		return err
+	}
+
+	entity, err := payload.ToEntity(ctx)
+	if err != nil {
+		return err
+	}
+
+	_, err = h.trxService.TransactionUpdate(ctx, entity)
+	if err != nil {
+		return err
+	}
+
+	return resPkg.NewStatusSuccess(
+		http.StatusOK,
+		term.SuccessfullyUpdatedVal.Localize(
+			ctx.Lang().Localizer,
+			term.Transaction.Localize(ctx.Lang().Localizer),
+		),
+		&commonCore.Id{Id: payload.GetId()},
+	)
+}
+
 // @Summary Get Transaction by ID
 // @Description Get transaction by ID
 // @Tags transactions

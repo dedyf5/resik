@@ -89,6 +89,78 @@ func (x *TransactionPost) GetTransactedAt() string {
 	return ""
 }
 
+// Message request to update a transaction
+type TransactionPut struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id           string         `protobuf:"bytes,1,opt,name=id,proto3" json:"-" param:"id" query:"-" validate:"required,uuidv7" example:"01a11f31972e75c6933f1a64b2fb2715"`                                          
+	Branch       *common.Branch `protobuf:"bytes,2,opt,name=branch,proto3" json:"branch" validate:"required"`                                  
+	BillTotal    *float64       `protobuf:"fixed64,3,opt,name=bill_total,json=billTotal,proto3,oneof" json:"bill_total" validate:"required,gte=0" example:"1000.5"`   
+	TransactedAt string         `protobuf:"bytes,4,opt,name=transacted_at,json=transactedAt,proto3" json:"transacted_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00,past_or_present" example:"2024-02-02T19:52:41Z"`  
+}
+
+func (x *TransactionPut) Reset() {
+	*x = TransactionPut{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_core_transaction_request_upsert_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *TransactionPut) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TransactionPut) ProtoMessage() {}
+
+func (x *TransactionPut) ProtoReflect() protoreflect.Message {
+	mi := &file_core_transaction_request_upsert_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TransactionPut.ProtoReflect.Descriptor instead.
+func (*TransactionPut) Descriptor() ([]byte, []int) {
+	return file_core_transaction_request_upsert_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *TransactionPut) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *TransactionPut) GetBranch() *common.Branch {
+	if x != nil {
+		return x.Branch
+	}
+	return nil
+}
+
+func (x *TransactionPut) GetBillTotal() float64 {
+	if x != nil && x.BillTotal != nil {
+		return *x.BillTotal
+	}
+	return 0
+}
+
+func (x *TransactionPut) GetTransactedAt() string {
+	if x != nil {
+		return x.TransactedAt
+	}
+	return ""
+}
+
 var File_core_transaction_request_upsert_proto protoreflect.FileDescriptor
 
 var file_core_transaction_request_upsert_proto_rawDesc = []byte{
@@ -107,11 +179,21 @@ var file_core_transaction_request_upsert_proto_rawDesc = []byte{
 	0x74, 0x61, 0x6c, 0x88, 0x01, 0x01, 0x12, 0x23, 0x0a, 0x0d, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x61,
 	0x63, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x74,
 	0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x65, 0x64, 0x41, 0x74, 0x42, 0x0d, 0x0a, 0x0b, 0x5f,
-	0x62, 0x69, 0x6c, 0x6c, 0x5f, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x42, 0x32, 0x5a, 0x30, 0x67, 0x69,
-	0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x64, 0x65, 0x64, 0x79, 0x66, 0x35, 0x2f,
-	0x72, 0x65, 0x73, 0x69, 0x6b, 0x2f, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x74, 0x72, 0x61, 0x6e, 0x73,
-	0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x2f, 0x72, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x62, 0x06,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x62, 0x69, 0x6c, 0x6c, 0x5f, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x22, 0xa5, 0x01, 0x0a, 0x0e, 0x54,
+	0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x50, 0x75, 0x74, 0x12, 0x0e, 0x0a,
+	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x2b, 0x0a,
+	0x06, 0x62, 0x72, 0x61, 0x6e, 0x63, 0x68, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x13, 0x2e,
+	0x63, 0x6f, 0x72, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x42, 0x72, 0x61, 0x6e,
+	0x63, 0x68, 0x52, 0x06, 0x62, 0x72, 0x61, 0x6e, 0x63, 0x68, 0x12, 0x22, 0x0a, 0x0a, 0x62, 0x69,
+	0x6c, 0x6c, 0x5f, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28, 0x01, 0x48, 0x00,
+	0x52, 0x09, 0x62, 0x69, 0x6c, 0x6c, 0x54, 0x6f, 0x74, 0x61, 0x6c, 0x88, 0x01, 0x01, 0x12, 0x23,
+	0x0a, 0x0d, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18,
+	0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x65,
+	0x64, 0x41, 0x74, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x62, 0x69, 0x6c, 0x6c, 0x5f, 0x74, 0x6f, 0x74,
+	0x61, 0x6c, 0x42, 0x32, 0x5a, 0x30, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d,
+	0x2f, 0x64, 0x65, 0x64, 0x79, 0x66, 0x35, 0x2f, 0x72, 0x65, 0x73, 0x69, 0x6b, 0x2f, 0x63, 0x6f,
+	0x72, 0x65, 0x2f, 0x74, 0x72, 0x61, 0x6e, 0x73, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x2f, 0x72,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -126,18 +208,20 @@ func file_core_transaction_request_upsert_proto_rawDescGZIP() []byte {
 	return file_core_transaction_request_upsert_proto_rawDescData
 }
 
-var file_core_transaction_request_upsert_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_core_transaction_request_upsert_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_core_transaction_request_upsert_proto_goTypes = []any{
 	(*TransactionPost)(nil), // 0: core.transaction.request.TransactionPost
-	(*common.Branch)(nil),   // 1: core.common.Branch
+	(*TransactionPut)(nil),  // 1: core.transaction.request.TransactionPut
+	(*common.Branch)(nil),   // 2: core.common.Branch
 }
 var file_core_transaction_request_upsert_proto_depIdxs = []int32{
-	1, // 0: core.transaction.request.TransactionPost.branch:type_name -> core.common.Branch
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2, // 0: core.transaction.request.TransactionPost.branch:type_name -> core.common.Branch
+	2, // 1: core.transaction.request.TransactionPut.branch:type_name -> core.common.Branch
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_core_transaction_request_upsert_proto_init() }
@@ -158,15 +242,28 @@ func file_core_transaction_request_upsert_proto_init() {
 				return nil
 			}
 		}
+		file_core_transaction_request_upsert_proto_msgTypes[1].Exporter = func(v any, i int) any {
+			switch v := v.(*TransactionPut); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_core_transaction_request_upsert_proto_msgTypes[0].OneofWrappers = []any{}
+	file_core_transaction_request_upsert_proto_msgTypes[1].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_core_transaction_request_upsert_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

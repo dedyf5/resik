@@ -47,3 +47,38 @@ func (h *TransactionHandler) TransactionPost(c context.Context, req *reqTrxCore.
 		},
 	}, nil
 }
+
+func (h *TransactionHandler) TransactionPut(c context.Context, req *reqTrxCore.TransactionPut) (*commonCore.StatusAndId, error) {
+	ctx, err := ctx.NewCtx(c, h.log)
+	if err != nil {
+		return nil, err
+	}
+	ctx.Log().Debug("TransactionPut")
+
+	if err := h.validator.Struct(req, ctx.Lang()); err != nil {
+		return nil, err
+	}
+
+	entity, err := req.ToEntity(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = h.trxService.TransactionUpdate(ctx, entity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &commonCore.StatusAndId{
+		Status: &commonCore.Status{
+			Code: commonCore.StatusCodePlus(codes.OK),
+			Message: term.SuccessfullyUpdatedVal.Localize(
+				ctx.Lang().Localizer,
+				term.Transaction.Localize(ctx.Lang().Localizer),
+			),
+		},
+		Data: &commonCore.Id{
+			Id: req.GetId(),
+		},
+	}, nil
+}

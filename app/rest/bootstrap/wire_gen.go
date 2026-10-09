@@ -90,7 +90,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	service5 := service2.New(config, identityResolver, userRepo, organizationRepo)
 	organizationHandler := organization2.New(logLog, echoEcho, identityResolver, service5)
 	transactionRepo := transaction.New(gormDB)
-	service6 := service3.New(config, transactionRepo, userRepo)
+	service6 := service3.New(config, identityResolver, organizationRepo, transactionRepo, userRepo)
 	transactionHandler := transaction2.New(config, logLog, echoEcho, identityResolver, service6)
 	checkDatabaseRepo := check.NewCheckDatabaseRepo(db, config)
 	checkRedisRepo := check.NewCheckRedisRepo(client, config)

@@ -15,3 +15,11 @@ message TransactionPost {
   optional double bill_total = 2; // @gotags: json:"bill_total" validate:"required,gte=0" example:"1000.5"
   string transacted_at = 3; // @gotags: json:"transacted_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00,past_or_present" example:"2024-02-02T19:52:41Z"
 }
+
+// Message request to update a transaction
+message TransactionPut {
+  string id = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required,uuidv7" example:"01a11f31972e75c6933f1a64b2fb2715"
+  core.common.Branch branch = 2; // @gotags: json:"branch" validate:"required"
+  optional double bill_total = 3; // @gotags: json:"bill_total" validate:"required,gte=0" example:"1000.5"
+  string transacted_at = 4; // @gotags: json:"transacted_at" validate:"required,datetime=2006-01-02T15:04:05Z07:00,past_or_present" example:"2024-02-02T19:52:41Z"
+}
