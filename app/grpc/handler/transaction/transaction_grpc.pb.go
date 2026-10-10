@@ -29,6 +29,7 @@ const (
 	TransactionService_TransactionPut_FullMethodName       = "/transaction.TransactionService/TransactionPut"
 	TransactionService_TransactionDetailGet_FullMethodName = "/transaction.TransactionService/TransactionDetailGet"
 	TransactionService_TransactionListGet_FullMethodName   = "/transaction.TransactionService/TransactionListGet"
+	TransactionService_TransactionDelete_FullMethodName    = "/transaction.TransactionService/TransactionDelete"
 	TransactionService_OrganizationOmzetGet_FullMethodName = "/transaction.TransactionService/OrganizationOmzetGet"
 	TransactionService_BranchOmzetGet_FullMethodName       = "/transaction.TransactionService/BranchOmzetGet"
 )
@@ -39,8 +40,9 @@ const (
 type TransactionServiceClient interface {
 	TransactionPost(ctx context.Context, in *request.TransactionPost, opts ...grpc.CallOption) (*common.StatusAndId, error)
 	TransactionPut(ctx context.Context, in *request.TransactionPut, opts ...grpc.CallOption) (*common.StatusAndId, error)
-	TransactionDetailGet(ctx context.Context, in *request.TransactionDetailGet, opts ...grpc.CallOption) (*TransactionDetailRes, error)
+	TransactionDetailGet(ctx context.Context, in *request.Id, opts ...grpc.CallOption) (*TransactionDetailRes, error)
 	TransactionListGet(ctx context.Context, in *request.TransactionListGet, opts ...grpc.CallOption) (*TransactionListGetRes, error)
+	TransactionDelete(ctx context.Context, in *request.Id, opts ...grpc.CallOption) (*common.Empty, error)
 	OrganizationOmzetGet(ctx context.Context, in *request.OrganizationOmzetGet, opts ...grpc.CallOption) (*OrganizationOmzetGetRes, error)
 	BranchOmzetGet(ctx context.Context, in *request.BranchOmzetGet, opts ...grpc.CallOption) (*BranchOmzetGetRes, error)
 }
@@ -73,7 +75,7 @@ func (c *transactionServiceClient) TransactionPut(ctx context.Context, in *reque
 	return out, nil
 }
 
-func (c *transactionServiceClient) TransactionDetailGet(ctx context.Context, in *request.TransactionDetailGet, opts ...grpc.CallOption) (*TransactionDetailRes, error) {
+func (c *transactionServiceClient) TransactionDetailGet(ctx context.Context, in *request.Id, opts ...grpc.CallOption) (*TransactionDetailRes, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TransactionDetailRes)
 	err := c.cc.Invoke(ctx, TransactionService_TransactionDetailGet_FullMethodName, in, out, cOpts...)
@@ -87,6 +89,16 @@ func (c *transactionServiceClient) TransactionListGet(ctx context.Context, in *r
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(TransactionListGetRes)
 	err := c.cc.Invoke(ctx, TransactionService_TransactionListGet_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *transactionServiceClient) TransactionDelete(ctx context.Context, in *request.Id, opts ...grpc.CallOption) (*common.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(common.Empty)
+	err := c.cc.Invoke(ctx, TransactionService_TransactionDelete_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,8 +131,9 @@ func (c *transactionServiceClient) BranchOmzetGet(ctx context.Context, in *reque
 type TransactionServiceServer interface {
 	TransactionPost(context.Context, *request.TransactionPost) (*common.StatusAndId, error)
 	TransactionPut(context.Context, *request.TransactionPut) (*common.StatusAndId, error)
-	TransactionDetailGet(context.Context, *request.TransactionDetailGet) (*TransactionDetailRes, error)
+	TransactionDetailGet(context.Context, *request.Id) (*TransactionDetailRes, error)
 	TransactionListGet(context.Context, *request.TransactionListGet) (*TransactionListGetRes, error)
+	TransactionDelete(context.Context, *request.Id) (*common.Empty, error)
 	OrganizationOmzetGet(context.Context, *request.OrganizationOmzetGet) (*OrganizationOmzetGetRes, error)
 	BranchOmzetGet(context.Context, *request.BranchOmzetGet) (*BranchOmzetGetRes, error)
 	mustEmbedUnimplementedTransactionServiceServer()
@@ -136,11 +149,14 @@ func (UnimplementedTransactionServiceServer) TransactionPost(context.Context, *r
 func (UnimplementedTransactionServiceServer) TransactionPut(context.Context, *request.TransactionPut) (*common.StatusAndId, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TransactionPut not implemented")
 }
-func (UnimplementedTransactionServiceServer) TransactionDetailGet(context.Context, *request.TransactionDetailGet) (*TransactionDetailRes, error) {
+func (UnimplementedTransactionServiceServer) TransactionDetailGet(context.Context, *request.Id) (*TransactionDetailRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TransactionDetailGet not implemented")
 }
 func (UnimplementedTransactionServiceServer) TransactionListGet(context.Context, *request.TransactionListGet) (*TransactionListGetRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TransactionListGet not implemented")
+}
+func (UnimplementedTransactionServiceServer) TransactionDelete(context.Context, *request.Id) (*common.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TransactionDelete not implemented")
 }
 func (UnimplementedTransactionServiceServer) OrganizationOmzetGet(context.Context, *request.OrganizationOmzetGet) (*OrganizationOmzetGetRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OrganizationOmzetGet not implemented")
@@ -198,7 +214,7 @@ func _TransactionService_TransactionPut_Handler(srv interface{}, ctx context.Con
 }
 
 func _TransactionService_TransactionDetailGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(request.TransactionDetailGet)
+	in := new(request.Id)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -210,7 +226,7 @@ func _TransactionService_TransactionDetailGet_Handler(srv interface{}, ctx conte
 		FullMethod: TransactionService_TransactionDetailGet_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TransactionServiceServer).TransactionDetailGet(ctx, req.(*request.TransactionDetailGet))
+		return srv.(TransactionServiceServer).TransactionDetailGet(ctx, req.(*request.Id))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -229,6 +245,24 @@ func _TransactionService_TransactionListGet_Handler(srv interface{}, ctx context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TransactionServiceServer).TransactionListGet(ctx, req.(*request.TransactionListGet))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TransactionService_TransactionDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(request.Id)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TransactionServiceServer).TransactionDelete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TransactionService_TransactionDelete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TransactionServiceServer).TransactionDelete(ctx, req.(*request.Id))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -291,6 +325,10 @@ var TransactionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TransactionListGet",
 			Handler:    _TransactionService_TransactionListGet_Handler,
+		},
+		{
+			MethodName: "TransactionDelete",
+			Handler:    _TransactionService_TransactionDelete_Handler,
 		},
 		{
 			MethodName: "OrganizationOmzetGet",

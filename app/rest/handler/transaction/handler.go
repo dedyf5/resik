@@ -11,6 +11,7 @@ import (
 	"github.com/dedyf5/resik/config"
 	commonCore "github.com/dedyf5/resik/core/common"
 	trxService "github.com/dedyf5/resik/core/transaction"
+	dtoTrx "github.com/dedyf5/resik/core/transaction/dto"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
@@ -161,12 +162,12 @@ func (h *Handler) TransactionDetailGet(echoCtx *echo.Context) error {
 	}
 	h.log.Debug("TransactionDetailGet")
 
-	var payload reqTrxCore.TransactionDetailGet
+	var payload reqTrxCore.Id
 	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
 		return err
 	}
 
-	param, err := payload.ToParam(ctx, h.resolver)
+	param, err := payload.ToParam(ctx, h.resolver, dtoTrx.PERMISSION_CODE_READ)
 	if err != nil {
 		return err
 	}
@@ -237,6 +238,45 @@ func (h *Handler) TransactionListGet(echoCtx *echo.Context) error {
 			Total:       res.Total,
 		},
 	)
+}
+
+// @Summary Delete Transaction
+// @Description Delete transaction
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param       id path string true "Transaction ID"
+// @Param       parameter query commonEntity.Request true "Query Param"
+// @Success		204	{object}	nil
+// @Failure     400 {object}	resPkg.ResponseBadRequest
+// @Failure     401 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     404 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     429 {object}	resPkg.ResponseErrorWithoutDetails
+// @Failure     500 {object}	resPkg.ResponseErrorWithoutDetails
+// @Router		/transactions/{id} [delete]
+func (h *Handler) TransactionDelete(echoCtx *echo.Context) error {
+	ctx, err := ctx.NewCtx(echoCtx.Request().Context(), h.log)
+	if err != nil {
+		return err
+	}
+	h.log.Debug("TransactionDelete")
+
+	var payload reqTrxCore.Id
+	if err := h.fw.StructValidator(echoCtx, &payload); err != nil {
+		return err
+	}
+
+	param, err := payload.ToParam(ctx, h.resolver, dtoTrx.PERMISSION_CODE_DELETE)
+	if err != nil {
+		return err
+	}
+
+	if ok, err := h.trxService.TransactionDelete(param); err != nil || !ok {
+		return err
+	}
+
+	return resPkg.NewStatusCode(http.StatusNoContent)
 }
 
 // @Summary Get Organization Omzet

@@ -47,7 +47,7 @@ func (r *TransactionRepo) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transac
 	return true, nil
 }
 
-func (r *TransactionRepo) TransactionGetByPublicID(param *paramTrx.TransactionGet) (transaction *trxEntity.Transaction, err *resPkg.Status) {
+func (r *TransactionRepo) TransactionGetByPublicID(param *paramTrx.TransactionPublicID) (transaction *trxEntity.Transaction, err *resPkg.Status) {
 	query := r.DB.WithContext(param.Ctx.Context).Table(trxEntity.TABLE_NAME).
 		Where("public_id = ?", param.PublicID).
 		Where("branch_public_id IN ?", param.BranchPublicIDs)
@@ -111,6 +111,15 @@ func (r *TransactionRepo) TransactionsBaseQuery(param *paramTrx.TransactionsGet)
 	}
 
 	return
+}
+
+func (r *TransactionRepo) TransactionDelete(param *paramTrx.TransactionPublicID) (ok bool, err *resPkg.Status) {
+	sql := "DELETE FROM " + trxEntity.TABLE_NAME + " WHERE public_id = ? AND branch_public_id IN ?"
+	result := r.DB.WithContext(param.Ctx.Context).Exec(sql, param.PublicID, param.BranchPublicIDs)
+	if result.Error != nil {
+		return false, resPkg.NewStatusError(http.StatusInternalServerError, result.Error)
+	}
+	return true, nil
 }
 
 func (r *TransactionRepo) OrganizationOmzetGetData(param *paramTrx.OrganizationOmzetGet) (res []trxEntity.OrganizationOmzet, err *resPkg.Status) {

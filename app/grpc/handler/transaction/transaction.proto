@@ -12,10 +12,11 @@ import "app/grpc/handler/transaction/detail.proto";
 import "app/grpc/handler/transaction/list.proto";
 import "app/grpc/handler/transaction/organization.proto";
 
+import "core/common/status.proto";
 import "core/common/status_and_id.proto";
 
 import "core/transaction/request/branch.proto";
-import "core/transaction/request/detail.proto";
+import "core/transaction/request/id.proto";
 import "core/transaction/request/list.proto";
 import "core/transaction/request/organization.proto";
 import "core/transaction/request/upsert.proto";
@@ -23,8 +24,10 @@ import "core/transaction/request/upsert.proto";
 service TransactionService {
     rpc TransactionPost(core.transaction.request.TransactionPost) returns (core.common.StatusAndId);
     rpc TransactionPut(core.transaction.request.TransactionPut) returns (core.common.StatusAndId);
-    rpc TransactionDetailGet(core.transaction.request.TransactionDetailGet) returns (transaction.TransactionDetailRes);
+    rpc TransactionDetailGet(core.transaction.request.Id) returns (transaction.TransactionDetailRes);
     rpc TransactionListGet(core.transaction.request.TransactionListGet) returns (transaction.TransactionListGetRes);
+    rpc TransactionDelete(core.transaction.request.Id) returns (core.common.Empty);
+
     rpc OrganizationOmzetGet(core.transaction.request.OrganizationOmzetGet) returns (transaction.OrganizationOmzetGetRes);
     rpc BranchOmzetGet(core.transaction.request.BranchOmzetGet) returns (transaction.BranchOmzetGetRes);
 }

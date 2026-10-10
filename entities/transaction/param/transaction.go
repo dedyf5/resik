@@ -10,10 +10,10 @@ import (
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
-type TransactionGet struct {
+type TransactionPublicID struct {
 	Ctx             *ctx.Ctx
 	BranchPublicIDs []uuidPkg.UUIDV7
-	PublicID        uuidPkg.UUIDV7
+	PublicID        *uuidPkg.UUIDV7
 }
 
 type TransactionsGet struct {

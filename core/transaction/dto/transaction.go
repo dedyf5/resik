@@ -64,7 +64,9 @@ type PERMISSION_CODE string
 
 const (
 	PERMISSION_CODE_CREATE PERMISSION_CODE = "transaction:create"
+	PERMISSION_CODE_READ   PERMISSION_CODE = "transaction:read"
 	PERMISSION_CODE_UPDATE PERMISSION_CODE = "transaction:update"
+	PERMISSION_CODE_DELETE PERMISSION_CODE = "transaction:delete"
 )
 
 func (u PERMISSION_CODE) String() string {

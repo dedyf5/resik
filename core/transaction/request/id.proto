@@ -7,7 +7,7 @@ syntax = "proto3";
 package core.transaction.request;
 option go_package = "github.com/dedyf5/resik/core/transaction/request";
 
-// Message request detail for transaction
-message TransactionDetailGet {
-  string id = 1; // @gotags: json:"-" param:"id" query:"id" validate:"required" example:"01a10703ca02751d979b9349583fcdbc"
+// Message request id
+message Id {
+  string id = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required,uuidv7" example:"01a10703ca02751d979b9349583fcdbc"
 }

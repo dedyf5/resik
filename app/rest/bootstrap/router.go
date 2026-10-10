@@ -71,6 +71,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	trx.GET("", trxHandler.TransactionListGet)
 	trx.GET("/:id", trxHandler.TransactionDetailGet)
 	trx.PUT("/:id", trxHandler.TransactionPut)
+	trx.DELETE("/:id", trxHandler.TransactionDelete)
 	trxOrganization := trx.Group("/organization/:organization_id")
 	trxOrganization.GET("/omzet", trxHandler.OrganizationOmzetGet)
 	trxBranch := trx.Group("/branch/:branch_id")

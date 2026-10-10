@@ -7,6 +7,7 @@ package request
 import (
 	"net/http"
 
+	dtoTrx "github.com/dedyf5/resik/core/transaction/dto"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/ctx/lang/term"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
@@ -15,7 +16,7 @@ import (
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
-func (t *TransactionDetailGet) ToParam(ctx *ctx.Ctx, resolver identity.IdentityResolver) (param *paramTrx.TransactionGet, err *resPkg.Status) {
+func (t *Id) ToParam(ctx *ctx.Ctx, resolver identity.IdentityResolver, permissionCode dtoTrx.PERMISSION_CODE) (param *paramTrx.TransactionPublicID, err *resPkg.Status) {
 	publicID, uuidErr := uuidPkg.ParseUUIDV7(t.GetId())
 	if uuidErr != nil {
 		return nil, resPkg.NewStatusMessage(
@@ -25,14 +26,14 @@ func (t *TransactionDetailGet) ToParam(ctx *ctx.Ctx, resolver identity.IdentityR
 		)
 	}
 
-	branchPublicIDs, errRes := resolver.GetBranchPublicIDsByPermission(ctx.Context, ctx.UserClaims().UserID(), "transaction:read")
+	branchPublicIDs, errRes := resolver.GetBranchPublicIDsByPermission(ctx.Context, ctx.UserClaims().UserID(), permissionCode.String())
 	if errRes != nil {
 		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errRes)
 	}
 
-	return &paramTrx.TransactionGet{
+	return &paramTrx.TransactionPublicID{
 		Ctx:             ctx,
 		BranchPublicIDs: branchPublicIDs,
-		PublicID:        publicID,
+		PublicID:        &publicID,
 	}, nil
 }

@@ -19,8 +19,9 @@ type IService interface {
 	TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (ok bool, err *resPkg.Status)
 	HasAccessBranch(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7, permissionCode trxDTO.PERMISSION_CODE) (ok bool, err *resPkg.Status)
 	ValidateBranchOrganization(ctx *ctx.Ctx, branchPublicID, orgPublicID *uuidPkg.UUIDV7) (ok bool, err *resPkg.Status)
-	TransactionGetByPublicID(param *paramTrx.TransactionGet) (res *trxDTO.Transaction, err *resPkg.Status)
+	TransactionGetByPublicID(param *paramTrx.TransactionPublicID) (res *trxDTO.Transaction, err *resPkg.Status)
 	TransactionsGet(param *paramTrx.TransactionsGet) (res *trxDTO.TransactionsResult, err *resPkg.Status)
+	TransactionDelete(param *paramTrx.TransactionPublicID) (ok bool, err *resPkg.Status)
 	OrganizationOmzetGet(param *paramTrx.OrganizationOmzetGet) (res *trxDTO.OrganizationOmzet, err *resPkg.Status)
 	BranchOmzetGet(param *paramTrx.BranchOmzetGet) (res *trxDTO.BranchOmzet, err *resPkg.Status)
 }

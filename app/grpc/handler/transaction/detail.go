@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	commonCore "github.com/dedyf5/resik/core/common"
+	dtoTrx "github.com/dedyf5/resik/core/transaction/dto"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
@@ -17,7 +18,7 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-func (h *TransactionHandler) TransactionDetailGet(c context.Context, req *reqTrxCore.TransactionDetailGet) (*TransactionDetailRes, error) {
+func (h *TransactionHandler) TransactionDetailGet(c context.Context, req *reqTrxCore.Id) (*TransactionDetailRes, error) {
 	ctx, err := ctx.NewCtx(c, h.log)
 	if err != nil {
 		return nil, err
@@ -28,7 +29,7 @@ func (h *TransactionHandler) TransactionDetailGet(c context.Context, req *reqTrx
 		return nil, err
 	}
 
-	param, err := req.ToParam(ctx, h.resolver)
+	param, err := req.ToParam(ctx, h.resolver, dtoTrx.PERMISSION_CODE_READ)
 	if err != nil {
 		return nil, err
 	}

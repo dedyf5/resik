@@ -90,8 +90,23 @@ func (mr *MockIServiceMockRecorder) OrganizationOmzetGet(arg0 any) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationOmzetGet", reflect.TypeOf((*MockIService)(nil).OrganizationOmzetGet), arg0)
 }
 
+// TransactionDelete mocks base method.
+func (m *MockIService) TransactionDelete(arg0 *param.TransactionPublicID) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionDelete", arg0)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionDelete indicates an expected call of TransactionDelete.
+func (mr *MockIServiceMockRecorder) TransactionDelete(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionDelete", reflect.TypeOf((*MockIService)(nil).TransactionDelete), arg0)
+}
+
 // TransactionGetByPublicID mocks base method.
-func (m *MockIService) TransactionGetByPublicID(arg0 *param.TransactionGet) (*dto.Transaction, *response.Status) {
+func (m *MockIService) TransactionGetByPublicID(arg0 *param.TransactionPublicID) (*dto.Transaction, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "TransactionGetByPublicID", arg0)
 	ret0, _ := ret[0].(*dto.Transaction)

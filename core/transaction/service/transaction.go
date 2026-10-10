@@ -80,7 +80,7 @@ func (s *Service) ValidateBranchOrganization(ctx *ctx.Ctx, branchPublicID, orgPu
 	return branch.IsBelongToOrganization(orgPublicID)
 }
 
-func (s *Service) TransactionGetByPublicID(param *paramTrx.TransactionGet) (res *trxDTO.Transaction, err *resPkg.Status) {
+func (s *Service) TransactionGetByPublicID(param *paramTrx.TransactionPublicID) (res *trxDTO.Transaction, err *resPkg.Status) {
 	transaction, err := s.transactionRepo.TransactionGetByPublicID(param)
 	if err != nil {
 		return nil, err
@@ -136,6 +136,20 @@ func (s *Service) TransactionsGet(param *paramTrx.TransactionsGet) (res *trxDTO.
 		Data:  trxDTO.TransactionsFromEntity(transactions, users.UniquePublicIDsMap()),
 		Total: total,
 	}, nil
+}
+
+func (s *Service) TransactionDelete(param *paramTrx.TransactionPublicID) (ok bool, err *resPkg.Status) {
+	trx, err := s.transactionRepo.TransactionGetByPublicID(param)
+	if err != nil {
+		return false, err
+	}
+	if trx == nil {
+		return false, resPkg.NewStatusError(
+			http.StatusNotFound,
+			nil,
+		)
+	}
+	return s.transactionRepo.TransactionDelete(param)
 }
 
 func (s *Service) OrganizationOmzetGet(param *paramTrx.OrganizationOmzetGet) (res *trxDTO.OrganizationOmzet, err *resPkg.Status) {

@@ -391,7 +391,7 @@ func TestTransactionGetByPublicID(t *testing.T) {
 
 	_, trxRepo, userRepo, ctx, trxService, _ := setup(ctrl)
 
-	param := &trxParam.TransactionGet{
+	param := &trxParam.TransactionPublicID{
 		Ctx: ctx,
 	}
 
@@ -559,6 +559,65 @@ func TestTransactionsGet(t *testing.T) {
 		assert.Equal(t, transactions[0].ID, res.Data[0].Transaction.ID)
 		assert.Equal(t, transactions[0].BillTotal, res.Data[0].BillTotal)
 		assert.Equal(t, transactions[0].TransactedAt, res.Data[0].TransactedAt)
+	})
+}
+
+func TestTransactionDelete(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	_, trxRepo, _, ctx, trxService, _ := setup(ctrl)
+
+	param := &trxParam.TransactionPublicID{
+		Ctx: ctx,
+	}
+
+	transaction := &trxEntity.Transaction{}
+
+	err500 := &resPkg.Status{
+		Code: http.StatusInternalServerError,
+	}
+
+	t.Run("TestTransactionDelete TransactionGetByPublicID ERROR-500", func(t *testing.T) {
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(nil, err500),
+		)
+		ok, err := trxService.TransactionDelete(param)
+		assert.False(t, ok)
+		assert.Equal(t, err500, err)
+	})
+
+	t.Run("TestTransactionDelete ERROR-404", func(t *testing.T) {
+		statusErr := &resPkg.Status{
+			Code: http.StatusNotFound,
+		}
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(nil, nil),
+		)
+		ok, err := trxService.TransactionDelete(param)
+		assert.False(t, ok)
+		assert.Equal(t, statusErr.Code, err.Code)
+	})
+
+	t.Run("TestTransactionDelete TransactionDelete ERROR-500", func(t *testing.T) {
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(transaction, nil),
+			trxRepo.EXPECT().TransactionDelete(param).Return(false, err500),
+		)
+		ok, err := trxService.TransactionDelete(param)
+		assert.False(t, ok)
+		assert.NotNil(t, err)
+		assert.Equal(t, err500.Code, err.Code)
+	})
+
+	t.Run("TestTransactionDelete ALL-SUCCESS", func(t *testing.T) {
+		gomock.InOrder(
+			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(transaction, nil),
+			trxRepo.EXPECT().TransactionDelete(param).Return(true, nil),
+		)
+		ok, err := trxService.TransactionDelete(param)
+		assert.True(t, ok)
+		assert.Nil(t, err)
 	})
 }
 
