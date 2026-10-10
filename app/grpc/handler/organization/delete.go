@@ -10,6 +10,7 @@ import (
 	commonCore "github.com/dedyf5/resik/core/common"
 	reqOrganizationCore "github.com/dedyf5/resik/core/organization/request"
 	"github.com/dedyf5/resik/ctx"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	"google.golang.org/grpc/codes"
 )
 
@@ -24,7 +25,7 @@ func (h *OrganizationHandler) OrganizationDelete(c context.Context, req *reqOrga
 		return nil, err
 	}
 
-	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), "organization:delete")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), permisEntity.PERMISSION_CODE_ORG_DELETE.String())
 	if err != nil {
 		return nil, err
 	}

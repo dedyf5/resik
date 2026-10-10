@@ -8,9 +8,9 @@ import (
 	"context"
 
 	commonCore "github.com/dedyf5/resik/core/common"
-	dtoTrx "github.com/dedyf5/resik/core/transaction/dto"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	"github.com/dedyf5/resik/ctx"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	"google.golang.org/grpc/codes"
 )
 
@@ -25,7 +25,7 @@ func (h *TransactionHandler) TransactionDelete(c context.Context, req *reqTrxCor
 		return nil, err
 	}
 
-	param, err := req.ToParam(ctx, h.resolver, dtoTrx.PERMISSION_CODE_DELETE)
+	param, err := req.ToParam(ctx, h.resolver, permisEntity.PERMISSION_CODE_TRX_DELETE)
 	if err != nil {
 		return nil, err
 	}

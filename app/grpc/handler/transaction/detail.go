@@ -9,11 +9,11 @@ import (
 	"net/http"
 
 	commonCore "github.com/dedyf5/resik/core/common"
-	dtoTrx "github.com/dedyf5/resik/core/transaction/dto"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/ctx/lang/term"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"google.golang.org/grpc/codes"
 )
@@ -29,7 +29,7 @@ func (h *TransactionHandler) TransactionDetailGet(c context.Context, req *reqTrx
 		return nil, err
 	}
 
-	param, err := req.ToParam(ctx, h.resolver, dtoTrx.PERMISSION_CODE_READ)
+	param, err := req.ToParam(ctx, h.resolver, permisEntity.PERMISSION_CODE_TRX_READ)
 	if err != nil {
 		return nil, err
 	}

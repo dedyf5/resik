@@ -9,6 +9,7 @@ import (
 
 	"github.com/dedyf5/resik/ctx"
 	paramOrganization "github.com/dedyf5/resik/entities/organization/param"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	"github.com/dedyf5/resik/internal/identity"
 	"github.com/dedyf5/resik/pkg/goku"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -20,7 +21,7 @@ func (m *OrganizationListGet) ToParam(c *ctx.Ctx, resolver identity.IdentityReso
 		orderStr = m.GetOrder()
 	}
 
-	organizationIDs, errRes := resolver.GetOrganizationIDsByPermission(c.Context, c.UserClaims().UserID(), "organization:read")
+	organizationIDs, errRes := resolver.GetOrganizationIDsByPermission(c.Context, c.UserClaims().UserID(), permisEntity.PERMISSION_CODE_ORG_READ.String())
 	if errRes != nil {
 		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errRes)
 	}

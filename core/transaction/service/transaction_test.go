@@ -20,6 +20,7 @@ import (
 	branchEntity "github.com/dedyf5/resik/entities/branch"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	orgEntity "github.com/dedyf5/resik/entities/organization"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	trxParam "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
@@ -70,7 +71,7 @@ func TestTransactionInsert(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -90,7 +91,7 @@ func TestTransactionInsert(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -112,7 +113,7 @@ func TestTransactionInsert(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -132,7 +133,7 @@ func TestTransactionInsert(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -184,7 +185,7 @@ func TestTransactionUpdate(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_UPDATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_UPDATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -204,7 +205,7 @@ func TestTransactionUpdate(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_UPDATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_UPDATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -223,7 +224,7 @@ func TestTransactionUpdate(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_UPDATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_UPDATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -258,13 +259,13 @@ func TestHasAccessBranch(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
 				Return(okExpected, errors.New("error 500")),
 		)
-		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, dtoTrx.PERMISSION_CODE_CREATE)
+		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, permisEntity.PERMISSION_CODE_TRX_CREATE)
 		assert.Equal(t, okExpected, ok)
 		assert.Equal(t, statusErr.Code, err.Code)
 	})
@@ -279,13 +280,13 @@ func TestHasAccessBranch(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
 				Return(okExpected, nil),
 		)
-		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, dtoTrx.PERMISSION_CODE_CREATE)
+		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, permisEntity.PERMISSION_CODE_TRX_CREATE)
 		assert.Equal(t, okExpected, ok)
 		assert.Equal(t, statusErr.Code, err.Code)
 	})
@@ -297,13 +298,13 @@ func TestHasAccessBranch(t *testing.T) {
 				HasAccessByPublicID(
 					ctx.Context,
 					ctx.UserClaims().UserID(),
-					dtoTrx.PERMISSION_CODE_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
 				Return(okExpected, nil),
 		)
-		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, dtoTrx.PERMISSION_CODE_CREATE)
+		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, permisEntity.PERMISSION_CODE_TRX_CREATE)
 		assert.Equal(t, okExpected, ok)
 		assert.Nil(t, err)
 	})

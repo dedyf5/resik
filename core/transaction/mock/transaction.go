@@ -14,6 +14,7 @@ import (
 
 	dto "github.com/dedyf5/resik/core/transaction/dto"
 	ctx "github.com/dedyf5/resik/ctx"
+	permission "github.com/dedyf5/resik/entities/permission"
 	transaction "github.com/dedyf5/resik/entities/transaction"
 	param "github.com/dedyf5/resik/entities/transaction/param"
 	response "github.com/dedyf5/resik/pkg/response"
@@ -61,7 +62,7 @@ func (mr *MockIServiceMockRecorder) BranchOmzetGet(arg0 any) *gomock.Call {
 }
 
 // HasAccessBranch mocks base method.
-func (m *MockIService) HasAccessBranch(arg0 *ctx.Ctx, branchPublicID *uuid.UUIDV7, permissionCode dto.PERMISSION_CODE) (bool, *response.Status) {
+func (m *MockIService) HasAccessBranch(arg0 *ctx.Ctx, branchPublicID *uuid.UUIDV7, permissionCode permission.PERMISSION_CODE) (bool, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasAccessBranch", arg0, branchPublicID, permissionCode)
 	ret0, _ := ret[0].(bool)

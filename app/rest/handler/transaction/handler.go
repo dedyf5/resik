@@ -11,13 +11,13 @@ import (
 	"github.com/dedyf5/resik/config"
 	commonCore "github.com/dedyf5/resik/core/common"
 	trxService "github.com/dedyf5/resik/core/transaction"
-	dtoTrx "github.com/dedyf5/resik/core/transaction/dto"
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v5"
@@ -167,7 +167,7 @@ func (h *Handler) TransactionDetailGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	param, err := payload.ToParam(ctx, h.resolver, dtoTrx.PERMISSION_CODE_READ)
+	param, err := payload.ToParam(ctx, h.resolver, permisEntity.PERMISSION_CODE_TRX_READ)
 	if err != nil {
 		return err
 	}
@@ -267,7 +267,7 @@ func (h *Handler) TransactionDelete(echoCtx *echo.Context) error {
 		return err
 	}
 
-	param, err := payload.ToParam(ctx, h.resolver, dtoTrx.PERMISSION_CODE_DELETE)
+	param, err := payload.ToParam(ctx, h.resolver, permisEntity.PERMISSION_CODE_TRX_DELETE)
 	if err != nil {
 		return err
 	}

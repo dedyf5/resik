@@ -11,6 +11,7 @@ import (
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/ctx/lang/term"
 	"github.com/dedyf5/resik/entities/branch"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -18,7 +19,7 @@ import (
 )
 
 func (s *Service) TransactionInsert(ctx *ctx.Ctx, trx *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
-	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID, trxDTO.PERMISSION_CODE_CREATE)
+	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID, permisEntity.PERMISSION_CODE_TRX_CREATE)
 	if err != nil {
 		return false, err
 	}
@@ -33,7 +34,7 @@ func (s *Service) TransactionInsert(ctx *ctx.Ctx, trx *trxEntity.Transaction) (o
 }
 
 func (s *Service) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
-	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID, trxDTO.PERMISSION_CODE_UPDATE)
+	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID, permisEntity.PERMISSION_CODE_TRX_UPDATE)
 	if err != nil {
 		return false, err
 	}
@@ -47,7 +48,7 @@ func (s *Service) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (o
 	return
 }
 
-func (s *Service) HasAccessBranch(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7, permissionCode trxDTO.PERMISSION_CODE) (ok bool, err *resPkg.Status) {
+func (s *Service) HasAccessBranch(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7, permissionCode permisEntity.PERMISSION_CODE) (ok bool, err *resPkg.Status) {
 	hasAccess, accessErr := s.resolver.HasAccessByPublicID(
 		ctx.Context, ctx.UserClaims().UserID(),
 		permissionCode.String(),

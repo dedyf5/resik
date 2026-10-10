@@ -12,6 +12,7 @@ import (
 	resOrganizationCore "github.com/dedyf5/resik/core/organization/response"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/ctx/lang/term"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	"google.golang.org/grpc/codes"
 )
 
@@ -60,7 +61,7 @@ func (h *OrganizationHandler) OrganizationPut(c context.Context, req *reqOrganiz
 		return nil, err
 	}
 
-	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), "organization:update")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), permisEntity.PERMISSION_CODE_ORG_UPDATE.String())
 	if err != nil {
 		return nil, err
 	}

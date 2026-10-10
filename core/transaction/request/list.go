@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	ctx "github.com/dedyf5/resik/ctx"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	"github.com/dedyf5/resik/internal/identity"
 	"github.com/dedyf5/resik/pkg/goku"
@@ -15,7 +16,7 @@ import (
 )
 
 func (t *TransactionListGet) ToParam(c *ctx.Ctx, resolver identity.IdentityResolver) (param *paramTrx.TransactionsGet, err *resPkg.Status) {
-	branchPublicIDs, errRes := resolver.GetBranchPublicIDsByPermission(c.Context, c.UserClaims().UserID(), "transaction:read")
+	branchPublicIDs, errRes := resolver.GetBranchPublicIDsByPermission(c.Context, c.UserClaims().UserID(), permisEntity.PERMISSION_CODE_TRX_READ.String())
 	if errRes != nil {
 		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errRes)
 	}

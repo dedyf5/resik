@@ -13,6 +13,7 @@ import (
 	resOrganizationCore "github.com/dedyf5/resik/core/organization/response"
 	"github.com/dedyf5/resik/ctx"
 	"github.com/dedyf5/resik/ctx/lang/term"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"google.golang.org/grpc/codes"
 )
@@ -28,7 +29,7 @@ func (h *OrganizationHandler) OrganizationDetailGet(c context.Context, req *reqO
 		return nil, err
 	}
 
-	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), "organization:read")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), permisEntity.PERMISSION_CODE_ORG_READ.String())
 	if err != nil {
 		return nil, err
 	}

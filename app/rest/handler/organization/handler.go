@@ -15,6 +15,7 @@ import (
 	"github.com/dedyf5/resik/ctx/lang/term"
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	commonEntity "github.com/dedyf5/resik/entities/common"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/labstack/echo/v5"
@@ -117,7 +118,7 @@ func (h *Handler) OrganizationPut(echoCtx *echo.Context) error {
 		return err
 	}
 
-	organizationID, _, err := ctx.GetOrganizationID(h.resolver, body.GetId(), "organization:update")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, body.GetId(), permisEntity.PERMISSION_CODE_ORG_UPDATE.String())
 	if err != nil {
 		return err
 	}
@@ -170,7 +171,7 @@ func (h *Handler) OrganizationDetailGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	organizationID, _, err := ctx.GetOrganizationID(h.resolver, param.GetId(), "organization:read")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, param.GetId(), permisEntity.PERMISSION_CODE_ORG_READ.String())
 	if err != nil {
 		return err
 	}
@@ -270,7 +271,7 @@ func (h *Handler) OrganizationDelete(echoCtx *echo.Context) error {
 		return err
 	}
 
-	organizationID, _, err := ctx.GetOrganizationID(h.resolver, param.GetId(), "organization:delete")
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, param.GetId(), permisEntity.PERMISSION_CODE_ORG_DELETE.String())
 	if err != nil {
 		return err
 	}
