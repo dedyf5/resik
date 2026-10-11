@@ -6,7 +6,6 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"testing"
@@ -24,141 +23,16 @@ import (
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	"github.com/dedyf5/resik/entities/organization/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
-	identityMock "github.com/dedyf5/resik/internal/identity/mock"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	repoMock "github.com/dedyf5/resik/repositories/mock"
 )
 
-func TestOrganizationInsert(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	resolver, ctx, organizationRepo, _, organizationService := setup(ctrl)
-
-	userID := ctx.UserClaims().UserID()
-	organization := &organizationEntity.Organization{}
-
-	t.Run("TestOrganizationInsert OrganizationInsert ERROR-500", func(t *testing.T) {
-		okExpected := false
-		statusErr := &resPkg.Status{
-			Code: http.StatusInternalServerError,
-		}
-		gomock.InOrder(
-			organizationRepo.EXPECT().OrganizationInsert(ctx, organization).Return(okExpected, statusErr),
-		)
-		ok, err := organizationService.OrganizationInsert(ctx, organization)
-		assert.Equal(t, okExpected, ok)
-		assert.Equal(t, statusErr, err)
-	})
-
-	t.Run("TestOrganizationInsert InvalidateUserAccessOrganization ERROR-500", func(t *testing.T) {
-		okExpected := true
-		errExpected := errors.New("ERROR")
-		gomock.InOrder(
-			organizationRepo.EXPECT().OrganizationInsert(ctx, organization).Return(okExpected, nil),
-			resolver.EXPECT().InvalidateUserAccessOrganization(ctx.Context, userID).Return(errExpected),
-		)
-		ok, err := organizationService.OrganizationInsert(ctx, organization)
-		assert.Equal(t, okExpected, ok)
-		assert.Nil(t, err)
-	})
-
-	t.Run("TestOrganizationInsert ALL-SUCCESS", func(t *testing.T) {
-		okExpected := true
-		gomock.InOrder(
-			organizationRepo.EXPECT().OrganizationInsert(ctx, organization).Return(okExpected, nil),
-			resolver.EXPECT().InvalidateUserAccessOrganization(ctx.Context, userID).Return(nil),
-		)
-		ok, err := organizationService.OrganizationInsert(ctx, organization)
-		assert.Equal(t, okExpected, ok)
-		assert.Nil(t, err)
-	})
-}
-
-func TestOrganizationUpdate(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	_, ctx, organizationRepo, _, organizationService := setup(ctrl)
-
-	organization := &organizationEntity.Organization{}
-
-	t.Run("TestOrganizationUpdate OrganizationUpdate ERROR-500", func(t *testing.T) {
-		okExpected := false
-		statusErr := &resPkg.Status{
-			Code: http.StatusInternalServerError,
-		}
-		gomock.InOrder(
-			organizationRepo.EXPECT().OrganizationUpdate(ctx, organization).Return(okExpected, statusErr),
-		)
-		ok, err := organizationService.OrganizationUpdate(ctx, organization)
-		assert.Equal(t, okExpected, ok)
-		assert.Equal(t, statusErr, err)
-	})
-
-	t.Run("TestOrganizationUpdate ALL-SUCCESS", func(t *testing.T) {
-		okExpected := true
-		gomock.InOrder(
-			organizationRepo.EXPECT().OrganizationUpdate(ctx, organization).Return(true, nil),
-		)
-		ok, err := organizationService.OrganizationUpdate(ctx, organization)
-		assert.Equal(t, okExpected, ok)
-		assert.Nil(t, err)
-	})
-}
-
-func TestOrganizationDelete(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	resolver, ctx, organizationRepo, _, organizationService := setup(ctrl)
-
-	userID := ctx.UserClaims().UserID()
-	organization := &organizationEntity.Organization{}
-
-	t.Run("TestOrganizationDelete OrganizationDelete ERROR-500", func(t *testing.T) {
-		okExpected := false
-		statusErr := &resPkg.Status{
-			Code: http.StatusInternalServerError,
-		}
-		gomock.InOrder(
-			organizationRepo.EXPECT().OrganizationDelete(ctx, organization).Return(okExpected, statusErr),
-		)
-		ok, err := organizationService.OrganizationDelete(ctx, organization)
-		assert.Equal(t, okExpected, ok)
-		assert.Equal(t, statusErr, err)
-	})
-
-	t.Run("TestOrganizationDelete InvalidateUserAccessOrganization ERROR-500", func(t *testing.T) {
-		okExpected := true
-		errExpected := errors.New("ERROR")
-		gomock.InOrder(
-			organizationRepo.EXPECT().OrganizationDelete(ctx, organization).Return(okExpected, nil),
-			resolver.EXPECT().InvalidateUserAccessOrganization(ctx.Context, userID).Return(errExpected),
-		)
-		ok, err := organizationService.OrganizationDelete(ctx, organization)
-		assert.Equal(t, okExpected, ok)
-		assert.Nil(t, err)
-	})
-
-	t.Run("TestOrganizationDelete ALL-SUCCESS", func(t *testing.T) {
-		okExpected := true
-		gomock.InOrder(
-			organizationRepo.EXPECT().OrganizationDelete(ctx, organization).Return(okExpected, nil),
-			resolver.EXPECT().InvalidateUserAccessOrganization(ctx.Context, userID).Return(nil),
-		)
-		ok, err := organizationService.OrganizationDelete(ctx, organization)
-		assert.Equal(t, okExpected, ok)
-		assert.Nil(t, err)
-	})
-}
-
 func TestOrganizationGetByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	_, ctx, organizationRepo, userRepo, organizationService := setup(ctrl)
+	ctx, organizationRepo, userRepo, organizationService := setup(ctrl)
 
 	organization := &organizationEntity.Organization{}
 	user := &userEntity.User{}
@@ -226,7 +100,7 @@ func TestOrganizationsGet(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	_, ctx, organizationRepo, userRepo, organizationService := setup(ctrl)
+	ctx, organizationRepo, userRepo, organizationService := setup(ctrl)
 
 	param := &param.OrganizationsGet{
 		Ctx: ctx,
@@ -322,12 +196,11 @@ func TestOrganizationsGet(t *testing.T) {
 	})
 }
 
-func setup(ctrl *gomock.Controller) (resolver *identityMock.MockIdentityResolver, ctx *ctx.Ctx, organizationRepo *repoMock.MockIOrganization, userRepo *repoMock.MockIUser, organizationService *Service) {
-	resolver = identityMock.NewMockIdentityResolver(ctrl)
+func setup(ctrl *gomock.Controller) (ctx *ctx.Ctx, organizationRepo *repoMock.MockIOrganization, userRepo *repoMock.MockIUser, organizationService *Service) {
 	organizationRepo = repoMock.NewMockIOrganization(ctrl)
 	userRepo = repoMock.NewMockIUser(ctrl)
 	config, ctx := env()
-	organizationService = New(config, resolver, userRepo, organizationRepo)
+	organizationService = New(config, userRepo, organizationRepo)
 	return
 }
 

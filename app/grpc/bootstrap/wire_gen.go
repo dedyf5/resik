@@ -72,7 +72,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	identityResolver := identity.NewResolver(string2, gormDB, client)
 	userRepo := user.New(gormDB)
 	organizationRepo := organization.New(gormDB)
-	serviceService := service.New(config, identityResolver, userRepo, organizationRepo)
+	serviceService := service.New(config, userRepo, organizationRepo)
 	organizationHandler := organization2.New(logLog, validate, identityResolver, serviceService)
 	transactionRepo := transaction.New(gormDB)
 	service5 := service2.New(config, identityResolver, organizationRepo, transactionRepo, userRepo)

@@ -43,12 +43,9 @@ type IUser interface {
 }
 
 type IOrganization interface {
-	OrganizationInsert(ctx *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status)
-	OrganizationUpdate(ctx *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status)
 	OrganizationGetByID(ctx *ctx.Ctx, organizationID uint64) (organization *organizationEntity.Organization, err *resPkg.Status)
 	OrganizationsGetData(param *paramOrganization.OrganizationsGet) (organizations organizationEntity.Organizations, err *resPkg.Status)
 	OrganizationsGetTotal(param *paramOrganization.OrganizationsGet) (total int64, err *resPkg.Status)
-	OrganizationDelete(c *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status)
 
 	BranchGetByPublicID(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7) (branch *branchEntity.Branch, err *resPkg.Status)
 }

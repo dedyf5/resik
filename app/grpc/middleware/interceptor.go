@@ -60,9 +60,6 @@ func methodRoles() map[string][]Role {
 	const transactionService = "/transaction.TransactionService/"
 	const userService = "/user.UserService/"
 	return map[string][]Role{
-		organizationService + "OrganizationPost":      {RoleValidToken},
-		organizationService + "OrganizationPut":       {RoleValidToken},
-		organizationService + "OrganizationDelete":    {RoleValidToken},
 		organizationService + "OrganizationDetailGet": {RoleValidToken},
 		organizationService + "OrganizationListGet":   {RoleValidToken},
 		transactionService + "TransactionPost":        {RoleValidToken},

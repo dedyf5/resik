@@ -116,42 +116,6 @@ definitions:
     - password
     - username
     type: object
-  request.OrganizationPost:
-    properties:
-      created_at:
-        example: "2024-04-14T14:18:00Z"
-        type: string
-      description:
-        description: nullable
-        example: Organization description 1
-        maxLength: 5000
-        type: string
-      name:
-        example: Resik Organization
-        maxLength: 40
-        type: string
-    required:
-    - created_at
-    - name
-    type: object
-  request.OrganizationPut:
-    properties:
-      description:
-        description: nullable
-        example: Organization description 1
-        maxLength: 5000
-        type: string
-      name:
-        example: Resik Organization
-        maxLength: 40
-        type: string
-      updated_at:
-        example: "2024-04-14T14:18:00Z"
-        type: string
-    required:
-    - name
-    - updated_at
-    type: object
   request.TransactionPost:
     properties:
       bill_total:
@@ -309,12 +273,6 @@ definitions:
         $ref: '#/definitions/common.Organization'
       period:
         example: "2023-11-22"
-        type: string
-    type: object
-  response.OrganizationUpsert:
-    properties:
-      id:
-        example: 019df0d3d46f71d0863084d474748c3a
         type: string
     type: object
   response.ResponseBadRequest:
@@ -641,101 +599,7 @@ paths:
       summary: Organization List
       tags:
       - organizations
-    post:
-      consumes:
-      - application/json
-      description: Create new organization
-      parameters:
-      - enum:
-        - en
-        - id
-        - ja
-        in: query
-        name: lang
-        type: string
-      - description: Payload
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/request.OrganizationPost'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.ResponseSuccess'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.OrganizationUpsert'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ResponseBadRequest'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
-        "429":
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
-      security:
-      - BearerAuth: []
-      summary: Create Organization
-      tags:
-      - organizations
   /organizations/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete organization
-      parameters:
-      - description: Organization ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - enum:
-        - en
-        - id
-        - ja
-        in: query
-        name: lang
-        type: string
-      produces:
-      - application/json
-      responses:
-        "204":
-          description: No Content
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ResponseBadRequest'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
-        "429":
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
-      security:
-      - BearerAuth: []
-      summary: Delete Organization
-      tags:
-      - organizations
     get:
       consumes:
       - application/json
@@ -784,62 +648,6 @@ paths:
       security:
       - BearerAuth: []
       summary: Get Organization by ID
-      tags:
-      - organizations
-    put:
-      consumes:
-      - application/json
-      description: Update organization
-      parameters:
-      - description: Organization ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - enum:
-        - en
-        - id
-        - ja
-        in: query
-        name: lang
-        type: string
-      - description: Payload
-        in: body
-        name: payload
-        required: true
-        schema:
-          $ref: '#/definitions/request.OrganizationPut'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/response.ResponseSuccess'
-            - properties:
-                data:
-                  $ref: '#/definitions/response.OrganizationUpsert'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/response.ResponseBadRequest'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
-        "429":
-          description: Too Many Requests
-          schema:
-            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/response.ResponseErrorWithoutDetails'
-      security:
-      - BearerAuth: []
-      summary: Update Organization
       tags:
       - organizations
   /readyz:

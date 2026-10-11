@@ -345,21 +345,6 @@ func (mr *MockIOrganizationMockRecorder) BranchGetByPublicID(arg0, branchPublicI
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BranchGetByPublicID", reflect.TypeOf((*MockIOrganization)(nil).BranchGetByPublicID), arg0, branchPublicID)
 }
 
-// OrganizationDelete mocks base method.
-func (m *MockIOrganization) OrganizationDelete(c *ctx.Ctx, arg1 *organization.Organization) (bool, *response.Status) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OrganizationDelete", c, arg1)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(*response.Status)
-	return ret0, ret1
-}
-
-// OrganizationDelete indicates an expected call of OrganizationDelete.
-func (mr *MockIOrganizationMockRecorder) OrganizationDelete(c, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationDelete", reflect.TypeOf((*MockIOrganization)(nil).OrganizationDelete), c, arg1)
-}
-
 // OrganizationGetByID mocks base method.
 func (m *MockIOrganization) OrganizationGetByID(arg0 *ctx.Ctx, organizationID uint64) (*organization.Organization, *response.Status) {
 	m.ctrl.T.Helper()
@@ -373,36 +358,6 @@ func (m *MockIOrganization) OrganizationGetByID(arg0 *ctx.Ctx, organizationID ui
 func (mr *MockIOrganizationMockRecorder) OrganizationGetByID(arg0, organizationID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationGetByID", reflect.TypeOf((*MockIOrganization)(nil).OrganizationGetByID), arg0, organizationID)
-}
-
-// OrganizationInsert mocks base method.
-func (m *MockIOrganization) OrganizationInsert(arg0 *ctx.Ctx, arg1 *organization.Organization) (bool, *response.Status) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OrganizationInsert", arg0, arg1)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(*response.Status)
-	return ret0, ret1
-}
-
-// OrganizationInsert indicates an expected call of OrganizationInsert.
-func (mr *MockIOrganizationMockRecorder) OrganizationInsert(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationInsert", reflect.TypeOf((*MockIOrganization)(nil).OrganizationInsert), arg0, arg1)
-}
-
-// OrganizationUpdate mocks base method.
-func (m *MockIOrganization) OrganizationUpdate(arg0 *ctx.Ctx, arg1 *organization.Organization) (bool, *response.Status) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OrganizationUpdate", arg0, arg1)
-	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(*response.Status)
-	return ret0, ret1
-}
-
-// OrganizationUpdate indicates an expected call of OrganizationUpdate.
-func (mr *MockIOrganizationMockRecorder) OrganizationUpdate(arg0, arg1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationUpdate", reflect.TypeOf((*MockIOrganization)(nil).OrganizationUpdate), arg0, arg1)
 }
 
 // OrganizationsGetData mocks base method.

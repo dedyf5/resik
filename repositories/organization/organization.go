@@ -16,23 +16,6 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *OrganizationRepo) OrganizationInsert(ctx *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status) {
-	result := r.DB.WithContext(ctx.Context).Create(organization)
-	if result.Error != nil {
-		return false, resPkg.NewStatusError(http.StatusInternalServerError, result.Error)
-	}
-	return true, nil
-}
-
-func (r *OrganizationRepo) OrganizationUpdate(ctx *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status) {
-	result := r.DB.WithContext(ctx.Context).
-		Exec("UPDATE "+organizationEntity.TABLE_NAME+" SET name = ?, description = ?, updated_at = ?, updated_by_public_id = ? WHERE id = ?", organization.Name, organization.Description, organization.UpdatedAt, organization.UpdatedByPublicID, organization.ID)
-	if result.Error != nil {
-		return false, resPkg.NewStatusError(http.StatusInternalServerError, result.Error)
-	}
-	return true, nil
-}
-
 func (r *OrganizationRepo) OrganizationGetByID(ctx *ctx.Ctx, organizationID uint64) (organization *organizationEntity.Organization, err *resPkg.Status) {
 	errDB := r.DB.WithContext(ctx.Context).Where("id = ?", organizationID).First(&organization).Error
 	if errDB != nil {
@@ -94,11 +77,4 @@ func (r *OrganizationRepo) OrganizationsBaseQuery(param *paramOrganization.Organ
 		query = query.Where("name LIKE ?", "%"+param.Filter.Search+"%")
 	}
 	return
-}
-
-func (r *OrganizationRepo) OrganizationDelete(c *ctx.Ctx, organization *organizationEntity.Organization) (ok bool, err *resPkg.Status) {
-	if err := r.DB.WithContext(c.Context).Delete(organization).Error; err != nil {
-		return false, resPkg.NewStatusError(http.StatusInternalServerError, err)
-	}
-	return true, nil
 }

@@ -12,7 +12,6 @@ package organization
 
 import (
 	context "context"
-	common "github.com/dedyf5/resik/core/common"
 	request "github.com/dedyf5/resik/core/organization/request"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
@@ -25,22 +24,16 @@ import (
 const _ = grpc.SupportPackageIsVersion8
 
 const (
-	OrganizationService_OrganizationPost_FullMethodName      = "/organization.OrganizationService/OrganizationPost"
-	OrganizationService_OrganizationPut_FullMethodName       = "/organization.OrganizationService/OrganizationPut"
 	OrganizationService_OrganizationDetailGet_FullMethodName = "/organization.OrganizationService/OrganizationDetailGet"
 	OrganizationService_OrganizationListGet_FullMethodName   = "/organization.OrganizationService/OrganizationListGet"
-	OrganizationService_OrganizationDelete_FullMethodName    = "/organization.OrganizationService/OrganizationDelete"
 )
 
 // OrganizationServiceClient is the client API for OrganizationService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrganizationServiceClient interface {
-	OrganizationPost(ctx context.Context, in *request.OrganizationPost, opts ...grpc.CallOption) (*OrganizationUpsertRes, error)
-	OrganizationPut(ctx context.Context, in *request.OrganizationPut, opts ...grpc.CallOption) (*OrganizationUpsertRes, error)
 	OrganizationDetailGet(ctx context.Context, in *request.OrganizationDetailGet, opts ...grpc.CallOption) (*OrganizationDetailGetRes, error)
 	OrganizationListGet(ctx context.Context, in *request.OrganizationListGet, opts ...grpc.CallOption) (*OrganizationListGetRes, error)
-	OrganizationDelete(ctx context.Context, in *request.OrganizationDelete, opts ...grpc.CallOption) (*common.Empty, error)
 }
 
 type organizationServiceClient struct {
@@ -49,26 +42,6 @@ type organizationServiceClient struct {
 
 func NewOrganizationServiceClient(cc grpc.ClientConnInterface) OrganizationServiceClient {
 	return &organizationServiceClient{cc}
-}
-
-func (c *organizationServiceClient) OrganizationPost(ctx context.Context, in *request.OrganizationPost, opts ...grpc.CallOption) (*OrganizationUpsertRes, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationUpsertRes)
-	err := c.cc.Invoke(ctx, OrganizationService_OrganizationPost_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *organizationServiceClient) OrganizationPut(ctx context.Context, in *request.OrganizationPut, opts ...grpc.CallOption) (*OrganizationUpsertRes, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(OrganizationUpsertRes)
-	err := c.cc.Invoke(ctx, OrganizationService_OrganizationPut_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *organizationServiceClient) OrganizationDetailGet(ctx context.Context, in *request.OrganizationDetailGet, opts ...grpc.CallOption) (*OrganizationDetailGetRes, error) {
@@ -91,25 +64,12 @@ func (c *organizationServiceClient) OrganizationListGet(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *organizationServiceClient) OrganizationDelete(ctx context.Context, in *request.OrganizationDelete, opts ...grpc.CallOption) (*common.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(common.Empty)
-	err := c.cc.Invoke(ctx, OrganizationService_OrganizationDelete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // OrganizationServiceServer is the server API for OrganizationService service.
 // All implementations must embed UnimplementedOrganizationServiceServer
 // for forward compatibility
 type OrganizationServiceServer interface {
-	OrganizationPost(context.Context, *request.OrganizationPost) (*OrganizationUpsertRes, error)
-	OrganizationPut(context.Context, *request.OrganizationPut) (*OrganizationUpsertRes, error)
 	OrganizationDetailGet(context.Context, *request.OrganizationDetailGet) (*OrganizationDetailGetRes, error)
 	OrganizationListGet(context.Context, *request.OrganizationListGet) (*OrganizationListGetRes, error)
-	OrganizationDelete(context.Context, *request.OrganizationDelete) (*common.Empty, error)
 	mustEmbedUnimplementedOrganizationServiceServer()
 }
 
@@ -117,20 +77,11 @@ type OrganizationServiceServer interface {
 type UnimplementedOrganizationServiceServer struct {
 }
 
-func (UnimplementedOrganizationServiceServer) OrganizationPost(context.Context, *request.OrganizationPost) (*OrganizationUpsertRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrganizationPost not implemented")
-}
-func (UnimplementedOrganizationServiceServer) OrganizationPut(context.Context, *request.OrganizationPut) (*OrganizationUpsertRes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrganizationPut not implemented")
-}
 func (UnimplementedOrganizationServiceServer) OrganizationDetailGet(context.Context, *request.OrganizationDetailGet) (*OrganizationDetailGetRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OrganizationDetailGet not implemented")
 }
 func (UnimplementedOrganizationServiceServer) OrganizationListGet(context.Context, *request.OrganizationListGet) (*OrganizationListGetRes, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OrganizationListGet not implemented")
-}
-func (UnimplementedOrganizationServiceServer) OrganizationDelete(context.Context, *request.OrganizationDelete) (*common.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method OrganizationDelete not implemented")
 }
 func (UnimplementedOrganizationServiceServer) mustEmbedUnimplementedOrganizationServiceServer() {}
 
@@ -143,42 +94,6 @@ type UnsafeOrganizationServiceServer interface {
 
 func RegisterOrganizationServiceServer(s grpc.ServiceRegistrar, srv OrganizationServiceServer) {
 	s.RegisterService(&OrganizationService_ServiceDesc, srv)
-}
-
-func _OrganizationService_OrganizationPost_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(request.OrganizationPost)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrganizationServiceServer).OrganizationPost(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrganizationService_OrganizationPost_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServiceServer).OrganizationPost(ctx, req.(*request.OrganizationPost))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrganizationService_OrganizationPut_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(request.OrganizationPut)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrganizationServiceServer).OrganizationPut(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrganizationService_OrganizationPut_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServiceServer).OrganizationPut(ctx, req.(*request.OrganizationPut))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _OrganizationService_OrganizationDetailGet_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -217,24 +132,6 @@ func _OrganizationService_OrganizationListGet_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrganizationService_OrganizationDelete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(request.OrganizationDelete)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrganizationServiceServer).OrganizationDelete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrganizationService_OrganizationDelete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrganizationServiceServer).OrganizationDelete(ctx, req.(*request.OrganizationDelete))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // OrganizationService_ServiceDesc is the grpc.ServiceDesc for OrganizationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -243,24 +140,12 @@ var OrganizationService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*OrganizationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "OrganizationPost",
-			Handler:    _OrganizationService_OrganizationPost_Handler,
-		},
-		{
-			MethodName: "OrganizationPut",
-			Handler:    _OrganizationService_OrganizationPut_Handler,
-		},
-		{
 			MethodName: "OrganizationDetailGet",
 			Handler:    _OrganizationService_OrganizationDetailGet_Handler,
 		},
 		{
 			MethodName: "OrganizationListGet",
 			Handler:    _OrganizationService_OrganizationListGet_Handler,
-		},
-		{
-			MethodName: "OrganizationDelete",
-			Handler:    _OrganizationService_OrganizationDelete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

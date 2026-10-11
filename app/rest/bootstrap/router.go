@@ -60,10 +60,7 @@ func (r *Router) routerSetup(server *ServerHTTP) {
 	organizationHandler := r.organizationHandler
 	organization := e.Group("/organizations", validateToken, jwtMiddleware, rateLimit)
 	organization.GET("", organizationHandler.OrganizationListGet)
-	organization.POST("", organizationHandler.OrganizationPost)
 	organization.GET("/:id", organizationHandler.OrganizationDetailGet)
-	organization.PUT("/:id", organizationHandler.OrganizationPut)
-	organization.DELETE("/:id", organizationHandler.OrganizationDelete)
 
 	trxHandler := r.trxHandler
 	trx := e.Group("/transactions", validateToken, jwtMiddleware, rateLimit)
