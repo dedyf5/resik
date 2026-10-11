@@ -1,0 +1,17 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package core.common;
+option go_package = "github.com/dedyf5/resik/core/common";
+
+import "core/common/status.proto";
+import "core/common/id.proto";
+
+// Message status and id
+message StatusAndId {
+  core.common.Status status = 1; // @gotags: json:"status"
+  core.common.Id data = 2; // @gotags: json:"data"
+}

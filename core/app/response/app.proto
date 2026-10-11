@@ -4,7 +4,7 @@
 
 syntax = "proto3";
 
-package response;
+package core.app.response;
 option go_package = "github.com/dedyf5/resik/core/app/response";
 
 import "core/app/response/module.proto";
@@ -12,7 +12,7 @@ import "core/app/response/module.proto";
 message App {
     string app = 1; // @gotags: json:"app" example:"Resik REST"
     string version = 2; // @gotags: json:"version" example:"Version 0.1"
-    Module module = 3; // @gotags: json:"module"
+    core.app.response.Module module = 3; // @gotags: json:"module"
     AppLang lang = 4; // @gotags: json:"lang"
 }
 

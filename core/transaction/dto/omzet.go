@@ -6,7 +6,7 @@ package dto
 
 import trxEntity "github.com/dedyf5/resik/entities/transaction"
 
-type OutletOmzet struct {
-	Data  []trxEntity.OutletOmzet
+type BranchOmzet struct {
+	Data  []trxEntity.BranchOmzet
 	Total int64
 }

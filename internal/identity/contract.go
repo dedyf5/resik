@@ -14,8 +14,18 @@ import (
 type IdentityResolver interface {
 	Resolve(c context.Context, tableName string, publicID uuidPkg.UUIDV7) (uint64, error)
 	ResolveBatch(c context.Context, tableName string, publicIDs []uuidPkg.UUIDV7) ([]uint64, error)
-	GetMerchantIDs(c context.Context, userID uint64) ([]uint64, error)
-	GetOutletIDs(c context.Context, userID uint64) ([]uint64, error)
-	InvalidateUserAccessMerchant(ctx context.Context, userID uint64) error
-	InvalidateUserAccessOutlet(ctx context.Context, userID uint64) error
+	GetTenantOrganizationIDs(c context.Context, userID uint64) ([]uint64, error)
+	GetTenantBranchIDs(c context.Context, userID uint64) ([]uint64, error)
+
+	// Core Generic Authorization Engine
+	GetResourceIDs(c context.Context, userID uint64, resourceTable string, permissionCode string) ([]uint64, error)
+	HasAccessByPublicID(c context.Context, userID uint64, permissionCode string, resourceTable string, publicID uuidPkg.UUIDV7) (bool, error)
+	HasAccessByID(c context.Context, userID uint64, permissionCode string, resourceTable string, resourceID uint64) (bool, error)
+
+	// Domain Convenience Helpers
+	GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error)
+	GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error)
+	GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uuidPkg.UUIDV7, error)
+	InvalidateUserAccessOrganization(ctx context.Context, userID uint64) error
+	InvalidateUserAccessBranch(ctx context.Context, userID uint64) error
 }

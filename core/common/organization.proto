@@ -1,0 +1,19 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package core.common;
+option go_package = "github.com/dedyf5/resik/core/common";
+
+message Organization {
+  string id = 1; // @gotags: json:"id" validate:"required,uuidv7" example:"01a0e7406f8f737fa0818fb93226ee61"
+  string name = 2; // @gotags: json:"name" validate:"required" example:"Resik Organization"
+}
+
+message Branch {
+  string id = 1; // @gotags: json:"id" validate:"required,uuidv7" example:"019df0d3f6c579ac8976afe7a437166c"
+  string name = 2; // @gotags: json:"name" validate:"required" example:"Resik Branch"
+  Organization organization = 3; // @gotags: json:"organization" validate:"required"
+}

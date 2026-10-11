@@ -56,18 +56,20 @@ func NewInterceptor(module config.Module, auth config.Auth, resolver identity.Id
 }
 
 func methodRoles() map[string][]Role {
-	const merchantService = "/merchant.MerchantService/"
+	const organizationService = "/organization.OrganizationService/"
 	const transactionService = "/transaction.TransactionService/"
 	const userService = "/user.UserService/"
 	return map[string][]Role{
-		merchantService + "MerchantPost":        {RoleValidToken},
-		merchantService + "MerchantPut":         {RoleValidToken},
-		merchantService + "MerchantDelete":      {RoleValidToken},
-		merchantService + "MerchantDetailGet":   {RoleValidToken},
-		merchantService + "MerchantListGet":     {RoleValidToken},
-		transactionService + "MerchantOmzetGet": {RoleValidToken},
-		transactionService + "OutletOmzetGet":   {RoleValidToken},
-		userService + "TokenRefreshGet":         {RoleValidToken},
+		organizationService + "OrganizationDetailGet": {RoleValidToken},
+		organizationService + "OrganizationListGet":   {RoleValidToken},
+		transactionService + "TransactionPost":        {RoleValidToken},
+		transactionService + "TransactionPut":         {RoleValidToken},
+		transactionService + "TransactionDelete":      {RoleValidToken},
+		transactionService + "TransactionDetailGet":   {RoleValidToken},
+		transactionService + "TransactionListGet":     {RoleValidToken},
+		transactionService + "OrganizationOmzetGet":   {RoleValidToken},
+		transactionService + "BranchOmzetGet":         {RoleValidToken},
+		userService + "TokenRefreshGet":               {RoleValidToken},
 	}
 }
 

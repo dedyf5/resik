@@ -13,8 +13,12 @@ import (
 	reflect "reflect"
 
 	dto "github.com/dedyf5/resik/core/transaction/dto"
+	ctx "github.com/dedyf5/resik/ctx"
+	permission "github.com/dedyf5/resik/entities/permission"
+	transaction "github.com/dedyf5/resik/entities/transaction"
 	param "github.com/dedyf5/resik/entities/transaction/param"
 	response "github.com/dedyf5/resik/pkg/response"
+	uuid "github.com/dedyf5/resik/pkg/uuid"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -42,32 +46,137 @@ func (m *MockIService) EXPECT() *MockIServiceMockRecorder {
 	return m.recorder
 }
 
-// MerchantOmzetGet mocks base method.
-func (m *MockIService) MerchantOmzetGet(arg0 *param.MerchantOmzetGet) (*dto.MerchantOmzet, *response.Status) {
+// BranchOmzetGet mocks base method.
+func (m *MockIService) BranchOmzetGet(arg0 *param.BranchOmzetGet) (*dto.BranchOmzet, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MerchantOmzetGet", arg0)
-	ret0, _ := ret[0].(*dto.MerchantOmzet)
+	ret := m.ctrl.Call(m, "BranchOmzetGet", arg0)
+	ret0, _ := ret[0].(*dto.BranchOmzet)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
-// MerchantOmzetGet indicates an expected call of MerchantOmzetGet.
-func (mr *MockIServiceMockRecorder) MerchantOmzetGet(arg0 any) *gomock.Call {
+// BranchOmzetGet indicates an expected call of BranchOmzetGet.
+func (mr *MockIServiceMockRecorder) BranchOmzetGet(arg0 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MerchantOmzetGet", reflect.TypeOf((*MockIService)(nil).MerchantOmzetGet), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BranchOmzetGet", reflect.TypeOf((*MockIService)(nil).BranchOmzetGet), arg0)
 }
 
-// OutletOmzetGet mocks base method.
-func (m *MockIService) OutletOmzetGet(arg0 *param.OutletOmzetGet) (*dto.OutletOmzet, *response.Status) {
+// HasAccessBranch mocks base method.
+func (m *MockIService) HasAccessBranch(arg0 *ctx.Ctx, branchPublicID *uuid.UUIDV7, permissionCode permission.PERMISSION_CODE) (bool, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "OutletOmzetGet", arg0)
-	ret0, _ := ret[0].(*dto.OutletOmzet)
+	ret := m.ctrl.Call(m, "HasAccessBranch", arg0, branchPublicID, permissionCode)
+	ret0, _ := ret[0].(bool)
 	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
-// OutletOmzetGet indicates an expected call of OutletOmzetGet.
-func (mr *MockIServiceMockRecorder) OutletOmzetGet(arg0 any) *gomock.Call {
+// HasAccessBranch indicates an expected call of HasAccessBranch.
+func (mr *MockIServiceMockRecorder) HasAccessBranch(arg0, branchPublicID, permissionCode any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OutletOmzetGet", reflect.TypeOf((*MockIService)(nil).OutletOmzetGet), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAccessBranch", reflect.TypeOf((*MockIService)(nil).HasAccessBranch), arg0, branchPublicID, permissionCode)
+}
+
+// OrganizationOmzetGet mocks base method.
+func (m *MockIService) OrganizationOmzetGet(arg0 *param.OrganizationOmzetGet) (*dto.OrganizationOmzet, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "OrganizationOmzetGet", arg0)
+	ret0, _ := ret[0].(*dto.OrganizationOmzet)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// OrganizationOmzetGet indicates an expected call of OrganizationOmzetGet.
+func (mr *MockIServiceMockRecorder) OrganizationOmzetGet(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "OrganizationOmzetGet", reflect.TypeOf((*MockIService)(nil).OrganizationOmzetGet), arg0)
+}
+
+// TransactionDelete mocks base method.
+func (m *MockIService) TransactionDelete(arg0 *param.TransactionPublicID) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionDelete", arg0)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionDelete indicates an expected call of TransactionDelete.
+func (mr *MockIServiceMockRecorder) TransactionDelete(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionDelete", reflect.TypeOf((*MockIService)(nil).TransactionDelete), arg0)
+}
+
+// TransactionGetByPublicID mocks base method.
+func (m *MockIService) TransactionGetByPublicID(arg0 *param.TransactionPublicID) (*dto.Transaction, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionGetByPublicID", arg0)
+	ret0, _ := ret[0].(*dto.Transaction)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionGetByPublicID indicates an expected call of TransactionGetByPublicID.
+func (mr *MockIServiceMockRecorder) TransactionGetByPublicID(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionGetByPublicID", reflect.TypeOf((*MockIService)(nil).TransactionGetByPublicID), arg0)
+}
+
+// TransactionInsert mocks base method.
+func (m *MockIService) TransactionInsert(arg0 *ctx.Ctx, trx *transaction.Transaction) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionInsert", arg0, trx)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionInsert indicates an expected call of TransactionInsert.
+func (mr *MockIServiceMockRecorder) TransactionInsert(arg0, trx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionInsert", reflect.TypeOf((*MockIService)(nil).TransactionInsert), arg0, trx)
+}
+
+// TransactionUpdate mocks base method.
+func (m *MockIService) TransactionUpdate(arg0 *ctx.Ctx, trx *transaction.Transaction) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionUpdate", arg0, trx)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionUpdate indicates an expected call of TransactionUpdate.
+func (mr *MockIServiceMockRecorder) TransactionUpdate(arg0, trx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionUpdate", reflect.TypeOf((*MockIService)(nil).TransactionUpdate), arg0, trx)
+}
+
+// TransactionsGet mocks base method.
+func (m *MockIService) TransactionsGet(arg0 *param.TransactionsGet) (*dto.TransactionsResult, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "TransactionsGet", arg0)
+	ret0, _ := ret[0].(*dto.TransactionsResult)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// TransactionsGet indicates an expected call of TransactionsGet.
+func (mr *MockIServiceMockRecorder) TransactionsGet(arg0 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TransactionsGet", reflect.TypeOf((*MockIService)(nil).TransactionsGet), arg0)
+}
+
+// ValidateBranchOrganization mocks base method.
+func (m *MockIService) ValidateBranchOrganization(arg0 *ctx.Ctx, branchPublicID, orgPublicID *uuid.UUIDV7) (bool, *response.Status) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ValidateBranchOrganization", arg0, branchPublicID, orgPublicID)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(*response.Status)
+	return ret0, ret1
+}
+
+// ValidateBranchOrganization indicates an expected call of ValidateBranchOrganization.
+func (mr *MockIServiceMockRecorder) ValidateBranchOrganization(arg0, branchPublicID, orgPublicID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateBranchOrganization", reflect.TypeOf((*MockIService)(nil).ValidateBranchOrganization), arg0, branchPublicID, orgPublicID)
 }

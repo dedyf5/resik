@@ -1,0 +1,13 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package core.transaction.request;
+option go_package = "github.com/dedyf5/resik/core/transaction/request";
+
+// Message request id
+message Id {
+  string id = 1; // @gotags: json:"-" param:"id" query:"-" validate:"required,uuidv7" example:"01a10703ca02751d979b9349583fcdbc"
+}

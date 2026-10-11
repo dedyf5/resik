@@ -14,6 +14,7 @@ import (
 	logCtx "github.com/dedyf5/resik/ctx/log"
 	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
 type Ctx struct {
@@ -59,12 +60,12 @@ func (c *Ctx) UserClaims() *jwt.AuthClaims {
 	return c.userClaims
 }
 
-// GetMerchantID gets the merchant ID by merchant public ID, and check if user has access to it
-func (c *Ctx) GetMerchantID(resolver identity.IdentityResolver, merchantPublicID string) (merchantID uint64, err *resPkg.Status) {
-	return c.userClaims.GetMerchantID(c.Context, resolver, c.lang, merchantPublicID)
+// GetOrganizationID gets the organization ID by organization public ID, and check if user has access to it for permission code
+func (c *Ctx) GetOrganizationID(resolver identity.IdentityResolver, organizationPublicID string, permissionCode string) (organizationID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
+	return c.userClaims.GetOrganizationID(c.Context, resolver, c.lang, organizationPublicID, permissionCode)
 }
 
-// GetOutletID gets the outlet ID by outlet public ID, and check if user has access to it
-func (c *Ctx) GetOutletID(resolver identity.IdentityResolver, outletPublicID string) (outletID uint64, err *resPkg.Status) {
-	return c.userClaims.GetOutletID(c.Context, resolver, c.lang, outletPublicID)
+// GetBranchID gets the branch ID by branch public ID, and check if user has access to it for permission code
+func (c *Ctx) GetBranchID(resolver identity.IdentityResolver, branchPublicID string, permissionCode string) (branchID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
+	return c.userClaims.GetBranchID(c.Context, resolver, c.lang, branchPublicID, permissionCode)
 }

@@ -76,10 +76,10 @@ var (
 		},
 	}
 
-	Merchant = &Term{
+	Organization = &Term{
 		Message: &i18n.Message{
-			ID:    "merchant",
-			Other: "Merchant",
+			ID:    "organization",
+			Other: "Organization",
 		},
 	}
 
@@ -87,6 +87,13 @@ var (
 		Message: &i18n.Message{
 			ID:    "user",
 			Other: "User",
+		},
+	}
+
+	Transaction = &Term{
+		Message: &i18n.Message{
+			ID:    "transaction",
+			Other: "Transaction",
 		},
 	}
 

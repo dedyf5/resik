@@ -225,14 +225,14 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/merchants": {
+        "/organizations": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Merchant list",
+                "description": "Organization list",
                 "consumes": [
                     "application/json"
                 ],
@@ -240,9 +240,9 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchants"
+                    "organizations"
                 ],
-                "summary": "Merchant List",
+                "summary": "Organization List",
                 "parameters": [
                     {
                         "enum": [
@@ -296,91 +296,8 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.MerchantList"
+                                                "$ref": "#/definitions/response.OrganizationList"
                                             }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseBadRequest"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    },
-                    "429": {
-                        "description": "Too Many Requests",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Create new merchant",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "merchants"
-                ],
-                "summary": "Create Merchant",
-                "parameters": [
-                    {
-                        "enum": [
-                            "en",
-                            "id",
-                            "ja"
-                        ],
-                        "type": "string",
-                        "name": "lang",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Payload",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.MerchantPost"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.MerchantUpsert"
                                         }
                                     }
                                 }
@@ -414,14 +331,14 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/merchants/{id}": {
+        "/organizations/{id}": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get merchant by ID",
+                "description": "Get organization by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -429,13 +346,13 @@ const docTemplaterest = `{
                     "application/json"
                 ],
                 "tags": [
-                    "merchants"
+                    "organizations"
                 ],
-                "summary": "Get Merchant by ID",
+                "summary": "Get Organization by ID",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Merchant ID",
+                        "type": "string",
+                        "description": "Organization ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -463,168 +380,12 @@ const docTemplaterest = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/response.MerchantDetail"
+                                            "$ref": "#/definitions/response.OrganizationDetail"
                                         }
                                     }
                                 }
                             ]
                         }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseBadRequest"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    },
-                    "429": {
-                        "description": "Too Many Requests",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update merchant",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "merchants"
-                ],
-                "summary": "Update Merchant",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Merchant ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "en",
-                            "id",
-                            "ja"
-                        ],
-                        "type": "string",
-                        "name": "lang",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Payload",
-                        "name": "payload",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.MerchantPut"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.ResponseSuccess"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/response.MerchantUpsert"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseBadRequest"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    },
-                    "429": {
-                        "description": "Too Many Requests",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Delete merchant",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "merchants"
-                ],
-                "summary": "Delete Merchant",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Merchant ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "enum": [
-                            "en",
-                            "id",
-                            "ja"
-                        ],
-                        "type": "string",
-                        "name": "lang",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "No Content"
                     },
                     "400": {
                         "description": "Bad Request",
@@ -800,14 +561,14 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/transactions/merchant/{merchant_id}/omzet": {
+        "/transactions": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get merchant omzet by merchant id",
+                "description": "Get transactions list",
                 "consumes": [
                     "application/json"
                 ],
@@ -817,12 +578,199 @@ const docTemplaterest = `{
                 "tags": [
                     "transactions"
                 ],
-                "summary": "Get Merchant Omzet",
+                "summary": "Transactions List",
+                "parameters": [
+                    {
+                        "enum": [
+                            "en",
+                            "id",
+                            "ja"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "example": 10,
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "order",
+                        "in": "query"
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "example": 1,
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "keyword",
+                        "name": "search",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseSuccessWithMeta"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/response.TransactionList"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Create new transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Create Transaction",
+                "parameters": [
+                    {
+                        "enum": [
+                            "en",
+                            "id",
+                            "ja"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TransactionPost"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/common.Id"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/transactions/branch/{branch_id}/omzet": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get branch omzet by branch id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get Branch Omzet",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Merchant ID",
-                        "name": "merchant_id",
+                        "description": "Branch ID",
+                        "name": "branch_id",
                         "in": "path",
                         "required": true
                     },
@@ -911,7 +859,7 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.MerchantOmzet"
+                                                "$ref": "#/definitions/response.BranchOmzet"
                                             }
                                         }
                                     }
@@ -946,14 +894,14 @@ const docTemplaterest = `{
                 }
             }
         },
-        "/transactions/outlet/{outlet_id}/omzet": {
+        "/transactions/organization/{organization_id}/omzet": {
             "get": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Get outlet omzet by outlet id",
+                "description": "Get organization omzet by organization id",
                 "consumes": [
                     "application/json"
                 ],
@@ -963,12 +911,12 @@ const docTemplaterest = `{
                 "tags": [
                     "transactions"
                 ],
-                "summary": "Get Outlet Omzet",
+                "summary": "Get Organization Omzet",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "Outlet ID",
-                        "name": "outlet_id",
+                        "description": "Organization ID",
+                        "name": "organization_id",
                         "in": "path",
                         "required": true
                     },
@@ -1057,7 +1005,7 @@ const docTemplaterest = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/response.OutletOmzet"
+                                                "$ref": "#/definitions/response.OrganizationOmzet"
                                             }
                                         }
                                     }
@@ -1091,9 +1039,336 @@ const docTemplaterest = `{
                     }
                 }
             }
+        },
+        "/transactions/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get transaction by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Get Transaction by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Transaction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "en",
+                            "id",
+                            "ja"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/response.TransactionDetail"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Update Transaction",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Transaction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "en",
+                            "id",
+                            "ja"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TransactionPut"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.ResponseSuccess"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/common.Id"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Delete transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "Delete Transaction",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Transaction ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            "en",
+                            "id",
+                            "ja"
+                        ],
+                        "type": "string",
+                        "name": "lang",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/response.ResponseErrorWithoutDetails"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "common.Branch": {
+            "type": "object",
+            "required": [
+                "id",
+                "name",
+                "organization"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "019df0d3f6c579ac8976afe7a437166c"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Resik Branch"
+                },
+                "organization": {
+                    "$ref": "#/definitions/common.Organization"
+                }
+            }
+        },
+        "common.Id": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "01a10efed4a1715081b36e0ebed6d68a"
+                }
+            }
+        },
+        "common.Organization": {
+            "type": "object",
+            "required": [
+                "id",
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "01a0e7406f8f737fa0818fb93226ee61"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Resik Organization"
+                }
+            }
+        },
+        "common.User": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "01a0d3979d5e7ab99b47d88a5f9349bd"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "User 1"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "user1"
+                }
+            }
+        },
         "errdetails.BadRequest": {
             "type": "object",
             "properties": {
@@ -1161,51 +1436,47 @@ const docTemplaterest = `{
                 }
             }
         },
-        "request.MerchantPost": {
+        "request.TransactionPost": {
             "type": "object",
             "required": [
-                "created_at",
-                "name"
+                "bill_total",
+                "branch",
+                "transacted_at"
             ],
             "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "2024-04-14T14:18:00Z"
+                "bill_total": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 1000.5
                 },
-                "description": {
-                    "description": "nullable",
-                    "type": "string",
-                    "maxLength": 5000,
-                    "example": "Merchant description 1"
+                "branch": {
+                    "$ref": "#/definitions/common.Branch"
                 },
-                "name": {
+                "transacted_at": {
                     "type": "string",
-                    "maxLength": 40,
-                    "example": "Resik Merchant"
+                    "example": "2024-02-02T19:52:41Z"
                 }
             }
         },
-        "request.MerchantPut": {
+        "request.TransactionPut": {
             "type": "object",
             "required": [
-                "name",
-                "updated_at"
+                "bill_total",
+                "branch",
+                "transacted_at"
             ],
             "properties": {
-                "description": {
-                    "description": "nullable",
-                    "type": "string",
-                    "maxLength": 5000,
-                    "example": "Merchant description 1"
+                "bill_total": {
+                    "type": "number",
+                    "minimum": 0,
+                    "example": 1000.5
                 },
-                "name": {
-                    "type": "string",
-                    "maxLength": 40,
-                    "example": "Resik Merchant"
+                "branch": {
+                    "$ref": "#/definitions/common.Branch"
                 },
-                "updated_at": {
+                "transacted_at": {
                     "type": "string",
-                    "example": "2024-04-14T14:18:00Z"
+                    "example": "2024-02-02T19:52:41Z"
                 }
             }
         },
@@ -1248,6 +1519,22 @@ const docTemplaterest = `{
                 "request": {
                     "type": "string",
                     "example": "id"
+                }
+            }
+        },
+        "response.BranchOmzet": {
+            "type": "object",
+            "properties": {
+                "branch": {
+                    "$ref": "#/definitions/common.Branch"
+                },
+                "omzet": {
+                    "type": "number",
+                    "example": 5000.5
+                },
+                "period": {
+                    "type": "string",
+                    "example": "2023-11-22"
                 }
             }
         },
@@ -1294,88 +1581,6 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.MerchantDetail": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "2026-01-02T15:04:05+07:00"
-                },
-                "creator": {
-                    "$ref": "#/definitions/response.User"
-                },
-                "description": {
-                    "description": "nullable",
-                    "type": "string",
-                    "example": "Merchant description 1"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "019defa1ccd0794c9459795fc65d38b6"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "Merchant 1"
-                },
-                "owner": {
-                    "$ref": "#/definitions/response.User"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "2026-01-02T15:04:05+07:00"
-                },
-                "updater": {
-                    "$ref": "#/definitions/response.User"
-                }
-            }
-        },
-        "response.MerchantList": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string",
-                    "example": "2024-01-14T11:40:00Z"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "019def99a9267f64b75a97b4b19a2c4b"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "Resik Merchant"
-                },
-                "updated_at": {
-                    "type": "string",
-                    "example": "2024-01-14T11:40:00Z"
-                }
-            }
-        },
-        "response.MerchantOmzet": {
-            "type": "object",
-            "properties": {
-                "merchant_name": {
-                    "type": "string",
-                    "example": "Resik Merchant"
-                },
-                "omzet": {
-                    "type": "number",
-                    "example": 5000.5
-                },
-                "period": {
-                    "type": "string",
-                    "example": "2023-11-22"
-                }
-            }
-        },
-        "response.MerchantUpsert": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": "019df0d3d46f71d0863084d474748c3a"
-                }
-            }
-        },
         "response.Module": {
             "type": "object",
             "properties": {
@@ -1389,20 +1594,68 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.OutletOmzet": {
+        "response.OrganizationDetail": {
             "type": "object",
             "properties": {
-                "merchant_name": {
+                "created_at": {
                     "type": "string",
-                    "example": "Resik Merchant"
+                    "example": "2026-01-02T15:04:05+07:00"
                 },
+                "creator": {
+                    "$ref": "#/definitions/common.User"
+                },
+                "description": {
+                    "description": "nullable",
+                    "type": "string",
+                    "example": "Organization description 1"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "019defa1ccd0794c9459795fc65d38b6"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Organization 1"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2026-01-02T15:04:05+07:00"
+                },
+                "updater": {
+                    "$ref": "#/definitions/common.User"
+                }
+            }
+        },
+        "response.OrganizationList": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-01-14T11:40:00Z"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "019def99a9267f64b75a97b4b19a2c4b"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Resik Organization"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-01-14T11:40:00Z"
+                }
+            }
+        },
+        "response.OrganizationOmzet": {
+            "type": "object",
+            "properties": {
                 "omzet": {
                     "type": "number",
                     "example": 5000.5
                 },
-                "outlet_name": {
-                    "type": "string",
-                    "example": "Resik Outlet"
+                "organization": {
+                    "$ref": "#/definitions/common.Organization"
                 },
                 "period": {
                     "type": "string",
@@ -1518,20 +1771,63 @@ const docTemplaterest = `{
                 }
             }
         },
-        "response.User": {
+        "response.TransactionDetail": {
             "type": "object",
             "properties": {
+                "bill_total": {
+                    "type": "number",
+                    "example": 1000.5
+                },
+                "branch": {
+                    "$ref": "#/definitions/common.Branch"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2024-02-02T19:52:41Z"
+                },
+                "creator": {
+                    "$ref": "#/definitions/common.User"
+                },
                 "id": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "name": {
                     "type": "string",
-                    "example": "User 1"
+                    "example": "01a0eca283a4796fa0e51d3ab1cfd2ba"
                 },
-                "username": {
+                "transacted_at": {
                     "type": "string",
-                    "example": "user1"
+                    "example": "2024-02-02T19:52:41Z"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2024-02-02T19:52:41Z"
+                },
+                "updater": {
+                    "$ref": "#/definitions/common.User"
+                }
+            }
+        },
+        "response.TransactionList": {
+            "type": "object",
+            "properties": {
+                "bill_total": {
+                    "type": "number",
+                    "example": 1000.5
+                },
+                "branch": {
+                    "$ref": "#/definitions/common.Branch"
+                },
+                "creator": {
+                    "$ref": "#/definitions/common.User"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "01a0eca283a4796fa0e51d3ab1cfd2ba"
+                },
+                "transacted_at": {
+                    "type": "string",
+                    "example": "2024-02-02T19:52:41Z"
+                },
+                "updater": {
+                    "$ref": "#/definitions/common.User"
                 }
             }
         },

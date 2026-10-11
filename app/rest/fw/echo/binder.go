@@ -5,6 +5,8 @@
 package echo
 
 import (
+	"encoding/json"
+	"errors"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -183,6 +185,18 @@ func (b *bind) JSONErrorFormatter(c *echo.Context, err error) error {
 	if errLang != nil {
 		return errLang
 	}
+
+	if unmarshalErr, ok := errors.AsType[*json.UnmarshalTypeError](err); ok {
+		message, technicalErr := errorTypeMessage(lang, unmarshalErr.Field, unmarshalErr.Type.String(), unmarshalErr.Value)
+		return resPkg.NewStatusBadRequest(
+			lang.LanguageReqOrDefault().String(),
+			unmarshalErr.Field,
+			message,
+			"INVALID_TYPE",
+			technicalErr,
+		)
+	}
+
 	regField := regexp.MustCompile(`field\=(.*?),`)
 	fields := regField.FindStringSubmatch(err.Error())
 	expectedReg := regexp.MustCompile(`expected\=(.*?),`)
@@ -201,7 +215,7 @@ func (b *bind) JSONErrorFormatter(c *echo.Context, err error) error {
 		)
 	}
 
-	return nil
+	return err
 }
 
 func errorTypeMessage(lang *langCtx.Lang, field, expected, actual string) (message string, technicalErr error) {

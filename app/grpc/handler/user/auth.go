@@ -7,7 +7,7 @@ package user
 import (
 	"context"
 
-	"github.com/dedyf5/resik/app/grpc/proto/status"
+	commonCore "github.com/dedyf5/resik/core/common"
 	reqUserCore "github.com/dedyf5/resik/core/user/request"
 	resUserCore "github.com/dedyf5/resik/core/user/response"
 	"github.com/dedyf5/resik/ctx"
@@ -32,8 +32,8 @@ func (h *UserHandler) LoginPost(c context.Context, req *reqUserCore.LoginPost) (
 	}
 
 	return &UserCredentialRes{
-		Status: &status.Status{
-			Code:    status.CodePlus(codes.OK),
+		Status: &commonCore.Status{
+			Code:    commonCore.StatusCodePlus(codes.OK),
 			Message: codes.OK.String(),
 		},
 		Data: &resUserCore.UserCredential{
@@ -56,8 +56,8 @@ func (h *UserHandler) TokenRefreshGet(c context.Context, _ *emptypb.Empty) (*Use
 	}
 
 	return &UserCredentialRes{
-		Status: &status.Status{
-			Code:    status.CodePlus(codes.OK),
+		Status: &commonCore.Status{
+			Code:    commonCore.StatusCodePlus(codes.OK),
 			Message: codes.OK.String(),
 		},
 		Data: &resUserCore.UserCredential{

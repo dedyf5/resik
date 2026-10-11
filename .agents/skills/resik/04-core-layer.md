@@ -15,12 +15,12 @@ description: Core business logic rules
 
 All CRUD must be in ONE file:
 
-merchant.go:
-- CreateMerchant
-- UpdateMerchant
-- DeleteMerchant
-- GetMerchant
-- ListMerchant
+organization.go:
+- CreateOrganization
+- UpdateOrganization
+- DeleteOrganization
+- GetOrganization
+- ListOrganization
 
 ## Do NOT:
 

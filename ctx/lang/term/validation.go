@@ -95,19 +95,71 @@ var (
 		},
 	}
 
-	validationFieldMerchantIDID = "validation.field.merchant_id"
-	ValidationFieldMerchantID   = &Term{
+	branchID = "Branch ID"
+
+	validationFieldBranchIDID = "validation.field.branch_id"
+	ValidationFieldBranchID   = &Term{
 		Message: &i18n.Message{
-			ID:    validationFieldMerchantIDID,
-			Other: "Merchant ID",
+			ID:    validationFieldBranchIDID,
+			Other: branchID,
 		},
 	}
 
-	validationFieldOutletIDID = "validation.field.outlet_id"
-	ValidationFieldOutletID   = &Term{
+	organizationID = "Organization ID"
+
+	validationFieldOrganizationIDID = "validation.field.organization_id"
+	ValidationFieldOrganizationID   = &Term{
 		Message: &i18n.Message{
-			ID:    validationFieldOutletIDID,
-			Other: "Outlet ID",
+			ID:    validationFieldOrganizationIDID,
+			Other: organizationID,
+		},
+	}
+
+	validationFieldBranchBranchIDID = "validation.field.branch.id"
+	ValidationFieldBranchBranchID   = &Term{
+		Message: &i18n.Message{
+			ID:    validationFieldBranchBranchIDID,
+			Other: branchID,
+		},
+	}
+
+	validationFieldBranchBranchNameID = "validation.field.branch.name"
+	ValidationFieldBranchBranchName   = &Term{
+		Message: &i18n.Message{
+			ID:    validationFieldBranchBranchNameID,
+			Other: "Branch Name",
+		},
+	}
+
+	validationFieldBranchOrganizationIDID = "validation.field.branch.organization.id"
+	ValidationFieldBranchOrganizationID   = &Term{
+		Message: &i18n.Message{
+			ID:    validationFieldBranchOrganizationIDID,
+			Other: organizationID,
+		},
+	}
+
+	validationFieldBranchOrganizationNameID = "validation.field.branch.organization.name"
+	ValidationFieldBranchOrganizationName   = &Term{
+		Message: &i18n.Message{
+			ID:    validationFieldBranchOrganizationNameID,
+			Other: "Organization Name",
+		},
+	}
+
+	validationFieldBillTotalID = "validation.field.bill_total"
+	ValidationFieldBillTotal   = &Term{
+		Message: &i18n.Message{
+			ID:    validationFieldBillTotalID,
+			Other: "Bill Total",
+		},
+	}
+
+	validationFieldTransactedAtID = "validation.field.transacted_at"
+	ValidationFieldTransactedAt   = &Term{
+		Message: &i18n.Message{
+			ID:    validationFieldTransactedAtID,
+			Other: "Transacted at",
 		},
 	}
 

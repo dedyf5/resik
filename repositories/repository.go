@@ -6,13 +6,15 @@ package repositories
 
 import (
 	"github.com/dedyf5/resik/ctx"
+	branchEntity "github.com/dedyf5/resik/entities/branch"
 	checkEntity "github.com/dedyf5/resik/entities/check"
-	merchantEntity "github.com/dedyf5/resik/entities/merchant"
-	paramMerchant "github.com/dedyf5/resik/entities/merchant/param"
+	organizationEntity "github.com/dedyf5/resik/entities/organization"
+	paramOrganization "github.com/dedyf5/resik/entities/organization/param"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
 //go:generate mockgen -source repository.go -package mock -destination ./mock/repository.go
@@ -21,25 +23,29 @@ type ICheck interface {
 }
 
 type ITransaction interface {
-	MerchantOmzetGetData(param *paramTrx.MerchantOmzetGet) (res []trxEntity.MerchantOmzet, err *resPkg.Status)
-	MerchantOmzetGetTotal(param *paramTrx.MerchantOmzetGet) (total int64, err *resPkg.Status)
-	OutletOmzetGetData(param *paramTrx.OutletOmzetGet) (res []trxEntity.OutletOmzet, err *resPkg.Status)
-	OutletOmzetGetTotal(param *paramTrx.OutletOmzetGet) (total int64, err *resPkg.Status)
+	TransactionInsert(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status)
+	TransactionUpdate(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status)
+	TransactionGetByPublicID(param *paramTrx.TransactionPublicID) (transaction *trxEntity.Transaction, err *resPkg.Status)
+	TransactionsGetData(param *paramTrx.TransactionsGet) (transactions trxEntity.Transactions, err *resPkg.Status)
+	TransactionsGetTotal(param *paramTrx.TransactionsGet) (total int64, err *resPkg.Status)
+	TransactionDelete(param *paramTrx.TransactionPublicID) (ok bool, err *resPkg.Status)
+
+	OrganizationOmzetGetData(param *paramTrx.OrganizationOmzetGet) (res []trxEntity.OrganizationOmzet, err *resPkg.Status)
+	OrganizationOmzetGetTotal(param *paramTrx.OrganizationOmzetGet) (total int64, err *resPkg.Status)
+	BranchOmzetGetData(param *paramTrx.BranchOmzetGet) (res []trxEntity.BranchOmzet, err *resPkg.Status)
+	BranchOmzetGetTotal(param *paramTrx.BranchOmzetGet) (total int64, err *resPkg.Status)
 }
 
 type IUser interface {
 	UserByID(ctx *ctx.Ctx, userID uint64) (user *userEntity.User, err *resPkg.Status)
 	UserByUsername(ctx *ctx.Ctx, username string) (user *userEntity.User, err *resPkg.Status)
-	UsersGetByIDs(ctx *ctx.Ctx, userIDs []uint64) (users userEntity.Users, err *resPkg.Status)
-	MerchantIDsByUserIDGetData(userID uint64) (merchantIDs []uint64, err *resPkg.Status)
-	OutletMerchantByUserIDGetData(ctx *ctx.Ctx, userID uint64) (merchantOutletIDs userEntity.MerchantOutletIDs, err *resPkg.Status)
+	UsersGetByPublicIDs(ctx *ctx.Ctx, userIDs []uuidPkg.UUIDV7) (users userEntity.Users, err *resPkg.Status)
 }
 
-type IMerchant interface {
-	MerchantInsert(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
-	MerchantUpdate(ctx *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
-	MerchantGetByIDAndOwnerID(ctx *ctx.Ctx, merchantID, ownerID uint64) (merchant *merchantEntity.Merchant, err *resPkg.Status)
-	MerchantsGetData(param *paramMerchant.MerchantsGet) (merchants merchantEntity.Merchants, err *resPkg.Status)
-	MerchantsGetTotal(param *paramMerchant.MerchantsGet) (total int64, err *resPkg.Status)
-	MerchantDelete(c *ctx.Ctx, merchant *merchantEntity.Merchant) (ok bool, err *resPkg.Status)
+type IOrganization interface {
+	OrganizationGetByID(ctx *ctx.Ctx, organizationID uint64) (organization *organizationEntity.Organization, err *resPkg.Status)
+	OrganizationsGetData(param *paramOrganization.OrganizationsGet) (organizations organizationEntity.Organizations, err *resPkg.Status)
+	OrganizationsGetTotal(param *paramOrganization.OrganizationsGet) (total int64, err *resPkg.Status)
+
+	BranchGetByPublicID(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7) (branch *branchEntity.Branch, err *resPkg.Status)
 }

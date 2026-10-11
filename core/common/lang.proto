@@ -1,0 +1,12 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package core.common;
+option go_package = "github.com/dedyf5/resik/core/common";
+
+message Lang {
+    string lang = 1; // @gotags: json:"lang" example:"id"
+}

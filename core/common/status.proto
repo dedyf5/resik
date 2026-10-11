@@ -1,0 +1,18 @@
+// Resik
+// Author: Dedy Fajar Setyawan
+// See: https://github.com/dedyf5/resik
+
+syntax = "proto3";
+
+package core.common;
+option go_package = "github.com/dedyf5/resik/core/common";
+
+message Status {
+    string code = 1; // @gotags: json:"code" example:"0"
+    string message = 2; // @gotags: json:"message" example:"OK"
+}
+
+message Empty {
+    string code = 1; // @gotags: json:"-"
+    string message = 2; // @gotags: json:"-"
+}

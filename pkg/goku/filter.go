@@ -4,6 +4,8 @@
 
 package goku
 
+import "strings"
+
 var LimitDefault int32 = 10
 var PageDefault int32 = 1
 
@@ -29,6 +31,38 @@ func NewFilter(search string, page, limit int32) *Filter {
 			limit: limit,
 		},
 	}
+}
+
+// FulltextSeach converts the search string into a format suitable for full-text search.
+//
+// It removes leading/trailing whitespace and converts the search string into a boolean mode search query.
+// For example, "apple banana" becomes "+apple* +banana*" (each word gets a "+" prefix and "*" suffix to ensure it appears in results).
+func (f *Filter) FulltextSeach() string {
+	str := strings.TrimSpace(f.Search)
+	if str == "" {
+		return ""
+	}
+
+	words := strings.Fields(str)
+	if len(words) == 0 {
+		return ""
+	}
+
+	var formattedWords []string
+	for _, word := range words {
+		cleanWord := strings.Map(func(r rune) rune {
+			if strings.ContainsRune("+-*~<>()@\"", r) {
+				return -1
+			}
+			return r
+		}, word)
+
+		if cleanWord != "" {
+			formattedWords = append(formattedWords, "+"+cleanWord+"*")
+		}
+	}
+
+	return strings.Join(formattedWords, " ")
 }
 
 func (f *Filter) PageOrDefault() int {
