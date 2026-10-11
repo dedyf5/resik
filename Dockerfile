@@ -68,7 +68,7 @@ COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/static ./static
 
 # Copy .proto files needed for grpcurl health checks
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/app/grpc/handler/health/health.proto ./app/grpc/handler/health/health.proto
-COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/app/grpc/proto/status/status.proto ./app/grpc/proto/status/status.proto
+COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/core/common/status.proto ./core/common/status.proto
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/core/health/response/healthz.proto ./core/health/response/healthz.proto
 COPY --from=builder --chown=${APP_USER}:${APP_GROUP} /app/core/health/response/readyz.proto ./core/health/response/readyz.proto
 
