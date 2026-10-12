@@ -28,7 +28,7 @@ func (t *Id) ToParam(ctx *ctx.Ctx, resolver identity.IdentityResolver, permissio
 
 	branchPublicIDs, errRes := resolver.GetBranchPublicIDsByPermission(ctx.Context, ctx.UserClaims().UserID(), permissionCode.String())
 	if errRes != nil {
-		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errRes)
+		return nil, errRes
 	}
 
 	return &paramTrx.TransactionPublicID{

@@ -86,15 +86,15 @@ func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver
 		)
 	}
 
-	hasAccess, errResolver := resolver.HasAccessByPublicID(c, a.User.ID, permissionCode, tableName, uuidV7)
+	hasAccess, errResolver := resolver.HasAccessByPublicID(c, lang, a.User.ID, permissionCode, tableName, uuidV7)
 	if errResolver != nil {
-		return 0, uuidPkg.Nil, HTTPStatusError(errResolver, lang)
+		return 0, uuidPkg.Nil, errResolver
 	}
 
 	if hasAccess {
 		id, errResolve := resolver.Resolve(c, tableName, uuidV7)
 		if errResolve != nil {
-			return 0, uuidPkg.Nil, HTTPStatusError(errResolve, lang)
+			return 0, uuidPkg.Nil, errResolve
 		}
 		return id, uuidV7, nil
 	}
@@ -145,20 +145,20 @@ func AuthClaimsFromString(tokenString string, signatureKey string, c context.Con
 		if !claims.User.PublicID.IsEmpty() {
 			userID, errResolver := resolver.Resolve(c, userEntity.TABLE_NAME, claims.User.PublicID)
 			if errResolver != nil {
-				return nil, HTTPStatusError(errResolver, lang)
+				return nil, errResolver
 			}
 			claims.User.ID = userID
 		}
 
 		organizationIDs, errOrganizations := resolver.GetTenantOrganizationIDs(c, claims.User.ID)
 		if errOrganizations != nil {
-			return nil, HTTPStatusError(errOrganizations, lang)
+			return nil, errOrganizations
 		}
 		claims.OrganizationIDs = organizationIDs
 
 		branchIDs, errBranches := resolver.GetTenantBranchIDs(c, claims.User.ID)
 		if errBranches != nil {
-			return nil, HTTPStatusError(errBranches, lang)
+			return nil, errBranches
 		}
 		claims.BranchIDs = branchIDs
 

@@ -7,6 +7,7 @@ package organization
 import (
 	"time"
 
+	commonEntity "github.com/dedyf5/resik/entities/common"
 	"github.com/dedyf5/resik/pkg/collection"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	"gorm.io/gorm"
@@ -30,22 +31,12 @@ func (m *Organization) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (m *Organization) AllUserPublicIDs() [2]uuidPkg.UUIDV7 {
-	return [2]uuidPkg.UUIDV7{m.CreatedByPublicID, m.UpdatedByPublicID}
+func (m *Organization) AllUserPublicIDs() []uuidPkg.UUIDV7 {
+	return []uuidPkg.UUIDV7{m.CreatedByPublicID, m.UpdatedByPublicID}
 }
 
 func (m *Organization) UniqueAllUserPublicIDs() []uuidPkg.UUIDV7 {
-	keys := make(map[uuidPkg.UUIDV7]bool, 2)
-	var list []uuidPkg.UUIDV7
-
-	ids := m.AllUserPublicIDs()
-	for _, id := range ids {
-		if !keys[id] {
-			keys[id] = true
-			list = append(list, id)
-		}
-	}
-	return list
+	return commonEntity.UniqueAllUserPublicIDs([]Organization{*m})
 }
 
 func (Organization) TableName() string {
@@ -71,17 +62,5 @@ func (ms Organizations) UniqueUpdatedByPublicIDs() []uuidPkg.UUIDV7 {
 }
 
 func (ms Organizations) UniqueAllUserPublicIDs() []uuidPkg.UUIDV7 {
-	keys := make(map[uuidPkg.UUIDV7]bool, len(ms)*2)
-	var list []uuidPkg.UUIDV7
-
-	for _, m := range ms {
-		ids := m.AllUserPublicIDs()
-		for _, id := range ids {
-			if !keys[id] {
-				keys[id] = true
-				list = append(list, id)
-			}
-		}
-	}
-	return list
+	return commonEntity.UniqueAllUserPublicIDs(ms)
 }

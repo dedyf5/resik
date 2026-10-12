@@ -1,3 +1,4 @@
+access_denied = "Access denied"
 home_message = "{{.AppName}} Version {{.AppVersion}} :: Module {{.ModuleName}} Type {{.ModuleType}}"
 incorrect_username_or_password = "Incorrect username or password"
 invalid_id = "Invalid ID"

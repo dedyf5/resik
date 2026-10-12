@@ -13,6 +13,8 @@ import (
 	context "context"
 	reflect "reflect"
 
+	lang "github.com/dedyf5/resik/ctx/lang"
+	response "github.com/dedyf5/resik/pkg/response"
 	uuid "github.com/dedyf5/resik/pkg/uuid"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -42,11 +44,11 @@ func (m *MockIdentityResolver) EXPECT() *MockIdentityResolverMockRecorder {
 }
 
 // GetBranchIDsByPermission mocks base method.
-func (m *MockIdentityResolver) GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
+func (m *MockIdentityResolver) GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBranchIDsByPermission", c, userID, permissionCode)
 	ret0, _ := ret[0].([]uint64)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
@@ -57,11 +59,11 @@ func (mr *MockIdentityResolverMockRecorder) GetBranchIDsByPermission(c, userID, 
 }
 
 // GetBranchPublicIDsByPermission mocks base method.
-func (m *MockIdentityResolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uuid.UUIDV7, error) {
+func (m *MockIdentityResolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uuid.UUIDV7, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBranchPublicIDsByPermission", c, userID, permissionCode)
 	ret0, _ := ret[0].([]uuid.UUIDV7)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
@@ -72,11 +74,11 @@ func (mr *MockIdentityResolverMockRecorder) GetBranchPublicIDsByPermission(c, us
 }
 
 // GetOrganizationIDsByPermission mocks base method.
-func (m *MockIdentityResolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
+func (m *MockIdentityResolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOrganizationIDsByPermission", c, userID, permissionCode)
 	ret0, _ := ret[0].([]uint64)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
@@ -87,11 +89,11 @@ func (mr *MockIdentityResolverMockRecorder) GetOrganizationIDsByPermission(c, us
 }
 
 // GetResourceIDs mocks base method.
-func (m *MockIdentityResolver) GetResourceIDs(c context.Context, userID uint64, resourceTable, permissionCode string) ([]uint64, error) {
+func (m *MockIdentityResolver) GetResourceIDs(c context.Context, userID uint64, resourceTable, permissionCode string) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetResourceIDs", c, userID, resourceTable, permissionCode)
 	ret0, _ := ret[0].([]uint64)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
@@ -102,11 +104,11 @@ func (mr *MockIdentityResolverMockRecorder) GetResourceIDs(c, userID, resourceTa
 }
 
 // GetTenantBranchIDs mocks base method.
-func (m *MockIdentityResolver) GetTenantBranchIDs(c context.Context, userID uint64) ([]uint64, error) {
+func (m *MockIdentityResolver) GetTenantBranchIDs(c context.Context, userID uint64) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTenantBranchIDs", c, userID)
 	ret0, _ := ret[0].([]uint64)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
@@ -117,11 +119,11 @@ func (mr *MockIdentityResolverMockRecorder) GetTenantBranchIDs(c, userID any) *g
 }
 
 // GetTenantOrganizationIDs mocks base method.
-func (m *MockIdentityResolver) GetTenantOrganizationIDs(c context.Context, userID uint64) ([]uint64, error) {
+func (m *MockIdentityResolver) GetTenantOrganizationIDs(c context.Context, userID uint64) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetTenantOrganizationIDs", c, userID)
 	ret0, _ := ret[0].([]uint64)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
@@ -132,40 +134,40 @@ func (mr *MockIdentityResolverMockRecorder) GetTenantOrganizationIDs(c, userID a
 }
 
 // HasAccessByID mocks base method.
-func (m *MockIdentityResolver) HasAccessByID(c context.Context, userID uint64, permissionCode, resourceTable string, resourceID uint64) (bool, error) {
+func (m *MockIdentityResolver) HasAccessByID(c context.Context, arg1 *lang.Lang, userID uint64, permissionCode, resourceTable string, resourceID uint64) (bool, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasAccessByID", c, userID, permissionCode, resourceTable, resourceID)
+	ret := m.ctrl.Call(m, "HasAccessByID", c, arg1, userID, permissionCode, resourceTable, resourceID)
 	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
 // HasAccessByID indicates an expected call of HasAccessByID.
-func (mr *MockIdentityResolverMockRecorder) HasAccessByID(c, userID, permissionCode, resourceTable, resourceID any) *gomock.Call {
+func (mr *MockIdentityResolverMockRecorder) HasAccessByID(c, arg1, userID, permissionCode, resourceTable, resourceID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAccessByID", reflect.TypeOf((*MockIdentityResolver)(nil).HasAccessByID), c, userID, permissionCode, resourceTable, resourceID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAccessByID", reflect.TypeOf((*MockIdentityResolver)(nil).HasAccessByID), c, arg1, userID, permissionCode, resourceTable, resourceID)
 }
 
 // HasAccessByPublicID mocks base method.
-func (m *MockIdentityResolver) HasAccessByPublicID(c context.Context, userID uint64, permissionCode, resourceTable string, publicID uuid.UUIDV7) (bool, error) {
+func (m *MockIdentityResolver) HasAccessByPublicID(c context.Context, arg1 *lang.Lang, userID uint64, permissionCode, resourceTable string, publicID uuid.UUIDV7) (bool, *response.Status) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HasAccessByPublicID", c, userID, permissionCode, resourceTable, publicID)
+	ret := m.ctrl.Call(m, "HasAccessByPublicID", c, arg1, userID, permissionCode, resourceTable, publicID)
 	ret0, _ := ret[0].(bool)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
 // HasAccessByPublicID indicates an expected call of HasAccessByPublicID.
-func (mr *MockIdentityResolverMockRecorder) HasAccessByPublicID(c, userID, permissionCode, resourceTable, publicID any) *gomock.Call {
+func (mr *MockIdentityResolverMockRecorder) HasAccessByPublicID(c, arg1, userID, permissionCode, resourceTable, publicID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAccessByPublicID", reflect.TypeOf((*MockIdentityResolver)(nil).HasAccessByPublicID), c, userID, permissionCode, resourceTable, publicID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HasAccessByPublicID", reflect.TypeOf((*MockIdentityResolver)(nil).HasAccessByPublicID), c, arg1, userID, permissionCode, resourceTable, publicID)
 }
 
 // InvalidateUserAccessBranch mocks base method.
-func (m *MockIdentityResolver) InvalidateUserAccessBranch(ctx context.Context, userID uint64) error {
+func (m *MockIdentityResolver) InvalidateUserAccessBranch(ctx context.Context, userID uint64) *response.Status {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InvalidateUserAccessBranch", ctx, userID)
-	ret0, _ := ret[0].(error)
+	ret0, _ := ret[0].(*response.Status)
 	return ret0
 }
 
@@ -176,10 +178,10 @@ func (mr *MockIdentityResolverMockRecorder) InvalidateUserAccessBranch(ctx, user
 }
 
 // InvalidateUserAccessOrganization mocks base method.
-func (m *MockIdentityResolver) InvalidateUserAccessOrganization(ctx context.Context, userID uint64) error {
+func (m *MockIdentityResolver) InvalidateUserAccessOrganization(ctx context.Context, userID uint64) *response.Status {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "InvalidateUserAccessOrganization", ctx, userID)
-	ret0, _ := ret[0].(error)
+	ret0, _ := ret[0].(*response.Status)
 	return ret0
 }
 
@@ -190,11 +192,11 @@ func (mr *MockIdentityResolverMockRecorder) InvalidateUserAccessOrganization(ctx
 }
 
 // Resolve mocks base method.
-func (m *MockIdentityResolver) Resolve(c context.Context, tableName string, publicID uuid.UUIDV7) (uint64, error) {
+func (m *MockIdentityResolver) Resolve(c context.Context, tableName string, publicID uuid.UUIDV7) (uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Resolve", c, tableName, publicID)
 	ret0, _ := ret[0].(uint64)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 
@@ -205,11 +207,11 @@ func (mr *MockIdentityResolverMockRecorder) Resolve(c, tableName, publicID any) 
 }
 
 // ResolveBatch mocks base method.
-func (m *MockIdentityResolver) ResolveBatch(c context.Context, tableName string, publicIDs []uuid.UUIDV7) ([]uint64, error) {
+func (m *MockIdentityResolver) ResolveBatch(c context.Context, tableName string, publicIDs []uuid.UUIDV7) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ResolveBatch", c, tableName, publicIDs)
 	ret0, _ := ret[0].([]uint64)
-	ret1, _ := ret[1].(error)
+	ret1, _ := ret[1].(*response.Status)
 	return ret0, ret1
 }
 

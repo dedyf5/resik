@@ -70,12 +70,13 @@ func TestTransactionInsert(t *testing.T) {
 			resolver.EXPECT().
 				HasAccessByPublicID(
 					ctx.Context,
+					ctx.Lang(),
 					ctx.UserClaims().UserID(),
 					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
-				Return(okExpected, errors.New("error 500")),
+				Return(okExpected, statusErr),
 		)
 		ok, err := trxService.TransactionInsert(ctx, transaction)
 		assert.Equal(t, okExpected, ok)
@@ -90,6 +91,7 @@ func TestTransactionInsert(t *testing.T) {
 			resolver.EXPECT().
 				HasAccessByPublicID(
 					ctx.Context,
+					ctx.Lang(),
 					ctx.UserClaims().UserID(),
 					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
@@ -112,6 +114,7 @@ func TestTransactionInsert(t *testing.T) {
 			resolver.EXPECT().
 				HasAccessByPublicID(
 					ctx.Context,
+					ctx.Lang(),
 					ctx.UserClaims().UserID(),
 					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
@@ -132,6 +135,7 @@ func TestTransactionInsert(t *testing.T) {
 			resolver.EXPECT().
 				HasAccessByPublicID(
 					ctx.Context,
+					ctx.Lang(),
 					ctx.UserClaims().UserID(),
 					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,
@@ -184,12 +188,13 @@ func TestTransactionUpdate(t *testing.T) {
 			resolver.EXPECT().
 				HasAccessByPublicID(
 					ctx.Context,
+					ctx.Lang(),
 					ctx.UserClaims().UserID(),
 					permisEntity.PERMISSION_CODE_TRX_UPDATE.String(),
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
-				Return(okExpected, errors.New("error 500")),
+				Return(okExpected, statusErr),
 		)
 		ok, err := trxService.TransactionUpdate(ctx, transaction)
 		assert.Equal(t, okExpected, ok)
@@ -204,6 +209,7 @@ func TestTransactionUpdate(t *testing.T) {
 			resolver.EXPECT().
 				HasAccessByPublicID(
 					ctx.Context,
+					ctx.Lang(),
 					ctx.UserClaims().UserID(),
 					permisEntity.PERMISSION_CODE_TRX_UPDATE.String(),
 					branchEntity.TABLE_NAME,
@@ -223,6 +229,7 @@ func TestTransactionUpdate(t *testing.T) {
 			resolver.EXPECT().
 				HasAccessByPublicID(
 					ctx.Context,
+					ctx.Lang(),
 					ctx.UserClaims().UserID(),
 					permisEntity.PERMISSION_CODE_TRX_UPDATE.String(),
 					branchEntity.TABLE_NAME,
@@ -249,54 +256,13 @@ func TestHasAccessBranch(t *testing.T) {
 		t.Error(err)
 	}
 
-	t.Run("TestHasAccessBranch HasAccessByPublicID ERROR-500", func(t *testing.T) {
-		okExpected := false
-		statusErr := &resPkg.Status{
-			Code: http.StatusInternalServerError,
-		}
-		gomock.InOrder(
-			resolver.EXPECT().
-				HasAccessByPublicID(
-					ctx.Context,
-					ctx.UserClaims().UserID(),
-					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
-					branchEntity.TABLE_NAME,
-					branchPublicID,
-				).
-				Return(okExpected, errors.New("error 500")),
-		)
-		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, permisEntity.PERMISSION_CODE_TRX_CREATE)
-		assert.Equal(t, okExpected, ok)
-		assert.Equal(t, statusErr.Code, err.Code)
-	})
-
-	t.Run("TestHasAccessBranch HasAccessByPublicID ERROR-403", func(t *testing.T) {
-		okExpected := false
-		statusErr := &resPkg.Status{
-			Code: http.StatusForbidden,
-		}
-		gomock.InOrder(
-			resolver.EXPECT().
-				HasAccessByPublicID(
-					ctx.Context,
-					ctx.UserClaims().UserID(),
-					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
-					branchEntity.TABLE_NAME,
-					branchPublicID,
-				).
-				Return(okExpected, nil),
-		)
-		ok, err := trxService.HasAccessBranch(ctx, &branchPublicID, permisEntity.PERMISSION_CODE_TRX_CREATE)
-		assert.Equal(t, okExpected, ok)
-		assert.Equal(t, statusErr.Code, err.Code)
-	})
-
 	t.Run("TestHasAccessBranch ALL-SUCCESS", func(t *testing.T) {
 		okExpected := true
 		gomock.InOrder(
 			resolver.EXPECT().
 				HasAccessByPublicID(
 					ctx.Context,
+					ctx.Lang(),
 					ctx.UserClaims().UserID(),
 					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
 					branchEntity.TABLE_NAME,

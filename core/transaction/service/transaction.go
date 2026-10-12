@@ -49,22 +49,12 @@ func (s *Service) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (o
 }
 
 func (s *Service) HasAccessBranch(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7, permissionCode permisEntity.PERMISSION_CODE) (ok bool, err *resPkg.Status) {
-	hasAccess, accessErr := s.resolver.HasAccessByPublicID(
-		ctx.Context, ctx.UserClaims().UserID(),
+	return s.resolver.HasAccessByPublicID(
+		ctx.Context, ctx.Lang(), ctx.UserClaims().UserID(),
 		permissionCode.String(),
 		branch.TABLE_NAME,
 		*branchPublicID,
 	)
-	if accessErr != nil {
-		return false, resPkg.NewStatusError(http.StatusInternalServerError, accessErr)
-	}
-	if !hasAccess {
-		return false, resPkg.NewStatusError(
-			http.StatusForbidden,
-			accessErr,
-		)
-	}
-	return true, nil
 }
 
 func (s *Service) ValidateBranchOrganization(ctx *ctx.Ctx, branchPublicID, orgPublicID *uuidPkg.UUIDV7) (ok bool, err *resPkg.Status) {

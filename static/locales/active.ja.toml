@@ -1,3 +1,7 @@
+[access_denied]
+hash = "sha1-64343a83ad8c0b8e2789c32ca5ab1eb6abb614e0"
+other = "アクセスが拒否されました"
+
 [home_message]
 hash = "sha1-1d8a054d68ff1e1e4468c63d3a12bb88949a19d0"
 other = "{{.AppName}} バージョン {{.AppVersion}} :: モジュール {{.ModuleName}} タイプ {{.ModuleType}}"
