@@ -48,6 +48,13 @@ var (
 		},
 	}
 
+	AccessDenied = &Term{
+		Message: &i18n.Message{
+			ID:    "access_denied",
+			Other: "Access denied",
+		},
+	}
+
 	InvalidID = &Term{
 		Message: &i18n.Message{
 			ID:    "invalid_id",

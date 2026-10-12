@@ -9,15 +9,19 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 	"slices"
 	"strconv"
 	"strings"
 	"time"
 
+	langCtx "github.com/dedyf5/resik/ctx/lang"
+	"github.com/dedyf5/resik/ctx/lang/term"
 	branchEntity "github.com/dedyf5/resik/entities/branch"
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	"github.com/dedyf5/resik/pkg/collection"
 	"github.com/dedyf5/resik/pkg/numbers"
+	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	goredis "github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
@@ -42,21 +46,24 @@ func NewResolver(appKey string, db *gorm.DB, cache *goredis.Client) IdentityReso
 }
 
 // Resolve resolves a public ID to its corresponding ID in a table.
-func (r *Resolver) Resolve(c context.Context, tableName string, publicID uuidPkg.UUIDV7) (uint64, error) {
+func (r *Resolver) Resolve(c context.Context, tableName string, publicID uuidPkg.UUIDV7) (id uint64, err *resPkg.Status) {
 	cacheKey := r.idMapCacheKey(tableName, publicID.String32())
-	if val, err := r.cache.Get(c, cacheKey).Result(); err == nil && val != "" {
-		return stringToUint64(val)
+	if val, cacheErr := r.cache.Get(c, cacheKey).Result(); cacheErr == nil && val != "" {
+		id, convErr := stringToUint64(val)
+		if convErr != nil {
+			return 0, resPkg.NewStatusError(http.StatusInternalServerError, convErr)
+		}
+		return id, nil
 	}
 
-	var id uint64
-	err := r.db.WithContext(c).
+	resultErr := r.db.WithContext(c).
 		Table(tableName).
 		Where("public_id = ?", publicID.String()).
 		Select("id").
 		Row().
 		Scan(&id)
-	if err != nil {
-		return 0, err
+	if resultErr != nil {
+		return 0, resPkg.NewStatusError(http.StatusInternalServerError, resultErr)
 	}
 
 	r.cache.Set(c, cacheKey, id, cacheExpiration)
@@ -65,12 +72,12 @@ func (r *Resolver) Resolve(c context.Context, tableName string, publicID uuidPkg
 }
 
 // ResolveBatch resolves a batch of public IDs to their corresponding IDs in a table.
-func (r *Resolver) ResolveBatch(c context.Context, tableName string, publicIDs []uuidPkg.UUIDV7) ([]uint64, error) {
+func (r *Resolver) ResolveBatch(c context.Context, tableName string, publicIDs []uuidPkg.UUIDV7) (ids []uint64, err *resPkg.Status) {
 	if len(publicIDs) == 0 {
 		return []uint64{}, nil
 	}
 
-	ids := make([]uint64, 0, len(publicIDs))
+	ids = make([]uint64, 0, len(publicIDs))
 	missingPublicIDs := make([]uuidPkg.UUIDV7, 0, len(publicIDs))
 
 	keys := make([]string, len(publicIDs))
@@ -80,8 +87,8 @@ func (r *Resolver) ResolveBatch(c context.Context, tableName string, publicIDs [
 
 	cacheMap := make(map[uuidPkg.UUIDV7]uint64)
 
-	cacheValues, err := r.cache.MGet(c, keys...).Result()
-	if err == nil {
+	cacheValues, cacheErr := r.cache.MGet(c, keys...).Result()
+	if cacheErr == nil {
 		for i, val := range cacheValues {
 			if val != nil {
 				if id, ok := anyToUint64(val); ok {
@@ -111,9 +118,9 @@ func (r *Resolver) ResolveBatch(c context.Context, tableName string, publicIDs [
 			query = query.Where("public_id IN ?", missingPublicIDsStr)
 		}
 
-		rows, err := query.Rows()
-		if err != nil {
-			return nil, err
+		rows, rowErr := query.Rows()
+		if rowErr != nil {
+			return nil, resPkg.NewStatusError(http.StatusInternalServerError, rowErr)
 		}
 		defer func() {
 			err := rows.Close()
@@ -148,7 +155,10 @@ func (r *Resolver) ResolveBatch(c context.Context, tableName string, publicIDs [
 		if id, ok := cacheMap[pid]; ok {
 			ids = append(ids, id)
 		} else {
-			return nil, fmt.Errorf("public_id for %s not found in table %s", pid, tableName)
+			return nil, resPkg.NewStatusError(
+				http.StatusInternalServerError,
+				fmt.Errorf("public_id for %s not found in table %s", pid, tableName),
+			)
 		}
 	}
 
@@ -156,11 +166,11 @@ func (r *Resolver) ResolveBatch(c context.Context, tableName string, publicIDs [
 }
 
 // GetTenantOrganizationIDs returns all organization IDs belonging to tenants of the user.
-func (r *Resolver) GetTenantOrganizationIDs(c context.Context, userID uint64) ([]uint64, error) {
+func (r *Resolver) GetTenantOrganizationIDs(c context.Context, userID uint64) (ids []uint64, err *resPkg.Status) {
 	cacheKey := fmt.Sprintf("%s:user_tenant_organizations:%d", r.appKey, userID)
 
-	cachedIDs, err := r.getSMembers(c, cacheKey)
-	if err == nil && len(cachedIDs) > 0 {
+	cachedIDs, cacheErr := r.getSMembers(c, cacheKey)
+	if cacheErr == nil && len(cachedIDs) > 0 {
 		return cachedIDs, nil
 	}
 
@@ -172,10 +182,9 @@ func (r *Resolver) GetTenantOrganizationIDs(c context.Context, userID uint64) ([
 		WHERE tm.user_id = @userID
 	`
 
-	var ids []uint64
-	err = r.db.WithContext(c).Raw(query, sql.Named("userID", userID)).Scan(&ids).Error
-	if err != nil {
-		return nil, err
+	dbErr := r.db.WithContext(c).Raw(query, sql.Named("userID", userID)).Scan(&ids).Error
+	if dbErr != nil {
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, dbErr)
 	}
 
 	if len(ids) > 0 {
@@ -188,11 +197,11 @@ func (r *Resolver) GetTenantOrganizationIDs(c context.Context, userID uint64) ([
 }
 
 // GetTenantBranchIDs returns all branch IDs belonging to organizations of tenants of the user.
-func (r *Resolver) GetTenantBranchIDs(c context.Context, userID uint64) ([]uint64, error) {
+func (r *Resolver) GetTenantBranchIDs(c context.Context, userID uint64) (ids []uint64, err *resPkg.Status) {
 	cacheKey := fmt.Sprintf("%s:user_tenant_branches:%d", r.appKey, userID)
 
-	cachedIDs, err := r.getSMembers(c, cacheKey)
-	if err == nil && len(cachedIDs) > 0 {
+	cachedIDs, cacheErr := r.getSMembers(c, cacheKey)
+	if cacheErr == nil && len(cachedIDs) > 0 {
 		return cachedIDs, nil
 	}
 
@@ -205,10 +214,9 @@ func (r *Resolver) GetTenantBranchIDs(c context.Context, userID uint64) ([]uint6
 		WHERE tm.user_id = @userID
 	`
 
-	var ids []uint64
-	err = r.db.WithContext(c).Raw(query, sql.Named("userID", userID)).Scan(&ids).Error
-	if err != nil {
-		return nil, err
+	dbErr := r.db.WithContext(c).Raw(query, sql.Named("userID", userID)).Scan(&ids).Error
+	if dbErr != nil {
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, dbErr)
 	}
 
 	if len(ids) > 0 {
@@ -221,7 +229,7 @@ func (r *Resolver) GetTenantBranchIDs(c context.Context, userID uint64) ([]uint6
 }
 
 // GetResourceIDs returns all resource IDs accessible to a user for a specific table and permission code.
-func (r *Resolver) GetResourceIDs(c context.Context, userID uint64, resourceTable string, permissionCode string) ([]uint64, error) {
+func (r *Resolver) GetResourceIDs(c context.Context, userID uint64, resourceTable string, permissionCode string) (ids []uint64, err *resPkg.Status) {
 	switch resourceTable {
 	case organizationEntity.TABLE_NAME:
 		return r.GetOrganizationIDsByPermission(c, userID, permissionCode)
@@ -233,29 +241,35 @@ func (r *Resolver) GetResourceIDs(c context.Context, userID uint64, resourceTabl
 }
 
 // HasAccessByID checks if a user has access to a specific resource by its internal uint64 ID.
-func (r *Resolver) HasAccessByID(c context.Context, userID uint64, permissionCode string, resourceTable string, resourceID uint64) (bool, error) {
+func (r *Resolver) HasAccessByID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode string, resourceTable string, resourceID uint64) (hasAccess bool, err *resPkg.Status) {
 	ids, err := r.GetResourceIDs(c, userID, resourceTable, permissionCode)
 	if err != nil {
 		return false, err
 	}
-	return slices.Contains(ids, resourceID), nil
+
+	hasAccess = slices.Contains(ids, resourceID)
+	if !hasAccess {
+		return false, resPkg.NewStatusMessage(http.StatusForbidden, term.AccessDenied.Localize(lang.Localizer), nil)
+	}
+
+	return hasAccess, nil
 }
 
 // HasAccessByPublicID checks if a user has access to a specific resource by its public UUID.
-func (r *Resolver) HasAccessByPublicID(c context.Context, userID uint64, permissionCode string, resourceTable string, publicID uuidPkg.UUIDV7) (bool, error) {
+func (r *Resolver) HasAccessByPublicID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode string, resourceTable string, publicID uuidPkg.UUIDV7) (hasAccess bool, err *resPkg.Status) {
 	id, err := r.Resolve(c, resourceTable, publicID)
 	if err != nil {
 		return false, err
 	}
-	return r.HasAccessByID(c, userID, permissionCode, resourceTable, id)
+	return r.HasAccessByID(c, lang, userID, permissionCode, resourceTable, id)
 }
 
 // GetOrganizationIDsByPermission returns all cached organization IDs for a specific user and permission code.
-func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
+func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) (ids []uint64, err *resPkg.Status) {
 	cacheKey := r.userAccessCacheKey(organizationEntity.TABLE_NAME, permissionCode, userID)
 
-	cachedIDs, err := r.getSMembers(c, cacheKey)
-	if err == nil && len(cachedIDs) > 0 {
+	cachedIDs, cacheErr := r.getSMembers(c, cacheKey)
+	if cacheErr == nil && len(cachedIDs) > 0 {
 		return cachedIDs, nil
 	}
 
@@ -291,14 +305,13 @@ func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint
 		WHERE tm.user_id = @userID
 	`
 
-	var ids []uint64
-	err = r.db.WithContext(c).Raw(query,
+	dbErr := r.db.WithContext(c).Raw(query,
 		sql.Named("permissionCode", permissionCode),
 		sql.Named("userID", userID),
 		sql.Named("resourceDomain", resourceDomain),
 	).Scan(&ids).Error
-	if err != nil {
-		return nil, err
+	if dbErr != nil {
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, dbErr)
 	}
 
 	if len(ids) > 0 {
@@ -311,11 +324,11 @@ func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint
 }
 
 // GetBranchIDsByPermission returns all cached branch IDs for a specific user and permission code.
-func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, error) {
+func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) (ids []uint64, err *resPkg.Status) {
 	cacheKey := r.userAccessCacheKey(branchEntity.TABLE_NAME, permissionCode, userID)
 
-	cachedIDs, err := r.getSMembers(c, cacheKey)
-	if err == nil && len(cachedIDs) > 0 {
+	cachedIDs, cacheErr := r.getSMembers(c, cacheKey)
+	if cacheErr == nil && len(cachedIDs) > 0 {
 		return cachedIDs, nil
 	}
 
@@ -368,14 +381,13 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 		WHERE tm.user_id = @userID
 	`
 
-	var ids []uint64
-	err = r.db.WithContext(c).Raw(query,
+	dbErr := r.db.WithContext(c).Raw(query,
 		sql.Named("permissionCode", permissionCode),
 		sql.Named("userID", userID),
 		sql.Named("resourceDomain", resourceDomain),
 	).Scan(&ids).Error
-	if err != nil {
-		return nil, err
+	if dbErr != nil {
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, dbErr)
 	}
 
 	if len(ids) > 0 {
@@ -388,11 +400,11 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 }
 
 // GetBranchPublicIDsByPermission returns all cached branch Public IDs for a specific user and permission code.
-func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uuidPkg.UUIDV7, error) {
+func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) (publicIDs []uuidPkg.UUIDV7, err *resPkg.Status) {
 	cacheKey := r.userAccessPublicCacheKey(branchEntity.TABLE_NAME, permissionCode, userID)
 
-	cachedPublicIDs, err := r.getSMembersPublicIDs(c, cacheKey)
-	if err == nil && len(cachedPublicIDs) > 0 {
+	cachedPublicIDs, cacheErr := r.getSMembersPublicIDs(c, cacheKey)
+	if cacheErr == nil && len(cachedPublicIDs) > 0 {
 		return cachedPublicIDs, nil
 	}
 
@@ -445,14 +457,13 @@ func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint
 		WHERE tm.user_id = @userID
 	`
 
-	var publicIDs []uuidPkg.UUIDV7
-	err = r.db.WithContext(c).Raw(query,
+	dbErr := r.db.WithContext(c).Raw(query,
 		sql.Named("permissionCode", permissionCode),
 		sql.Named("userID", userID),
 		sql.Named("resourceDomain", resourceDomain),
 	).Scan(&publicIDs).Error
-	if err != nil {
-		return nil, err
+	if dbErr != nil {
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, dbErr)
 	}
 
 	if len(publicIDs) > 0 {
@@ -465,38 +476,48 @@ func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint
 }
 
 // InvalidateUserAccessOrganization invalidates all user access organization caches for a specific user.
-func (r *Resolver) InvalidateUserAccessOrganization(c context.Context, userID uint64) error {
+func (r *Resolver) InvalidateUserAccessOrganization(c context.Context, userID uint64) (err *resPkg.Status) {
 	pattern := fmt.Sprintf("%s:user_access:%s:*:%d", r.appKey, organizationEntity.TABLE_NAME, userID)
 	return r.deleteKeysByPattern(c, pattern)
 }
 
 // InvalidateUserAccessBranch invalidates all user access branch caches for a specific user.
-func (r *Resolver) InvalidateUserAccessBranch(c context.Context, userID uint64) error {
+func (r *Resolver) InvalidateUserAccessBranch(c context.Context, userID uint64) (err *resPkg.Status) {
 	pattern := fmt.Sprintf("%s:user_access:%s:*:%d", r.appKey, branchEntity.TABLE_NAME, userID)
 	return r.deleteKeysByPattern(c, pattern)
 }
 
-func (r *Resolver) deleteKeysByPattern(c context.Context, pattern string) error {
+func (r *Resolver) deleteKeysByPattern(c context.Context, pattern string) (err *resPkg.Status) {
 	iter := r.cache.Scan(c, 0, pattern, 0).Iterator()
 	var keys []string
 	for iter.Next(c) {
 		keys = append(keys, iter.Val())
 	}
-	if err := iter.Err(); err != nil {
-		return err
+	if iterErr := iter.Err(); iterErr != nil {
+		return resPkg.NewStatusError(http.StatusInternalServerError, iterErr)
 	}
 	if len(keys) > 0 {
-		return r.cache.Del(c, keys...).Err()
+		if delErr := r.cache.Del(c, keys...).Err(); delErr != nil {
+			return resPkg.NewStatusError(http.StatusInternalServerError, delErr)
+		}
 	}
 	return nil
 }
 
 // getSMembers returns all cached IDs for a specific key.
-func (r *Resolver) getSMembers(c context.Context, key string) ([]uint64, error) {
-	cachedIDs, err := r.cache.SMembers(c, key).Result()
-	if err == nil && len(cachedIDs) > 0 {
-		ids, err := stringToUint64Slice(cachedIDs)
-		if len(ids) > 0 && err == nil {
+func (r *Resolver) getSMembers(c context.Context, key string) (ids []uint64, err *resPkg.Status) {
+	cachedIDs, cacheErr := r.cache.SMembers(c, key).Result()
+	if cacheErr != nil {
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, cacheErr)
+	}
+
+	if len(cachedIDs) > 0 {
+		ids, convErr := stringToUint64Slice(cachedIDs)
+		if convErr != nil {
+			return nil, resPkg.NewStatusError(http.StatusInternalServerError, convErr)
+		}
+
+		if len(ids) > 0 {
 			return ids, nil
 		}
 	}
@@ -505,14 +526,18 @@ func (r *Resolver) getSMembers(c context.Context, key string) ([]uint64, error) 
 }
 
 // getSMembersPublicIDs returns all cached Public IDs (UUIDV7) for a specific key.
-func (r *Resolver) getSMembersPublicIDs(c context.Context, key string) ([]uuidPkg.UUIDV7, error) {
-	cachedStrs, err := r.cache.SMembers(c, key).Result()
-	if err == nil && len(cachedStrs) > 0 {
-		publicIDs := make([]uuidPkg.UUIDV7, 0, len(cachedStrs))
+func (r *Resolver) getSMembersPublicIDs(c context.Context, key string) (publicIDs []uuidPkg.UUIDV7, err *resPkg.Status) {
+	cachedStrs, cacheErr := r.cache.SMembers(c, key).Result()
+	if cacheErr != nil {
+		return nil, resPkg.NewStatusError(http.StatusInternalServerError, cacheErr)
+	}
+
+	if len(cachedStrs) > 0 {
+		publicIDs = make([]uuidPkg.UUIDV7, 0, len(cachedStrs))
 		for _, s := range cachedStrs {
-			pid, err := uuidPkg.ParseUUIDV7(s)
-			if err != nil {
-				return nil, err
+			pid, convErr := uuidPkg.ParseUUIDV7(s)
+			if convErr != nil {
+				return nil, resPkg.NewStatusError(http.StatusInternalServerError, convErr)
 			}
 			publicIDs = append(publicIDs, pid)
 		}
@@ -522,7 +547,7 @@ func (r *Resolver) getSMembersPublicIDs(c context.Context, key string) ([]uuidPk
 }
 
 // setSMembers adds all IDs to the cache for a specific key.
-func (r *Resolver) setSMembers(c context.Context, key string, ids []uint64) error {
+func (r *Resolver) setSMembers(c context.Context, key string, ids []uint64) (err *resPkg.Status) {
 	if len(ids) == 0 {
 		return nil
 	}
@@ -537,8 +562,8 @@ func (r *Resolver) setSMembers(c context.Context, key string, ids []uint64) erro
 	pipe.SAdd(c, key, interfaces...)
 	pipe.Expire(c, key, cacheExpiration)
 
-	if _, err := pipe.Exec(c); err != nil {
-		return err
+	if _, execErr := pipe.Exec(c); execErr != nil {
+		return resPkg.NewStatusError(http.StatusInternalServerError, execErr)
 	}
 
 	return nil
@@ -577,16 +602,20 @@ func (r *Resolver) idMapCacheKey(tableName, publicID string) string {
 	return fmt.Sprintf("%s:id_map:%s:%s", r.appKey, tableName, publicID)
 }
 
-func stringToUint64(s string) (uint64, error) {
-	return strconv.ParseUint(s, 10, 64)
+func stringToUint64(s string) (id uint64, err *resPkg.Status) {
+	id, parseErr := strconv.ParseUint(s, 10, 64)
+	if parseErr != nil {
+		return 0, resPkg.NewStatusError(http.StatusInternalServerError, parseErr)
+	}
+	return id, nil
 }
 
-func stringToUint64Slice(s []string) ([]uint64, error) {
+func stringToUint64Slice(s []string) (ids []uint64, err *resPkg.Status) {
 	if len(s) == 0 {
 		return []uint64{}, nil
 	}
 
-	ids := make([]uint64, len(s))
+	ids = make([]uint64, len(s))
 	for i, v := range s {
 		if id, err := stringToUint64(v); err != nil {
 			return nil, err

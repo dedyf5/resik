@@ -5,8 +5,6 @@
 package request
 
 import (
-	"net/http"
-
 	"github.com/dedyf5/resik/ctx"
 	paramOrganization "github.com/dedyf5/resik/entities/organization/param"
 	permisEntity "github.com/dedyf5/resik/entities/permission"
@@ -23,7 +21,7 @@ func (m *OrganizationListGet) ToParam(c *ctx.Ctx, resolver identity.IdentityReso
 
 	organizationIDs, errRes := resolver.GetOrganizationIDsByPermission(c.Context, c.UserClaims().UserID(), permisEntity.PERMISSION_CODE_ORG_READ.String())
 	if errRes != nil {
-		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errRes)
+		return nil, errRes
 	}
 
 	return &paramOrganization.OrganizationsGet{
