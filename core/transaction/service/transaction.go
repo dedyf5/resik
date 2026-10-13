@@ -34,7 +34,44 @@ func (s *Service) TransactionInsert(ctx *ctx.Ctx, trx *trxEntity.Transaction) (o
 }
 
 func (s *Service) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
-	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID, permisEntity.PERMISSION_CODE_TRX_UPDATE)
+	permissionCode := permisEntity.PERMISSION_CODE_TRX_UPDATE
+
+	branchPublicIDs, err := s.resolver.GetBranchPublicIDsByPermission(
+		ctx.Context,
+		ctx.UserClaims().UserID(),
+		permissionCode.String(),
+	)
+	if err != nil {
+		return false, err
+	}
+	if len(branchPublicIDs) == 0 {
+		return false, resPkg.NewStatusMessage(
+			http.StatusForbidden,
+			term.AccessDenied.Localize(ctx.Lang().Localizer),
+			nil,
+		)
+	}
+
+	trxBefore, err := s.transactionRepo.TransactionGetByPublicID(&paramTrx.TransactionPublicID{
+		Ctx:             ctx,
+		BranchPublicIDs: branchPublicIDs,
+		PublicID:        &trx.PublicID,
+	})
+	if err != nil {
+		return false, err
+	}
+	if trxBefore == nil {
+		return false, resPkg.NewStatusMessage(
+			http.StatusNotFound,
+			term.NotFoundVal.Localize(
+				ctx.Lang().Localizer,
+				term.Transaction.Localize(ctx.Lang().Localizer),
+			),
+			nil,
+		)
+	}
+
+	_, err = s.HasAccessBranch(ctx, &trx.BranchPublicID, permissionCode)
 	if err != nil {
 		return false, err
 	}
