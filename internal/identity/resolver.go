@@ -7,6 +7,7 @@ package identity
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -63,6 +64,9 @@ func (r *Resolver) Resolve(c context.Context, tableName string, publicID uuidPkg
 		Row().
 		Scan(&id)
 	if resultErr != nil {
+		if errors.Is(resultErr, sql.ErrNoRows) {
+			return 0, resPkg.NewStatusError(http.StatusNotFound, resultErr)
+		}
 		return 0, resPkg.NewStatusError(http.StatusInternalServerError, resultErr)
 	}
 
