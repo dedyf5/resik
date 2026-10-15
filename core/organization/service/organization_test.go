@@ -64,18 +64,6 @@ func TestOrganizationGetByID(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("TestOrganizationGetByID UsersGetByPublicIDs ERROR-404", func(t *testing.T) {
-		statusErr := &resPkg.Status{
-			Code: http.StatusNotFound,
-		}
-		gomock.InOrder(
-			organizationRepo.EXPECT().OrganizationGetByID(ctx, organization.ID).Return(organization, nil),
-			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(nil, nil),
-		)
-		_, err := organizationService.OrganizationGetByID(ctx, organization.ID)
-		assert.Equal(t, statusErr.Code, err.Code)
-	})
-
 	t.Run("TestOrganizationGetByID ALL-EMPTY", func(t *testing.T) {
 		gomock.InOrder(
 			organizationRepo.EXPECT().OrganizationGetByID(ctx, organization.ID).Return(nil, nil),

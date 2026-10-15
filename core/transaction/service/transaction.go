@@ -123,15 +123,6 @@ func (s *Service) TransactionGetByPublicID(param *paramTrx.TransactionPublicID) 
 		return nil, err
 	}
 
-	if len(users) == 0 {
-		localizer := param.Ctx.Lang().Localizer
-		return nil, resPkg.NewStatusMessage(
-			http.StatusNotFound,
-			term.NotFoundVal.Localize(localizer, term.User.Localize(localizer)),
-			nil,
-		)
-	}
-
 	resDTO := trxDTO.TransactionFromEntity(*transaction, users.UniquePublicIDsMap())
 	return &resDTO, nil
 }

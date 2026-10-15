@@ -503,18 +503,6 @@ func TestTransactionGetByPublicID(t *testing.T) {
 		assert.Equal(t, statusErr, err)
 	})
 
-	t.Run("TestTransactionGetByPublicID UsersGetByPublicIDs ERROR-404", func(t *testing.T) {
-		statusErr := &resPkg.Status{
-			Code: http.StatusNotFound,
-		}
-		gomock.InOrder(
-			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(transaction, nil),
-			userRepo.EXPECT().UsersGetByPublicIDs(ctx, userPublicIDs).Return(nil, nil),
-		)
-		_, err := trxService.TransactionGetByPublicID(param)
-		assert.Equal(t, statusErr.Code, err.Code)
-	})
-
 	t.Run("TestTransactionGetByPublicID ALL-EMPTY", func(t *testing.T) {
 		gomock.InOrder(
 			trxRepo.EXPECT().TransactionGetByPublicID(param).Return(nil, nil),
