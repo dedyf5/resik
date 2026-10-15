@@ -10,6 +10,10 @@ import (
 )
 
 func FromString(val string, format string, c *ctx.Ctx) (res *time.Time, err *resPkg.Status) {
+	if val == "" {
+		return nil, nil
+	}
+
 	datetime, errParse := time.Parse(format, val)
 	if errParse != nil {
 		return nil, resPkg.NewStatusMessage(

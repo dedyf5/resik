@@ -9,7 +9,9 @@ option go_package = "github.com/dedyf5/resik/core/transaction/request";
 
 message TransactionListGet {
     string search = 1; // @gotags: json:"search" query:"search" validate:"" example:"keyword"
-    optional string order = 2; // @gotags: json:"order" query:"order" validate:"omitempty,oneof_order=branch_name organization_name bill_total transacted_at"
-    optional int32 page = 3; // @gotags: json:"page" query:"page" validate:"omitempty,min=1" example:"1"
-    optional int32 limit = 4; // @gotags: json:"limit" query:"limit" validate:"omitempty,min=1" example:"10"
+    optional string datetime_start = 2; // @gotags: json:"datetime_start" query:"datetime_start" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"
+    optional string datetime_end = 3; // @gotags: json:"datetime_end" query:"datetime_end" validate:"omitempty,datetime=2006-01-02T15:04:05Z07:00"
+    optional string order = 4; // @gotags: json:"order" query:"order" validate:"omitempty,oneof_order=branch_name organization_name bill_total transacted_at"
+    optional int32 page = 5; // @gotags: json:"page" query:"page" validate:"omitempty,min=1" example:"1"
+    optional int32 limit = 6; // @gotags: json:"limit" query:"limit" validate:"omitempty,min=1" example:"10"
 }
