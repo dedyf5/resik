@@ -5,11 +5,8 @@
 package service
 
 import (
-	"net/http"
-
 	dtoOrganization "github.com/dedyf5/resik/core/organization/dto"
 	"github.com/dedyf5/resik/ctx"
-	"github.com/dedyf5/resik/ctx/lang/term"
 	paramOrganization "github.com/dedyf5/resik/entities/organization/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 )
@@ -27,15 +24,6 @@ func (s *Service) OrganizationGetByID(ctx *ctx.Ctx, organizationID uint64) (*dto
 	users, err := s.userRepo.UsersGetByPublicIDs(ctx, organization.UniqueAllUserPublicIDs())
 	if err != nil {
 		return nil, err
-	}
-
-	if len(users) == 0 {
-		localizer := ctx.Lang().Localizer
-		return nil, resPkg.NewStatusMessage(
-			http.StatusNotFound,
-			term.NotFoundVal.Localize(localizer, term.User.Localize(localizer)),
-			nil,
-		)
 	}
 
 	res := dtoOrganization.OrganizationFromEntity(*organization, users.UniquePublicIDsMap())
