@@ -15,7 +15,7 @@ func UserFromUserEntity(src *userEntity.User) *User {
 
 	return &User{
 		Id:       src.PublicID.String32(),
-		Name:     src.Name,
+		FullName: src.FullName,
 		Username: src.Username,
 	}
 }

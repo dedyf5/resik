@@ -14,14 +14,14 @@ import (
 const TABLE_NAME = "users"
 
 type User struct {
-	ID          uint64         `json:"-" gorm:"primaryKey;autoIncrement;"`
+	ID          uint64         `json:"-" gorm:"column:id;primaryKey;autoIncrement;"`
 	PublicID    uuidPkg.UUIDV7 `json:"id" gorm:"column:public_id;type:uuid;unique;not null;"`
-	Name        string         `json:"name" gorm:"type:varchar(45);not null;"`
+	FullName    string         `json:"full_name" gorm:"column:full_name;type:varchar(45);not null;"`
 	Username    string         `json:"username" gorm:"column:username;type:varchar(45);unique;not null;"`
 	Password    string         `json:"-" gorm:"column:password;type:varchar(225);not null;"`
-	CreatedAt   time.Time      `json:"created_at" gorm:"type:datetime;not null;"`
+	CreatedAt   time.Time      `json:"created_at" gorm:"column:created_at;type:datetime;not null;"`
 	CreatedByID *uint64        `json:"created_by" gorm:"column:created_by_id;null;"`
-	UpdatedAt   time.Time      `json:"updated_at" gorm:"type:datetime;not null;"`
+	UpdatedAt   time.Time      `json:"updated_at" gorm:"column:updated_at;type:datetime;not null;"`
 	UpdatedByID *uint64        `json:"updated_by" gorm:"column:updated_by_id;null;"`
 }
 

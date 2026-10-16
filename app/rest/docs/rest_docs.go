@@ -1365,13 +1365,13 @@ const docTemplaterest = `{
         "common.User": {
             "type": "object",
             "properties": {
+                "full_name": {
+                    "type": "string",
+                    "example": "User 1"
+                },
                 "id": {
                     "type": "string",
                     "example": "01a0d3979d5e7ab99b47d88a5f9349bd"
-                },
-                "name": {
-                    "type": "string",
-                    "example": "User 1"
                 },
                 "username": {
                     "type": "string",
