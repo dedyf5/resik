@@ -106,6 +106,14 @@ func (r *TransactionRepo) TransactionsBaseQuery(param *paramTrx.TransactionsGet)
 		query = query.Where("branch_public_id IN ?", param.BranchPublicIDs)
 	}
 
+	if param.DatetimeStart != nil {
+		query = query.Where("transacted_at >= ?", param.DatetimeStart)
+	}
+
+	if param.DatetimeEnd != nil {
+		query = query.Where("transacted_at < ?", param.DatetimeEnd)
+	}
+
 	if param.Filter.Search != "" {
 		query = query.Where("organization_name LIKE ? OR branch_name LIKE ?", "%"+param.Filter.Search+"%", "%"+param.Filter.Search+"%")
 	}

@@ -591,6 +591,16 @@ const docTemplaterest = `{
                         "in": "query"
                     },
                     {
+                        "type": "string",
+                        "name": "datetime_end",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "datetime_start",
+                        "in": "query"
+                    },
+                    {
                         "minimum": 1,
                         "type": "integer",
                         "example": 10,
