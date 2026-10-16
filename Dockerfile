@@ -1,7 +1,7 @@
 # ----------------------------------------
 # Stage 1: Build Application
 # ----------------------------------------
-FROM golang:1.26-alpine AS builder
+FROM golang:1.27-alpine AS builder
 
 # Install build tools and dependencies
 RUN apk add --no-cache git gcc musl-dev make protoc protobuf protobuf-dev
