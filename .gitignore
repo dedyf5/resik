@@ -4,4 +4,6 @@ static/locales/translate.*.toml
 .vscode/
 .DS_Store
 .env
+coverage.out
+coverage.html
 /resik
