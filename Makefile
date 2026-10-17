@@ -47,6 +47,10 @@ sync-locales:
 test:
 	$(GOCMD) test -v -cover ./...
 
+## test-coverage: Test all files with coverage (show total coverage)
+test-coverage:
+	$(GOCMD) test -coverprofile=coverage.out ./... && $(GOCMD) tool cover -func=coverage.out | grep total
+
 APP_VERSION ?= $(shell git describe --tags --always)
 APP_GIT_COMMIT ?= $(shell git rev-parse --short HEAD)
 APP_BUILD_TIME ?= $(shell date -u +"%Y-%m-%dT%H:%M:%SZ")

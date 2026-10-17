@@ -133,14 +133,18 @@ You can run the tests using the following command:
 
 ### Using `make test`
 
+Run all test:
+
 ```bash
 make test
 ```
 
-### Using `go test`
+### Using `make test-coverage`
+
+Run all test with coverage (show total coverage):
 
 ```bash
-go test ./...
+make test-coverage
 ```
 
 ## Environment Variables
