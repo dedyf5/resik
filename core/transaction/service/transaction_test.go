@@ -39,15 +39,8 @@ func TestTransactionInsert(t *testing.T) {
 
 	orgRepo, trxRepo, _, ctx, trxService, resolver := setup(ctrl)
 
-	orgPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Error(err)
-	}
-
-	branchPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Error(err)
-	}
+	orgPublicID := uuidPkg.NewUUIDV7()
+	branchPublicID := uuidPkg.NewUUIDV7()
 
 	branch := &branchEntity.Branch{
 		PublicID: branchPublicID,
@@ -159,20 +152,9 @@ func TestTransactionUpdate(t *testing.T) {
 
 	permissionCode := permisEntity.PERMISSION_CODE_TRX_UPDATE.String()
 
-	trxPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Error(err)
-	}
-
-	orgPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Error(err)
-	}
-
-	branchPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Error(err)
-	}
+	trxPublicID := uuidPkg.NewUUIDV7()
+	orgPublicID := uuidPkg.NewUUIDV7()
+	branchPublicID := uuidPkg.NewUUIDV7()
 
 	branchPublicIDs := []uuidPkg.UUIDV7{branchPublicID}
 
@@ -362,10 +344,7 @@ func TestHasAccessBranch(t *testing.T) {
 
 	_, _, _, ctx, trxService, resolver := setup(ctrl)
 
-	branchPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Error(err)
-	}
+	branchPublicID := uuidPkg.NewUUIDV7()
 
 	t.Run("TestHasAccessBranch ALL-SUCCESS", func(t *testing.T) {
 		okExpected := true
@@ -393,15 +372,8 @@ func TestValidateBranchOrganization(t *testing.T) {
 
 	orgRepo, _, _, ctx, trxService, _ := setup(ctrl)
 
-	orgPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Error(err)
-	}
-
-	branchPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Error(err)
-	}
+	orgPublicID := uuidPkg.NewUUIDV7()
+	branchPublicID := uuidPkg.NewUUIDV7()
 
 	branch := &branchEntity.Branch{
 		PublicID: branchPublicID,
@@ -437,10 +409,7 @@ func TestValidateBranchOrganization(t *testing.T) {
 	})
 
 	t.Run("TestValidateBranchOrganization BranchGetByPublicID ERROR-422-2", func(t *testing.T) {
-		orgPublicIDParam, uuidErr := uuidPkg.NewUUIDV7()
-		if uuidErr != nil {
-			t.Error(uuidErr)
-		}
+		orgPublicIDParam := uuidPkg.NewUUIDV7()
 		statusErr := &resPkg.Status{
 			Code: http.StatusUnprocessableEntity,
 		}
@@ -693,10 +662,7 @@ func TestOrganizationOmzetGet(t *testing.T) {
 
 	_, trxRepo, _, ctx, trxService, _ := setup(ctrl)
 
-	organizationPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Fatal(err)
-	}
+	organizationPublicID := uuidPkg.NewUUIDV7()
 
 	p := trxParam.OrganizationOmzetGet{
 		Ctx:                  ctx,
@@ -764,15 +730,8 @@ func TestBranchOmzetGet(t *testing.T) {
 
 	_, trxRepo, _, ctx, trxService, _ := setup(ctrl)
 
-	organizationPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	branchPublicID, err := uuidPkg.NewUUIDV7()
-	if err != nil {
-		t.Fatal(err)
-	}
+	organizationPublicID := uuidPkg.NewUUIDV7()
+	branchPublicID := uuidPkg.NewUUIDV7()
 
 	p := trxParam.BranchOmzetGet{
 		Ctx:            ctx,

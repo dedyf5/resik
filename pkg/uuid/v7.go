@@ -10,22 +10,20 @@ import (
 	"encoding/json"
 	"errors"
 	"strings"
-
-	"github.com/google/uuid"
+	"uuid"
 )
 
 type UUIDV7 uuid.UUID
 
 var (
 	Nil UUIDV7
+
+	ErrInvalidValue   = errors.New("uuid: invalid value")
+	ErrInvalidVersion = errors.New("uuid: invalid version")
 )
 
-func NewUUIDV7() (UUIDV7, error) {
-	u, err := uuid.NewV7()
-	if err != nil {
-		return Nil, err
-	}
-	return UUIDV7(u), nil
+func NewUUIDV7() UUIDV7 {
+	return UUIDV7(uuid.NewV7())
 }
 
 func ParseUUIDV7(value string) (UUIDV7, error) {
@@ -33,8 +31,8 @@ func ParseUUIDV7(value string) (UUIDV7, error) {
 	if err != nil {
 		return Nil, err
 	}
-	if u.Version() != 7 {
-		return Nil, errors.New("uuid: invalid version")
+	if Version(u) != 7 {
+		return Nil, ErrInvalidVersion
 	}
 	return UUIDV7(u), nil
 }
@@ -110,7 +108,7 @@ func (u *UUIDV7) Scan(value any) error {
 
 	bytes, ok := value.([]byte)
 	if !ok {
-		return errors.New("uuid: invalid value")
+		return ErrInvalidValue
 	}
 
 	parseUUID, err := uuid.Parse(string(bytes))

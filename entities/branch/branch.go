@@ -29,7 +29,7 @@ type Branch struct {
 }
 
 func (b *Branch) BeforeCreate(tx *gorm.DB) (err error) {
-	b.PublicID, err = uuidPkg.NewUUIDV7()
+	b.PublicID = uuidPkg.NewUUIDV7()
 	return
 }
 

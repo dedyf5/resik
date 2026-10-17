@@ -27,7 +27,7 @@ type Organization struct {
 }
 
 func (m *Organization) BeforeCreate(tx *gorm.DB) (err error) {
-	m.PublicID, err = uuidPkg.NewUUIDV7()
+	m.PublicID = uuidPkg.NewUUIDV7()
 	return
 }
 
