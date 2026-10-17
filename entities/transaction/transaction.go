@@ -34,7 +34,7 @@ type Transaction struct {
 }
 
 func (t *Transaction) BeforeCreate(tx *gorm.DB) (err error) {
-	t.PublicID, err = uuidPkg.NewUUIDV7()
+	t.PublicID = uuidPkg.NewUUIDV7()
 	return
 }
 

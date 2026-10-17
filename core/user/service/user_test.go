@@ -115,7 +115,7 @@ func TestAuthTokenGenerate(t *testing.T) {
 
 	_, _, ctx, userService := setup(ctrl)
 
-	userPublicID, _ := uuidPkg.NewUUIDV7()
+	userPublicID := uuidPkg.NewUUIDV7()
 
 	t.Run("TestAuthTokenGenerate ALL-SUCCESS", func(t *testing.T) {
 		res, err := userService.AuthTokenGenerate(ctx, userID, userPublicID, username)
