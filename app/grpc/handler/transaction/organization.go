@@ -11,6 +11,7 @@ import (
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"google.golang.org/grpc/codes"
 )
@@ -26,7 +27,7 @@ func (h *TransactionHandler) OrganizationOmzetGet(c context.Context, req *reqTrx
 		return nil, err
 	}
 
-	_, organizationPublicID, err := ctx.GetOrganizationID(h.resolver, req.GetOrganizationId(), "transaction:read")
+	_, organizationPublicID, err := ctx.GetOrganizationID(h.resolver, req.GetOrganizationId(), permisEntity.PERMISSION_CODE_TRX_READ)
 	if err != nil {
 		return nil, err
 	}

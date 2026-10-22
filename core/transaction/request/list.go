@@ -17,7 +17,7 @@ import (
 )
 
 func (t *TransactionListGet) ToParam(c *ctx.Ctx, resolver identity.IdentityResolver) (param *paramTrx.TransactionsGet, err *resPkg.Status) {
-	branchPublicIDs, errRes := resolver.GetBranchPublicIDsByPermission(c.Context, c.UserClaims().UserID(), permisEntity.PERMISSION_CODE_TRX_READ.String())
+	branchPublicIDs, errRes := resolver.GetBranchPublicIDsByPermission(c.Context, c.UserClaims().UserID(), permisEntity.PERMISSION_CODE_TRX_READ)
 	if errRes != nil {
 		return nil, errRes
 	}

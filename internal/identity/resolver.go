@@ -20,6 +20,7 @@ import (
 	"github.com/dedyf5/resik/ctx/lang/term"
 	branchEntity "github.com/dedyf5/resik/entities/branch"
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	"github.com/dedyf5/resik/pkg/collection"
 	"github.com/dedyf5/resik/pkg/numbers"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -233,7 +234,7 @@ func (r *Resolver) GetTenantBranchIDs(c context.Context, userID uint64) (ids []u
 }
 
 // GetResourceIDs returns all resource IDs accessible to a user for a specific table and permission code.
-func (r *Resolver) GetResourceIDs(c context.Context, userID uint64, resourceTable string, permissionCode string) (ids []uint64, err *resPkg.Status) {
+func (r *Resolver) GetResourceIDs(c context.Context, userID uint64, resourceTable string, permissionCode permisEntity.PERMISSION_CODE) (ids []uint64, err *resPkg.Status) {
 	switch resourceTable {
 	case organizationEntity.TABLE_NAME:
 		return r.GetOrganizationIDsByPermission(c, userID, permissionCode)
@@ -245,7 +246,7 @@ func (r *Resolver) GetResourceIDs(c context.Context, userID uint64, resourceTabl
 }
 
 // HasAccessByID checks if a user has access to a specific resource by its internal uint64 ID.
-func (r *Resolver) HasAccessByID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode string, resourceTable string, resourceID uint64) (hasAccess bool, err *resPkg.Status) {
+func (r *Resolver) HasAccessByID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode permisEntity.PERMISSION_CODE, resourceTable string, resourceID uint64) (hasAccess bool, err *resPkg.Status) {
 	ids, err := r.GetResourceIDs(c, userID, resourceTable, permissionCode)
 	if err != nil {
 		return false, err
@@ -260,7 +261,7 @@ func (r *Resolver) HasAccessByID(c context.Context, lang *langCtx.Lang, userID u
 }
 
 // HasAccessByPublicID checks if a user has access to a specific resource by its public UUID.
-func (r *Resolver) HasAccessByPublicID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode string, resourceTable string, publicID uuidPkg.UUIDV7) (hasAccess bool, err *resPkg.Status) {
+func (r *Resolver) HasAccessByPublicID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode permisEntity.PERMISSION_CODE, resourceTable string, publicID uuidPkg.UUIDV7) (hasAccess bool, err *resPkg.Status) {
 	id, err := r.Resolve(c, resourceTable, publicID)
 	if err != nil {
 		return false, err
@@ -269,7 +270,7 @@ func (r *Resolver) HasAccessByPublicID(c context.Context, lang *langCtx.Lang, us
 }
 
 // GetOrganizationIDsByPermission returns all cached organization IDs for a specific user and permission code.
-func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) (ids []uint64, err *resPkg.Status) {
+func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (ids []uint64, err *resPkg.Status) {
 	cacheKey := r.userAccessCacheKey(organizationEntity.TABLE_NAME, permissionCode, userID)
 
 	cachedIDs, cacheErr := r.getSMembers(c, cacheKey)
@@ -277,7 +278,7 @@ func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint
 		return cachedIDs, nil
 	}
 
-	resourceDomain := strings.Split(permissionCode, ":")[0]
+	resourceDomain := strings.Split(permissionCode.String(), ":")[0]
 
 	query := `
 		-- 1. Full access: User does not have scope restrictions for this resource domain
@@ -328,7 +329,7 @@ func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint
 }
 
 // GetBranchIDsByPermission returns all cached branch IDs for a specific user and permission code.
-func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) (ids []uint64, err *resPkg.Status) {
+func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (ids []uint64, err *resPkg.Status) {
 	cacheKey := r.userAccessCacheKey(branchEntity.TABLE_NAME, permissionCode, userID)
 
 	cachedIDs, cacheErr := r.getSMembers(c, cacheKey)
@@ -336,7 +337,7 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 		return cachedIDs, nil
 	}
 
-	resourceDomain := strings.Split(permissionCode, ":")[0]
+	resourceDomain := strings.Split(permissionCode.String(), ":")[0]
 
 	query := `
 		-- 1. Full access: User does not have scope restrictions for this resource domain
@@ -404,7 +405,7 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 }
 
 // GetBranchPublicIDsByPermission returns all cached branch Public IDs for a specific user and permission code.
-func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) (publicIDs []uuidPkg.UUIDV7, err *resPkg.Status) {
+func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (publicIDs []uuidPkg.UUIDV7, err *resPkg.Status) {
 	cacheKey := r.userAccessPublicCacheKey(branchEntity.TABLE_NAME, permissionCode, userID)
 
 	cachedPublicIDs, cacheErr := r.getSMembersPublicIDs(c, cacheKey)
@@ -412,7 +413,7 @@ func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint
 		return cachedPublicIDs, nil
 	}
 
-	resourceDomain := strings.Split(permissionCode, ":")[0]
+	resourceDomain := strings.Split(permissionCode.String(), ":")[0]
 
 	query := `
 		-- 1. Full access: User does not have scope restrictions for this resource domain
@@ -592,12 +593,12 @@ func (r *Resolver) setSMembersPublicIDs(c context.Context, key string, publicIDs
 }
 
 // userAccessCacheKey returns the cache key for a specific user access to a table and permission code.
-func (r *Resolver) userAccessCacheKey(tableName string, permissionCode string, userID uint64) string {
-	return fmt.Sprintf("%s:user_access:%s:%s:%d", r.appKey, tableName, permissionCode, userID)
+func (r *Resolver) userAccessCacheKey(tableName string, permissionCode permisEntity.PERMISSION_CODE, userID uint64) string {
+	return fmt.Sprintf("%s:user_access:%s:%s:%d", r.appKey, tableName, permissionCode.String(), userID)
 }
 
 // userAccessPublicCacheKey returns the cache key of public ID for a specific user access to a table and permission code.
-func (r *Resolver) userAccessPublicCacheKey(tableName string, permissionCode string, userID uint64) string {
+func (r *Resolver) userAccessPublicCacheKey(tableName string, permissionCode permisEntity.PERMISSION_CODE, userID uint64) string {
 	return fmt.Sprintf("%s:user_access_public:%s:%s:%d", r.appKey, tableName, permissionCode, userID)
 }
 

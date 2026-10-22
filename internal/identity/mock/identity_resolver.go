@@ -14,6 +14,7 @@ import (
 	reflect "reflect"
 
 	lang "github.com/dedyf5/resik/ctx/lang"
+	permission "github.com/dedyf5/resik/entities/permission"
 	response "github.com/dedyf5/resik/pkg/response"
 	uuid "github.com/dedyf5/resik/pkg/uuid"
 	gomock "go.uber.org/mock/gomock"
@@ -44,7 +45,7 @@ func (m *MockIdentityResolver) EXPECT() *MockIdentityResolverMockRecorder {
 }
 
 // GetBranchIDsByPermission mocks base method.
-func (m *MockIdentityResolver) GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, *response.Status) {
+func (m *MockIdentityResolver) GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode permission.PERMISSION_CODE) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBranchIDsByPermission", c, userID, permissionCode)
 	ret0, _ := ret[0].([]uint64)
@@ -59,7 +60,7 @@ func (mr *MockIdentityResolverMockRecorder) GetBranchIDsByPermission(c, userID, 
 }
 
 // GetBranchPublicIDsByPermission mocks base method.
-func (m *MockIdentityResolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uuid.UUIDV7, *response.Status) {
+func (m *MockIdentityResolver) GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode permission.PERMISSION_CODE) ([]uuid.UUIDV7, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetBranchPublicIDsByPermission", c, userID, permissionCode)
 	ret0, _ := ret[0].([]uuid.UUIDV7)
@@ -74,7 +75,7 @@ func (mr *MockIdentityResolverMockRecorder) GetBranchPublicIDsByPermission(c, us
 }
 
 // GetOrganizationIDsByPermission mocks base method.
-func (m *MockIdentityResolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) ([]uint64, *response.Status) {
+func (m *MockIdentityResolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode permission.PERMISSION_CODE) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOrganizationIDsByPermission", c, userID, permissionCode)
 	ret0, _ := ret[0].([]uint64)
@@ -89,7 +90,7 @@ func (mr *MockIdentityResolverMockRecorder) GetOrganizationIDsByPermission(c, us
 }
 
 // GetResourceIDs mocks base method.
-func (m *MockIdentityResolver) GetResourceIDs(c context.Context, userID uint64, resourceTable, permissionCode string) ([]uint64, *response.Status) {
+func (m *MockIdentityResolver) GetResourceIDs(c context.Context, userID uint64, resourceTable string, permissionCode permission.PERMISSION_CODE) ([]uint64, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetResourceIDs", c, userID, resourceTable, permissionCode)
 	ret0, _ := ret[0].([]uint64)
@@ -134,7 +135,7 @@ func (mr *MockIdentityResolverMockRecorder) GetTenantOrganizationIDs(c, userID a
 }
 
 // HasAccessByID mocks base method.
-func (m *MockIdentityResolver) HasAccessByID(c context.Context, arg1 *lang.Lang, userID uint64, permissionCode, resourceTable string, resourceID uint64) (bool, *response.Status) {
+func (m *MockIdentityResolver) HasAccessByID(c context.Context, arg1 *lang.Lang, userID uint64, permissionCode permission.PERMISSION_CODE, resourceTable string, resourceID uint64) (bool, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasAccessByID", c, arg1, userID, permissionCode, resourceTable, resourceID)
 	ret0, _ := ret[0].(bool)
@@ -149,7 +150,7 @@ func (mr *MockIdentityResolverMockRecorder) HasAccessByID(c, arg1, userID, permi
 }
 
 // HasAccessByPublicID mocks base method.
-func (m *MockIdentityResolver) HasAccessByPublicID(c context.Context, arg1 *lang.Lang, userID uint64, permissionCode, resourceTable string, publicID uuid.UUIDV7) (bool, *response.Status) {
+func (m *MockIdentityResolver) HasAccessByPublicID(c context.Context, arg1 *lang.Lang, userID uint64, permissionCode permission.PERMISSION_CODE, resourceTable string, publicID uuid.UUIDV7) (bool, *response.Status) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "HasAccessByPublicID", c, arg1, userID, permissionCode, resourceTable, publicID)
 	ret0, _ := ret[0].(bool)

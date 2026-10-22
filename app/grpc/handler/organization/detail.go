@@ -29,7 +29,7 @@ func (h *OrganizationHandler) OrganizationDetailGet(c context.Context, req *reqO
 		return nil, err
 	}
 
-	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), permisEntity.PERMISSION_CODE_ORG_READ.String())
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, req.GetId(), permisEntity.PERMISSION_CODE_ORG_READ)
 	if err != nil {
 		return nil, err
 	}
