@@ -65,7 +65,7 @@ func TestTransactionInsert(t *testing.T) {
 					ctx.Context,
 					ctx.Lang(),
 					ctx.UserClaims().UserID(),
-					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE,
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -86,7 +86,7 @@ func TestTransactionInsert(t *testing.T) {
 					ctx.Context,
 					ctx.Lang(),
 					ctx.UserClaims().UserID(),
-					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE,
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -109,7 +109,7 @@ func TestTransactionInsert(t *testing.T) {
 					ctx.Context,
 					ctx.Lang(),
 					ctx.UserClaims().UserID(),
-					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE,
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -130,7 +130,7 @@ func TestTransactionInsert(t *testing.T) {
 					ctx.Context,
 					ctx.Lang(),
 					ctx.UserClaims().UserID(),
-					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE,
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).
@@ -150,7 +150,7 @@ func TestTransactionUpdate(t *testing.T) {
 
 	orgRepo, trxRepo, _, ctx, trxService, resolver := setup(ctrl)
 
-	permissionCode := permisEntity.PERMISSION_CODE_TRX_UPDATE.String()
+	permissionCode := permisEntity.PERMISSION_CODE_TRX_UPDATE
 
 	trxPublicID := uuidPkg.NewUUIDV7()
 	orgPublicID := uuidPkg.NewUUIDV7()
@@ -354,7 +354,7 @@ func TestHasAccessBranch(t *testing.T) {
 					ctx.Context,
 					ctx.Lang(),
 					ctx.UserClaims().UserID(),
-					permisEntity.PERMISSION_CODE_TRX_CREATE.String(),
+					permisEntity.PERMISSION_CODE_TRX_CREATE,
 					branchEntity.TABLE_NAME,
 					branchPublicID,
 				).

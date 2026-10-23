@@ -12,6 +12,7 @@ import (
 	jwt "github.com/dedyf5/resik/ctx/jwt"
 	lang "github.com/dedyf5/resik/ctx/lang"
 	logCtx "github.com/dedyf5/resik/ctx/log"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
@@ -61,11 +62,11 @@ func (c *Ctx) UserClaims() *jwt.AuthClaims {
 }
 
 // GetOrganizationID gets the organization ID by organization public ID, and check if user has access to it for permission code
-func (c *Ctx) GetOrganizationID(resolver identity.IdentityResolver, organizationPublicID string, permissionCode string) (organizationID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
+func (c *Ctx) GetOrganizationID(resolver identity.IdentityResolver, organizationPublicID string, permissionCode permisEntity.PERMISSION_CODE) (organizationID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return c.userClaims.GetOrganizationID(c.Context, resolver, c.lang, organizationPublicID, permissionCode)
 }
 
 // GetBranchID gets the branch ID by branch public ID, and check if user has access to it for permission code
-func (c *Ctx) GetBranchID(resolver identity.IdentityResolver, branchPublicID string, permissionCode string) (branchID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
+func (c *Ctx) GetBranchID(resolver identity.IdentityResolver, branchPublicID string, permissionCode permisEntity.PERMISSION_CODE) (branchID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return c.userClaims.GetBranchID(c.Context, resolver, c.lang, branchPublicID, permissionCode)
 }

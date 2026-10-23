@@ -10,6 +10,7 @@ import (
 
 	branchEntity "github.com/dedyf5/resik/entities/branch"
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	"github.com/stretchr/testify/assert"
 )
@@ -20,18 +21,18 @@ func TestResolverStructure(t *testing.T) {
 	}
 
 	t.Run("userAccessCacheKey", func(t *testing.T) {
-		key := r.userAccessCacheKey(organizationEntity.TABLE_NAME, "organization:read", 1)
+		key := r.userAccessCacheKey(organizationEntity.TABLE_NAME, permisEntity.PERMISSION_CODE_ORG_READ, 1)
 		assert.Equal(t, "resik:user_access:organizations:organization:read:1", key)
 
-		branchKey := r.userAccessCacheKey(branchEntity.TABLE_NAME, "branch:read", 1)
+		branchKey := r.userAccessCacheKey(branchEntity.TABLE_NAME, permisEntity.PERMISSION_CODE_BRANCH_READ, 1)
 		assert.Equal(t, "resik:user_access:branches:branch:read:1", branchKey)
 	})
 
 	t.Run("userAccessPublicCacheKey", func(t *testing.T) {
-		key := r.userAccessPublicCacheKey(organizationEntity.TABLE_NAME, "organization:read", 1)
+		key := r.userAccessPublicCacheKey(organizationEntity.TABLE_NAME, permisEntity.PERMISSION_CODE_ORG_READ, 1)
 		assert.Equal(t, "resik:user_access_public:organizations:organization:read:1", key)
 
-		branchKey := r.userAccessPublicCacheKey(branchEntity.TABLE_NAME, "branch:read", 1)
+		branchKey := r.userAccessPublicCacheKey(branchEntity.TABLE_NAME, permisEntity.PERMISSION_CODE_BRANCH_READ, 1)
 		assert.Equal(t, "resik:user_access_public:branches:branch:read:1", branchKey)
 	})
 

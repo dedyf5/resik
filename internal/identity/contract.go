@@ -8,6 +8,7 @@ import (
 	"context"
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
@@ -20,14 +21,14 @@ type IdentityResolver interface {
 	GetTenantBranchIDs(c context.Context, userID uint64) (ids []uint64, err *resPkg.Status)
 
 	// Core Generic Authorization Engine
-	GetResourceIDs(c context.Context, userID uint64, resourceTable string, permissionCode string) (ids []uint64, err *resPkg.Status)
-	HasAccessByPublicID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode string, resourceTable string, publicID uuidPkg.UUIDV7) (hasAccess bool, err *resPkg.Status)
-	HasAccessByID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode string, resourceTable string, resourceID uint64) (hasAccess bool, err *resPkg.Status)
+	GetResourceIDs(c context.Context, userID uint64, resourceTable string, permissionCode permisEntity.PERMISSION_CODE) (ids []uint64, err *resPkg.Status)
+	HasAccessByPublicID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode permisEntity.PERMISSION_CODE, resourceTable string, publicID uuidPkg.UUIDV7) (hasAccess bool, err *resPkg.Status)
+	HasAccessByID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode permisEntity.PERMISSION_CODE, resourceTable string, resourceID uint64) (hasAccess bool, err *resPkg.Status)
 
 	// Domain Convenience Helpers
-	GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode string) (ids []uint64, err *resPkg.Status)
-	GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode string) (ids []uint64, err *resPkg.Status)
-	GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode string) (publicIDs []uuidPkg.UUIDV7, err *resPkg.Status)
+	GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (ids []uint64, err *resPkg.Status)
+	GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (ids []uint64, err *resPkg.Status)
+	GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (publicIDs []uuidPkg.UUIDV7, err *resPkg.Status)
 	InvalidateUserAccessOrganization(ctx context.Context, userID uint64) (err *resPkg.Status)
 	InvalidateUserAccessBranch(ctx context.Context, userID uint64) (err *resPkg.Status)
 }

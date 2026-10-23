@@ -11,6 +11,7 @@ import (
 	reqTrxCore "github.com/dedyf5/resik/core/transaction/request"
 	resTrxCore "github.com/dedyf5/resik/core/transaction/response"
 	"github.com/dedyf5/resik/ctx"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"google.golang.org/grpc/codes"
 )
@@ -26,7 +27,7 @@ func (h *TransactionHandler) BranchOmzetGet(c context.Context, req *reqTrxCore.B
 		return nil, err
 	}
 
-	_, branchPublicID, err := ctx.GetBranchID(h.resolver, req.GetBranchId(), "transaction:read")
+	_, branchPublicID, err := ctx.GetBranchID(h.resolver, req.GetBranchId(), permisEntity.PERMISSION_CODE_TRX_READ)
 	if err != nil {
 		return nil, err
 	}

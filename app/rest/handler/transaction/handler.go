@@ -307,7 +307,7 @@ func (h *Handler) OrganizationOmzetGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	_, organizationPublicID, err := ctx.GetOrganizationID(h.resolver, payload.GetOrganizationId(), "transaction:read")
+	_, organizationPublicID, err := ctx.GetOrganizationID(h.resolver, payload.GetOrganizationId(), permisEntity.PERMISSION_CODE_TRX_READ)
 	if err != nil {
 		return err
 	}
@@ -360,7 +360,7 @@ func (h *Handler) BranchOmzetGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	_, branchPublicID, err := ctx.GetBranchID(h.resolver, payload.GetBranchId(), "transaction:read")
+	_, branchPublicID, err := ctx.GetBranchID(h.resolver, payload.GetBranchId(), permisEntity.PERMISSION_CODE_TRX_READ)
 	if err != nil {
 		return err
 	}

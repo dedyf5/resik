@@ -67,7 +67,7 @@ func (h *Handler) OrganizationDetailGet(echoCtx *echo.Context) error {
 		return err
 	}
 
-	organizationID, _, err := ctx.GetOrganizationID(h.resolver, param.GetId(), permisEntity.PERMISSION_CODE_ORG_READ.String())
+	organizationID, _, err := ctx.GetOrganizationID(h.resolver, param.GetId(), permisEntity.PERMISSION_CODE_ORG_READ)
 	if err != nil {
 		return err
 	}

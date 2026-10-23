@@ -26,7 +26,7 @@ func (t *Id) ToParam(ctx *ctx.Ctx, resolver identity.IdentityResolver, permissio
 		)
 	}
 
-	branchPublicIDs, errRes := resolver.GetBranchPublicIDsByPermission(ctx.Context, ctx.UserClaims().UserID(), permissionCode.String())
+	branchPublicIDs, errRes := resolver.GetBranchPublicIDsByPermission(ctx.Context, ctx.UserClaims().UserID(), permissionCode)
 	if errRes != nil {
 		return nil, errRes
 	}

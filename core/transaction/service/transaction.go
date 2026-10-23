@@ -39,7 +39,7 @@ func (s *Service) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (o
 	branchPublicIDs, err := s.resolver.GetBranchPublicIDsByPermission(
 		ctx.Context,
 		ctx.UserClaims().UserID(),
-		permissionCode.String(),
+		permissionCode,
 	)
 	if err != nil {
 		return false, err
@@ -88,7 +88,7 @@ func (s *Service) TransactionUpdate(ctx *ctx.Ctx, trx *trxEntity.Transaction) (o
 func (s *Service) HasAccessBranch(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7, permissionCode permisEntity.PERMISSION_CODE) (ok bool, err *resPkg.Status) {
 	return s.resolver.HasAccessByPublicID(
 		ctx.Context, ctx.Lang(), ctx.UserClaims().UserID(),
-		permissionCode.String(),
+		permissionCode,
 		branch.TABLE_NAME,
 		*branchPublicID,
 	)

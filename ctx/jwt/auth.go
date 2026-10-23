@@ -16,6 +16,7 @@ import (
 	branchEntity "github.com/dedyf5/resik/entities/branch"
 	"github.com/dedyf5/resik/entities/config"
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
+	permisEntity "github.com/dedyf5/resik/entities/permission"
 	userEntity "github.com/dedyf5/resik/entities/user"
 	"github.com/dedyf5/resik/internal/identity"
 	resPkg "github.com/dedyf5/resik/pkg/response"
@@ -72,7 +73,7 @@ func (a *AuthClaims) Username() string {
 }
 
 // getID gets the ID for a specific table by public ID, and check if user has access to it for the given permission code
-func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, permissionCode string, tableName string, publicIDString string) (id uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
+func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, permissionCode permisEntity.PERMISSION_CODE, tableName string, publicIDString string) (id uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	if a == nil {
 		return 0, uuidPkg.Nil, resPkg.NewStatusCode(http.StatusUnauthorized)
 	}
@@ -103,12 +104,12 @@ func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver
 }
 
 // GetOrganizationID gets the organization ID by organization public ID, and check if user has access to it for permission code
-func (a *AuthClaims) GetOrganizationID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, organizationPublicID string, permissionCode string) (organizationID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
+func (a *AuthClaims) GetOrganizationID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, organizationPublicID string, permissionCode permisEntity.PERMISSION_CODE) (organizationID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return a.getID(c, resolver, lang, permissionCode, organizationEntity.TABLE_NAME, organizationPublicID)
 }
 
 // GetBranchID gets the branch ID by branch public ID, and check if user has access to it for permission code
-func (a *AuthClaims) GetBranchID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, branchPublicID string, permissionCode string) (branchID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
+func (a *AuthClaims) GetBranchID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, branchPublicID string, permissionCode permisEntity.PERMISSION_CODE) (branchID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return a.getID(c, resolver, lang, permissionCode, branchEntity.TABLE_NAME, branchPublicID)
 }
 

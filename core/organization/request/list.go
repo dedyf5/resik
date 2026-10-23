@@ -19,7 +19,7 @@ func (m *OrganizationListGet) ToParam(c *ctx.Ctx, resolver identity.IdentityReso
 		orderStr = m.GetOrder()
 	}
 
-	organizationIDs, errRes := resolver.GetOrganizationIDsByPermission(c.Context, c.UserClaims().UserID(), permisEntity.PERMISSION_CODE_ORG_READ.String())
+	organizationIDs, errRes := resolver.GetOrganizationIDsByPermission(c.Context, c.UserClaims().UserID(), permisEntity.PERMISSION_CODE_ORG_READ)
 	if errRes != nil {
 		return nil, errRes
 	}
