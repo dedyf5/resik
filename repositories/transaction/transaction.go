@@ -18,6 +18,11 @@ import (
 	"gorm.io/gorm"
 )
 
+const (
+	orderPeriodKey = "period"
+	orderOmzetKey  = "omzet"
+)
+
 func (r *TransactionRepo) TransactionInsert(ctx *ctx.Ctx, transaction *trxEntity.Transaction) (ok bool, err *resPkg.Status) {
 	result := r.DB.WithContext(ctx.Context).Create(transaction)
 	if result.Error != nil {
@@ -142,8 +147,8 @@ func (r *TransactionRepo) OrganizationOmzetGetData(param *paramTrx.OrganizationO
 
 	if len(param.Orders) > 0 {
 		orderMap := map[string]string{
-			"period": "period",
-			"omzet":  "omzet",
+			orderPeriodKey: "period",
+			orderOmzetKey:  "omzet",
 		}
 		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
 		if err != nil {
@@ -207,8 +212,8 @@ func (r *TransactionRepo) BranchOmzetGetData(param *paramTrx.BranchOmzetGet) (re
 
 	if len(param.Orders) > 0 {
 		orderMap := map[string]string{
-			"period": "period",
-			"omzet":  "omzet",
+			orderPeriodKey: "period",
+			orderOmzetKey:  "omzet",
 		}
 		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
 		if err != nil {
