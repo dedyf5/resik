@@ -112,11 +112,11 @@ var (
 		Message: func() *i18n.Message {
 			return &i18n.Message{
 				ID:    notFoundValID,
-				Other: "{{.Val}} not found",
+				Other: "{{." + keyVal + "}} not found",
 			}
 		},
 		Localize: func(localizer *i18n.Localizer, val string) string {
-			return GetByTemplateData(localizer, notFoundValID, common.Map{"Val": val})
+			return GetByTemplateData(localizer, notFoundValID, common.Map{keyVal: val})
 		},
 	}
 
@@ -128,11 +128,11 @@ var (
 		Message: func() *i18n.Message {
 			return &i18n.Message{
 				ID:    successfullyCreatedValID,
-				Other: "Successfully created {{.Val}}",
+				Other: "Successfully created {{." + keyVal + "}}",
 			}
 		},
 		Localize: func(localizer *i18n.Localizer, val string) string {
-			return GetByTemplateData(localizer, successfullyCreatedValID, common.Map{"Val": val})
+			return GetByTemplateData(localizer, successfullyCreatedValID, common.Map{keyVal: val})
 		},
 	}
 
@@ -144,11 +144,11 @@ var (
 		Message: func() *i18n.Message {
 			return &i18n.Message{
 				ID:    successfullyUpdatedValID,
-				Other: "Successfully updated {{.Val}}",
+				Other: "Successfully updated {{." + keyVal + "}}",
 			}
 		},
 		Localize: func(localizer *i18n.Localizer, val string) string {
-			return GetByTemplateData(localizer, successfullyUpdatedValID, common.Map{"Val": val})
+			return GetByTemplateData(localizer, successfullyUpdatedValID, common.Map{keyVal: val})
 		},
 	}
 )

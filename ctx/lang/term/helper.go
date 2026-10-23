@@ -10,6 +10,8 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
+const keyVal = "Val"
+
 type Term struct {
 	Message *i18n.Message
 }

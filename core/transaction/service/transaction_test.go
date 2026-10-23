@@ -591,8 +591,8 @@ func TestTransactionsGet(t *testing.T) {
 		res, err := trxService.TransactionsGet(param)
 		assert.Nil(t, err)
 		assert.Len(t, res.Data, len(transactions))
-		assert.Equal(t, transactions[0].ID, res.Data[0].Transaction.ID)
-		assert.Equal(t, transactions[0].BillTotal, res.Data[0].BillTotal)
+		assert.Equal(t, transactions[0].ID, res.Data[0].ID)
+		assert.InDelta(t, transactions[0].BillTotal, res.Data[0].BillTotal, 0.001)
 		assert.Equal(t, transactions[0].TransactedAt, res.Data[0].TransactedAt)
 	})
 }

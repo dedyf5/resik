@@ -187,11 +187,11 @@ var (
 		Message: func() *i18n.Message {
 			return &i18n.Message{
 				ID:    validationQuoteValID,
-				Other: "\"{{.Val}}\"",
+				Other: "\"{{." + keyVal + "}}\"",
 			}
 		},
 		Localize: func(localizer *i18n.Localizer, val string) string {
-			return GetByTemplateData(localizer, validationQuoteValID, common.Map{"Val": val})
+			return GetByTemplateData(localizer, validationQuoteValID, common.Map{keyVal: val})
 		},
 	}
 
