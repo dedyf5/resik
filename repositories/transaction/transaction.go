@@ -9,8 +9,6 @@ import (
 	"net/http"
 
 	"github.com/dedyf5/resik/ctx"
-	branchEntity "github.com/dedyf5/resik/entities/branch"
-	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	"github.com/dedyf5/resik/pkg/goku"
@@ -185,17 +183,16 @@ func (r *TransactionRepo) OrganizationOmzetGetQuery(param *paramTrx.Organization
 		WithContext(param.Ctx.Context).
 		Select(`
 		t1.organization_public_id,
-		DATE_FORMAT(CONVERT_TZ(t1.created_at, 'UTC', ?), ?) period,
-		SUM(t1.bill_total) AS omzet,
-		o1.name AS organization_name
+		t1.organization_name,
+		DATE_FORMAT(CONVERT_TZ(t1.transacted_at, 'UTC', ?), ?) AS period,
+		SUM(t1.bill_total) AS omzet
 		`, param.GroupPeriod.Timezone, param.GroupPeriod.Mode.DateFormatMySQL()).
 		Table(trxEntity.TABLE_NAME+" AS t1").
-		Joins("LEFT JOIN "+organizationEntity.TABLE_NAME+" AS o1 ON o1.public_id = t1.organization_public_id").
 		Where("t1.organization_public_id = ?", param.OrganizationPublicID).
-		Where("t1.created_at >= ? AND t1.created_at < ?", param.GroupPeriod.DatetimeStartString(), param.GroupPeriod.DatetimeEndString()).
+		Where("t1.transacted_at >= ? AND t1.transacted_at < ?", param.GroupPeriod.DatetimeStartString(), param.GroupPeriod.DatetimeEndString()).
 		Group("t1.organization_public_id, period")
 	if search := param.Filter.Search; search != "" {
-		query = query.Where("o1.name LIKE ?", "%"+search+"%")
+		query = query.Where("t1.organization_name LIKE ?", "%"+search+"%")
 	}
 	return
 }
@@ -250,20 +247,18 @@ func (r *TransactionRepo) BranchOmzetGetQuery(param *paramTrx.BranchOmzetGet) (q
 		WithContext(param.Ctx.Context).
 		Select(`
 		t1.organization_public_id,
+		t1.organization_name,
 		t1.branch_public_id,
-		DATE_FORMAT(CONVERT_TZ(t1.created_at, 'UTC', ?), ?) period,
-		SUM(t1.bill_total) AS omzet,
-		o1.name AS organization_name,
-		b1.name AS branch_name
+		t1.branch_name,
+		DATE_FORMAT(CONVERT_TZ(t1.transacted_at, 'UTC', ?), ?) AS period,
+		SUM(t1.bill_total) AS omzet
 		`, param.GroupPeriod.Timezone, param.GroupPeriod.Mode.DateFormatMySQL()).
 		Table(trxEntity.TABLE_NAME+" AS t1").
-		Joins("LEFT JOIN "+organizationEntity.TABLE_NAME+" AS o1 ON o1.public_id = t1.organization_public_id").
-		Joins("LEFT JOIN "+branchEntity.TABLE_NAME+" AS b1 ON b1.public_id = t1.branch_public_id").
 		Where("t1.branch_public_id = ?", param.BranchPublicID).
-		Where("t1.created_at >= ? AND t1.created_at < ?", param.GroupPeriod.DatetimeStartString(), param.GroupPeriod.DatetimeEndString()).
+		Where("t1.transacted_at >= ? AND t1.transacted_at < ?", param.GroupPeriod.DatetimeStartString(), param.GroupPeriod.DatetimeEndString()).
 		Group("t1.branch_public_id, period")
 	if search := param.Filter.Search; search != "" {
-		query = query.Where("o1.name LIKE ? OR b1.name LIKE ?", "%"+search+"%", "%"+search+"%")
+		query = query.Where("t1.organization_name LIKE ? OR t1.branch_name LIKE ?", "%"+search+"%", "%"+search+"%")
 	}
 	return
 }
