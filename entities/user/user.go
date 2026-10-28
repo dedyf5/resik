@@ -30,10 +30,6 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-type Tabler interface {
-	TableName() string
-}
-
 func (User) TableName() string {
 	return TABLE_NAME
 }
