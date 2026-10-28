@@ -41,10 +41,8 @@ func (s *Service) Auth(param paramUser.Auth) (token string, err *resPkg.Status) 
 
 func (s *Service) AuthTokenGenerate(ctx *ctx.Ctx, userID uint64, userPublicID uuidPkg.UUIDV7, username string) (token string, err *resPkg.Status) {
 	user := jwtCtx.User{
-		Base: jwtCtx.Base{
-			ID:       userID,
-			PublicID: userPublicID,
-		},
+		ID:       userID,
+		PublicID: userPublicID,
 		Username: username,
 	}
 

@@ -115,11 +115,9 @@ func (a *AuthClaims) GetBranchID(c context.Context, resolver identity.IdentityRe
 
 func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, user User) (token string, err *resPkg.Status) {
 	claims := AuthClaims{
-		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    moduleConfig.Name,
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(authConfig.Expires)),
-		},
-		User: user,
+		Issuer:    moduleConfig.Name,
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(authConfig.Expires)),
+		User:      user,
 	}
 
 	tokenGen := jwt.NewWithClaims(AUTH_SIGNING_METHOD, claims)
