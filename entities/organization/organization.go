@@ -43,10 +43,6 @@ func (Organization) TableName() string {
 	return TABLE_NAME
 }
 
-type Tabler interface {
-	TableName() string
-}
-
 type Organizations []Organization
 
 func (ms Organizations) UniqueCreatedByPublicIDs() []uuidPkg.UUIDV7 {

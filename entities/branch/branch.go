@@ -43,10 +43,6 @@ func (b *Branch) IsBelongToOrganization(organizationPublicID *uuidPkg.UUIDV7) (o
 	)
 }
 
-type Tabler interface {
-	TableName() string
-}
-
 func (Branch) TableName() string {
 	return TABLE_NAME
 }

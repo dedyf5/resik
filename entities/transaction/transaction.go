@@ -50,10 +50,6 @@ func (Transaction) TableName() string {
 	return TABLE_NAME
 }
 
-type Tabler interface {
-	TableName() string
-}
-
 type Transactions []Transaction
 
 func (ts Transactions) UniqueAllUserPublicIDs() []uuidPkg.UUIDV7 {
