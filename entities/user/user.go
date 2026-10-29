@@ -7,27 +7,25 @@ package user
 import (
 	"time"
 
+	commonEntity "github.com/dedyf5/resik/entities/common"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
-	"gorm.io/gorm"
 )
 
 const TABLE_NAME = "users"
 
 type User struct {
-	ID          uint64         `json:"-" gorm:"column:id;primaryKey;autoIncrement;"`
-	PublicID    uuidPkg.UUIDV7 `json:"id" gorm:"column:public_id;type:uuid;unique;not null;"`
-	FullName    string         `json:"full_name" gorm:"column:full_name;type:varchar(45);not null;"`
-	Username    string         `json:"username" gorm:"column:username;type:varchar(45);unique;not null;"`
-	Password    string         `json:"-" gorm:"column:password;type:varchar(225);not null;"`
-	CreatedAt   time.Time      `json:"created_at" gorm:"column:created_at;type:datetime;not null;"`
-	CreatedByID *uint64        `json:"created_by" gorm:"column:created_by_id;null;"`
-	UpdatedAt   time.Time      `json:"updated_at" gorm:"column:updated_at;type:datetime;not null;"`
-	UpdatedByID *uint64        `json:"updated_by" gorm:"column:updated_by_id;null;"`
+	commonEntity.TableIdentity
+	FullName    string    `json:"full_name" gorm:"column:full_name;type:varchar(45);not null;"`
+	Username    string    `json:"username" gorm:"column:username;type:varchar(45);unique;not null;"`
+	Password    string    `json:"-" gorm:"column:password;type:varchar(225);not null;"`
+	CreatedAt   time.Time `json:"created_at" gorm:"column:created_at;type:datetime;not null;"`
+	CreatedByID *uint64   `json:"created_by" gorm:"column:created_by_id;null;"`
+	UpdatedAt   time.Time `json:"updated_at" gorm:"column:updated_at;type:datetime;not null;"`
+	UpdatedByID *uint64   `json:"updated_by" gorm:"column:updated_by_id;null;"`
 }
 
-func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
-	u.PublicID = uuidPkg.NewUUIDV7()
-	return
+func (u User) GetTableIdentity() commonEntity.TableIdentity {
+	return u.TableIdentity
 }
 
 func (User) TableName() string {
@@ -36,12 +34,6 @@ func (User) TableName() string {
 
 type Users []User
 
-func (u Users) UniquePublicIDsMap() (users map[uuidPkg.UUIDV7]User) {
-	users = make(map[uuidPkg.UUIDV7]User, len(u))
-	for _, v := range u {
-		if v.PublicID != (uuidPkg.Nil) {
-			users[v.PublicID] = v
-		}
-	}
-	return
+func (u Users) UniquePublicIDMap() (users map[uuidPkg.UUIDV7]User) {
+	return commonEntity.UniquePublicIDMap(u)
 }
