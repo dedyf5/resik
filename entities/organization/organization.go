@@ -5,38 +5,20 @@
 package organization
 
 import (
-	"time"
-
 	commonEntity "github.com/dedyf5/resik/entities/common"
-	"github.com/dedyf5/resik/pkg/collection"
-	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
-	"gorm.io/gorm"
 )
 
 const TABLE_NAME = "organizations"
 
 type Organization struct {
-	ID                uint64         `json:"-" gorm:"primaryKey;autoIncrement;"`
-	PublicID          uuidPkg.UUIDV7 `json:"id" gorm:"column:public_id;type:uuid;unique;not null;"`
-	Name              string         `json:"name" gorm:"type:varchar(40);not null"`
-	Description       *string        `json:"description" gorm:"type:text;null"`
-	CreatedAt         time.Time      `json:"created_at" gorm:"type:datetime;not null;"`
-	CreatedByPublicID uuidPkg.UUIDV7 `json:"created_by" gorm:"column:created_by_public_id;type:uuid;not null;"`
-	UpdatedAt         time.Time      `json:"updated_at" gorm:"type:datetime;not null;"`
-	UpdatedByPublicID uuidPkg.UUIDV7 `json:"updated_by" gorm:"column:updated_by_public_id;type:uuid;not null;"`
+	commonEntity.TableIdentity
+	commonEntity.TableAuthor
+	Name        string  `json:"name" gorm:"column:name;type:varchar(40);not null;"`
+	Description *string `json:"description" gorm:"column:description;type:text;null;"`
 }
 
-func (m *Organization) BeforeCreate(tx *gorm.DB) (err error) {
-	m.PublicID = uuidPkg.NewUUIDV7()
-	return
-}
-
-func (m *Organization) AllUserPublicIDs() []uuidPkg.UUIDV7 {
-	return []uuidPkg.UUIDV7{m.CreatedByPublicID, m.UpdatedByPublicID}
-}
-
-func (m *Organization) UniqueAllUserPublicIDs() []uuidPkg.UUIDV7 {
-	return commonEntity.UniqueAllUserPublicIDs([]Organization{*m})
+func (o Organization) GetTableAuthor() commonEntity.TableAuthor {
+	return o.TableAuthor
 }
 
 func (Organization) TableName() string {
@@ -45,18 +27,6 @@ func (Organization) TableName() string {
 
 type Organizations []Organization
 
-func (ms Organizations) UniqueCreatedByPublicIDs() []uuidPkg.UUIDV7 {
-	return collection.Unique(ms, func(m Organization) uuidPkg.UUIDV7 {
-		return m.CreatedByPublicID
-	})
-}
-
-func (ms Organizations) UniqueUpdatedByPublicIDs() []uuidPkg.UUIDV7 {
-	return collection.Unique(ms, func(m Organization) uuidPkg.UUIDV7 {
-		return m.UpdatedByPublicID
-	})
-}
-
-func (ms Organizations) UniqueAllUserPublicIDs() []uuidPkg.UUIDV7 {
-	return commonEntity.UniqueAllUserPublicIDs(ms)
+func (os Organizations) GetTableAuthors() commonEntity.TableAuthors {
+	return commonEntity.ExtractTableAuthors(os)
 }

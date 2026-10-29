@@ -123,7 +123,7 @@ func (s *Service) TransactionGetByPublicID(param *paramTrx.TransactionPublicID) 
 		return nil, err
 	}
 
-	resDTO := trxDTO.TransactionFromEntity(*transaction, users.UniquePublicIDsMap())
+	resDTO := trxDTO.TransactionFromEntity(*transaction, users.UniquePublicIDMap())
 	return &resDTO, nil
 }
 
@@ -146,13 +146,16 @@ func (s *Service) TransactionsGet(param *paramTrx.TransactionsGet) (res *trxDTO.
 		return &trxDTO.TransactionsResultEmpty, nil
 	}
 
-	users, err := s.userRepo.UsersGetByPublicIDs(param.Ctx, transactions.UniqueAllUserPublicIDs())
+	users, err := s.userRepo.UsersGetByPublicIDs(
+		param.Ctx,
+		transactions.GetTableAuthors().UniqueAllUserPublicIDs(),
+	)
 	if err != nil {
 		return nil, err
 	}
 
 	return &trxDTO.TransactionsResult{
-		Data:  trxDTO.TransactionsFromEntity(transactions, users.UniquePublicIDsMap()),
+		Data:  trxDTO.TransactionsFromEntity(transactions, users.UniquePublicIDMap()),
 		Total: total,
 	}, nil
 }
