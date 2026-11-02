@@ -2,7 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package check
+package redis
 
 import (
 	"context"
@@ -12,12 +12,12 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-type CheckRedisRepo struct {
+type CheckRepo struct {
 	redis  *redis.Client
 	config checkEntity.CheckConfig
 }
 
-func NewCheckRedisRepo(redisClient *redis.Client, config config.Config) *CheckRedisRepo {
+func New(redisClient *redis.Client, config config.Config) *CheckRepo {
 	cfg := checkEntity.CheckConfig{
 		Name:    "redis",
 		Timeout: 0,
@@ -27,10 +27,10 @@ func NewCheckRedisRepo(redisClient *redis.Client, config config.Config) *CheckRe
 		cfg.Timeout = config.Redis.HealthCheckTimeout
 	}
 
-	return &CheckRedisRepo{redis: redisClient, config: cfg}
+	return &CheckRepo{redis: redisClient, config: cfg}
 }
 
-func (r *CheckRedisRepo) Check() checkEntity.CheckDetail {
+func (r *CheckRepo) Check() checkEntity.CheckDetail {
 	detail := checkEntity.CheckDetail{
 		Name:   r.config.Name,
 		Status: checkEntity.StatusDisabled,

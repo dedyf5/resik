@@ -28,8 +28,8 @@ import (
 	config2 "github.com/dedyf5/resik/entities/config"
 	"github.com/dedyf5/resik/internal/identity"
 	"github.com/dedyf5/resik/pkg/hash"
-	"github.com/dedyf5/resik/repositories"
 	"github.com/dedyf5/resik/repositories/check"
+	"github.com/dedyf5/resik/repositories/check/redis"
 	"github.com/dedyf5/resik/repositories/organization"
 	"github.com/dedyf5/resik/repositories/transaction"
 	"github.com/dedyf5/resik/repositories/user"
@@ -70,21 +70,21 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		return nil, nil, err
 	}
 	identityResolver := identity.NewResolver(string2, gormDB, client)
-	userRepo := user.New(gormDB)
-	organizationRepo := organization.New(gormDB)
-	serviceService := service.New(config, userRepo, organizationRepo)
+	iUser := user.New(gormDB)
+	iOrganization := organization.New(gormDB)
+	serviceService := service.New(config, iUser, iOrganization)
 	organizationHandler := organization2.New(logLog, validate, identityResolver, serviceService)
-	transactionRepo := transaction.New(gormDB)
-	service5 := service2.New(config, identityResolver, organizationRepo, transactionRepo, userRepo)
+	iTransaction := transaction.New(gormDB)
+	service5 := service2.New(config, identityResolver, iOrganization, iTransaction, iUser)
 	transactionHandler := transaction2.New(config, logLog, validate, identityResolver, service5)
 	auth := config.Auth
 	argon2Config := provideHasherConfig(auth)
 	iHash := hash.NewArgon2Hasher(argon2Config)
-	service6 := service3.New(userRepo, iHash, config)
+	service6 := service3.New(iUser, iHash, config)
 	userHandler := user2.New(logLog, validate, service6)
-	checkDatabaseRepo := check.NewCheckDatabaseRepo(db, config)
-	checkRedisRepo := check.NewCheckRedisRepo(client, config)
-	v := provideCheckerSlice(checkDatabaseRepo, checkRedisRepo)
+	iCheck := check.New(db, config)
+	checkRepo := redis.New(client, config)
+	v := provideCheckerSlice(iCheck, checkRepo)
 	service7 := service4.New(v)
 	healthHandler := health.New(service7)
 	router := newRouter(config, generalHandler, organizationHandler, transactionHandler, userHandler, healthHandler)
@@ -134,7 +134,7 @@ var interceptorSet = wire.NewSet(middleware.NewInterceptor)
 
 var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm, drivers.NewRedisConnection)
 
-var repoSet = wire.NewSet(check.NewCheckDatabaseRepo, check.NewCheckRedisRepo, organization.New, transaction.New, user.New, wire.Bind(new(repositories.ICheck), new(*check.CheckDatabaseRepo)), wire.Bind(new(repositories.IOrganization), new(*organization.OrganizationRepo)), wire.Bind(new(repositories.ITransaction), new(*transaction.TransactionRepo)), wire.Bind(new(repositories.IUser), new(*user.UserRepo)))
+var repoSet = wire.NewSet(check.New, redis.New, organization.New, transaction.New, user.New)
 
 func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 	return &hash.Argon2Config{
@@ -143,8 +143,8 @@ func provideHasherConfig(conf config2.Auth) *hash.Argon2Config {
 	}
 }
 
-func provideCheckerSlice(db *check.CheckDatabaseRepo, redis *check.CheckRedisRepo) []repositories.ICheck {
-	return []repositories.ICheck{db, redis}
+func provideCheckerSlice(db check.ICheck, redis2 *redis.CheckRepo) []check.ICheck {
+	return []check.ICheck{db, redis2}
 }
 
 func provideAppKey(conf config2.App) string {

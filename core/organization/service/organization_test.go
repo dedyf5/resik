@@ -25,7 +25,8 @@ import (
 	userEntity "github.com/dedyf5/resik/entities/user"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
-	repoMock "github.com/dedyf5/resik/repositories/mock"
+	mockOrgRepo "github.com/dedyf5/resik/repositories/organization/mock"
+	mockUserRepo "github.com/dedyf5/resik/repositories/user/mock"
 )
 
 func TestOrganizationGetByID(t *testing.T) {
@@ -184,9 +185,9 @@ func TestOrganizationsGet(t *testing.T) {
 	})
 }
 
-func setup(ctrl *gomock.Controller) (ctx *ctx.Ctx, organizationRepo *repoMock.MockIOrganization, userRepo *repoMock.MockIUser, organizationService *Service) {
-	organizationRepo = repoMock.NewMockIOrganization(ctrl)
-	userRepo = repoMock.NewMockIUser(ctrl)
+func setup(ctrl *gomock.Controller) (ctx *ctx.Ctx, organizationRepo *mockOrgRepo.MockIOrganization, userRepo *mockUserRepo.MockIUser, organizationService *Service) {
+	organizationRepo = mockOrgRepo.NewMockIOrganization(ctrl)
+	userRepo = mockUserRepo.NewMockIUser(ctrl)
 	config, ctx := env()
 	organizationService = New(config, userRepo, organizationRepo)
 	return

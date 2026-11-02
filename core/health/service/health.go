@@ -10,7 +10,7 @@ import (
 	"time"
 
 	checkEntity "github.com/dedyf5/resik/entities/check"
-	repo "github.com/dedyf5/resik/repositories"
+	repo "github.com/dedyf5/resik/repositories/check"
 )
 
 func (s *Service) LivenessCheck(c context.Context) (isLive bool, statusMessage string) {

@@ -12,19 +12,19 @@ import (
 
 	"github.com/dedyf5/resik/core/health"
 	checkEntity "github.com/dedyf5/resik/entities/check"
-	repo "github.com/dedyf5/resik/repositories"
-	mockRepo "github.com/dedyf5/resik/repositories/mock"
+	checkRepo "github.com/dedyf5/resik/repositories/check"
+	mockCheckRepo "github.com/dedyf5/resik/repositories/check/mock"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
 
 // setup initializes gomock controller, mock checkers, and the health service.
 // It returns the slice of mock checkers and the health service instance.
-func setup(ctrl *gomock.Controller, numCheckers int) ([]*mockRepo.MockICheck, health.IService) {
-	mockCheckers := make([]*mockRepo.MockICheck, numCheckers)
-	healthCheckers := make([]repo.ICheck, numCheckers)
+func setup(ctrl *gomock.Controller, numCheckers int) ([]*mockCheckRepo.MockICheck, health.IService) {
+	mockCheckers := make([]*mockCheckRepo.MockICheck, numCheckers)
+	healthCheckers := make([]checkRepo.ICheck, numCheckers)
 	for i := range numCheckers {
-		mockCheckers[i] = mockRepo.NewMockICheck(ctrl)
+		mockCheckers[i] = mockCheckRepo.NewMockICheck(ctrl)
 		healthCheckers[i] = mockCheckers[i]
 	}
 	healthService := New(healthCheckers)

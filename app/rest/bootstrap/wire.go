@@ -30,8 +30,8 @@ import (
 	configEntity "github.com/dedyf5/resik/entities/config"
 	identity "github.com/dedyf5/resik/internal/identity"
 	pkgHash "github.com/dedyf5/resik/pkg/hash"
-	repo "github.com/dedyf5/resik/repositories"
 	checkRepo "github.com/dedyf5/resik/repositories/check"
+	redisCheckRepo "github.com/dedyf5/resik/repositories/check/redis"
 	organizationRepo "github.com/dedyf5/resik/repositories/organization"
 	trxRepo "github.com/dedyf5/resik/repositories/transaction"
 	userRepo "github.com/dedyf5/resik/repositories/user"
@@ -72,15 +72,11 @@ var connSet = wire.NewSet(
 )
 
 var repoSet = wire.NewSet(
-	checkRepo.NewCheckDatabaseRepo,
-	checkRepo.NewCheckRedisRepo,
+	checkRepo.New,
+	redisCheckRepo.New,
 	userRepo.New,
 	organizationRepo.New,
 	trxRepo.New,
-	wire.Bind(new(repo.ICheck), new(*checkRepo.CheckDatabaseRepo)),
-	wire.Bind(new(repo.IUser), new(*userRepo.UserRepo)),
-	wire.Bind(new(repo.IOrganization), new(*organizationRepo.OrganizationRepo)),
-	wire.Bind(new(repo.ITransaction), new(*trxRepo.TransactionRepo)),
 )
 
 func provideHasherConfig(conf configEntity.Auth) *pkgHash.Argon2Config {
@@ -90,8 +86,8 @@ func provideHasherConfig(conf configEntity.Auth) *pkgHash.Argon2Config {
 	}
 }
 
-func provideCheckerSlice(db *checkRepo.CheckDatabaseRepo, redis *checkRepo.CheckRedisRepo) []repo.ICheck {
-	return []repo.ICheck{db, redis}
+func provideCheckerSlice(db checkRepo.ICheck, redis *redisCheckRepo.CheckRepo) []checkRepo.ICheck {
+	return []checkRepo.ICheck{db, redis}
 }
 
 func provideAppKey(conf configEntity.App) string {

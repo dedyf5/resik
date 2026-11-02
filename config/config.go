@@ -168,6 +168,10 @@ func (conf *Config) loadDatabase(module configEntity.ModuleType) {
 		db.Engine = drivers.PostgreSQL
 	}
 
+	if db.Engine == "" {
+		logExitError("DATABASE_ENGINE is not set or value is unknown")
+	}
+
 	db.Host = viper.GetString("DATABASE_HOST")
 	db.Port = viper.GetInt("DATABASE_PORT")
 	db.Username = getSecretFromFileOrEnv("DATABASE_USERNAME_PATH_FILE", "DATABASE_USERNAME")

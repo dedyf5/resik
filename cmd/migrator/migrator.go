@@ -20,7 +20,7 @@ import (
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 )
 
-//go:embed migrations/*.sql
+//go:embed migrations/*/*.sql
 var embeddedMigrations embed.FS
 
 func initMigrateInstance() (*migrate.Migrate, error) {
@@ -31,7 +31,7 @@ func initMigrateInstance() (*migrate.Migrate, error) {
 		return nil, errors.New("error loading complete database configuration")
 	}
 
-	migrationFiles, err := fs.Sub(embeddedMigrations, "migrations")
+	migrationFiles, err := fs.Sub(embeddedMigrations, "migrations/"+dbConfig.Engine.String())
 	if err != nil {
 		return nil, fmt.Errorf("error creating embedded sub-filesystem: %w", err)
 	}
