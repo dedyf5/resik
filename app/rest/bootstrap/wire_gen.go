@@ -51,7 +51,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
 	bool2 := _wireBoolValue
-	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig, bool2)
+	db, cleanup, err := drivers.NewConnection(sqlConfig, bool2)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -67,7 +67,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
-	identityResolver := identity.NewResolver(string2, gormDB, client)
+	identityResolver := identity.NewResolver(string2, gormDB, sqlEngine, client)
 	rateLimit := config.RateLimit
 	limiter, err := ratelimit.NewRateLimiter(app, rateLimit, client)
 	if err != nil {
@@ -80,16 +80,16 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	validate := validator.New(tag)
 	echoEcho := echo.New(validate)
 	handler := general.New(config, logLog, echoEcho)
-	iUser := user.New(gormDB)
+	iUser := user.New(gormDB, sqlEngine)
 	auth := config.Auth
 	argon2Config := provideHasherConfig(auth)
 	iHash := hash.NewArgon2Hasher(argon2Config)
 	serviceService := service.New(iUser, iHash, config)
 	userHandler := user2.New(echoEcho, logLog, serviceService)
-	iOrganization := organization.New(gormDB)
+	iOrganization := organization.New(gormDB, sqlEngine)
 	service5 := service2.New(config, iUser, iOrganization)
 	organizationHandler := organization2.New(logLog, echoEcho, identityResolver, service5)
-	iTransaction := transaction.New(gormDB)
+	iTransaction := transaction.New(gormDB, sqlEngine)
 	service6 := service3.New(config, identityResolver, iOrganization, iTransaction, iUser)
 	transactionHandler := transaction2.New(config, logLog, echoEcho, identityResolver, service6)
 	iCheck := check.New(db, config)
@@ -132,7 +132,7 @@ var utilSet = wire.NewSet(validator.New, wire.Bind(new(validator.IValidate), new
 
 var fwSet = wire.NewSet(echo.New, wire.Bind(new(echo.IEcho), new(*echo.Echo)))
 
-var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm, drivers.NewRedisConnection)
+var connSet = wire.NewSet(wire.Value(false), drivers.NewConnection, drivers.NewGorm, drivers.NewRedisConnection)
 
 var repoSet = wire.NewSet(check.New, redis.New, user.New, organization.New, transaction.New)
 

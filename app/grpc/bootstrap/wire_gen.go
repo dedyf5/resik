@@ -53,7 +53,7 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 	sqlConfig := config.Database
 	sqlEngine := sqlConfig.Engine
 	bool2 := _wireBoolValue
-	db, cleanup, err := drivers.NewMySQLConnection(sqlConfig, bool2)
+	db, cleanup, err := drivers.NewConnection(sqlConfig, bool2)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -69,12 +69,12 @@ func InitializeHTTP(c context.Context) (*App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
-	identityResolver := identity.NewResolver(string2, gormDB, client)
-	iUser := user.New(gormDB)
-	iOrganization := organization.New(gormDB)
+	identityResolver := identity.NewResolver(string2, gormDB, sqlEngine, client)
+	iUser := user.New(gormDB, sqlEngine)
+	iOrganization := organization.New(gormDB, sqlEngine)
 	serviceService := service.New(config, iUser, iOrganization)
 	organizationHandler := organization2.New(logLog, validate, identityResolver, serviceService)
-	iTransaction := transaction.New(gormDB)
+	iTransaction := transaction.New(gormDB, sqlEngine)
 	service5 := service2.New(config, identityResolver, iOrganization, iTransaction, iUser)
 	transactionHandler := transaction2.New(config, logLog, validate, identityResolver, service5)
 	auth := config.Auth
@@ -132,7 +132,7 @@ var utilSet = wire.NewSet(validator.New, ratelimit.NewRateLimiter, log.Get)
 
 var interceptorSet = wire.NewSet(middleware.NewInterceptor)
 
-var connSet = wire.NewSet(wire.Value(false), drivers.NewMySQLConnection, drivers.NewGorm, drivers.NewRedisConnection)
+var connSet = wire.NewSet(wire.Value(false), drivers.NewConnection, drivers.NewGorm, drivers.NewRedisConnection)
 
 var repoSet = wire.NewSet(check.New, redis.New, organization.New, transaction.New, user.New)
 

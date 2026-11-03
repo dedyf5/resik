@@ -18,6 +18,7 @@ import (
 
 	langCtx "github.com/dedyf5/resik/ctx/lang"
 	"github.com/dedyf5/resik/ctx/lang/term"
+	"github.com/dedyf5/resik/drivers"
 	branchEntity "github.com/dedyf5/resik/entities/branch"
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	permisEntity "github.com/dedyf5/resik/entities/permission"
@@ -34,16 +35,18 @@ const (
 )
 
 type Resolver struct {
-	appKey string
-	db     *gorm.DB
-	cache  *goredis.Client
+	appKey   string
+	db       *gorm.DB
+	dbEngine drivers.SQLEngine
+	cache    *goredis.Client
 }
 
-func NewResolver(appKey string, db *gorm.DB, cache *goredis.Client) IdentityResolver {
+func NewResolver(appKey string, db *gorm.DB, dbEngine drivers.SQLEngine, cache *goredis.Client) IdentityResolver {
 	return &Resolver{
-		appKey: appKey,
-		db:     db,
-		cache:  cache,
+		appKey:   appKey,
+		db:       db,
+		dbEngine: dbEngine,
+		cache:    cache,
 	}
 }
 
@@ -269,6 +272,13 @@ func (r *Resolver) HasAccessByPublicID(c context.Context, lang *langCtx.Lang, us
 	return r.HasAccessByID(c, lang, userID, permissionCode, resourceTable, id)
 }
 
+func (r *Resolver) PublicIDColumnVarchar() string {
+	if r.dbEngine == drivers.PostgreSQL {
+		return "public_id::varchar"
+	}
+	return "public_id"
+}
+
 // GetOrganizationIDsByPermission returns all cached organization IDs for a specific user and permission code.
 func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (ids []uint64, err *resPkg.Status) {
 	cacheKey := r.userAccessCacheKey(organizationEntity.TABLE_NAME, permissionCode, userID)
@@ -306,7 +316,7 @@ func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint
 		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
 		  AND tmrs.resource_code = @resourceDomain
 		  AND tmrs.scope_by = 'organization'
-		JOIN organizations o ON o.tenant_public_id = t.public_id AND o.public_id = tmrs.scope_ref
+		JOIN organizations o ON o.tenant_public_id = t.public_id AND o.` + r.PublicIDColumnVarchar() + ` = tmrs.scope_ref
 		WHERE tm.user_id = @userID
 	`
 
@@ -366,7 +376,7 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
 		  AND tmrs.resource_code = @resourceDomain
 		  AND tmrs.scope_by = 'organization'
-		JOIN organizations o ON o.tenant_public_id = t.public_id AND o.public_id = tmrs.scope_ref
+		JOIN organizations o ON o.tenant_public_id = t.public_id AND o.` + r.PublicIDColumnVarchar() + ` = tmrs.scope_ref
 		JOIN branches b ON b.organization_id = o.id
 		WHERE tm.user_id = @userID
 
@@ -382,7 +392,7 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 		  AND tmrs.resource_code = @resourceDomain
 		  AND tmrs.scope_by = 'branch'
 		JOIN organizations o ON o.tenant_public_id = t.public_id
-		JOIN branches b ON b.organization_id = o.id AND b.public_id = tmrs.scope_ref
+		JOIN branches b ON b.organization_id = o.id AND b.` + r.PublicIDColumnVarchar() + ` = tmrs.scope_ref
 		WHERE tm.user_id = @userID
 	`
 
@@ -442,7 +452,7 @@ func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint
 		JOIN tenant_member_resource_scopes tmrs ON tmrs.tenant_member_id = tm.id 
 		  AND tmrs.resource_code = @resourceDomain
 		  AND tmrs.scope_by = 'organization'
-		JOIN organizations o ON o.tenant_public_id = t.public_id AND o.public_id = tmrs.scope_ref
+		JOIN organizations o ON o.tenant_public_id = t.public_id AND o.` + r.PublicIDColumnVarchar() + ` = tmrs.scope_ref
 		JOIN branches b ON b.organization_id = o.id
 		WHERE tm.user_id = @userID
 
@@ -458,7 +468,7 @@ func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint
 		  AND tmrs.resource_code = @resourceDomain
 		  AND tmrs.scope_by = 'branch'
 		JOIN organizations o ON o.tenant_public_id = t.public_id
-		JOIN branches b ON b.organization_id = o.id AND b.public_id = tmrs.scope_ref
+		JOIN branches b ON b.organization_id = o.id AND b.` + r.PublicIDColumnVarchar() + ` = tmrs.scope_ref
 		WHERE tm.user_id = @userID
 	`
 

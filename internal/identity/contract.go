@@ -26,6 +26,7 @@ type IdentityResolver interface {
 	HasAccessByID(c context.Context, lang *langCtx.Lang, userID uint64, permissionCode permisEntity.PERMISSION_CODE, resourceTable string, resourceID uint64) (hasAccess bool, err *resPkg.Status)
 
 	// Domain Convenience Helpers
+	PublicIDColumnVarchar() string
 	GetOrganizationIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (ids []uint64, err *resPkg.Status)
 	GetBranchIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (ids []uint64, err *resPkg.Status)
 	GetBranchPublicIDsByPermission(c context.Context, userID uint64, permissionCode permisEntity.PERMISSION_CODE) (publicIDs []uuidPkg.UUIDV7, err *resPkg.Status)

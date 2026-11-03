@@ -6,12 +6,14 @@ package organization
 
 import (
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/drivers"
 	branchEntity "github.com/dedyf5/resik/entities/branch"
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	paramOrganization "github.com/dedyf5/resik/entities/organization/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 	"github.com/dedyf5/resik/repositories/organization/mysql"
+	"github.com/dedyf5/resik/repositories/organization/postgres"
 	"gorm.io/gorm"
 )
 
@@ -24,6 +26,12 @@ type IOrganization interface {
 	BranchGetByPublicID(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7) (branch *branchEntity.Branch, err *resPkg.Status)
 }
 
-func New(db *gorm.DB) IOrganization {
-	return mysql.New(db)
+func New(db *gorm.DB, engine drivers.SQLEngine) IOrganization {
+	switch engine {
+	case drivers.MySQL:
+		return mysql.New(db)
+	case drivers.PostgreSQL:
+		return postgres.New(db)
+	}
+	return nil
 }

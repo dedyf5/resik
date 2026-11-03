@@ -6,10 +6,12 @@ package transaction
 
 import (
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/drivers"
 	trxEntity "github.com/dedyf5/resik/entities/transaction"
 	paramTrx "github.com/dedyf5/resik/entities/transaction/param"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	"github.com/dedyf5/resik/repositories/transaction/mysql"
+	"github.com/dedyf5/resik/repositories/transaction/postgres"
 	"gorm.io/gorm"
 )
 
@@ -28,6 +30,12 @@ type ITransaction interface {
 	BranchOmzetGetTotal(param *paramTrx.BranchOmzetGet) (total int64, err *resPkg.Status)
 }
 
-func New(db *gorm.DB) ITransaction {
-	return mysql.New(db)
+func New(db *gorm.DB, engine drivers.SQLEngine) ITransaction {
+	switch engine {
+	case drivers.MySQL:
+		return mysql.New(db)
+	case drivers.PostgreSQL:
+		return postgres.New(db)
+	}
+	return nil
 }

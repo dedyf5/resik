@@ -16,6 +16,7 @@ import (
 
 	"github.com/pkg/errors"
 	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -46,36 +47,57 @@ type SQLConfig struct {
 	IsDebug            bool
 }
 
-func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func(), error) {
-	dsnCfgs := map[string]string{
-		"charset":         "utf8",
-		"parseTime":       "True",
-		"loc":             "UTC",
-		"multiStatements": strconv.FormatBool(isMultiStatements),
-		"autocommit":      "True",
-	}
-	dsnCfgStr := make([]string, 0, len(dsnCfgs))
-	for key, val := range dsnCfgs {
-		dsnCfgStr = append(dsnCfgStr, fmt.Sprintf("%s=%s", key, val))
+func dataSourceName(config SQLConfig, mysqlMultiStatements bool) string {
+	var dsnCfg map[string]string
+	format := ""
+
+	switch config.Engine {
+	case MySQL:
+		dsnCfg = map[string]string{
+			"charset":         "utf8",
+			"parseTime":       "True",
+			"loc":             "UTC",
+			"multiStatements": strconv.FormatBool(mysqlMultiStatements),
+			"autocommit":      "True",
+		}
+		format = "%s:%s@tcp(%s:%d)/%s?%s"
+	case PostgreSQL:
+		dsnCfg = map[string]string{
+			"sslmode":  "disable",
+			"TimeZone": "UTC",
+		}
+		format = "postgres://%s:%s@%s:%d/%s?%s"
 	}
 
-	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s:%d)/%s?%s",
+	dsnCfgList := make([]string, 0, len(dsnCfg))
+	for key, val := range dsnCfg {
+		dsnCfgList = append(dsnCfgList, fmt.Sprintf("%s=%s", key, val))
+	}
+
+	return fmt.Sprintf(
+		format,
 		config.Username,
 		config.Password,
 		config.Host,
 		config.Port,
 		config.Schema,
-		strings.Join(dsnCfgStr, "&"),
+		strings.Join(dsnCfgList, "&"),
 	)
+}
 
-	conn, err := sql.Open("mysql", dsn)
+func NewConnection(config SQLConfig, mysqlMultiStatements bool) (*sql.DB, func(), error) {
+	dsn := dataSourceName(config, mysqlMultiStatements)
+
+	driverName := config.Engine.String()
+
+	conn, err := sql.Open(driverName, dsn)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
+
 	if err := conn.PingContext(ctx); err != nil {
 		return nil, nil, err
 	}
@@ -95,7 +117,7 @@ func NewMySQLConnection(config SQLConfig, isMultiStatements bool) (*sql.DB, func
 
 	cleanup := func() {
 		if err := conn.Close(); err != nil {
-			log.Printf("failed to close mysql connection %e", err)
+			log.Printf("failed to close %s connection %e", driverName, err)
 		}
 	}
 
@@ -121,9 +143,12 @@ func NewGorm(
 		)
 	}
 	var gormDialect gorm.Dialector
-	if dialect.String() == "mysql" {
+	switch dialect {
+	case MySQL:
 		gormDialect = mysql.New(mysql.Config{Conn: conn})
-	} else {
+	case PostgreSQL:
+		gormDialect = postgres.New(postgres.Config{Conn: conn})
+	default:
 		return nil, func() {}, errors.WithStack(errors.New("sql dialect is not available"))
 	}
 
@@ -134,7 +159,7 @@ func NewGorm(
 
 	cleanup := func() {
 		if err := conn.Close(); err != nil {
-			log.Printf("failed to close mysql connection %e", err)
+			log.Printf("failed to close %s connection %e", dialect, err)
 		}
 	}
 

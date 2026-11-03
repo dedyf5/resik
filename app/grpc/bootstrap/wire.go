@@ -64,7 +64,7 @@ var interceptorSet = wire.NewSet(
 
 var connSet = wire.NewSet(
 	wire.Value(false),
-	drivers.NewMySQLConnection,
+	drivers.NewConnection,
 	drivers.NewGorm,
 	drivers.NewRedisConnection,
 )

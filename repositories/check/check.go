@@ -8,8 +8,10 @@ import (
 	"database/sql"
 
 	"github.com/dedyf5/resik/config"
+	"github.com/dedyf5/resik/drivers"
 	checkEntity "github.com/dedyf5/resik/entities/check"
 	"github.com/dedyf5/resik/repositories/check/mysql"
+	"github.com/dedyf5/resik/repositories/check/postgres"
 )
 
 //go:generate mockgen -source check.go -package mock -destination ./mock/check.go
@@ -18,5 +20,11 @@ type ICheck interface {
 }
 
 func New(db *sql.DB, config config.Config) ICheck {
-	return mysql.New(db, config)
+	switch config.Database.Engine {
+	case drivers.MySQL:
+		return mysql.New(db, config)
+	case drivers.PostgreSQL:
+		return postgres.New(db, config)
+	}
+	return nil
 }

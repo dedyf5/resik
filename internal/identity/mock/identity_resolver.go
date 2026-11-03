@@ -192,6 +192,20 @@ func (mr *MockIdentityResolverMockRecorder) InvalidateUserAccessOrganization(ctx
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InvalidateUserAccessOrganization", reflect.TypeOf((*MockIdentityResolver)(nil).InvalidateUserAccessOrganization), ctx, userID)
 }
 
+// PublicIDColumnVarchar mocks base method.
+func (m *MockIdentityResolver) PublicIDColumnVarchar() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "PublicIDColumnVarchar")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// PublicIDColumnVarchar indicates an expected call of PublicIDColumnVarchar.
+func (mr *MockIdentityResolverMockRecorder) PublicIDColumnVarchar() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "PublicIDColumnVarchar", reflect.TypeOf((*MockIdentityResolver)(nil).PublicIDColumnVarchar))
+}
+
 // Resolve mocks base method.
 func (m *MockIdentityResolver) Resolve(c context.Context, tableName string, publicID uuid.UUIDV7) (uint64, *response.Status) {
 	m.ctrl.T.Helper()

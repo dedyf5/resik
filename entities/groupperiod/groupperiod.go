@@ -35,6 +35,18 @@ func (m Mode) DateFormatMySQL() string {
 	return ""
 }
 
+func (m Mode) DateFormatPSQL() string {
+	switch m {
+	case ModeDay:
+		return "YYYY-MM-DD"
+	case ModeMonth:
+		return "YYYY-MM"
+	case ModeYear:
+		return "YYYY"
+	}
+	return ""
+}
+
 func (g *GroupPeriod) DatetimeStartString() string {
 	return g.DatetimeStart.UTC().Format("2006-01-02 15:04:05")
 }
