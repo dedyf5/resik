@@ -21,7 +21,7 @@ import (
 	hashMock "github.com/dedyf5/resik/pkg/hash/mock"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
-	userMock "github.com/dedyf5/resik/repositories/mock"
+	mockUserRepo "github.com/dedyf5/resik/repositories/user/mock"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"golang.org/x/text/language"
@@ -124,8 +124,8 @@ func TestAuthTokenGenerate(t *testing.T) {
 	})
 }
 
-func setup(ctrl *gomock.Controller) (userRepo *userMock.MockIUser, hasher *hashMock.MockIHash, ctx *ctx.Ctx, userService *Service) {
-	userRepo = userMock.NewMockIUser(ctrl)
+func setup(ctrl *gomock.Controller) (userRepo *mockUserRepo.MockIUser, hasher *hashMock.MockIHash, ctx *ctx.Ctx, userService *Service) {
+	userRepo = mockUserRepo.NewMockIUser(ctrl)
 	hasher = hashMock.NewMockIHash(ctrl)
 	config, ctx := env()
 	userService = New(userRepo, hasher, config)

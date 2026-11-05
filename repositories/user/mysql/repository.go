@@ -2,18 +2,18 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package transaction
+package mysql
 
 import (
 	"gorm.io/gorm"
 )
 
-type TransactionRepo struct {
+type UserRepo struct {
 	DB *gorm.DB
 }
 
-func New(db *gorm.DB) *TransactionRepo {
-	return &TransactionRepo{
+func New(db *gorm.DB) *UserRepo {
+	return &UserRepo{
 		DB: db,
 	}
 }

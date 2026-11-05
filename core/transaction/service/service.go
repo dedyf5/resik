@@ -7,19 +7,21 @@ package service
 import (
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/internal/identity"
-	repo "github.com/dedyf5/resik/repositories"
+	orgRepo "github.com/dedyf5/resik/repositories/organization"
+	trxRepo "github.com/dedyf5/resik/repositories/transaction"
+	userRepo "github.com/dedyf5/resik/repositories/user"
 )
 
 type Service struct {
 	config   config.Config
 	resolver identity.IdentityResolver
 
-	organizationRepo repo.IOrganization
-	transactionRepo  repo.ITransaction
-	userRepo         repo.IUser
+	organizationRepo orgRepo.IOrganization
+	transactionRepo  trxRepo.ITransaction
+	userRepo         userRepo.IUser
 }
 
-func New(config config.Config, resolver identity.IdentityResolver, organizationRepo repo.IOrganization, transactionRepo repo.ITransaction, userRepo repo.IUser) *Service {
+func New(config config.Config, resolver identity.IdentityResolver, organizationRepo orgRepo.IOrganization, transactionRepo trxRepo.ITransaction, userRepo userRepo.IUser) *Service {
 	return &Service{
 		config:           config,
 		resolver:         resolver,

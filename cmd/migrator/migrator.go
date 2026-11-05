@@ -5,6 +5,7 @@
 package migrator
 
 import (
+	"database/sql"
 	"embed"
 	"errors"
 	"fmt"
@@ -16,12 +17,52 @@ import (
 	"github.com/dedyf5/resik/drivers"
 	configEntity "github.com/dedyf5/resik/entities/config"
 	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 )
 
-//go:embed migrations/*.sql
+//go:embed migrations/*/*.sql
 var embeddedMigrations embed.FS
+
+func dbConnection(dbConfig drivers.SQLConfig) (*sql.DB, database.Driver, error) {
+	var driverFn func(*sql.DB) (database.Driver, error)
+
+	switch dbConfig.Engine {
+	case drivers.MySQL:
+		driverFn = func(db *sql.DB) (database.Driver, error) {
+			return mysql.WithInstance(db, &mysql.Config{})
+		}
+
+	case drivers.PostgreSQL:
+		driverFn = func(db *sql.DB) (database.Driver, error) {
+			return postgres.WithInstance(db, &postgres.Config{})
+		}
+
+	default:
+		return nil, nil, fmt.Errorf("unsupported SQL dialect: %s", dbConfig.Engine)
+	}
+
+	dbConn, _, err := drivers.NewConnection(dbConfig, true)
+	if err != nil {
+		return nil, nil, fmt.Errorf("error opening database connection: %w", err)
+	}
+
+	dbDriver, err := driverFn(dbConn)
+	if err != nil {
+		if errClose := dbConn.Close(); errClose != nil {
+			return nil, nil, errors.Join(
+				fmt.Errorf("error creating database driver: %w", err),
+				fmt.Errorf("error closing database connection: %w", errClose),
+			)
+		}
+
+		return nil, nil, fmt.Errorf("error creating database driver: %w", err)
+	}
+
+	return dbConn, dbDriver, nil
+}
 
 func initMigrateInstance() (*migrate.Migrate, error) {
 	configREST := config.Load(configEntity.ModuleTypeREST)
@@ -31,7 +72,7 @@ func initMigrateInstance() (*migrate.Migrate, error) {
 		return nil, errors.New("error loading complete database configuration")
 	}
 
-	migrationFiles, err := fs.Sub(embeddedMigrations, "migrations")
+	migrationFiles, err := fs.Sub(embeddedMigrations, "migrations/"+dbConfig.Engine.String())
 	if err != nil {
 		return nil, fmt.Errorf("error creating embedded sub-filesystem: %w", err)
 	}
@@ -41,16 +82,9 @@ func initMigrateInstance() (*migrate.Migrate, error) {
 		return nil, fmt.Errorf("error creating embed source driver: %w", err)
 	}
 
-	dbConn, _, err := drivers.NewMySQLConnection(dbConfig, true)
+	dbConn, databaseDriver, err := dbConnection(dbConfig)
 	if err != nil {
-		return nil, fmt.Errorf("error opening database connection: %w", err)
-	}
-	databaseDriver, err := mysql.WithInstance(dbConn, &mysql.Config{})
-	if err != nil {
-		if errClose := dbConn.Close(); errClose != nil {
-			return nil, fmt.Errorf("error closing database connection: %w", errClose)
-		}
-		return nil, fmt.Errorf("error creating database driver: %w", err)
+		return nil, err
 	}
 
 	m, err := migrate.NewWithInstance("goembed", sourceDriver, dbConfig.Schema, databaseDriver)

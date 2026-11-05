@@ -2,7 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package organization
+package postgres
 
 import "gorm.io/gorm"
 

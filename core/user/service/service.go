@@ -7,7 +7,7 @@ package service
 import (
 	"github.com/dedyf5/resik/config"
 	"github.com/dedyf5/resik/pkg/hash"
-	userRepo "github.com/dedyf5/resik/repositories"
+	userRepo "github.com/dedyf5/resik/repositories/user"
 )
 
 type Service struct {

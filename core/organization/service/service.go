@@ -6,16 +6,17 @@ package service
 
 import (
 	"github.com/dedyf5/resik/config"
-	"github.com/dedyf5/resik/repositories"
+	orgRepo "github.com/dedyf5/resik/repositories/organization"
+	userRepo "github.com/dedyf5/resik/repositories/user"
 )
 
 type Service struct {
 	config           config.Config
-	organizationRepo repositories.IOrganization
-	userRepo         repositories.IUser
+	organizationRepo orgRepo.IOrganization
+	userRepo         userRepo.IUser
 }
 
-func New(config config.Config, userRepo repositories.IUser, organizationRepo repositories.IOrganization) *Service {
+func New(config config.Config, userRepo userRepo.IUser, organizationRepo orgRepo.IOrganization) *Service {
 	return &Service{
 		config:           config,
 		userRepo:         userRepo,

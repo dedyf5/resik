@@ -1,3 +1,7 @@
+# Resik
+# Author: Dedy Fajar Setyawan
+# See: https://github.com/dedyf5/resik
+
 # ============================================================================
 # SERVICES: Defines the containers to be run
 # ============================================================================
@@ -195,7 +199,7 @@ services:
     volumes:
       # Mounts a named volume for persistent database data.
       # Data in this volume will persist even if the MariaDB container is removed.
-      - db_data:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
       # Optional: Uncomment if you have SQL scripts for initial database setup.
       # These scripts will be executed by MariaDB's entrypoint when the container starts for the first time.
       # - ./init-db:/docker-entrypoint-initdb.d
@@ -284,4 +288,4 @@ secrets:
 # data longevity for stateful services like databases.
 # ============================================================================
 volumes:
-  db_data:
+  mariadb_data:

@@ -5,7 +5,7 @@
 package service
 
 import (
-	repo "github.com/dedyf5/resik/repositories"
+	repo "github.com/dedyf5/resik/repositories/check"
 )
 
 type Service struct {

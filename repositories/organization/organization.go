@@ -5,76 +5,33 @@
 package organization
 
 import (
-	"errors"
-	"net/http"
-
 	"github.com/dedyf5/resik/ctx"
+	"github.com/dedyf5/resik/drivers"
+	branchEntity "github.com/dedyf5/resik/entities/branch"
 	organizationEntity "github.com/dedyf5/resik/entities/organization"
 	paramOrganization "github.com/dedyf5/resik/entities/organization/param"
-	"github.com/dedyf5/resik/pkg/goku"
 	resPkg "github.com/dedyf5/resik/pkg/response"
+	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
+	"github.com/dedyf5/resik/repositories/organization/mysql"
+	"github.com/dedyf5/resik/repositories/organization/postgres"
 	"gorm.io/gorm"
 )
 
-func (r *OrganizationRepo) OrganizationGetByID(ctx *ctx.Ctx, organizationID uint64) (organization *organizationEntity.Organization, err *resPkg.Status) {
-	errDB := r.DB.WithContext(ctx.Context).Where("id = ?", organizationID).First(&organization).Error
-	if errDB != nil {
-		if errors.Is(errDB, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errDB)
-	}
-	return
+//go:generate mockgen -source organization.go -package mock -destination ./mock/organization.go
+type IOrganization interface {
+	OrganizationGetByID(ctx *ctx.Ctx, organizationID uint64) (organization *organizationEntity.Organization, err *resPkg.Status)
+	OrganizationsGetData(param *paramOrganization.OrganizationsGet) (organizations organizationEntity.Organizations, err *resPkg.Status)
+	OrganizationsGetTotal(param *paramOrganization.OrganizationsGet) (total int64, err *resPkg.Status)
+
+	BranchGetByPublicID(ctx *ctx.Ctx, branchPublicID *uuidPkg.UUIDV7) (branch *branchEntity.Branch, err *resPkg.Status)
 }
 
-func (r *OrganizationRepo) OrganizationsGetData(param *paramOrganization.OrganizationsGet) (organizations organizationEntity.Organizations, err *resPkg.Status) {
-	query := r.OrganizationsBaseQuery(param)
-
-	query = query.Select("*").
-		Limit(param.Filter.LimitOrDefault()).
-		Offset(param.Filter.Offset())
-
-	if len(param.Orders) > 0 {
-		orderMap := map[string]string{
-			"name":       "name",
-			"created_at": "created_at",
-			"updated_at": "updated_at",
-		}
-		order, err := goku.OrdersQueryBuilder(param.Orders, orderMap)
-		if err != nil {
-			return nil, resPkg.NewStatusError(http.StatusInternalServerError, err)
-		}
-		query = query.Order(order)
+func New(db *gorm.DB, engine drivers.SQLEngine) IOrganization {
+	switch engine {
+	case drivers.MySQL:
+		return mysql.New(db)
+	case drivers.PostgreSQL:
+		return postgres.New(db)
 	}
-
-	errQuery := query.Find(&organizations).Error
-	if errQuery != nil {
-		return nil, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
-	}
-	return
-}
-
-func (r *OrganizationRepo) OrganizationsGetTotal(param *paramOrganization.OrganizationsGet) (total int64, err *resPkg.Status) {
-	query := r.OrganizationsBaseQuery(param).Select("COUNT(id) AS total")
-	errQuery := query.Take(&total).Error
-	if errQuery != nil {
-		return 0, resPkg.NewStatusError(http.StatusInternalServerError, errQuery)
-	}
-	return
-}
-
-func (r *OrganizationRepo) OrganizationsBaseQuery(param *paramOrganization.OrganizationsGet) (query *gorm.DB) {
-	query = r.DB.WithContext(param.Ctx.Context).
-		Table(organizationEntity.TABLE_NAME)
-
-	if len(param.OrganizationIDs) == 1 {
-		query = query.Where("id = ?", param.OrganizationIDs[0])
-	} else {
-		query = query.Where("id IN ?", param.OrganizationIDs)
-	}
-
-	if param.Filter.Search != "" {
-		query = query.Where("name LIKE ?", "%"+param.Filter.Search+"%")
-	}
-	return
+	return nil
 }

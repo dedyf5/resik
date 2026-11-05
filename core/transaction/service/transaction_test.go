@@ -27,7 +27,9 @@ import (
 	identity "github.com/dedyf5/resik/internal/identity/mock"
 	resPkg "github.com/dedyf5/resik/pkg/response"
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
-	repoMock "github.com/dedyf5/resik/repositories/mock"
+	mockOrgRepo "github.com/dedyf5/resik/repositories/organization/mock"
+	mockTrxRepo "github.com/dedyf5/resik/repositories/transaction/mock"
+	mockUserRepo "github.com/dedyf5/resik/repositories/user/mock"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"golang.org/x/text/language"
@@ -795,12 +797,12 @@ func TestBranchOmzetGet(t *testing.T) {
 	})
 }
 
-func setup(ctrl *gomock.Controller) (orgRepo *repoMock.MockIOrganization, trxRepo *repoMock.MockITransaction, userRepo *repoMock.MockIUser, ctx *ctx.Ctx, trxService *Service, resolver *identity.MockIdentityResolver) {
+func setup(ctrl *gomock.Controller) (orgRepo *mockOrgRepo.MockIOrganization, trxRepo *mockTrxRepo.MockITransaction, userRepo *mockUserRepo.MockIUser, ctx *ctx.Ctx, trxService *Service, resolver *identity.MockIdentityResolver) {
 	config, ctx := env()
 	resolver = identity.NewMockIdentityResolver(ctrl)
-	orgRepo = repoMock.NewMockIOrganization(ctrl)
-	trxRepo = repoMock.NewMockITransaction(ctrl)
-	userRepo = repoMock.NewMockIUser(ctrl)
+	orgRepo = mockOrgRepo.NewMockIOrganization(ctrl)
+	trxRepo = mockTrxRepo.NewMockITransaction(ctrl)
+	userRepo = mockUserRepo.NewMockIUser(ctrl)
 	trxService = New(config, resolver, orgRepo, trxRepo, userRepo)
 	return
 }

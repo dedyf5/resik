@@ -2,7 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
-package check
+package mysql
 
 import (
 	"context"
@@ -12,20 +12,20 @@ import (
 	checkEntity "github.com/dedyf5/resik/entities/check"
 )
 
-type CheckDatabaseRepo struct {
+type CheckRepo struct {
 	db     *sql.DB
 	config checkEntity.CheckConfig
 }
 
-func NewCheckDatabaseRepo(db *sql.DB, config config.Config) *CheckDatabaseRepo {
+func New(db *sql.DB, config config.Config) *CheckRepo {
 	cfg := checkEntity.CheckConfig{
 		Name:    "database",
 		Timeout: config.Database.HealthCheckTimeout,
 	}
-	return &CheckDatabaseRepo{db: db, config: cfg}
+	return &CheckRepo{db: db, config: cfg}
 }
 
-func (dc *CheckDatabaseRepo) Check() checkEntity.CheckDetail {
+func (dc *CheckRepo) Check() checkEntity.CheckDetail {
 	detail := checkEntity.CheckDetail{
 		Name:   dc.config.Name,
 		Status: checkEntity.StatusUp,
