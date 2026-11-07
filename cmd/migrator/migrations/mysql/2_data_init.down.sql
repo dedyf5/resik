@@ -1,3 +1,7 @@
+-- Resik
+-- Author: Dedy Fajar Setyawan
+-- See: https://github.com/dedyf5/resik
+
 -- +migrate Down
 -- Remove sample data using TRUNCATE
 
