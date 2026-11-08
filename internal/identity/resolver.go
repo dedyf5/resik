@@ -288,7 +288,7 @@ func (r *Resolver) GetOrganizationIDsByPermission(c context.Context, userID uint
 		return cachedIDs, nil
 	}
 
-	resourceDomain := strings.Split(permissionCode.String(), ":")[0]
+	resourceDomain, _, _ := strings.Cut(permissionCode.String(), ":")
 
 	query := `
 		-- 1. Full access: User does not have scope restrictions for this resource domain
@@ -347,7 +347,7 @@ func (r *Resolver) GetBranchIDsByPermission(c context.Context, userID uint64, pe
 		return cachedIDs, nil
 	}
 
-	resourceDomain := strings.Split(permissionCode.String(), ":")[0]
+	resourceDomain, _, _ := strings.Cut(permissionCode.String(), ":")
 
 	query := `
 		-- 1. Full access: User does not have scope restrictions for this resource domain
@@ -423,7 +423,7 @@ func (r *Resolver) GetBranchPublicIDsByPermission(c context.Context, userID uint
 		return cachedPublicIDs, nil
 	}
 
-	resourceDomain := strings.Split(permissionCode.String(), ":")[0]
+	resourceDomain, _, _ := strings.Cut(permissionCode.String(), ":")
 
 	query := `
 		-- 1. Full access: User does not have scope restrictions for this resource domain
