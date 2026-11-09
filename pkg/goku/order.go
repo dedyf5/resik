@@ -9,23 +9,29 @@ import (
 	"strings"
 )
 
+// OrderMethod represents the sorting direction (ASC or DESC).
 type OrderMethod string
 
 const (
-	OrderMethodASC  OrderMethod = "ASC"
+	// OrderMethodASC represents ascending order.
+	OrderMethodASC OrderMethod = "ASC"
+	// OrderMethodDESC represents descending order.
 	OrderMethodDESC OrderMethod = "DESC"
 )
 
+// Order defines a column and its sorting method.
 type Order struct {
 	Column string
 	Method OrderMethod
 }
 
+// String returns the string representation of the OrderMethod.
 func (m OrderMethod) String() string {
 	return string(m)
 }
 
-// build []Order by string. multiple columns separated by comma ","
+// OrdersBuilder parses a comma-separated string into a slice of Order.
+// Multiple columns are separated by commas ",".
 func OrdersBuilder(str string) []Order {
 	res := []Order{}
 	if str == "" {
@@ -43,13 +49,12 @@ func OrdersBuilder(str string) []Order {
 	return res
 }
 
-// build Order by string. add prefix "-" to indicate that order method is DESC.
+// OrderBuilder parses a single sorting string into an Order.
+// Add a prefix "-" to indicate that the order method is DESC.
 //
-// example:
-//
-// address -> {Column: address, Method: ASC}
-//
-// -address -> {Column: address, Method: DESC}
+// Example:
+//   - address -> {Column: "address", Method: ASC}
+//   - -address -> {Column: "address", Method: DESC}
 func OrderBuilder(str string) Order {
 	if str[0:1] == "-" {
 		return Order{
@@ -64,6 +69,8 @@ func OrderBuilder(str string) Order {
 	}
 }
 
+// OrdersQueryBuilder builds a SQL ORDER BY query string from a slice of Order
+// using the provided column map to translate field names to actual database columns.
 func OrdersQueryBuilder(orders []Order, columnMap map[string]string) (queryString string, err error) {
 	ordersLen := len(orders)
 	if ordersLen == 0 || (ordersLen == 0 && len(columnMap) == 0) {

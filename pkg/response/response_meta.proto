@@ -7,12 +7,16 @@ syntax = "proto3";
 package response;
 option go_package = "github.com/dedyf5/resik/pkg/response";
 
+// ResponseMeta defines the metadata structure for paginated API responses,
+// including total items, limit per page, and pagination navigation details.
 message ResponseMeta {
     int64 total = 1; // @gotags: json:"total" example:"100"
     int32 limit = 2; // @gotags: json:"limit" example:"10"
     ResponsePage page = 3; // @gotags: json:"page"
 }
 
+// ResponsePage defines the detailed navigation state for pagination,
+// including first, previous, current, next, and last page numbers.
 message ResponsePage {
     int32 first = 1; // @gotags: json:"first" example:"1"
     optional int32 previous = 2; // @gotags: json:"previous" example:"2"
