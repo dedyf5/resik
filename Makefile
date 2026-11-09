@@ -47,8 +47,15 @@ sync-locales:
 test:
 	$(GOCMD) test -v -cover ./...
 
-## test-coverage: Test all files with coverage (show total coverage)
+## test-coverage: Test all files with coverage (excluding generated files and show total)
 test-coverage:
+	$(GOCMD) test -coverprofile=coverage.out ./...
+	@grep -v "\.pb\.go" coverage.out > coverage_cleaned.out
+	@$(GOCMD) tool cover -func=coverage_cleaned.out | grep total
+	@rm -f coverage.out coverage_cleaned.out
+
+## test-coverage: Test all files with coverage (show total coverage)
+test-coverage-all:
 	$(GOCMD) test -coverprofile=coverage.out ./... && $(GOCMD) tool cover -func=coverage.out | grep total
 
 APP_VERSION ?= $(shell git describe --tags --always)
