@@ -15,7 +15,10 @@ type Integer interface {
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr
 }
 
+// Target defines the target integer type for safe conversion.
 type Target Integer
+
+// Source defines the source integer type for safe conversion.
 type Source Integer
 
 var (
