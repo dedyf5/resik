@@ -25,6 +25,8 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// ResponseMeta defines the metadata structure for paginated API responses,
+// including total items, limit per page, and pagination navigation details.
 type ResponseMeta struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Total         int64                  `protobuf:"varint,1,opt,name=total,proto3" json:"total" example:"100"`  
@@ -85,6 +87,8 @@ func (x *ResponseMeta) GetPage() *ResponsePage {
 	return nil
 }
 
+// ResponsePage defines the detailed navigation state for pagination,
+// including first, previous, current, next, and last page numbers.
 type ResponsePage struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	First         int32                  `protobuf:"varint,1,opt,name=first,proto3" json:"first" example:"1"`              

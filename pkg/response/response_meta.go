@@ -6,6 +6,7 @@ package response
 
 import "math"
 
+// ResponseMetaSetup creates and initializes a ResponseMeta instance with calculated pagination details.
 func ResponseMetaSetup(total int64, limit, pageCurrent int32) *ResponseMeta {
 	return &ResponseMeta{
 		Total: total,
@@ -14,6 +15,8 @@ func ResponseMetaSetup(total int64, limit, pageCurrent int32) *ResponseMeta {
 	}
 }
 
+// ResponsePageSetup calculates pagination details such as first, previous, current, next, and last pages
+// based on the total items, limit per page, and current page.
 func ResponsePageSetup(total int64, limit, pageCurrent int32) *ResponsePage {
 	current := pageCurrent
 	if pageCurrent == 0 {
