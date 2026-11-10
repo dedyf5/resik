@@ -2,6 +2,9 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
+// Package config provides application configuration management, environment
+// loading, secret handling from files or environment variables, and module-specific
+// mapping for database, HTTP, Redis, rate limiting, and authentication.
 package config
 
 import (
@@ -20,6 +23,9 @@ import (
 )
 
 type (
+	// Config holds the complete application configuration structure,
+	// encompassing core app metadata, module settings, HTTP options,
+	// database connections, caching, rate limiting, security, and logging.
 	Config struct {
 		App       configEntity.App
 		Module    configEntity.Module
@@ -53,6 +59,9 @@ func init() {
 	logger = logger.With("component", "config")
 }
 
+// Load reads environment variables and configuration files for the specified
+// module type, populates the application configuration structure, and returns
+// the initialized Config instance.
 func Load(module configEntity.ModuleType) *Config {
 	if _, err := os.Stat(".env"); err == nil {
 		viper.SetConfigType("env")
@@ -113,6 +122,8 @@ func (conf *Config) loadApp() {
 	conf.App = *GetApp()
 }
 
+// GetApp retrieves basic application metadata instances such as name,
+// key identifier, and version from the environment configuration.
 func GetApp() *configEntity.App {
 	return configEntity.NewApp(
 		viper.GetString("APP_NAME"),
@@ -237,6 +248,8 @@ func (conf *Config) loadLog(module configEntity.ModuleType) {
 	}
 }
 
+// AppModuleName formats and returns a combined string representation
+// of the application name and the current active module name.
 func (conf *Config) AppModuleName() string {
 	return conf.App.Name() + " (" + conf.Module.Name + ")"
 }
