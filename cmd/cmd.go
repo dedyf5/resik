@@ -2,6 +2,9 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
+// Package cmd provides the root command-line interface definitions and
+// wiring, managing execution flows for REST services, gRPC services,
+// and database migrations.
 package cmd
 
 import (
@@ -18,6 +21,8 @@ var mainCMD = &cobra.Command{
 	Short: buildinfo.FrameworkLogoASCIIVersion,
 }
 
+// Execute runs the root command, parsing command-line arguments and
+// terminating the application with a non-zero exit code if an error occurs.
 func Execute() {
 	if err := mainCMD.Execute(); err != nil {
 		os.Exit(1)

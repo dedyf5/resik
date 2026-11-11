@@ -2,6 +2,8 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
+// Package migrator provides database migration management tools using embedded
+// SQL migration files, supporting multiple SQL dialects (MySQL and PostgreSQL).
 package migrator
 
 import (
@@ -98,6 +100,9 @@ func initMigrateInstance() (*migrate.Migrate, error) {
 	return m, nil
 }
 
+// RunUp executes pending database migrations upward.
+// If stepsStr is provided and valid, it executes up to the specified number of steps;
+// otherwise, it runs all available pending migrations.
 func RunUp(stepsStr string) error {
 	m, err := initMigrateInstance()
 	if err != nil {
@@ -135,6 +140,9 @@ func RunUp(stepsStr string) error {
 	return nil
 }
 
+// RunDown rolls back applied database migrations downward.
+// If stepsStr is provided and valid, it rolls back by the specified number of steps;
+// otherwise, it reverts the last migration or batch.
 func RunDown(stepsStr string) error {
 	m, err := initMigrateInstance()
 	if err != nil {
@@ -172,6 +180,8 @@ func RunDown(stepsStr string) error {
 	return nil
 }
 
+// RunVersion checks and displays the current database migration version
+// and whether the database state is marked as dirty.
 func RunVersion() error {
 	m, err := initMigrateInstance()
 	if err != nil {

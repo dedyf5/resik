@@ -18,6 +18,8 @@ var (
 	AppBuildTime        string = "unknown"
 )
 
+// GetAppVersionGenerator returns the configured version generator type
+// (e.g., from environment variables or version tags).
 func GetAppVersionGenerator() VersionGenerator {
 	return VersionGenerator(AppVersionGenerator)
 }
