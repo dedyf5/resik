@@ -25,15 +25,19 @@ import (
 )
 
 var (
+	// AUTH_SIGNING_METHOD defines the default cryptographic signing method used for JWT tokens (HS256).
 	AUTH_SIGNING_METHOD = jwt.SigningMethodHS256
 )
 
 type authClaimsKey string
 
 const (
+	// AuthClaimsKey is the key used to store and retrieve the authentication claims from the context.
 	AuthClaimsKey authClaimsKey = "auth_claims"
 )
 
+// AuthClaims represents the JWT claims structure containing registered claims,
+// authenticated user details, and authorized tenant organization/branch identifiers.
 type AuthClaims struct {
 	jwt.RegisteredClaims
 	User            User     `json:"user"`
@@ -41,16 +45,19 @@ type AuthClaims struct {
 	BranchIDs       []uint64 `json:"-"`
 }
 
+// User represents the basic user information embedded within authentication claims.
 type User struct {
 	Base
 	Username string `json:"username"`
 }
 
+// Base holds internal database ID and external public UUIDv7 identifier mappings.
 type Base struct {
 	ID       uint64         `json:"-"`
 	PublicID uuidPkg.UUIDV7 `json:"id"`
 }
 
+// UserID retrieves the internal database ID of the authenticated user.
 func (a *AuthClaims) UserID() uint64 {
 	if a == nil {
 		return 0
@@ -58,6 +65,7 @@ func (a *AuthClaims) UserID() uint64 {
 	return a.User.ID
 }
 
+// UserPublicID retrieves the public UUIDv7 identifier of the authenticated user.
 func (a *AuthClaims) UserPublicID() uuidPkg.UUIDV7 {
 	if a == nil {
 		return uuidPkg.UUIDV7{}
@@ -65,6 +73,7 @@ func (a *AuthClaims) UserPublicID() uuidPkg.UUIDV7 {
 	return a.User.PublicID
 }
 
+// Username retrieves the username of the authenticated user.
 func (a *AuthClaims) Username() string {
 	if a == nil {
 		return ""
@@ -72,7 +81,8 @@ func (a *AuthClaims) Username() string {
 	return a.User.Username
 }
 
-// getID gets the ID for a specific table by public ID, and check if user has access to it for the given permission code
+// getID resolves a specific table entity ID by its public ID string and verifies
+// whether the authenticated user has access to it for the given permission code.
 func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, permissionCode permisEntity.PERMISSION_CODE, tableName string, publicIDString string) (id uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	if a == nil {
 		return 0, uuidPkg.Nil, resPkg.NewStatusCode(http.StatusUnauthorized)
@@ -103,16 +113,19 @@ func (a *AuthClaims) getID(c context.Context, resolver identity.IdentityResolver
 	return 0, uuidPkg.Nil, resPkg.NewStatusCode(http.StatusUnauthorized)
 }
 
-// GetOrganizationID gets the organization ID by organization public ID, and check if user has access to it for permission code
+// GetOrganizationID gets the organization internal database ID and public UUIDv7 by organization public ID string,
+// and verifies if the user has access to it for the specified permission code.
 func (a *AuthClaims) GetOrganizationID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, organizationPublicID string, permissionCode permisEntity.PERMISSION_CODE) (organizationID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return a.getID(c, resolver, lang, permissionCode, organizationEntity.TABLE_NAME, organizationPublicID)
 }
 
-// GetBranchID gets the branch ID by branch public ID, and check if user has access to it for permission code
+// GetBranchID gets the branch internal database ID and public UUIDv7 by branch public ID string,
+// and verifies if the user has access to it for the specified permission code.
 func (a *AuthClaims) GetBranchID(c context.Context, resolver identity.IdentityResolver, lang *lang.Lang, branchPublicID string, permissionCode permisEntity.PERMISSION_CODE) (branchID uint64, publicID uuidPkg.UUIDV7, err *resPkg.Status) {
 	return a.getID(c, resolver, lang, permissionCode, branchEntity.TABLE_NAME, branchPublicID)
 }
 
+// AuthTokenGenerate generates a signed JWT string for the given user based on module and auth configurations.
 func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, user User) (token string, err *resPkg.Status) {
 	claims := AuthClaims{
 		Issuer:    moduleConfig.Name,
@@ -128,6 +141,8 @@ func AuthTokenGenerate(moduleConfig config.Module, authConfig config.Auth, user 
 	return
 }
 
+// AuthClaimsFromString parses, validates, and extracts AuthClaims from a raw JWT token string using the provided signature key,
+// resolving user identifiers, tenant organizations, and branches.
 func AuthClaimsFromString(tokenString string, signatureKey string, c context.Context, resolver identity.IdentityResolver, lang *lang.Lang) (claim *AuthClaims, err *resPkg.Status) {
 	if tokenString == "" {
 		return nil, statusInvalid(errors.New("missing value in request header"), lang)
@@ -167,6 +182,7 @@ func AuthClaimsFromString(tokenString string, signatureKey string, c context.Con
 	return nil, statusInvalid(errors.New("error while casting AuthClaims"), lang)
 }
 
+// AuthClaimsFromContext retrieves the AuthClaims instance stored within the given context.
 func AuthClaimsFromContext(ctx context.Context) *AuthClaims {
 	value := ctx.Value(AuthClaimsKey)
 	if value == nil {
@@ -178,6 +194,7 @@ func AuthClaimsFromContext(ctx context.Context) *AuthClaims {
 	return nil
 }
 
+// HTTPStatusError maps a generic error to an appropriate HTTP response status based on error characteristics.
 func HTTPStatusError(err error, lang *lang.Lang) *resPkg.Status {
 	if strings.Contains(err.Error(), "invalid") {
 		return statusInvalid(err, lang)
@@ -189,6 +206,7 @@ func HTTPStatusError(err error, lang *lang.Lang) *resPkg.Status {
 	)
 }
 
+// statusInvalid creates a standardized unauthorized response status with a localized session message.
 func statusInvalid(err error, lang *lang.Lang) *resPkg.Status {
 	return resPkg.NewStatusMessage(
 		http.StatusUnauthorized,
