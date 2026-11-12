@@ -18,6 +18,8 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// HTTP represents a custom http.ResponseWriter wrapper for capturing HTTP status codes,
+// request metadata, and response bodies for structured logging.
 type HTTP struct {
 	http.ResponseWriter
 	context      context.Context
@@ -32,16 +34,19 @@ type HTTP struct {
 	responseBody *bytes.Buffer
 }
 
+// NewHTTP creates and returns a new HTTP response writer logging wrapper instance.
 func NewHTTP(w http.ResponseWriter, c context.Context, log *Log, start time.Time, method string, url *url.URL, contentType, userAgent string, requestBody []byte) *HTTP {
 	var buf bytes.Buffer
 	return &HTTP{w, c, log, start, http.StatusOK, method, url, contentType, userAgent, requestBody, &buf}
 }
 
+// WriteHeader captures the HTTP status code before passing it to the underlying ResponseWriter.
 func (h *HTTP) WriteHeader(code int) {
 	h.statusCode = code
 	h.ResponseWriter.WriteHeader(code)
 }
 
+// Write intercepts the HTTP response body writing process, encodes log data, and writes to the underlying ResponseWriter.
 func (h *HTTP) Write(buf []byte) (int, error) {
 	loggerRes := getLogResponse(buf)
 	bodyByte, err := json.Marshal(loggerRes.Response)
@@ -53,6 +58,7 @@ func (h *HTTP) Write(buf []byte) (int, error) {
 	return h.ResponseWriter.Write(bodyByte)
 }
 
+// writeLogger processes the extracted log response and records HTTP logs at the appropriate log level based on HTTP status codes.
 func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 	msg := ""
 	if loggerRes != nil {
@@ -92,6 +98,7 @@ func (h *HTTP) writeLogger(loggerRes *resPkg.Log) {
 	}
 }
 
+// MarshalLogObject implements zapcore.ObjectMarshaler to serialize HTTP telemetry data into Zap structured logs.
 func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	enc.AddString("module", h.log.module.NameKey)
 	enc.AddString(KeyCorrelationIDContext.String(), h.log.CorrelationID)
@@ -137,6 +144,7 @@ func (h *HTTP) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	return nil
 }
 
+// getLogResponse unmarshals the response buffer into a structured response log entity.
 func getLogResponse(buf []byte) *resPkg.Log {
 	var response resPkg.Log
 	err := json.Unmarshal(buf, &response)

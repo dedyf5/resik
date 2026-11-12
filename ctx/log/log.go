@@ -2,6 +2,8 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
+// Package log provides structured logging utilities, log configuration,
+// HTTP/gRPC request loggers, and automatic payload sanitization/masking.
 package log
 
 import (
@@ -22,6 +24,7 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+// Log encapsulates the Zap logger instance, module configuration, correlation ID, and request path context.
 type Log struct {
 	logger        *zap.Logger
 	module        configEntity.Module
@@ -30,13 +33,17 @@ type Log struct {
 	QueryString   *string
 }
 
+// Key represents custom string types used for context keys.
 type Key string
 
 const (
+	// KeyCorrelationIDContext is the context key used for tracking request correlation IDs.
 	KeyCorrelationIDContext Key = "correlation_id"
-	KeyCallerHolderContext  Key = "caller"
+	// KeyCallerHolderContext is the context key used for holding caller information.
+	KeyCallerHolderContext Key = "caller"
 )
 
+// CallerHolder stores source code caller information for tracing logs.
 type CallerHolder struct {
 	Caller string
 }
@@ -55,6 +62,7 @@ var logLevelSeverity = map[zapcore.Level]string{
 	zapcore.FatalLevel:  "emergency",
 }
 
+// EnsureCorrelationID retrieves an existing correlation ID from the context or generates a new one using xid if missing.
 func EnsureCorrelationID(ctx context.Context) (string, context.Context) {
 	if correlationID, ok := ctx.Value(KeyCorrelationIDContext).(string); ok && correlationID != "" {
 		return correlationID, ctx
@@ -65,6 +73,7 @@ func EnsureCorrelationID(ctx context.Context) (string, context.Context) {
 	return correlationID, newCtx
 }
 
+// Get initializes and returns the singleton instance of Log configured with stdout and optional file logging via lumberjack.
 func Get(logEntity configEntity.Log, module configEntity.Module) *Log {
 	once.Do(func() {
 		stdout := zapcore.AddSync(os.Stdout)
@@ -107,30 +116,37 @@ func Get(logEntity configEntity.Log, module configEntity.Module) *Log {
 	return log
 }
 
+// CustomEncodeLevel customizes the string representation of zap core log levels based on severity mapping.
 func CustomEncodeLevel(level zapcore.Level, enc zapcore.PrimitiveArrayEncoder) {
 	enc.AppendString(logLevelSeverity[level])
 }
 
+// Error logs an error level message with standard zap fields.
 func (l *Log) Error(msg string) {
 	l.logger.WithOptions(zap.AddCallerSkip(1)).Error(msg, l.ZapFields()...)
 }
 
+// Errorf logs a formatted error level message with standard zap fields.
 func (l *Log) Errorf(format string, args ...any) {
 	l.logger.WithOptions(zap.AddCallerSkip(1)).Error(fmt.Sprintf(format, args...), l.ZapFields()...)
 }
 
+// Warn logs a warning level message with standard zap fields.
 func (l *Log) Warn(msg string) {
 	l.logger.WithOptions(zap.AddCallerSkip(1)).Warn(msg, l.ZapFields()...)
 }
 
+// Info logs an info level message with standard zap fields.
 func (l *Log) Info(msg string) {
 	l.logger.WithOptions(zap.AddCallerSkip(1)).Info(msg, l.ZapFields()...)
 }
 
+// Debug logs a debug level message with standard zap fields.
 func (l *Log) Debug(msg string) {
 	l.logger.WithOptions(zap.AddCallerSkip(1)).Debug(msg, l.ZapFields()...)
 }
 
+// ZapFields constructs and returns standard zap fields including module, correlation ID, path, and query string.
 func (l *Log) ZapFields() (fields []zap.Field) {
 	fields = append(
 		fields,
@@ -144,6 +160,7 @@ func (l *Log) ZapFields() (fields []zap.Field) {
 	return
 }
 
+// String converts the Key type into its string representation.
 func (k Key) String() string {
 	return string(k)
 }
