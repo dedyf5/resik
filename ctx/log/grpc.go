@@ -18,6 +18,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+// GRPC represents a structured logging wrapper for gRPC requests and responses.
 type GRPC struct {
 	context      context.Context
 	log          *Log
@@ -47,6 +48,7 @@ var sensitiveFields = map[string]struct{}{
 	"token":    {},
 }
 
+// NewGRPC creates and returns a new GRPC logging wrapper instance.
 func NewGRPC(c context.Context, log *Log, start time.Time, path string, requestBody any, responseBody any, err error) *GRPC {
 	status := resPkg.NewStatusCode(http.StatusOK)
 
@@ -71,6 +73,7 @@ func NewGRPC(c context.Context, log *Log, start time.Time, path string, requestB
 	}
 }
 
+// Write evaluates the gRPC status and writes the appropriate log level (Info, Error, or Warn) along with structured zap fields.
 func (h *GRPC) Write() {
 	logger := h.log.logger
 
@@ -105,6 +108,7 @@ func (h *GRPC) Write() {
 	}
 }
 
+// MarshalLogObject implements zapcore.ObjectMarshaler to encode gRPC request and response telemetry into Zap structured fields.
 func (h *GRPC) MarshalLogObject(enc zapcore.ObjectEncoder) error {
 	grpc := h.status.GRPCStatus()
 

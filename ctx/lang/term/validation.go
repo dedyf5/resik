@@ -10,6 +10,7 @@ import (
 )
 
 var (
+	// ValidationFieldPage represents the pagination page field label.
 	ValidationFieldPage = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.page",
@@ -17,6 +18,7 @@ var (
 		},
 	}
 
+	// ValidationFieldLimit represents the pagination limit field label.
 	ValidationFieldLimit = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.limit",
@@ -24,6 +26,7 @@ var (
 		},
 	}
 
+	// ValidationFieldOrder represents the sorting order field label.
 	ValidationFieldOrder = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.order",
@@ -31,6 +34,7 @@ var (
 		},
 	}
 
+	// ValidationFieldID represents the generic ID validation field label.
 	ValidationFieldID = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.id",
@@ -38,6 +42,7 @@ var (
 		},
 	}
 
+	// ValidationFieldName represents the name validation field label.
 	ValidationFieldName = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.name",
@@ -45,6 +50,7 @@ var (
 		},
 	}
 
+	// ValidationFieldDescription represents the description validation field label.
 	ValidationFieldDescription = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.description",
@@ -52,6 +58,7 @@ var (
 		},
 	}
 
+	// ValidationFieldCreatedAt represents the created timestamp validation field label.
 	ValidationFieldCreatedAt = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.created_at",
@@ -59,6 +66,7 @@ var (
 		},
 	}
 
+	// ValidationFieldUpdatedAt represents the updated timestamp validation field label.
 	ValidationFieldUpdatedAt = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.updated_at",
@@ -66,6 +74,7 @@ var (
 		},
 	}
 
+	// ValidationFieldMode represents the operational mode validation field label.
 	ValidationFieldMode = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.mode",
@@ -73,6 +82,7 @@ var (
 		},
 	}
 
+	// ValidationFieldDatetimeStart represents the start datetime validation field label.
 	ValidationFieldDatetimeStart = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.datetime_start",
@@ -80,6 +90,7 @@ var (
 		},
 	}
 
+	// ValidationFieldDatetimeEnd represents the end datetime validation field label.
 	ValidationFieldDatetimeEnd = &Term{
 		Message: &i18n.Message{
 			ID:    "validation.field.datetime_end",
@@ -88,7 +99,8 @@ var (
 	}
 
 	validationFieldTimezoneID = "validation.field.timezone"
-	ValidationFieldTimezone   = &Term{
+	// ValidationFieldTimezone represents the timezone validation field label.
+	ValidationFieldTimezone = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldTimezoneID,
 			Other: "Timezone",
@@ -98,7 +110,8 @@ var (
 	branchID = "Branch ID"
 
 	validationFieldBranchIDID = "validation.field.branch_id"
-	ValidationFieldBranchID   = &Term{
+	// ValidationFieldBranchID represents the branch ID validation field label.
+	ValidationFieldBranchID = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldBranchIDID,
 			Other: branchID,
@@ -108,7 +121,8 @@ var (
 	organizationID = "Organization ID"
 
 	validationFieldOrganizationIDID = "validation.field.organization_id"
-	ValidationFieldOrganizationID   = &Term{
+	// ValidationFieldOrganizationID represents the organization ID validation field label.
+	ValidationFieldOrganizationID = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldOrganizationIDID,
 			Other: organizationID,
@@ -116,7 +130,8 @@ var (
 	}
 
 	validationFieldBranchBranchIDID = "validation.field.branch.id"
-	ValidationFieldBranchBranchID   = &Term{
+	// ValidationFieldBranchBranchID represents the nested branch identifier validation field label.
+	ValidationFieldBranchBranchID = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldBranchBranchIDID,
 			Other: branchID,
@@ -124,7 +139,8 @@ var (
 	}
 
 	validationFieldBranchBranchNameID = "validation.field.branch.name"
-	ValidationFieldBranchBranchName   = &Term{
+	// ValidationFieldBranchBranchName represents the nested branch name validation field label.
+	ValidationFieldBranchBranchName = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldBranchBranchNameID,
 			Other: "Branch Name",
@@ -132,7 +148,8 @@ var (
 	}
 
 	validationFieldBranchOrganizationIDID = "validation.field.branch.organization.id"
-	ValidationFieldBranchOrganizationID   = &Term{
+	// ValidationFieldBranchOrganizationID represents the nested organization identifier within a branch validation field label.
+	ValidationFieldBranchOrganizationID = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldBranchOrganizationIDID,
 			Other: organizationID,
@@ -140,7 +157,8 @@ var (
 	}
 
 	validationFieldBranchOrganizationNameID = "validation.field.branch.organization.name"
-	ValidationFieldBranchOrganizationName   = &Term{
+	// ValidationFieldBranchOrganizationName represents the nested organization name within a branch validation field label.
+	ValidationFieldBranchOrganizationName = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldBranchOrganizationNameID,
 			Other: "Organization Name",
@@ -148,7 +166,8 @@ var (
 	}
 
 	validationFieldBillTotalID = "validation.field.bill_total"
-	ValidationFieldBillTotal   = &Term{
+	// ValidationFieldBillTotal represents the bill total validation field label.
+	ValidationFieldBillTotal = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldBillTotalID,
 			Other: "Bill Total",
@@ -156,7 +175,8 @@ var (
 	}
 
 	validationFieldTransactedAtID = "validation.field.transacted_at"
-	ValidationFieldTransactedAt   = &Term{
+	// ValidationFieldTransactedAt represents the transaction timestamp validation field label.
+	ValidationFieldTransactedAt = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldTransactedAtID,
 			Other: "Transacted at",
@@ -164,7 +184,8 @@ var (
 	}
 
 	validationFieldUsernameID = "validation.field.username"
-	ValidationFieldUsername   = &Term{
+	// ValidationFieldUsername represents the username validation field label.
+	ValidationFieldUsername = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldUsernameID,
 			Other: "Username",
@@ -172,7 +193,8 @@ var (
 	}
 
 	validationFieldPasswordID = "validation.field.password"
-	ValidationFieldPassword   = &Term{
+	// ValidationFieldPassword represents the password validation field label.
+	ValidationFieldPassword = &Term{
 		Message: &i18n.Message{
 			ID:    validationFieldPasswordID,
 			Other: "Password",
@@ -180,9 +202,10 @@ var (
 	}
 
 	validationQuoteValID = "validation.quote_val"
-	ValidationQuoteVal   = &struct {
-		Message  func() *i18n.Message
-		Localize func(localizer *i18n.Localizer, val string) string
+	// ValidationQuoteVal wraps a validation value in quotation marks for localized error formatting.
+	ValidationQuoteVal = &struct {
+		Message  msgFunc
+		Localize locFunc
 	}{
 		Message: func() *i18n.Message {
 			return &i18n.Message{
@@ -196,8 +219,9 @@ var (
 	}
 
 	validationTypeMessageID = "validation.type_message"
-	ValidationTypeMessage   = &struct {
-		Message  func() *i18n.Message
+	// ValidationTypeMessage generates a localized type mismatch validation error message.
+	ValidationTypeMessage = &struct {
+		Message  msgFunc
 		Localize func(localizer *i18n.Localizer, field, expected, actual string) string
 	}{
 		Message: func() *i18n.Message {

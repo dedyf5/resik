@@ -11,8 +11,9 @@ import (
 
 var (
 	homeMessageID = "home_message"
-	HomeMessage   = &struct {
-		Message  func() *i18n.Message
+	// HomeMessage defines the parameterized greeting/status message for application startup or health endpoints.
+	HomeMessage = &struct {
+		Message  msgFunc
 		Localize func(localizer *i18n.Localizer, appName, appVersion, moduleName, moduleType string) string
 	}{
 		Message: func() *i18n.Message {
@@ -34,6 +35,7 @@ var (
 		},
 	}
 
+	// IncorrectUsernameOrPassword represents an authentication error term.
 	IncorrectUsernameOrPassword = &Term{
 		Message: &i18n.Message{
 			ID:    "incorrect_username_or_password",
@@ -41,6 +43,7 @@ var (
 		},
 	}
 
+	// Unauthorized represents a general unauthorized access term.
 	Unauthorized = &Term{
 		Message: &i18n.Message{
 			ID:    "unauthorized",
@@ -48,6 +51,7 @@ var (
 		},
 	}
 
+	// AccessDenied represents an explicit privilege denial term.
 	AccessDenied = &Term{
 		Message: &i18n.Message{
 			ID:    "access_denied",
@@ -55,6 +59,7 @@ var (
 		},
 	}
 
+	// InvalidID represents a malformed or invalid identifier error term.
 	InvalidID = &Term{
 		Message: &i18n.Message{
 			ID:    "invalid_id",
@@ -62,6 +67,7 @@ var (
 		},
 	}
 
+	// InvalidOrExpiredSessionLoginAgain represents a session timeout or invalid token term.
 	InvalidOrExpiredSessionLoginAgain = &Term{
 		Message: &i18n.Message{
 			ID:    "invalid_or_expired_session_login_again",
@@ -69,6 +75,7 @@ var (
 		},
 	}
 
+	// InvalidTimeFormat represents a time parsing failure term.
 	InvalidTimeFormat = &Term{
 		Message: &i18n.Message{
 			ID:    "invalid_time_format",
@@ -76,6 +83,7 @@ var (
 		},
 	}
 
+	// TooManyRequests represents a rate limit exceeded error term.
 	TooManyRequests = &Term{
 		Message: &i18n.Message{
 			ID:    "too_many_requests",
@@ -83,6 +91,7 @@ var (
 		},
 	}
 
+	// Organization represents the organization entity label term.
 	Organization = &Term{
 		Message: &i18n.Message{
 			ID:    "organization",
@@ -90,6 +99,7 @@ var (
 		},
 	}
 
+	// User represents the user entity label term.
 	User = &Term{
 		Message: &i18n.Message{
 			ID:    "user",
@@ -97,6 +107,7 @@ var (
 		},
 	}
 
+	// Transaction represents the transaction entity label term.
 	Transaction = &Term{
 		Message: &i18n.Message{
 			ID:    "transaction",
@@ -105,9 +116,10 @@ var (
 	}
 
 	notFoundValID = "not_found_val"
-	NotFoundVal   = &struct {
-		Message  func() *i18n.Message
-		Localize func(localizer *i18n.Localizer, val string) string
+	// NotFoundVal generates a localized entity not found message with a dynamic value.
+	NotFoundVal = &struct {
+		Message  msgFunc
+		Localize locFunc
 	}{
 		Message: func() *i18n.Message {
 			return &i18n.Message{
@@ -121,9 +133,10 @@ var (
 	}
 
 	successfullyCreatedValID = "successfully_created_val"
-	SuccessfullyCreatedVal   = &struct {
-		Message  func() *i18n.Message
-		Localize func(localizer *i18n.Localizer, val string) string
+	// SuccessfullyCreatedVal generates a localized success creation message for an entity.
+	SuccessfullyCreatedVal = &struct {
+		Message  msgFunc
+		Localize locFunc
 	}{
 		Message: func() *i18n.Message {
 			return &i18n.Message{
@@ -137,9 +150,10 @@ var (
 	}
 
 	successfullyUpdatedValID = "successfully_updated_val"
-	SuccessfullyUpdatedVal   = &struct {
-		Message  func() *i18n.Message
-		Localize func(localizer *i18n.Localizer, val string) string
+	// SuccessfullyUpdatedVal generates a localized success update message for an entity.
+	SuccessfullyUpdatedVal = &struct {
+		Message  msgFunc
+		Localize locFunc
 	}{
 		Message: func() *i18n.Message {
 			return &i18n.Message{
