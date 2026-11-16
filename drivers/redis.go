@@ -13,6 +13,8 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+// RedisConfig defines the configuration parameters required to establish
+// a connection to a Redis server instance.
 type RedisConfig struct {
 	Host               string
 	Port               int
@@ -23,6 +25,11 @@ type RedisConfig struct {
 	HealthCheckTimeout time.Duration
 }
 
+// NewRedisConnection initializes a new Redis client instance using the provided configuration,
+// pings the server to verify connectivity within a timeout, and returns the client along with
+// a cleanup function to gracefully close the connection.
+//
+// Returns an error if the connection or ping fails.
 func NewRedisConnection(config *RedisConfig) (*redis.Client, func(), error) {
 	if config == nil {
 		return nil, func() {}, nil
@@ -56,6 +63,7 @@ func NewRedisConnection(config *RedisConfig) (*redis.Client, func(), error) {
 	return client, cleanup, nil
 }
 
+// HostPort formats and returns the host and port combination as a standard address string.
 func (r *RedisConfig) HostPort() string {
 	return fmt.Sprintf("%s:%d", r.Host, r.Port)
 }

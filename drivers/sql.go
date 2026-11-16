@@ -21,17 +21,23 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+// SQLEngine represents the supported relational database management systems.
 type SQLEngine string
 
 const (
-	MySQL      SQLEngine = "mysql"
+	// MySQL represents the MySQL database engine.
+	MySQL SQLEngine = "mysql"
+	// PostgreSQL represents the PostgreSQL database engine.
 	PostgreSQL SQLEngine = "postgres"
 )
 
+// String returns the string representation of the SQLEngine.
 func (engine SQLEngine) String() string {
 	return string(engine)
 }
 
+// SQLConfig defines the configuration parameters for connecting to SQL databases,
+// managing connection pooling, and configuring runtime behavior.
 type SQLConfig struct {
 	Engine             SQLEngine
 	Host               string
@@ -47,6 +53,8 @@ type SQLConfig struct {
 	IsDebug            bool
 }
 
+// dataSourceName constructs the appropriate Data Source Name (DSN) connection string
+// based on the SQL engine dialect and configuration options.
 func dataSourceName(config SQLConfig, mysqlMultiStatements bool) string {
 	var dsnCfg map[string]string
 	format := ""
@@ -85,6 +93,9 @@ func dataSourceName(config SQLConfig, mysqlMultiStatements bool) string {
 	)
 }
 
+// NewConnection initializes a standard database connection pool (*sql.DB) using database/sql,
+// validates it with a ping context, configures connection pool limits, and returns the DB connection
+// along with a cleanup function.
 func NewConnection(config SQLConfig, mysqlMultiStatements bool) (*sql.DB, func(), error) {
 	dsn := dataSourceName(config, mysqlMultiStatements)
 
@@ -124,6 +135,8 @@ func NewConnection(config SQLConfig, mysqlMultiStatements bool) (*sql.DB, func()
 	return conn, cleanup, nil
 }
 
+// NewGorm wraps an existing *sql.DB instance into a GORM database session (*gorm.DB)
+// configured for the specified SQL dialect (MySQL or PostgreSQL), applying optional debug settings.
 func NewGorm(
 	dialect SQLEngine,
 	conn *sql.DB,
