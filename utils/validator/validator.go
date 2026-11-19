@@ -2,6 +2,9 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
+// Package validator provides structural payload validation, custaom validation rules
+// (such as uuidv7, notblank, oneof_order, past_or_present), multi-language localization translation support,
+// and standardized error formatting for HTTP/gRPC responses.
 package validator
 
 import (
@@ -32,11 +35,15 @@ import (
 )
 
 //go:generate mockgen -source validator.go -package mock -destination ./mock/validator.go
+
+// IValidate defines the contract for struct payload validation and validation error formatting.
 type IValidate interface {
 	Struct(payloadStruct any, lang *langCtx.Lang) *resPkg.Status
 	ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status
 }
 
+// Validate implements the IValidate interface wrapping the underlying validator instance,
+// universal translators, and default configurations.
 type Validate struct {
 	instance            *validator.Validate
 	langDefault         language.Tag
@@ -44,6 +51,7 @@ type Validate struct {
 	universalTranslator *ut.UniversalTranslator
 }
 
+// customTag holds metadata and mapping rules for custom validation tags.
 type customTag struct {
 	tag          string
 	transFunc    validator.Func
@@ -51,6 +59,7 @@ type customTag struct {
 	translations map[language.Tag]string
 }
 
+// customTags lists all custom validation rules and multilangual translation strings.
 var customTags = []customTag{
 	{
 		tag:       "notblank",
@@ -94,6 +103,8 @@ var customTags = []customTag{
 	},
 }
 
+// New initializes and returns a new Validate instance with registered custom rules,
+// translation tag extractors, and default localization settings.
 func New(langDefault language.Tag) *Validate {
 	validate := validator.New()
 
@@ -138,6 +149,7 @@ func New(langDefault language.Tag) *Validate {
 	}
 }
 
+// registerAllTranslations registers default and custom validation translations for all supported languages.
 func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator) {
 	type translator struct {
 		langTag language.Tag
@@ -174,6 +186,7 @@ func registerAllTranslations(v *validator.Validate, uni *ut.UniversalTranslator)
 	}
 }
 
+// registerNotBlank registers translation rules for the 'notblank' validation tag.
 func registerNotBlank(v *validator.Validate, trans ut.Translator, msg string) error {
 	return v.RegisterTranslation("notblank", trans, func(ut ut.Translator) error {
 		return ut.Add("notblank", msg, true)
@@ -183,6 +196,7 @@ func registerNotBlank(v *validator.Validate, trans ut.Translator, msg string) er
 	})
 }
 
+// registerOneOfOrder registers translation rules for the 'oneof_order' validation tag.
 func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) error {
 	return v.RegisterTranslation("oneof_order", trans, func(ut ut.Translator) error {
 		return ut.Add("oneof_order", msg, true)
@@ -195,6 +209,7 @@ func registerOneOfOrder(v *validator.Validate, trans ut.Translator, msg string) 
 	})
 }
 
+// registerUUIDv7 registers translation rules for the 'uuidv7' validation tag.
 func registerUUIDV7(v *validator.Validate, trans ut.Translator, msg string) error {
 	return v.RegisterTranslation("uuidv7", trans, func(ut ut.Translator) error {
 		return ut.Add("uuidv7", msg, true)
@@ -204,6 +219,7 @@ func registerUUIDV7(v *validator.Validate, trans ut.Translator, msg string) erro
 	})
 }
 
+// registerPastOrPresent registers translation rules for the 'past_or_present' validation tag.
 func registerPastOrPresent(v *validator.Validate, trans ut.Translator, msg string) error {
 	return v.RegisterTranslation("past_or_present", trans, func(ut ut.Translator) error {
 		return ut.Add("past_or_present", msg, true)
@@ -213,6 +229,8 @@ func registerPastOrPresent(v *validator.Validate, trans ut.Translator, msg strin
 	})
 }
 
+// Struct validates a given payload struct against its struct validation tags,
+// returning a localized error status if validation fails or internal errors occur.
 func (v *Validate) Struct(payloadStruct any, lang *langCtx.Lang) *resPkg.Status {
 	if payloadStruct == nil {
 		return resPkg.NewStatusError(
@@ -232,6 +250,8 @@ func (v *Validate) Struct(payloadStruct any, lang *langCtx.Lang) *resPkg.Status 
 	return nil
 }
 
+// ErrorFormatter parses validation errors and transforms them into a structured HTTP bad request status
+// complete with localized field violation details.
 func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status {
 	errs, ok := errors.AsType[validator.ValidationErrors](err)
 	if !ok {
@@ -284,6 +304,8 @@ func (v *Validate) ErrorFormatter(err error, lang *langCtx.Lang) *resPkg.Status 
 	return resPkg.NewStatusDetails(http.StatusBadRequest, first, badRequest)
 }
 
+// Translator retrieves the translator instance for a specified language tag,
+// falling back to the default translator if not found.
 func (v *Validate) Translator(lang language.Tag) ut.Translator {
 	t, found := v.universalTranslator.GetTranslator(lang.String())
 	if !found {
@@ -292,6 +314,7 @@ func (v *Validate) Translator(lang language.Tag) ut.Translator {
 	return t
 }
 
+// isOneOfOrder validates whether comma-separated field values conform to allowed sorting options.
 func isOneOfOrder(fl validator.FieldLevel) bool {
 	options := getOneOfOrderOptions(fl.Param())
 	fields := strings.SplitSeq(fl.Field().String(), ",")
@@ -304,11 +327,13 @@ func isOneOfOrder(fl validator.FieldLevel) bool {
 	return true
 }
 
+// isUUIDV7 validates whether a field string is a valid UUIDv7 format.
 func isUUIDV7(fl validator.FieldLevel) bool {
 	_, err := uuidPkg.ParseUUIDV7(fl.Field().String())
 	return err == nil
 }
 
+// isPastOrPresent validates whether a date-time string is in the past or present (with clock skew tolerance)
 func isPastOrPresent(fl validator.FieldLevel) bool {
 	str := fl.Field().String()
 	if str == "" {
@@ -326,6 +351,7 @@ func isPastOrPresent(fl validator.FieldLevel) bool {
 	return !t.After(nowWithTolerance)
 }
 
+// getOneOfOrderOptions generates ascending and descending order option variations from validation pramaters.
 func getOneOfOrderOptions(param string) []string {
 	s := strings.ReplaceAll(param, "'", "")
 	s = strings.ReplaceAll(s, `\"`, ``)
@@ -338,6 +364,7 @@ func getOneOfOrderOptions(param string) []string {
 	return vals
 }
 
+// errorReason maps a validator tag to a standardized error reason code string.
 func errorReason(err validator.FieldError) string {
 	switch err.Tag() {
 	case "required", "required_if", "required_unless", "required_with", "required_with_all", "required_without", "required_without_all":
@@ -378,14 +405,17 @@ func errorReason(err validator.FieldError) string {
 	}
 }
 
+// fieldPlaceholder wraps a field name into placeholder brackets (e.g. "{field}")
 func fieldPlaceholder(field string) string {
 	return "{" + field + "}"
 }
 
+// removeFieldPlaceholder strips bracket wrappers from a field placeholder string.
 func removeFieldPlaceholder(field string) string {
 	return strings.NewReplacer("{", "", "}", "").Replace(field)
 }
 
+// getLangReqOrDefault returns a slice of locales.Translator corresponding to all supported application languages.
 func getLangReqOrDefault(languageDefault language.Tag, lang *langCtx.Lang) *langCtx.Lang {
 	if lang == nil {
 		return langCtx.NewLang(languageDefault, nil, "")
@@ -393,6 +423,7 @@ func getLangReqOrDefault(languageDefault language.Tag, lang *langCtx.Lang) *lang
 	return lang
 }
 
+// Translators return a slice of locales.Translator corresponding to all supported application languages.
 func Translators() (res []locales.Translator) {
 	for _, v := range langCtx.Available {
 		res = append(res, LanguageToTranslator(v))
@@ -400,6 +431,7 @@ func Translators() (res []locales.Translator) {
 	return
 }
 
+// LanguageToTranslator maps a language.Tag to its corresponding locales.Translator implementation.
 func LanguageToTranslator(lang language.Tag) locales.Translator {
 	switch lang {
 	case language.Indonesian:
