@@ -5,10 +5,12 @@ import (
 	"strings"
 )
 
+// Request difines common query and payload parameters shared across incoming requests.
 type Request struct {
 	Lang string `json:"lang" query:"lang" validate:"omitempty,oneof=en id ja"`
 }
 
+// LangAvailable extracts the list of allowed language codes from the Lang field's oneof validation tag.
 func (r *Request) LangAvailable() []string {
 	fld := reflect.TypeFor[Request]().Field(0)
 	validate := fld.Tag.Get("validate")
