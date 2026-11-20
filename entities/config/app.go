@@ -6,12 +6,15 @@ package config
 
 import "github.com/dedyf5/resik/buildinfo"
 
+// App holds core application metadata such as display name, key identifier, and version
 type App struct {
 	name    string
 	nameKey string
 	version string
 }
 
+// NewApp initializes an App configuration instance, falling back to buildinfo defaults
+// when values are empty and overriding the version when tag generation is active.
 func NewApp(name, nameKey, version string) *App {
 	if name == "" {
 		name = buildinfo.FrameworkName
@@ -34,14 +37,17 @@ func NewApp(name, nameKey, version string) *App {
 	}
 }
 
+// Name returns the configured application name.
 func (a *App) Name() string {
 	return a.name
 }
 
+// NameKey returns the normalized key identifier for the application.
 func (a *App) NameKey() string {
 	return a.nameKey
 }
 
+// Version returns the resolved application version string.
 func (a *App) Version() string {
 	return a.version
 }
