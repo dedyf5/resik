@@ -2,6 +2,8 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
+// Package branch defines the Branch entity, table mapping, organization ownership
+// validation helpers.
 package branch
 
 import (
@@ -13,8 +15,10 @@ import (
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
+// TABLE_NAME specifies the database table name for Branch entities.
 const TABLE_NAME = "branches"
 
+// Branch represents a branch office or operational unit belonging to an organization.
 type Branch struct {
 	commonEntity.TableIdentity
 	commonEntity.TableAuthor
@@ -23,6 +27,8 @@ type Branch struct {
 	Organization   organization.Organization `json:"organization" gorm:"foreignKey:OrganizationID;references:ID;constraint:OnUpdate:CASCADE,OnDelete:NO ACTION;"`
 }
 
+// IsBelongToOrganization checks whether the branch's associated organization matches
+// organizationPublicID, returning an HTTP 422 status error when it does not match.
 func (b *Branch) IsBelongToOrganization(organizationPublicID *uuidPkg.UUIDV7) (ok bool, err *resPkg.Status) {
 	if b.Organization.PublicID == *organizationPublicID {
 		return true, nil
@@ -33,6 +39,7 @@ func (b *Branch) IsBelongToOrganization(organizationPublicID *uuidPkg.UUIDV7) (o
 	)
 }
 
+// TableName returns the database table name for GORM mapping.
 func (Branch) TableName() string {
 	return TABLE_NAME
 }
