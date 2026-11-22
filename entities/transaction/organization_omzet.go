@@ -8,6 +8,7 @@ import (
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
+// OrganizationOmzet holds aggregated transaction omzet data per organization and time period.
 type OrganizationOmzet struct {
 	OrganizationPublicID uuidPkg.UUIDV7 `gorm:"column:organization_public_id"`
 	OrganizationName     string         `gorm:"column:organization_name"`

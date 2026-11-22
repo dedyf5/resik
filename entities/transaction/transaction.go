@@ -2,6 +2,7 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
+// Package transaction defines transaction entities, collections, and omzet reporting models.
 package transaction
 
 import (
@@ -13,8 +14,10 @@ import (
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
+// TABLE_NAME specifies the database table name for Transaction entities.
 const TABLE_NAME = "transactions"
 
+// Transaction represents a recorded transaction associated with an organization and branch.
 type Transaction struct {
 	commonEntity.TableIdentity
 	commonEntity.TableAuthor
@@ -28,16 +31,20 @@ type Transaction struct {
 	Branch               branch.Branch             `json:"branch" gorm:"foreignKey:BranchPublicID;references:PublicID;constraint:OnUpdate:-,OnDelete:-;"`
 }
 
+// GetTableAuthor returns the embedded TableAuthor audit metadata for Transaction.
 func (t Transaction) GetTableAuthor() commonEntity.TableAuthor {
 	return t.TableAuthor
 }
 
+// TableName returns the database table name for GORM mapping.
 func (Transaction) TableName() string {
 	return TABLE_NAME
 }
 
+// Transactions represents a slice of Transaction entities.
 type Transactions []Transaction
 
+// GetTableAuthors extracts TableAuthor metadata from all transactions in the slice.
 func (ts Transactions) GetTableAuthors() commonEntity.TableAuthors {
 	return commonEntity.ExtractTableAuthors(ts)
 }

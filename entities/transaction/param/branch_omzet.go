@@ -11,6 +11,8 @@ import (
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
+// BranchOmzetGet holds execution context, branch ID, grouping period, filters,
+// and ordering rules for retrieving branch omzet data.
 type BranchOmzetGet struct {
 	Ctx            *ctx.Ctx
 	BranchPublicID uuidPkg.UUIDV7

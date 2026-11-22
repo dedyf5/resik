@@ -11,6 +11,8 @@ import (
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
+// OrganizationOmzetGet holds execution context, organization public ID, grouping period, filters,
+// and ordering rules for retrieving organization omzet data.
 type OrganizationOmzetGet struct {
 	Ctx                  *ctx.Ctx
 	OrganizationPublicID uuidPkg.UUIDV7
