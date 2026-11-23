@@ -6,6 +6,7 @@ package config
 
 import "time"
 
+// Auth holds authentication token expiration, signing key, and password hashing parameters.
 type Auth struct {
 	Expires        time.Duration `mapstructure:"expires" yaml:"expires" json:"expires"`
 	SignatureKey   string

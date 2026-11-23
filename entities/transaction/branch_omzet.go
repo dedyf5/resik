@@ -8,6 +8,7 @@ import (
 	uuidPkg "github.com/dedyf5/resik/pkg/uuid"
 )
 
+// BranchOmzet holds aggregated transaction omzet data per branch and time period.
 type BranchOmzet struct {
 	OrganizationPublicID uuidPkg.UUIDV7 `gorm:"column:organization_public_id"`
 	OrganizationName     string         `gorm:"column:organization_name"`

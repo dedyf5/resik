@@ -4,6 +4,7 @@
 
 package config
 
+// Log holds logging configuration options such as the target log file path.
 type Log struct {
 	File string
 }

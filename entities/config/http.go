@@ -6,6 +6,7 @@ package config
 
 import "time"
 
+// HTTP defines timeout settings for HTTP server connections and request lifecycles.
 type HTTP struct {
 	ReadHeaderTimeout time.Duration
 	ReadTimeout       time.Duration
