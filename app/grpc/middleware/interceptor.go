@@ -2,6 +2,8 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
+// Package middleware provides gRPC unary server interceptors for logging, language
+// resolution, JWT authentication, error formatting, and rate limiting.
 package middleware
 
 import (
@@ -26,15 +28,21 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
+// Role identifies an authorization requirement for a gRPC method.
 type Role string
 
 const (
+	// RoleValidToken indicates that the gRPC method requires a valid JWT bearer token.
 	RoleValidToken Role = "ValidToken"
 
-	healthService  string = "/health.HealthService"
+	// healthService is the fully qualified gRPC service path for health checks.
+	healthService string = "/health.HealthService"
+	// HealthzGetPath is the fully gRPC method path for healthz readiness/liveness endpoint.
 	HealthzGetPath string = healthService + "/HealthzGet"
 )
 
+// Interceptor provides gRPC unary unary interceptors for request tracking, localization,
+// authentication, structured logging, and rate limiting.
 type Interceptor struct {
 	module      config.Module
 	auth        config.Auth
@@ -44,6 +52,8 @@ type Interceptor struct {
 	methodRoles map[string][]Role
 }
 
+// NewInterceptor constructs a new gRPC Interceptor configured with module settings,
+// authentication config, identity resolver, rate limiter, and base logger.
 func NewInterceptor(module config.Module, auth config.Auth, resolver identity.IdentityResolver, limiter ratelimit.Limiter, log *logCtx.Log) *Interceptor {
 	return &Interceptor{
 		module:      module,
@@ -55,6 +65,7 @@ func NewInterceptor(module config.Module, auth config.Auth, resolver identity.Id
 	}
 }
 
+// methodRoles returns a map of fully qualified gRPC method names to their required roles.
 func methodRoles() map[string][]Role {
 	const organizationService = "/organization.OrganizationService/"
 	const transactionService = "/transaction.TransactionService/"
@@ -73,6 +84,7 @@ func methodRoles() map[string][]Role {
 	}
 }
 
+// logCtx ensures a correlation ID exists on c and populates i.log with the correlation ID and request path.
 func (i *Interceptor) logCtx(c context.Context, path string) (*context.Context, error) {
 	correlationID, newCtx := logCtx.EnsureCorrelationID(c)
 
@@ -82,12 +94,15 @@ func (i *Interceptor) logCtx(c context.Context, path string) (*context.Context, 
 	return &newCtx, nil
 }
 
+// writeLogger records a gRPC audit/request log entry and converts err into a detailed gRPC error.
 func (i *Interceptor) writeLogger(c context.Context, start time.Time, fullMethod string, req any, res any, err error) (any, error) {
 	logger := logCtx.NewGRPC(c, i.log, start, fullMethod, req, res, err)
 	logger.Write()
 	return res, statusUtil.GRPCErrorWithDetails(err, i.log)
 }
 
+// langCtx reads incoming gRPC metadata to resolve the requested language, attaches a localized
+// langCtx.Lang instance to the context, and returns the updated context and language config.
 func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*context.Context, *langCtx.Lang, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
@@ -110,6 +125,8 @@ func (i *Interceptor) langCtx(c context.Context, langDefault language.Tag) (*con
 	return &newCtx, langRes, nil
 }
 
+// validateJWT enfores RoleValidToken when configured for fullMethod by parsing the Bearer token
+// from incoming gRPC metadata and storing the resulting claims in the returned context.
 func (i *Interceptor) validateJWT(c context.Context, lang *langCtx.Lang, signatureKey string, fullMethod string) (*context.Context, error) {
 	meta, ok := metadata.FromIncomingContext(c)
 	if !ok {
@@ -135,10 +152,13 @@ func (i *Interceptor) validateJWT(c context.Context, lang *langCtx.Lang, signatu
 	return &newCtx, nil
 }
 
+// errorMetadata returns a nil context and an internal server error status when gRPC metadata cannot be read.
 func (i *Interceptor) errorMetadata() (*context.Context, error) {
 	return nil, resPkg.NewStatusMessage(http.StatusInternalServerError, "unable to read metadata", nil)
 }
 
+// Unary is a gRPC unary server interceptor that initializes tracking and caller context,
+// resolves language preferences, validates JWT credentials, invokes handler, and logs the outcome.
 func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	start := time.Now()
 
@@ -166,6 +186,8 @@ func (i *Interceptor) Unary(c context.Context, req any, info *grpc.UnaryServerIn
 	return i.writeLogger(*tokenC, start, info.FullMethod, req, res, err)
 }
 
+// RateLimit is a gRPC unary server interceptor that applies rate limiting per request key,
+// sets rate-limit response headers, and rejects excess requests with HTTP 429 status details.
 func (i *Interceptor) RateLimit(c context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 	if info.FullMethod == HealthzGetPath {
 		return handler(c, req)
