@@ -40,6 +40,8 @@ type Result struct {
 	Reached    bool  // Indicates whether the rate limit has been reached.
 }
 
+//go:generate mockgen -source ratelimit.go -package mock -destination ./mock/ratelimit.go
+
 // Limiter defines the contract for rate-limiting enforcement and client key extraction.
 type Limiter interface {
 	Take(c context.Context, key string) (*Result, *resPkg.Status) // Take evaluates and records a hit against the rate limit for the given key.
