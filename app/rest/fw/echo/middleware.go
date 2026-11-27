@@ -27,6 +27,8 @@ import (
 	"golang.org/x/text/language"
 )
 
+// LangMiddleware resolves the requested language from query parameters or Accept-Language
+// header and stores a localized langCtx.Lang value in the request context.
 func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -53,6 +55,8 @@ func LangMiddleware(langDefault language.Tag) echo.MiddlewareFunc {
 	})
 }
 
+// LoggerAndResponseFormatterMiddleware initializes correlation IDs, caller context, request body
+// capture, and HTTP response/audit logging for non-documentation routes.
 func LoggerAndResponseFormatterMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
 	return echo.WrapMiddleware(func(h http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -92,6 +96,8 @@ func LoggerAndResponseFormatterMiddleware(log *logCtx.Log) echo.MiddlewareFunc {
 	})
 }
 
+// ValidateTokenMiddleware configures echo-jwt token parsing and maps JWT errors to
+// localized HTTP status response.
 func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 	jwtConfig := echojwt.Config{
 		NewClaimsFunc: func(c *echo.Context) jwt.Claims {
@@ -110,6 +116,8 @@ func ValidateTokenMiddleware(signatureKey string) echo.MiddlewareFunc {
 	return echojwt.WithConfig(jwtConfig)
 }
 
+// JWTMiddleware parses Bearer tokens from the Authorization header using signatureKey and
+// identity.IdentityResolver, attaching authenticated claims to the request context when present.
 func JWTMiddleware(signatureKey string, resolver identity.IdentityResolver, langDef language.Tag) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(ctx *echo.Context) error {
@@ -140,6 +148,8 @@ func JWTMiddleware(signatureKey string, resolver identity.IdentityResolver, lang
 	}
 }
 
+// RateLimitMiddleware enforces per-client rate limits, writes X-RateLimit-* response headers,
+// and returns an HTTP 429 response with Retry-After when the limit is reached.
 func RateLimitMiddleware(limiter ratelimit.Limiter) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {

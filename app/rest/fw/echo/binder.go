@@ -19,6 +19,8 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
+// Binder defines request binding, parameter/type validation, and JSON binding error formatting
+// operations for Echo handlers.
 type Binder interface {
 	Bind(c *echo.Context, i any) error
 	BindHeaders(c *echo.Context, i any) error
@@ -29,13 +31,18 @@ type Binder interface {
 	JSONErrorFormatter(c *echo.Context, err error) error
 }
 
+// binder holds the singleton Binder implementation instance.
 var binder *bind
+
+// once ensures singleton initialization of binder is executed only once.
 var once sync.Once
 
+// bind implements Binder on top of Echo's DefaultBinder with localized type validation.
 type bind struct {
 	def *echo.DefaultBinder
 }
 
+// NewBinder returns the singleton Binder instance initialized with Echo's DefaultBinder.
 func NewBinder() Binder {
 	once.Do(func() {
 		binder = &bind{&echo.DefaultBinder{}}
@@ -43,22 +50,28 @@ func NewBinder() Binder {
 	return binder
 }
 
+// BindHeaders binds incoming HTTP headers into i.
 func (b *bind) BindHeaders(c *echo.Context, i any) error {
 	return echo.BindHeaders(c, i)
 }
 
+// BindBody binds the incoming HTTP request body into i.
 func (b *bind) BindBody(c *echo.Context, i any) error {
 	return echo.BindBody(c, i)
 }
 
+// BindQueryParams binds incoming URL query parameters into i.
 func (b *bind) BindQueryParams(c *echo.Context, i any) error {
 	return echo.BindQueryParams(c, i)
 }
 
+// BindPathParams binds incoming route path parameters into i.
 func (b *bind) BindPathParams(c *echo.Context, i any) error {
 	return echo.BindPathValues(c, i)
 }
 
+// Bind validates query, path, and form parameter types and binds request data into i,
+// formatting any binding error into a localized bad-request response when applicable.
 func (b *bind) Bind(c *echo.Context, i any) error {
 	if err := b.ParamValidator(c, i); err != nil {
 		return err
@@ -69,6 +82,8 @@ func (b *bind) Bind(c *echo.Context, i any) error {
 	return nil
 }
 
+// ParamValidator validates language query parameters and checks that non-empty query,
+// path, and form values match their target struct field types.
 func (b *bind) ParamValidator(c *echo.Context, i any) error {
 	if i == nil {
 		return nil
@@ -180,6 +195,8 @@ func (b *bind) ParamValidator(c *echo.Context, i any) error {
 	return nil
 }
 
+// JSONErrorFormatter converts JSON unmarshal type errors or field-type error strings into
+// localized bad-request responses, returning the original error if unformatted.
 func (b *bind) JSONErrorFormatter(c *echo.Context, err error) error {
 	lang, errLang := langCtx.FromContext(c.Request().Context())
 	if errLang != nil {
@@ -218,6 +235,7 @@ func (b *bind) JSONErrorFormatter(c *echo.Context, err error) error {
 	return err
 }
 
+// errorTypeMessage builds a technical error and localized validation message for field type mismatch.
 func errorTypeMessage(lang *langCtx.Lang, field, expected, actual string) (message string, technicalErr error) {
 	technicalErr = fmt.Errorf("field=%s,expected=%s,got=%s", field, expected, actual)
 	message = term.ValidationTypeMessage.Localize(
