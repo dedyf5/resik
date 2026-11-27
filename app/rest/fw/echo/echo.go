@@ -2,6 +2,8 @@
 // Author: Dedy Fajar Setyawan
 // See: https://github.com/dedyf5/resik
 
+// Package echo provides Echo v5 framework helpers, request binding/validation,
+// custom HTTP error handling, and REST middlewares for the application.
 package echo
 
 import (
@@ -16,22 +18,28 @@ import (
 	"github.com/labstack/echo/v5"
 )
 
+// DocPrefix defines the URL path prefix used to identify Swagger documentation routes.
 const DocPrefix string = "/docs/swagger"
 
+// IEcho defines the contract for Echo-specific request payload validation.
 type IEcho interface {
 	StructValidator(ctx *echo.Context, payload any) error
 }
 
+// Echo wraps a structured validator implementation for use with Echo request contexts.
 type Echo struct {
 	validator validatorUtil.IValidate
 }
 
+// New constructs a new Echo helper instance configured with the given struct validator.
 func New(validator validatorUtil.IValidate) *Echo {
 	return &Echo{
 		validator: validator,
 	}
 }
 
+// StructValidator binds the incoming request payload and validates struct fields,
+// using the language resolved from the request context.
 func (e *Echo) StructValidator(ctx *echo.Context, payload any) error {
 	if err := ctx.Bind(payload); err != nil {
 		return err
@@ -46,6 +54,8 @@ func (e *Echo) StructValidator(ctx *echo.Context, payload any) error {
 	return nil
 }
 
+// HTTPErrorHandler formats errors returned by Echo handlers or middlewares into
+// standardized JSON responses and logs committed-response or unexpected errors.
 func HTTPErrorHandler(ctx *echo.Context, err error) {
 	resp, errUnwrap := echo.UnwrapResponse(ctx.Response())
 	if errUnwrap != nil {
